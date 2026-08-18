@@ -1,0 +1,575 @@
+{
+  "id": "na-neun-solo",
+  "name": "나는 솔로",
+  "type": "예능",
+  "platform": "SBS Plus · ENA",
+  "seasons": [
+    {
+      "id": "s24",
+      "programId": "na-neun-solo",
+      "label": "24기",
+      "airDate": "",
+      "onAir": true,
+      "cast": [
+        {
+          "id": "s24-yeongsu",
+          "alias": "영수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s24-yeongsik",
+          "alias": "영식",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s24-yeongho",
+          "alias": "영호",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s24-yeongcheol",
+          "alias": "영철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s24-gwangsu",
+          "alias": "광수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s24-sangcheol",
+          "alias": "상철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s24-jeongsuk",
+          "alias": "정숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s24-yeongsuk",
+          "alias": "영숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s24-sunja",
+          "alias": "순자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s24-hyeonsuk",
+          "alias": "현숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s24-yeongja",
+          "alias": "영자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s24-oksun",
+          "alias": "옥순",
+          "gender": "female",
+          "status": "searching"
+        }
+      ]
+    },
+    {
+      "id": "s23",
+      "programId": "na-neun-solo",
+      "label": "23기",
+      "airDate": "",
+      "onAir": false,
+      "cast": [
+        {
+          "id": "s23-yeongsu",
+          "alias": "영수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s23-yeongsik",
+          "alias": "영식",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s23-yeongho",
+          "alias": "영호",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s23-yeongcheol",
+          "alias": "영철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s23-gwangsu",
+          "alias": "광수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s23-sangcheol",
+          "alias": "상철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s23-jeongsuk",
+          "alias": "정숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s23-yeongsuk",
+          "alias": "영숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s23-sunja",
+          "alias": "순자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s23-hyeonsuk",
+          "alias": "현숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s23-yeongja",
+          "alias": "영자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s23-oksun",
+          "alias": "옥순",
+          "gender": "female",
+          "status": "searching"
+        }
+      ]
+    },
+    {
+      "id": "s22",
+      "programId": "na-neun-solo",
+      "label": "22기",
+      "airDate": "",
+      "onAir": false,
+      "cast": [
+        {
+          "id": "s22-yeongsu",
+          "alias": "영수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s22-yeongsik",
+          "alias": "영식",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s22-yeongho",
+          "alias": "영호",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s22-yeongcheol",
+          "alias": "영철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s22-gwangsu",
+          "alias": "광수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s22-sangcheol",
+          "alias": "상철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s22-jeongsuk",
+          "alias": "정숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s22-yeongsuk",
+          "alias": "영숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s22-sunja",
+          "alias": "순자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s22-hyeonsuk",
+          "alias": "현숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s22-yeongja",
+          "alias": "영자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s22-oksun",
+          "alias": "옥순",
+          "gender": "female",
+          "status": "searching"
+        }
+      ]
+    },
+    {
+      "id": "s21",
+      "programId": "na-neun-solo",
+      "label": "21기",
+      "airDate": "",
+      "onAir": false,
+      "cast": [
+        {
+          "id": "s21-yeongsu",
+          "alias": "영수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s21-yeongsik",
+          "alias": "영식",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s21-yeongho",
+          "alias": "영호",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s21-yeongcheol",
+          "alias": "영철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s21-gwangsu",
+          "alias": "광수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s21-sangcheol",
+          "alias": "상철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s21-jeongsuk",
+          "alias": "정숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s21-yeongsuk",
+          "alias": "영숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s21-sunja",
+          "alias": "순자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s21-hyeonsuk",
+          "alias": "현숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s21-yeongja",
+          "alias": "영자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s21-oksun",
+          "alias": "옥순",
+          "gender": "female",
+          "status": "searching"
+        }
+      ]
+    },
+    {
+      "id": "s20",
+      "programId": "na-neun-solo",
+      "label": "20기",
+      "airDate": "",
+      "onAir": false,
+      "cast": [
+        {
+          "id": "s20-yeongsu",
+          "alias": "영수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s20-yeongsik",
+          "alias": "영식",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s20-yeongho",
+          "alias": "영호",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s20-yeongcheol",
+          "alias": "영철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s20-gwangsu",
+          "alias": "광수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s20-sangcheol",
+          "alias": "상철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s20-jeongsuk",
+          "alias": "정숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s20-yeongsuk",
+          "alias": "영숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s20-sunja",
+          "alias": "순자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s20-hyeonsuk",
+          "alias": "현숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s20-yeongja",
+          "alias": "영자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s20-oksun",
+          "alias": "옥순",
+          "gender": "female",
+          "status": "searching"
+        }
+      ]
+    },
+    {
+      "id": "s19",
+      "programId": "na-neun-solo",
+      "label": "19기",
+      "airDate": "",
+      "onAir": false,
+      "cast": [
+        {
+          "id": "s19-yeongsu",
+          "alias": "영수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s19-yeongsik",
+          "alias": "영식",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s19-yeongho",
+          "alias": "영호",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s19-yeongcheol",
+          "alias": "영철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s19-gwangsu",
+          "alias": "광수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s19-sangcheol",
+          "alias": "상철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s19-jeongsuk",
+          "alias": "정숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s19-yeongsuk",
+          "alias": "영숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s19-sunja",
+          "alias": "순자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s19-hyeonsuk",
+          "alias": "현숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s19-yeongja",
+          "alias": "영자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s19-oksun",
+          "alias": "옥순",
+          "gender": "female",
+          "status": "searching"
+        }
+      ]
+    },
+    {
+      "id": "s18",
+      "programId": "na-neun-solo",
+      "label": "18기",
+      "airDate": "",
+      "onAir": false,
+      "cast": [
+        {
+          "id": "s18-yeongsu",
+          "alias": "영수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s18-yeongsik",
+          "alias": "영식",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s18-yeongho",
+          "alias": "영호",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s18-yeongcheol",
+          "alias": "영철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s18-gwangsu",
+          "alias": "광수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s18-sangcheol",
+          "alias": "상철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s18-jeongsuk",
+          "alias": "정숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s18-yeongsuk",
+          "alias": "영숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s18-sunja",
+          "alias": "순자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s18-hyeonsuk",
+          "alias": "현숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s18-yeongja",
+          "alias": "영자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s18-oksun",
+          "alias": "옥순",
+          "gender": "female",
+          "status": "searching"
+        }
+      ]
+    }
+  ]
+}

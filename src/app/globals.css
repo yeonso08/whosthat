@@ -7,7 +7,12 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-elevated: var(--elevated);
+  --color-photo: var(--photo);
+  --color-photo-ink: var(--photo-ink);
+  --color-searching: var(--searching);
   --font-sans: var(--font-sans);
+  --font-lat: var(--font-lat);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -48,73 +53,45 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* 시안 D "어둠 속 사진" — 사이트는 다크 전용이라 :root 자체가 다크 팔레트다.
+   색은 흑백뿐이고, 유일한 유채색 --searching 은 "아직 못 찾음" 상태에만 쓴다. */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: #0a0a0c;
+  --foreground: #f4f4f6;
+  --card: #141418;
+  --card-foreground: #f4f4f6;
+  --elevated: #1d1d23;
+  --photo: #23232b;
+  --photo-ink: #33333e;
+  --searching: #d9a44b;
+  --popover: #1d1d23;
+  --popover-foreground: #f4f4f6;
+  --primary: #f4f4f6;
+  --primary-foreground: #0a0a0c;
+  --secondary: #1d1d23;
+  --secondary-foreground: #f4f4f6;
+  --muted: #1d1d23;
+  --muted-foreground: #90909b;
+  --accent: #1d1d23;
+  --accent-foreground: #f4f4f6;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --border: #292930;
+  --input: #292930;
+  --ring: #57575f;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --radius: 0.875rem;
+  --sidebar: #141418;
+  --sidebar-foreground: #f4f4f6;
+  --sidebar-primary: #f4f4f6;
+  --sidebar-primary-foreground: #0a0a0c;
+  --sidebar-accent: #1d1d23;
+  --sidebar-accent-foreground: #f4f4f6;
+  --sidebar-border: #292930;
+  --sidebar-ring: #57575f;
 }
 
 @layer base {

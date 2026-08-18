@@ -1,0 +1,64 @@
+/** 계정 확인 상태. PLANNING.md 의 verified/lastVerified 를 화면에서 쓰는 형태로 좁힌 것. */
+export type AccountStatus =
+  /** 계정을 찾아서 확인까지 마쳤다. instagramHandle 이 반드시 있다. */
+  | "found"
+  /** 찾아봤고, 계정이 없다는 것까지 확인했다. */
+  | "none"
+  /** 아직 못 찾았다. 제보를 받는 상태. */
+  | "searching";
+
+export type CastMember = {
+  id: string;
+  /** 실명. 공개된 경우에만 채운다 — 모르면 비워 두고 가명으로만 보여준다. */
+  name?: string;
+  /** 방송에서 쓰는 가명. 영수·정숙·옥순처럼 기수마다 반복되는 고정 이름. */
+  alias: string;
+  gender: "male" | "female";
+  occupation?: string;
+  /** 방영 당시 나이. */
+  ageAtAiring?: number;
+  profileImageUrl?: string;
+  status: AccountStatus;
+  /** status 가 "found" 일 때만 채운다. @ 없이 핸들만. */
+  instagramHandle?: string;
+  /** 마지막으로 확인한 날짜 (YYYY-MM-DD). "searching" 이면 없다. */
+  lastVerified?: string;
+  /** 어떻게 확인했는지. 직접 검색 / 제보 등. */
+  source?: string;
+};
+
+export type Season = {
+  id: string;
+  programId: string;
+  /** 예: "20기" */
+  label: string;
+  /** 예: "2024-08". 확인 못 한 기수는 빈 문자열로 두고 화면에서 생략한다. */
+  airDate: string;
+  onAir: boolean;
+  cast: CastMember[];
+};
+
+export type Program = {
+  id: string;
+  name: string;
+  type: string;
+  platform: string;
+  seasons: Season[];
+};
+
+/** 한 기수의 계정 확인 현황. 목록·상세 양쪽에서 같은 계산을 쓰려고 뽑아 둔다. */
+export type Coverage = {
+  total: number;
+  found: number;
+  none: number;
+  searching: number;
+};
+
+export function getCoverage(cast: CastMember[]): Coverage {
+  return {
+    total: cast.length,
+    found: cast.filter((m) => m.status === "found").length,
+    none: cast.filter((m) => m.status === "none").length,
+    searching: cast.filter((m) => m.status === "searching").length,
+  };
+}
