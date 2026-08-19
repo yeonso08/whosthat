@@ -10,6 +10,8 @@
 pnpm dev      # 개발 서버 (3000)
 pnpm build    # 프로덕션 빌드 — 기수 페이지를 전부 SSG로 뽑는다
 pnpm lint
+
+pnpm exec shadcn add <name>   # shadcn/ui 컴포넌트 추가 — 손으로 짜기 전에 먼저 확인
 ```
 
 ## 구조
@@ -24,6 +26,65 @@ src/components/               cast-card, cast-photo, season-row, season-feature,
 ```
 
 Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 반드시 await 한다.
+
+## 코드 규칙
+
+원론이 아니라 이 코드베이스에 걸리는 형태로만 적는다. 새 코드는 아래를 만족해야 한다.
+
+### 컴포넌트는 shadcn/ui 에 있는지 먼저 본다
+
+- **손으로 짜기 전에 레지스트리를 먼저 확인한다.** 있으면 그걸 쓴다. 받는 건 로컬 CLI 로 — `pnpm exec shadcn add <name>`. `dlx shadcn@latest` 는 설치된 버전(4.18.0)·스타일(`base-nova`)과 어긋날 수 있으니 쓰지 않는다.
+- **접근성이 걸린 것은 특히 직접 만들지 않는다.** dialog, dropdown, popover, tooltip, tabs, sheet, command, form, input. 포커스 트랩·키보드 이동·ARIA 를 손으로 다시 짜면 반드시 빠뜨린다. 로드맵상 검색은 `command`, 제보 폼은 `form` + `input` 부터 본다.
+- 아이콘도 같다. `lucide-react` 가 이미 깔려 있다(`components.json` 의 `iconLibrary: lucide`). 새 아이콘은 lucide 에서 가져오고, `components/icons.tsx` 에는 **lucide 에 없는 것만** 둔다(인스타그램 같은 브랜드 마크).
+- 받은 뒤에는 **시안 D 에 맞춰 고쳐 쓴다.** 들어온 순간 우리 코드라 수정해도 된다 — 다만 기본 스타일이 디자인 규칙(흑백, 유채색은 `searching` 전용, 반경 12~16px)을 이기게 두지 않는다.
+- **`components/ui/` 는 shadcn 자리, `components/` 바로 아래는 우리 자리.** 섞지 않아야 나중에 `add` 로 덮어써도 안전하다.
+- 직접 만드는 건 레지스트리에 없거나 **도메인이 들어갈 때**다. `CastCard` 는 `found/none/searching` 3상태를 아는 컴포넌트라 우리 것이 맞다.
+
+### 의존 방향은 한 쪽으로만 (결합도)
+
+- `page → components → lib → data(JSON)`. 역방향 import 는 없다. `lib` 은 컴포넌트를 모르고, 컴포넌트는 JSON 을 모른다.
+- **JSON 을 직접 import 하는 파일은 `lib/data.ts` 하나뿐이다.** 제보 기능에서 DB 로 갈아탈 때(로드맵 2단계) 고칠 파일을 하나로 묶어 두는 게 목적이다. 페이지에서 `@/data/*.json` 을 부르고 싶어지면 `data.ts` 에 함수를 하나 더 만든다.
+- 컴포넌트는 **그리는 데 필요한 최소 타입만** props 로 받는다. `SeasonRow` 는 `Season`, `CastCard` 는 `CastMember` 다. 편하다고 `Program` 을 통째로 내려보내면 그 컴포넌트는 프로그램 구조가 바뀔 때마다 같이 깨진다.
+
+### 한 파일에 한 역할 (단일 책임)
+
+- 카드를 그리는 건 `CastCard`, 상태 한 줄은 `CardStatus`, 사진과 실루엣은 `CastPhoto`. 역할이 갈리면 **같은 파일 안의 작은 컴포넌트로 먼저 쪼갠다** — 파일이나 폴더부터 만들지 않는다. 두 번째 사용처가 생기면 그때 파일로 뽑는다.
+- **포맷팅은 컴포넌트가 하지 않는다.** `formatAirDate`, `formatChecked` 처럼 `lib/data.ts` 에 두고 불러 쓴다. JSX 안에 `.split("-")` 이나 `.slice(2)` 가 보이면 자리를 잘못 잡은 것이다.
+- 데이터 정렬·집계도 마찬가지다. 기수 정렬은 `getSeasons`, 현황 집계는 `getCoverage` 가 한다. 페이지에서 `.sort()` 를 다시 부르지 않는다.
+
+### 같이 바뀌는 것을 같이 둔다 (응집성)
+
+- `AccountStatus` 와 `getCoverage` 가 `types.ts` 에 함께 있는 이유: 상태가 하나 늘면 둘 다 손대야 한다. 반대로 함께 바뀌지 않는 것은 같은 파일에 두지 않는다.
+- **파생값은 저장하지 않고 계산한다.** 확인 개수를 JSON 에 적어 두지 않고 `getCoverage` 로 세는 게 그 이유다. 두 군데 적힌 숫자는 반드시 어긋난다.
+
+### status 가 분기의 유일한 근원
+
+- `found / none / searching` 분기는 **`member.status` 로만** 한다. `instagramHandle` 이 있는지로 "찾았다"를 유추하지 말 것 — 애써 셋으로 나눈 상태가 그렇게 다시 둘로 무너진다.
+- 상태를 하나 추가하면 세 곳을 함께 고친다: `types.ts` 의 유니온, `CastCard` 의 `CardStatus`, `getCoverage`. 유니온만 늘리면 타입 검사가 나머지를 잡아 주도록 `switch` 든 분기든 전부 다루게 쓴다.
+
+### 추상화는 늦게
+
+- 두 번째 사용처까지는 복붙이 낫다. `CastPhoto` 의 `variant` 는 카드와 아바타 **두 곳이 실제로 생긴 뒤에** 붙인 것이다. 세 번째 variant 가 필요해지면 그때는 플래그를 늘리지 말고 컴포넌트를 나눈다.
+- 쓰이지 않는 옵션·설정·확장 포인트는 만들지 않는다.
+
+### 값은 상수로 뽑는다
+
+- **코드 안에 그냥 박힌 숫자·문자열을 두지 않는다.** 파일 상단에 `SCREAMING_SNAKE_CASE` 상수로 올리고, **왜 그 값인지** 한 줄 주석을 단다. `FACE_COUNT`(더 넣으면 기수 이름이 밀린다), `CARD_SIZES` 가 그 형태다.
+- 기준은 "의미가 있는가"지 "몇 번 쓰였는가"가 아니다. 한 번만 쓰여도 그 값이 왜 4인지 설명이 필요하면 상수다. 반대로 `flex gap-3` 같은 Tailwind 클래스 문자열은 그대로 둔다 — 상수로 빼면 오히려 안 읽힌다.
+- **두 파일 이상에서 쓰이는 값은 파일 상단이 아니라 `lib` 으로 올린다.** 외부 URL(`https://instagram.com/`)과 내부 라우트(`/seasons/{id}`)가 지금 컴포넌트에 직접 박혀 있는데, 이런 건 헬퍼 하나로 모아 두 번째 호출부가 생길 때 같이 안 틀리게 한다.
+- 화면에 보이는 문구도 같은 자리에서 반복되면 상수로 뺀다. 특히 `"찾는 중"`, `"계정 없음"` 처럼 **상태와 짝이 되는 문구**는 흩어지면 상태를 추가할 때 빠뜨린다.
+
+### 타입은 컴포넌트 파일에 두지 않는다
+
+- **도메인 타입과 공유 타입은 전부 `src/lib/types.ts` 에 있다.** 컴포넌트 파일에서 `CastMember` 같은 타입을 새로 정의하거나 부분 복제(`{ alias: string; status: string }`)하지 않는다 — 데이터 모델이 두 군데로 갈라지는 순간 한쪽만 고치게 된다.
+- 컴포넌트 파일이 타입을 쓸 때는 **`import type` 으로 가져다 쓰기만 한다.** 정의는 `types.ts`, 사용은 컴포넌트다.
+- 그 컴포넌트만 쓰는 Props 는 파일에 둬도 되지만, **`type Props` 로 이름 붙여 파일 상단 한 곳에** 선언한다. 함수 시그니처 안에 인라인으로 흩뿌리지 않는다(`cast-photo.tsx` 가 이 형태다).
+- **그 Props 를 다른 파일이 참조하는 순간 `types.ts` 로 옮긴다.** 두 번째 사용처가 분리 기준이다.
+- 타입만 모아 두는 파일은 `types.ts` 하나로 충분하다. 프로그램이 늘어 이 파일이 커지면 도메인 단위(`types/cast.ts`, `types/season.ts`)로 나누고, 컴포넌트별로 쪼개지 않는다.
+
+### 이름은 도메인 용어 그대로
+
+- 기수는 `season`, 방송 가명은 `alias`, 실명은 `name`. `title` 이나 `label` 같은 일반 명사로 바꾸지 않는다 — 가명과 실명이 섞이는 순간 데이터 규칙(공개된 실명만)을 지키기 어려워진다.
 
 ## 디자인 — 시안 D "어둠 속 사진"
 
@@ -49,3 +110,67 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 두 화면이 동작하고 빌드가 통과한다. 데이터는 **뼈대만** 있다 — 18~24기의 기수 번호와 가명 로스터만 있고 계정은 전부 `searching` 이라 화면이 "찾는 중"으로 차 있다. 실제 계정을 채우면 그 카드부터 살아난다.
 
 다음: 계정 데이터 채우기 → 그 다음 검색 기능(데이터가 비어 있으면 검색할 게 없어 미뤄 뒀다) → 제보 폼(`PLANNING.md` 로드맵 2단계).
+
+## Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
+
+**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+
+## 1. Think Before Coding
+
+**Don't assume. Don't hide confusion. Surface tradeoffs.**
+
+Before implementing:
+- State your assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them - don't pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, stop. Name what's confusing. Ask.
+
+## 2. Simplicity First
+
+**Minimum code that solves the problem. Nothing speculative.**
+
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested.
+- No error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it.
+
+Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+
+## 3. Surgical Changes
+
+**Touch only what you must. Clean up only your own mess.**
+
+When editing existing code:
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- If you notice unrelated dead code, mention it - don't delete it.
+
+When your changes create orphans:
+- Remove imports/variables/functions that YOUR changes made unused.
+- Don't remove pre-existing dead code unless asked.
+
+The test: Every changed line should trace directly to the user's request.
+
+## 4. Goal-Driven Execution
+
+**Define success criteria. Loop until verified.**
+
+Transform tasks into verifiable goals:
+- "Add validation" → "Write tests for invalid inputs, then make them pass"
+- "Fix the bug" → "Write a test that reproduces it, then make it pass"
+- "Refactor X" → "Ensure tests pass before and after"
+
+For multi-step tasks, state a brief plan:
+```
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+3. [Step] → verify: [check]
+```
+
+Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+---
+
+**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
