@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getSeasons } from "@/lib/data";
-import { seasonHref } from "@/lib/links";
+import { PRIVACY_HREF, seasonHref, TAKEDOWN_HREF } from "@/lib/links";
 import { SITE_URL } from "@/lib/site";
 
 /**
@@ -24,6 +24,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       // 방영 중인 기수는 계정이 계속 붙는다. 지난 기수는 거의 안 바뀐다.
       changeFrequency: season.onAir ? ("daily" as const) : ("monthly" as const),
       priority: season.onAir ? 0.9 : 0.7,
+    })),
+    // 삭제 창구는 당사자가 검색으로도 닿아야 해서 색인에 올린다.
+    ...[TAKEDOWN_HREF, PRIVACY_HREF].map((path) => ({
+      url: `${SITE_URL}${path}`,
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
     })),
   ];
 }

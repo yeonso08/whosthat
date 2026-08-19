@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { ChevronLeft } from "lucide-react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BackLink } from "@/components/back-link";
 import { CastCard } from "@/components/cast-card";
-import { Button } from "@/components/ui/button";
 import { formatAirDate, getSeason, getSeasons } from "@/lib/data";
 import { seasonHref } from "@/lib/links";
 import { getCoverage } from "@/lib/types";
@@ -48,20 +46,8 @@ export default async function Page({ params }: PageProps<"/seasons/[id]">) {
   const airDate = formatAirDate(season.airDate);
 
   return (
-    <main className="pb-10">
-      <div className="px-3 pt-3.5">
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="기수 목록으로"
-          className="size-11 [&_svg]:size-5"
-          // Link 는 <a> 라 native button 이 아니라고 알려 줘야 한다.
-          nativeButton={false}
-          render={<Link href="/" />}
-        >
-          <ChevronLeft />
-        </Button>
-      </div>
+    <main>
+      <BackLink />
 
       <header className="px-5 pt-1.5">
         <h1 className="text-3xl font-black tracking-tighter">{season.label}</h1>
@@ -90,11 +76,6 @@ export default async function Page({ params }: PageProps<"/seasons/[id]">) {
           짐작으로 채우지 않는다.
         </p>
       )}
-
-      <p className="mt-8 px-5 text-xs leading-relaxed text-muted-foreground">
-        방송에서 공개됐거나 본인이 공개로 둔 계정만 올린다. 잘못된 계정을
-        발견하면 알려주면 내린다.
-      </p>
     </main>
   );
 }

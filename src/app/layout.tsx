@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Gothic_A1, Manrope } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { SiteFooter } from "@/components/site-footer";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -49,6 +50,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="mx-auto flex min-h-full w-full max-w-screen-sm flex-col">
         {children}
+        {/* 레이아웃에 두면 기수를 아무리 늘려도 삭제 창구가 빠지는 화면이 없다. */}
+        <SiteFooter />
         <Analytics />
       </body>
     </html>

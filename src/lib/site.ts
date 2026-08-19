@@ -26,5 +26,14 @@ function resolveSiteUrl(): string {
 /** 검색 결과와 공유 카드에 쓰는 사이트 이름. */
 export const SITE_NAME = "나는 솔로 출연진 인스타";
 
+/**
+ * 삭제·정정 요청을 받는 주소.
+ *
+ * PLANNING.md §9 가 약속한 창구라 **실제로 열려 있는 주소여야 한다.** 반송되면
+ * 요청이 통째로 사라지고, 사이트는 지키지 못할 약속을 걸어 둔 셈이 된다.
+ * 개인 메일 대신 이 사이트 전용 주소를 쓴다 — 공개되면 수집되기 때문이다.
+ */
+export const CONTACT_EMAIL = "whosthat.archive@gmail.com";
+
 /** OG 카드 규격. 1200×630 은 카카오톡·페이스북·X 가 공통으로 받는 크기다. */
 export const OG_SIZE = { width: 1200, height: 630 };

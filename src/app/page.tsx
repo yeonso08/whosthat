@@ -17,7 +17,7 @@ export default function Page() {
   );
 
   return (
-    <main className="pb-10">
+    <main>
       <header className="px-5 pt-6 pb-1">
         <p className="text-sm font-bold tracking-tight text-muted-foreground">
           {program.name}

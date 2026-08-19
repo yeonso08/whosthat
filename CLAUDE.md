@@ -19,10 +19,12 @@ pnpm exec shadcn add <name>   # shadcn/ui 컴포넌트 추가 — 손으로 짜�
 ```
 src/app/page.tsx              기수 목록
 src/app/seasons/[id]/page.tsx 기수 상세 (generateStaticParams 로 전 기수 프리렌더)
+src/app/takedown/page.tsx     삭제·정정 요청 창구
+src/app/privacy/page.tsx      개인정보 처리방침
 src/lib/types.ts              Program → Season → CastMember 모델
 src/lib/data.ts               JSON 로더 + 날짜 포맷
 src/data/na-neun-solo.json    실데이터 — 채우는 법은 src/data/README.md
-src/components/               cast-card, cast-photo, season-row, season-feature, icons
+src/components/               cast-card, cast-avatar, season-row, season-feature, site-footer, back-link, icons
 ```
 
 Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 반드시 await 한다.
@@ -117,6 +119,10 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 기수 골격은 1~33기 전부 들어가 있다(318명). 계정은 채워 나가는 중이고 대부분 아직 `searching` 이다. 1~5·25·32기는 명단을 확인 못 해 `cast` 가 비어 있다(화면에 "명단 정리 중").
 
 **계정을 채울 때는 `src/data/README.md` 의 "계정 검증 방법"을 먼저 읽을 것.** 계정 하나를 잘못 올리면 무관한 사람이 피해를 본다. 집계 사이트·블로그를 그대로 옮기다 실제로 여러 번 걸렸다(가짜 목록, 오타 핸들, 사진작가 계정 등). 반드시 인스타 페이지를 직접 열어 확인한다. 다음 배치 순서는 `PLANNING.md` §10.
+
+삭제·정정 요청 창구(`/takedown`)와 개인정보 처리방침(`/privacy`)이 붙어 있고, 푸터가 레이아웃에 있어 전 화면에서 닿는다. **삭제 요청 처리 방법은 `src/data/README.md` 의 "내려 달라는 요청이 오면" 을 따른다** — `searching` 으로 되돌리면 다음 배치에서 다시 올라온다.
+
+연락처는 `lib/site.ts` 의 `CONTACT_EMAIL` 한 곳이다. 이 주소는 **실제로 열려 있어야 한다** — 반송되면 사이트가 지키지 못할 약속을 걸어 둔 셈이 된다.
 
 다음: 계정 데이터 채우기 → 그 다음 검색 기능(데이터가 비어 있으면 검색할 게 없어 미뤄 뒀다) → 제보 폼(`PLANNING.md` 로드맵 2단계).
 
