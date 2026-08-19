@@ -143,13 +143,19 @@
           "id": "s31-gyeongsu",
           "alias": "경수",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "sang.jun.k",
+          "lastVerified": "2026-08-19",
+          "source": "본인 게시물 '31기 경수입니다', 공개 계정 확인"
         },
         {
           "id": "s31-yeongsuk",
           "alias": "영숙",
           "gender": "female",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "nuries20",
+          "lastVerified": "2026-08-19",
+          "source": "본인 게시물 '나는 솔로 31기 영숙입니다', 공개 계정 확인"
         },
         {
           "id": "s31-jeongsuk",
@@ -161,7 +167,10 @@
           "id": "s31-sunja",
           "alias": "순자",
           "gender": "female",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "teeth.all.silver",
+          "lastVerified": "2026-08-19",
+          "source": "본인 게시물 '나는솔로 31기 순자입니다', 팔로워 수 교차 검증"
         },
         {
           "id": "s31-yeongja",
@@ -185,7 +194,10 @@
           "id": "s31-jeonghui",
           "alias": "정희",
           "gender": "female",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "byyoonkim",
+          "lastVerified": "2026-08-19",
+          "source": "본인 게시물 '나는 솔로 31기 정희입니다', 공개 계정 확인"
         }
       ]
     },
@@ -200,19 +212,28 @@
           "id": "s30-yeongsu",
           "alias": "영수",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "_dryhands",
+          "lastVerified": "2026-08-19",
+          "source": "본인 릴스 자막에 '나는솔로 30영수' 표기, 공개 계정 확인"
         },
         {
           "id": "s30-yeongho",
           "alias": "영호",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "jhw1773",
+          "lastVerified": "2026-08-19",
+          "source": "프로필 소개에 '#나는솔로 #30기영호' 표기, 공개 계정 확인"
         },
         {
           "id": "s30-yeongsik",
           "alias": "영식",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "shimpodo",
+          "lastVerified": "2026-08-19",
+          "source": "프로필 소개에 '나는솔로 30기 영식' 표기, 공개 계정 확인"
         },
         {
           "id": "s30-yeongcheol",
@@ -230,7 +251,10 @@
           "id": "s30-sangcheol",
           "alias": "상철",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "rtmx_11",
+          "lastVerified": "2026-08-19",
+          "source": "계정 표시명이 '30기상철', 공개 계정 확인"
         },
         {
           "id": "s30-yeongsuk",
@@ -248,7 +272,10 @@
           "id": "s30-sunja",
           "alias": "순자",
           "gender": "female",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "boxing_podo",
+          "lastVerified": "2026-08-19",
+          "source": "하이라이트에 '나솔 30기', 팔로워 수 교차 검증, 공개 계정 확인"
         },
         {
           "id": "s30-yeongja",
@@ -260,7 +287,10 @@
           "id": "s30-oksun",
           "alias": "옥순",
           "gender": "female",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "noajoa_",
+          "lastVerified": "2026-08-19",
+          "source": "본인 게시물에 '#나는솔로 #30기옥순' 표기, 공개 계정 확인"
         },
         {
           "id": "s30-hyeonsuk",
@@ -300,7 +330,10 @@
           "id": "s29-yeongcheol",
           "alias": "영철",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "wpboxer",
+          "lastVerified": "2026-08-19",
+          "source": "프로필에 '나는솔로 29기 영철' 표기, 정숙 계정과 상호 태그 확인"
         },
         {
           "id": "s29-gwangsu",
@@ -324,7 +357,10 @@
           "id": "s29-jeongsuk",
           "alias": "정숙",
           "gender": "female",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "sunny_onfleek",
+          "lastVerified": "2026-08-19",
+          "source": "프로필에 '나는솔로 29기 정숙' 표기, 공개 계정 확인"
         },
         {
           "id": "s29-sunja",
@@ -364,7 +400,10 @@
           "id": "s28-yeongsu",
           "alias": "영수",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "realmikekim",
+          "lastVerified": "2026-08-19",
+          "source": "프로필 이름이 '나는솔로 28기 영수', 공개 계정 확인"
         },
         {
           "id": "s28-yeongho",
@@ -376,25 +415,37 @@
           "id": "s28-yeongsik",
           "alias": "영식",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "djmbog",
+          "lastVerified": "2026-08-19",
+          "source": "프로필 이름에 '나는솔로28기영식' 표기, 공개 계정 확인"
         },
         {
           "id": "s28-yeongcheol",
           "alias": "영철",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "teracms37",
+          "lastVerified": "2026-08-19",
+          "source": "프로필 이름에 '나는솔로28기' 표기, 공개 계정 확인"
         },
         {
           "id": "s28-gwangsu",
           "alias": "광수",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "likewisesyx",
+          "lastVerified": "2026-08-19",
+          "source": "본인 게시물 '28기 광수입니다', 유튜브 채널 교차 확인"
         },
         {
           "id": "s28-sangcheol",
           "alias": "상철",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "ys_2ternal",
+          "lastVerified": "2026-08-19",
+          "source": "프로필 이름이 '나는솔로 28기 상철', 공개 계정 확인"
         },
         {
           "id": "s28-gyeongsu",
@@ -424,25 +475,37 @@
           "id": "s28-yeongja",
           "alias": "영자",
           "gender": "female",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "cutemina0414",
+          "lastVerified": "2026-08-19",
+          "source": "프로필 이름이 '나는 SOLO 28기 영자', 공개 계정 확인"
         },
         {
           "id": "s28-oksun",
           "alias": "옥순",
           "gender": "female",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "yelimy",
+          "lastVerified": "2026-08-19",
+          "source": "본인 게시물 '28기 옥순입니다', 프로필에도 '28기 옥순' 표기"
         },
         {
           "id": "s28-hyeonsuk",
           "alias": "현숙",
           "gender": "female",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "emmma06_wow",
+          "lastVerified": "2026-08-19",
+          "source": "프로필 이름에 '나는솔로 28기 돌싱특집 현숙' 표기, 공개 계정 확인"
         },
         {
           "id": "s28-jeonghui",
           "alias": "정희",
           "gender": "female",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "ella_miso",
+          "lastVerified": "2026-08-19",
+          "source": "본인 게시물 '나는 솔로 28기 정희입니다', 프로필에 '28기 정희' 표기"
         }
       ]
     },
