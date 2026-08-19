@@ -1,22 +1,35 @@
+import type { Metadata } from "next";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CastCard } from "@/components/cast-card";
 import { Button } from "@/components/ui/button";
 import { formatAirDate, getSeason, getSeasons } from "@/lib/data";
+import { seasonHref } from "@/lib/links";
 import { getCoverage } from "@/lib/types";
 
 export function generateStaticParams() {
   return getSeasons().map((season) => ({ id: season.id }));
 }
 
-export async function generateMetadata({ params }: PageProps<"/seasons/[id]">) {
+export async function generateMetadata({
+  params,
+}: PageProps<"/seasons/[id]">): Promise<Metadata> {
   const { id } = await params;
   const season = getSeason(id);
   if (!season) return {};
+
+  const coverage = getCoverage(season.cast);
+  const title = `나는 솔로 ${season.label} 출연진 인스타`;
+  const description = `나는 솔로 ${season.label} 출연진 ${coverage.total}명의 인스타그램 계정. 확인된 것만 모아 뒀고, 계정이 없는 사람은 없다고 적어 뒀다.`;
+  const path = seasonHref(season.id);
+
   return {
-    title: `나는 솔로 ${season.label} 출연진 인스타`,
-    description: `나는 솔로 ${season.label} 출연진의 인스타그램 계정. 확인된 것만 모아 뒀다.`,
+    title,
+    description,
+    // 같은 기수가 여러 경로로 잡히면 색인이 쪼개진다.
+    alternates: { canonical: path },
+    openGraph: { type: "article", title, description, url: path },
   };
 }
 
