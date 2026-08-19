@@ -143,7 +143,8 @@ Submission (제보 — Phase 2)
 
 - 프로젝트 세팅(Next.js 16 + Tailwind v4 + shadcn/ui, pnpm), 디자인 방향 확정(시안 D)
 - 기수 목록·기수 상세 두 화면. 전 페이지 SSG 프리렌더
-- SEO 배관 — `sitemap.ts`, `robots.ts`, `metadataBase`, canonical, 기수별 OG 이미지(코드 생성). **배포처에 `NEXT_PUBLIC_SITE_URL` 설정 필요**
+- SEO 배관 — `sitemap.ts`, `robots.ts`, `metadataBase`, canonical, 기수별 OG 이미지(코드 생성)
+- Vercel 배포 — https://whosthat-six.vercel.app (도메인 추후 구매). 도메인 값은 `lib/site.ts` 가 Vercel 시스템 환경변수에서 자동으로 잡는다
 - 기수 골격 1~33기 (18~24기만 있던 것을 전 기수로 확장)
 
 ### 데이터 현황

@@ -107,7 +107,9 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ## 현재 상태
 
-두 화면이 동작하고 빌드가 통과한다. SEO 배관(sitemap·robots·canonical·OG 이미지)까지 붙어 있고 전부 정적으로 프리렌더된다. **배포처에 `NEXT_PUBLIC_SITE_URL` 을 설정해야 한다** — 안 하면 canonical 과 sitemap 이 localhost 를 가리킨다.
+두 화면이 동작하고 빌드가 통과한다. SEO 배관(sitemap·robots·canonical·OG 이미지)까지 붙어 있고 전부 정적으로 프리렌더된다. Vercel 에 배포돼 있다 — https://whosthat-six.vercel.app (도메인은 추후 구매 예정).
+
+도메인은 `lib/site.ts` 한 곳에서 정해진다. Vercel 이 넣어 주는 `VERCEL_PROJECT_PRODUCTION_URL` 을 쓰므로 **평소엔 설정할 게 없고**, 커스텀 도메인을 Vercel 에 연결하면 자동으로 따라간다. Vercel 밖에 배포할 때만 `NEXT_PUBLIC_SITE_URL` 을 준다.
 
 기수 골격은 1~33기 전부 들어가 있다(318명). 계정은 채워 나가는 중이고 대부분 아직 `searching` 이다. 1~5·25·32기는 명단을 확인 못 해 `cast` 가 비어 있다(화면에 "명단 정리 중").
 

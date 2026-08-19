@@ -1,11 +1,27 @@
 /**
  * 배포 도메인. metadataBase·sitemap·robots·OG 이미지가 전부 이 값을 쓴다.
  *
- * 배포 환경에서 NEXT_PUBLIC_SITE_URL 을 반드시 설정한다. 안 하면 canonical 과
- * sitemap 이 localhost 를 가리켜서 색인이 통째로 무의미해진다.
+ * 틀리면 조용히 망가진다 — 에러 없이 canonical 과 sitemap 이 엉뚱한 곳을
+ * 가리키고, 색인과 공유 카드가 통째로 무의미해진다.
+ *
+ * 서버에서만 쓴다. VERCEL_ 변수는 클라이언트 번들에 안 들어가므로
+ * 클라이언트 컴포넌트에서 이 값을 읽지 말 것.
  */
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+export const SITE_URL = resolveSiteUrl();
+
+function resolveSiteUrl(): string {
+  // 직접 산 도메인. 설정하면 항상 이게 이긴다.
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return explicit;
+
+  // Vercel 이 넣어 주는 프로덕션 도메인. 커스텀 도메인을 붙이면 그쪽으로 바뀌고,
+  // 프리뷰 배포에서도 프로덕션 주소가 들어와서 canonical 이 흩어지지 않는다.
+  // (프로젝트 설정에서 시스템 환경변수 접근이 꺼져 있으면 값이 없다.)
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (vercel) return `https://${vercel}`;
+
+  return "http://localhost:3000";
+}
 
 /** 검색 결과와 공유 카드에 쓰는 사이트 이름. */
 export const SITE_NAME = "나는 솔로 출연진 인스타";
