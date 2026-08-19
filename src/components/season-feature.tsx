@@ -1,20 +1,23 @@
 import Link from "next/link";
 import { CastPhoto } from "@/components/cast-photo";
 import { formatAirDate } from "@/lib/data";
+import { seasonHref } from "@/lib/links";
 import { getCoverage, type Season } from "@/lib/types";
 
 /** 히어로에 나란히 세우는 사진 수. */
 const TILE_COUNT = 3;
 
+type Props = { season: Season };
+
 /** 목록 맨 위에 크게 세우는 최신(또는 방영 중) 기수. */
-export function SeasonFeature({ season }: { season: Season }) {
+export function SeasonFeature({ season }: Props) {
   const coverage = getCoverage(season.cast);
   const tiles = season.cast.slice(0, TILE_COUNT);
   const airDate = formatAirDate(season.airDate);
 
   return (
     <Link
-      href={`/seasons/${season.id}`}
+      href={seasonHref(season.id)}
       className="block overflow-hidden rounded-2xl bg-card transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       <div className="flex gap-0.5">

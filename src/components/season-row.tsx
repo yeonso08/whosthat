@@ -2,19 +2,22 @@ import Link from "next/link";
 import { CastPhoto } from "@/components/cast-photo";
 import { ChevronRightIcon } from "@/components/icons";
 import { formatAirDate } from "@/lib/data";
+import { seasonHref } from "@/lib/links";
 import { getCoverage, type Season } from "@/lib/types";
 
 /** 줄 왼쪽에 겹쳐 쌓는 얼굴 수. 더 넣으면 기수 이름이 밀린다. */
 const FACE_COUNT = 4;
 
-export function SeasonRow({ season }: { season: Season }) {
+type Props = { season: Season };
+
+export function SeasonRow({ season }: Props) {
   const coverage = getCoverage(season.cast);
   const faces = season.cast.slice(0, FACE_COUNT);
   const airDate = formatAirDate(season.airDate);
 
   return (
     <Link
-      href={`/seasons/${season.id}`}
+      href={seasonHref(season.id)}
       className="flex items-center gap-3.5 rounded-xl p-3 transition-colors hover:bg-elevated focus-visible:bg-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       <div className="flex shrink-0 pl-2.5">
