@@ -538,7 +538,11 @@
           "id": "s27-yeongcheol",
           "alias": "영철",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "eon90_hello",
+          "name": "전승언",
+          "lastVerified": "2026-08-19",
+          "source": "본인 게시물 \"안녕하세요 나는솔로 27기 영철 입니다\" + #나는솔로27기 해시태그, 공개 계정 확인"
         },
         {
           "id": "s27-gwangsu",
@@ -656,7 +660,11 @@
           "id": "s26-sunja",
           "alias": "순자",
           "gender": "female",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "anna_noh_",
+          "name": "노안나",
+          "lastVerified": "2026-08-19",
+          "source": "사진 스튜디오 게시물이 \"나는 솔로 26기 순자 첼리스트 노안나\"로 명시 + #나는솔로26기, 프로필 첼리스트 직업 일치, 공개 계정 확인"
         },
         {
           "id": "s26-yeongja",
@@ -674,7 +682,10 @@
           "id": "s26-hyeonsuk",
           "alias": "현숙",
           "gender": "female",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "honeyday_n_n",
+          "lastVerified": "2026-08-19",
+          "source": "프로필 소개에 \"(전) 나는솔로 26기 현숙 / (현) 허니데이 채널주\" 명시, 공개 계정 확인"
         }
       ]
     },
@@ -703,19 +714,31 @@
           "id": "s24-yeongho",
           "alias": "영호",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "ok_min87",
+          "name": "이옥민",
+          "lastVerified": "2026-08-19",
+          "source": "본인 게시물 \"안녕하세요! 나는솔로 24기 영호였던 이옥민입니다\", 공개 계정 확인"
         },
         {
           "id": "s24-yeongsik",
           "alias": "영식",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "iamolderbrotherjin",
+          "name": "전형진",
+          "lastVerified": "2026-08-19",
+          "source": "본인 게시물 \"안녕하세요. 나는 솔로 24기 영식, 전형진입니다\" + #24기영식 해시태그, 공개 계정 확인"
         },
         {
           "id": "s24-yeongcheol",
           "alias": "영철",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "2_sungho90kg",
+          "name": "이성호",
+          "lastVerified": "2026-08-19",
+          "source": "프로필 스토리 하이라이트에 \"24기 영철\" 명시, 공개 계정 확인"
         },
         {
           "id": "s24-gwangsu",
@@ -727,7 +750,9 @@
           "id": "s24-sangcheol",
           "alias": "상철",
           "gender": "male",
-          "status": "searching"
+          "status": "none",
+          "lastVerified": "2026-08-19",
+          "source": "같은 기수 영수(공개 계정)가 본인 게시물에서 \"아직도 인스타 아이디를 모르는 24기 상철\"이라 언급"
         },
         {
           "id": "s24-yeongsuk",
