@@ -144,11 +144,13 @@ Submission (제보 — Phase 2)
 
 ### 완료
 
-- 프로젝트 세팅(Next.js 16 + Tailwind v4 + shadcn/ui, pnpm), 디자인 방향 확정(시안 D)
-- 기수 목록·기수 상세 두 화면. 전 페이지 SSG 프리렌더
+- 프로젝트 세팅(Next.js 16 + Tailwind v4 + shadcn/ui, pnpm)
+- 네 화면 — 기수 목록·기수 상세·삭제 요청(`/takedown`)·개인정보 처리방침(`/privacy`). 전 페이지 SSG 프리렌더
 - SEO 배관 — `sitemap.ts`, `robots.ts`, `metadataBase`, canonical, 기수별 OG 이미지(코드 생성)
 - Vercel 배포 — https://whosthat-six.vercel.app (도메인 추후 구매). 도메인 값은 `lib/site.ts` 가 Vercel 시스템 환경변수에서 자동으로 잡는다
 - 기수 골격 1~33기 (18~24기만 있던 것을 전 기수로 확장)
+- **사진 제거 + 디자인 개편** — §9 ① 의 초상권·저작권 위험이 현실이 되어 이미지 필드와 사진 UI 를 통째로 걷어내고 이니셜 배지 중심으로 다시 짰다(§8)
+- **삭제 요청 창구·개인정보 처리방침** — §9 가 약속만 해 두고 없던 절차를 실제로 붙였다. 연락처는 `lib/site.ts` 의 `CONTACT_EMAIL` 한 곳
 
 ### 데이터 현황
 

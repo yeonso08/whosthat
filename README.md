@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# whosthat
 
-## Getting Started
+예능 출연진의 인스타그램 계정을 기수별로 모아 두는 아카이브. 1차 대상은 **나는 솔로**.
 
-First, run the development server:
+https://whosthat-six.vercel.app
+
+방송을 보다 "이 사람 인스타 뭐지" 하고 검색하면 가짜 계정과 오래된 커뮤니티 글이 먼저 나온다. 이 사이트는 **직접 확인한 계정만** 싣고, 찾아봤는데 없는 사람은 "계정 없음"이라고 적어 둔다. 헛수고를 없애는 게 목적이라 "아직 못 찾음"과 "찾아봤지만 없음"을 다른 상태로 구분한다.
+
+## 개발
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm dev      # 개발 서버 (3000)
+pnpm build    # 프로덕션 빌드 — 전 기수 페이지를 SSG 로 뽑는다
+pnpm lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Next.js 16 App Router · Tailwind v4 · shadcn/ui · pnpm. 데이터는 `src/data/*.json` 정적 파일이고 서버가 없다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 원칙
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **계정을 지어내지 않는다.** 본인이 프로필·게시물에서 기수와 가명을 밝힌 계정만 올린다. 집계 사이트·기사·커뮤니티 추측은 근거로 치지 않는다 — 잘못 올리면 아무 상관 없는 사람이 DM 을 맞는다.
+- **사진을 쓰지 않는다.** 방송 캡처는 제작사 저작권, 프로필 사진은 본인 저작권·초상권과 겹친다. 출연진은 연예인이 아니라 일반인이다.
+- **내려 달라면 내린다.** 이유를 묻지 않는다 → [삭제·정정 요청](https://whosthat-six.vercel.app/takedown)
 
-## Learn More
+## 문서
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| 파일 | 내용 |
+|---|---|
+| `PLANNING.md` | 기획·데이터 모델·로드맵·법적 유의사항, 진행 상황 |
+| `CLAUDE.md` | 코드 규칙과 디자인 규칙 |
+| `src/data/README.md` | **계정 검증 방법** — 데이터를 채우기 전에 반드시 읽을 것 |

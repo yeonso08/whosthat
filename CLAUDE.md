@@ -112,7 +112,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ## 현재 상태
 
-두 화면이 동작하고 빌드가 통과한다. SEO 배관(sitemap·robots·canonical·OG 이미지)까지 붙어 있고 전부 정적으로 프리렌더된다. Vercel 에 배포돼 있다 — https://whosthat-six.vercel.app (도메인은 추후 구매 예정). 사진을 못 쓰게 되면서 `CastPhoto` 를 걷어내고 이니셜 배지(`CastAvatar`) 중심으로 다시 짰다 — 위 "디자인" 절 참고.
+네 화면(기수 목록·기수 상세·삭제 요청·처리방침)이 동작하고 빌드가 통과한다. SEO 배관(sitemap·robots·canonical·OG 이미지)까지 붙어 있고 전부 정적으로 프리렌더된다. Vercel 에 배포돼 있다 — https://whosthat-six.vercel.app (도메인은 추후 구매 예정). 사진을 못 쓰게 되면서 `CastPhoto` 를 걷어내고 이니셜 배지(`CastAvatar`) 중심으로 다시 짰다 — 위 "디자인" 절 참고.
 
 도메인은 `lib/site.ts` 한 곳에서 정해진다. Vercel 이 넣어 주는 `VERCEL_PROJECT_PRODUCTION_URL` 을 쓰므로 **평소엔 설정할 게 없고**, 커스텀 도메인을 Vercel 에 연결하면 자동으로 따라간다. Vercel 밖에 배포할 때만 `NEXT_PUBLIC_SITE_URL` 을 준다.
 
