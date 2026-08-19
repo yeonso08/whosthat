@@ -60,7 +60,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 ### status 가 분기의 유일한 근원
 
 - `found / none / searching` 분기는 **`member.status` 로만** 한다. `instagramHandle` 이 있는지로 "찾았다"를 유추하지 말 것 — 애써 셋으로 나눈 상태가 그렇게 다시 둘로 무너진다.
-- 상태를 하나 추가하면 세 곳을 함께 고친다: `types.ts` 의 유니온, `CastCard` 의 `CardStatus`, `getCoverage`. 유니온만 늘리면 타입 검사가 나머지를 잡아 주도록 `switch` 든 분기든 전부 다루게 쓴다.
+- 상태를 하나 추가하면 세 곳을 함께 고친다: `types.ts` 의 유니온, `CastCard` 의 `CardStatus`, `getCoverage`. **유니온만 늘리면 나머지 두 곳에서 컴파일 에러가 난다** — `CardStatus` 는 반환 타입을 못 박은 `switch`, `getCoverage` 는 `Record<AccountStatus, number>` 리터럴이라 그렇다. 새 분기를 추가할 때도 이 장치를 없애지 말 것.
 
 ### 추상화는 늦게
 

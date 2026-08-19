@@ -47,18 +47,20 @@ export type Program = {
 };
 
 /** 한 기수의 계정 확인 현황. 목록·상세 양쪽에서 같은 계산을 쓰려고 뽑아 둔다. */
-export type Coverage = {
-  total: number;
-  found: number;
-  none: number;
-  searching: number;
-};
+export type Coverage = Record<AccountStatus, number> & { total: number };
 
 export function getCoverage(cast: CastMember[]): Coverage {
-  return {
-    total: cast.length,
-    found: cast.filter((m) => m.status === "found").length,
-    none: cast.filter((m) => m.status === "none").length,
-    searching: cast.filter((m) => m.status === "searching").length,
+  // AccountStatus 에 상태가 늘면 이 리터럴에서 컴파일 에러가 난다.
+  // 새 상태가 어디에도 안 세어진 채 조용히 지나가는 걸 막는 장치다.
+  const byStatus: Record<AccountStatus, number> = {
+    found: 0,
+    none: 0,
+    searching: 0,
   };
+
+  for (const member of cast) {
+    byStatus[member.status] += 1;
+  }
+
+  return { ...byStatus, total: cast.length };
 }
