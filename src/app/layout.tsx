@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Gothic_A1, Manrope } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="mx-auto flex min-h-full w-full max-w-screen-sm flex-col">
         {children}
+        <Analytics />
       </body>
     </html>
   );
