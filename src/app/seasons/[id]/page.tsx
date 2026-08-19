@@ -1,7 +1,8 @@
+import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CastCard } from "@/components/cast-card";
-import { ChevronLeftIcon } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 import { formatAirDate, getSeason, getSeasons } from "@/lib/data";
 import { getCoverage } from "@/lib/types";
 
@@ -30,13 +31,17 @@ export default async function Page({ params }: PageProps<"/seasons/[id]">) {
   return (
     <main className="pb-10">
       <div className="px-3 pt-3.5">
-        <Link
-          href="/"
+        <Button
+          variant="ghost"
+          size="icon"
           aria-label="기수 목록으로"
-          className="flex size-11 items-center justify-center rounded-xl transition-colors hover:bg-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="size-11 [&_svg]:size-5"
+          // Link 는 <a> 라 native button 이 아니라고 알려 줘야 한다.
+          nativeButton={false}
+          render={<Link href="/" />}
         >
-          <ChevronLeftIcon className="size-5" />
-        </Link>
+          <ChevronLeft />
+        </Button>
       </div>
 
       <header className="px-5 pt-1.5">

@@ -1,6 +1,14 @@
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { CastPhoto } from "@/components/cast-photo";
-import { ChevronRightIcon } from "@/components/icons";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
 import { formatAirDate } from "@/lib/data";
 import { seasonHref } from "@/lib/links";
 import { getCoverage, type Season } from "@/lib/types";
@@ -16,11 +24,9 @@ export function SeasonRow({ season }: Props) {
   const airDate = formatAirDate(season.airDate);
 
   return (
-    <Link
-      href={seasonHref(season.id)}
-      className="flex items-center gap-3.5 rounded-xl p-3 transition-colors hover:bg-elevated focus-visible:bg-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-    >
-      <div className="flex shrink-0 pl-2.5">
+    <Item className="gap-3.5 p-3" render={<Link href={seasonHref(season.id)} />}>
+      {/* 기본값 두 개를 되돌린다 — 설명이 있으면 위로 붙는 정렬, 그리고 얼굴 겹침을 상쇄하는 gap. */}
+      <ItemMedia className="translate-y-0 gap-0 self-center pl-2.5">
         {faces.map((member) => (
           <div
             key={member.id}
@@ -35,19 +41,21 @@ export function SeasonRow({ season }: Props) {
             />
           </div>
         ))}
-      </div>
+      </ItemMedia>
 
-      <div className="flex min-w-0 grow flex-col gap-0.5">
-        <span className="text-base font-bold tracking-tight">
+      <ItemContent className="gap-0.5">
+        <ItemTitle className="text-base font-bold tracking-tight">
           {season.label}
-        </span>
-        <span className="font-lat text-xs text-muted-foreground">
+        </ItemTitle>
+        <ItemDescription className="font-lat text-xs">
           {airDate ? `${airDate} · ` : ""}
           {coverage.found} / {coverage.total} 확인
-        </span>
-      </div>
+        </ItemDescription>
+      </ItemContent>
 
-      <ChevronRightIcon className="size-4 shrink-0 text-ring" />
-    </Link>
+      <ItemActions>
+        <ChevronRight className="size-4 shrink-0 text-ring" />
+      </ItemActions>
+    </Item>
   );
 }
