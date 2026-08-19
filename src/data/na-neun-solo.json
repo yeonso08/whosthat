@@ -1315,7 +1315,10 @@
           "id": "s16-yeongcheol",
           "alias": "영철",
           "gender": "male",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "6.24sm",
+          "lastVerified": "2026-08-19",
+          "source": "계정 프로필에 가명 '영철' 표기 + 언론 기사(살구뉴스)"
         },
         {
           "id": "s16-gwangsu",
@@ -1357,7 +1360,10 @@
           "id": "s16-oksun",
           "alias": "옥순",
           "gender": "female",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "elizabeth0912i",
+          "lastVerified": "2026-08-19",
+          "source": "언론 기사(살구뉴스) + 팔로워 수 교차 검증, 공개 계정 확인"
         },
         {
           "id": "s16-hyeonsuk",
