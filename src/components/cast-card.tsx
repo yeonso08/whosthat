@@ -1,11 +1,17 @@
 import type { ReactElement } from "react";
-import { CastPhoto } from "@/components/cast-photo";
+import { CastAvatar } from "@/components/cast-avatar";
 import { InstagramIcon } from "@/components/icons";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
 import { formatChecked } from "@/lib/data";
 import { instagramUrl } from "@/lib/links";
 import type { CastMember } from "@/lib/types";
-
-const CARD_SIZES = "(min-width: 640px) 300px, 50vw";
 
 /** 카드와 그 안의 상태 줄이 같은 사람을 그리므로 타입을 함께 쓴다. */
 type Props = { member: CastMember };
@@ -15,56 +21,53 @@ export function CastCard({ member }: Props) {
   const handle = member.instagramHandle;
   const description = describe(member);
 
-  const body = (
+  const content = (
     <>
-      <div className="relative aspect-[6/7] w-full">
-        <CastPhoto
-          src={member.profileImageUrl}
-          alt={`${member.alias} 사진`}
-          sizes={CARD_SIZES}
-          dimmed={!found}
-        />
-      </div>
+      <ItemMedia>
+        <CastAvatar alias={member.alias} status={member.status} />
+      </ItemMedia>
 
-      {found && (
-        <span className="absolute top-2.5 right-2.5 flex size-7.5 items-center justify-center rounded-full bg-background/65">
-          <InstagramIcon className="size-3.5 text-foreground" />
-        </span>
-      )}
-
-      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-0.5 bg-gradient-to-t from-background/95 to-transparent px-3 pt-8 pb-3">
-        <span
-          className={`text-xl font-bold tracking-tight ${found ? "" : "text-muted-foreground"}`}
+      <ItemContent className="gap-0.5">
+        <ItemTitle
+          className={`text-base font-bold tracking-tight ${found ? "" : "text-muted-foreground"}`}
         >
           {member.alias}
-        </span>
+        </ItemTitle>
         {description && (
-          <span className="truncate text-[11.5px] text-muted-foreground">
+          <ItemDescription className="text-[12.5px]">
             {description}
-          </span>
+          </ItemDescription>
         )}
         <CardStatus member={member} />
-      </div>
+      </ItemContent>
+
+      {found && (
+        <ItemActions>
+          <InstagramIcon className="size-4 text-muted-foreground" />
+        </ItemActions>
+      )}
     </>
   );
 
   // handle 까지 봐야 타입이 좁혀진다. found 인데 핸들이 없는 건 데이터 오류라
   // 링크를 거는 대신 카드로만 둔다.
   if (!found || !handle) {
-    return (
-      <div className="relative overflow-hidden rounded-2xl bg-card">{body}</div>
-    );
+    return <Item className="rounded-2xl bg-card p-3.5">{content}</Item>;
   }
 
   return (
-    <a
-      href={instagramUrl(handle)}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="relative block overflow-hidden rounded-2xl bg-elevated transition-opacity hover:opacity-85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+    <Item
+      className="rounded-2xl bg-card p-3.5 transition-colors hover:bg-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      render={
+        <a
+          href={instagramUrl(handle)}
+          target="_blank"
+          rel="noopener noreferrer"
+        />
+      }
     >
-      {body}
-    </a>
+      {content}
+    </Item>
   );
 }
 
@@ -76,7 +79,7 @@ function CardStatus({ member }: Props): ReactElement {
   switch (member.status) {
     case "found":
       return (
-        <span className="font-lat mt-1 truncate text-[11.5px] font-semibold">
+        <span className="font-lat mt-0.5 truncate text-[12.5px] font-semibold">
           @{member.instagramHandle}
         </span>
       );
@@ -86,7 +89,7 @@ function CardStatus({ member }: Props): ReactElement {
         ? formatChecked(member.lastVerified)
         : "";
       return (
-        <span className="mt-1 text-[11.5px] font-semibold text-muted-foreground">
+        <span className="mt-0.5 text-[12.5px] font-semibold text-muted-foreground">
           계정 없음{checked && ` · ${checked} 확인`}
         </span>
       );
@@ -94,7 +97,7 @@ function CardStatus({ member }: Props): ReactElement {
 
     case "searching":
       return (
-        <span className="mt-1 text-[11.5px] font-semibold text-searching">
+        <span className="mt-0.5 text-[12.5px] font-semibold text-searching">
           찾는 중
         </span>
       );

@@ -17,7 +17,6 @@ export type CastMember = {
   occupation?: string;
   /** 방영 당시 나이. */
   ageAtAiring?: number;
-  profileImageUrl?: string;
   status: AccountStatus;
   /** status 가 "found" 일 때만 채운다. @ 없이 핸들만. */
   instagramHandle?: string;

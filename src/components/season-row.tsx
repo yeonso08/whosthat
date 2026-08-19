@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { CastPhoto } from "@/components/cast-photo";
+import { CastAvatar } from "@/components/cast-avatar";
 import {
   Item,
   ItemActions,
@@ -29,18 +29,12 @@ export function SeasonRow({ season }: Props) {
       {/* 기본값 두 개를 되돌린다 — 설명이 있으면 위로 붙는 정렬, 그리고 얼굴 겹침을 상쇄하는 gap. */}
       <ItemMedia className="translate-y-0 gap-0 self-center pl-2.5">
         {faces.map((member) => (
-          <div
+          <CastAvatar
             key={member.id}
-            className="relative -ml-2.5 size-9.5 overflow-hidden rounded-full border-2 border-background"
-          >
-            <CastPhoto
-              src={member.profileImageUrl}
-              alt=""
-              sizes="38px"
-              variant="avatar"
-              dimmed={member.status !== "found"}
-            />
-          </div>
+            alias={member.alias}
+            status={member.status}
+            variant="face"
+          />
         ))}
 
         {faces.length === 0 &&

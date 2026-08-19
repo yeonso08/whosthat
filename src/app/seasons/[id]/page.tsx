@@ -79,7 +79,7 @@ export default async function Page({ params }: PageProps<"/seasons/[id]">) {
       </header>
 
       {season.cast.length > 0 ? (
-        <section className="mt-5 grid grid-cols-2 gap-3 px-5">
+        <section className="mt-5 flex flex-col gap-2 px-5">
           {season.cast.map((member) => (
             <CastCard key={member.id} member={member} />
           ))}
