@@ -5,11 +5,161 @@
   "platform": "SBS Plus · ENA",
   "seasons": [
     {
+      "id": "s33",
+      "programId": "na-neun-solo",
+      "label": "33기",
+      "airDate": "2026-08",
+      "onAir": true,
+      "special": "3차 모태솔로 특집",
+      "cast": [
+        {
+          "id": "s33-yeongsu",
+          "alias": "영수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s33-yeongsik",
+          "alias": "영식",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s33-yeongho",
+          "alias": "영호",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s33-yeongcheol",
+          "alias": "영철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s33-gwangsu",
+          "alias": "광수",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s33-sangcheol",
+          "alias": "상철",
+          "gender": "male",
+          "status": "searching"
+        },
+        {
+          "id": "s33-jeongsuk",
+          "alias": "정숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s33-yeongsuk",
+          "alias": "영숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s33-sunja",
+          "alias": "순자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s33-hyeonsuk",
+          "alias": "현숙",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s33-yeongja",
+          "alias": "영자",
+          "gender": "female",
+          "status": "searching"
+        },
+        {
+          "id": "s33-oksun",
+          "alias": "옥순",
+          "gender": "female",
+          "status": "searching"
+        }
+      ]
+    },
+    {
+      "id": "s32",
+      "programId": "na-neun-solo",
+      "label": "32기",
+      "airDate": "2026-06",
+      "onAir": false,
+      "special": "5차 돌싱 특집",
+      "cast": []
+    },
+    {
+      "id": "s31",
+      "programId": "na-neun-solo",
+      "label": "31기",
+      "airDate": "2026-04",
+      "onAir": false,
+      "cast": []
+    },
+    {
+      "id": "s30",
+      "programId": "na-neun-solo",
+      "label": "30기",
+      "airDate": "2026-01",
+      "onAir": false,
+      "cast": []
+    },
+    {
+      "id": "s29",
+      "programId": "na-neun-solo",
+      "label": "29기",
+      "airDate": "2025-11",
+      "onAir": false,
+      "special": "연상연하 특집",
+      "cast": []
+    },
+    {
+      "id": "s28",
+      "programId": "na-neun-solo",
+      "label": "28기",
+      "airDate": "2025-09",
+      "onAir": false,
+      "special": "4차 돌싱 특집",
+      "cast": []
+    },
+    {
+      "id": "s27",
+      "programId": "na-neun-solo",
+      "label": "27기",
+      "airDate": "2025-07",
+      "onAir": false,
+      "cast": []
+    },
+    {
+      "id": "s26",
+      "programId": "na-neun-solo",
+      "label": "26기",
+      "airDate": "2025-04",
+      "onAir": false,
+      "special": "40대 골드 특집",
+      "cast": []
+    },
+    {
+      "id": "s25",
+      "programId": "na-neun-solo",
+      "label": "25기",
+      "airDate": "2025-03",
+      "onAir": false,
+      "cast": []
+    },
+    {
       "id": "s24",
       "programId": "na-neun-solo",
       "label": "24기",
-      "airDate": "",
-      "onAir": true,
+      "airDate": "2024-12",
+      "onAir": false,
       "cast": [
         {
           "id": "s24-yeongsu",

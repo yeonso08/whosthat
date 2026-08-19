@@ -34,7 +34,13 @@ export type Season = {
   label: string;
   /** 예: "2024-08". 확인 못 한 기수는 빈 문자열로 두고 화면에서 생략한다. */
   airDate: string;
+  /** 예: "3차 모태솔로 특집". 특집이 아닌 기수는 없다. */
+  special?: string;
   onAir: boolean;
+  /**
+   * 출연진 명단. 인원 구성을 확인하지 못한 기수는 빈 배열로 둔다 —
+   * 6:6 이 아닌 기수가 있어서 기본 로스터를 찍어 넣으면 없는 사람을 만들게 된다.
+   */
   cast: CastMember[];
 };
 

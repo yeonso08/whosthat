@@ -20,12 +20,18 @@ export async function generateMetadata({
   if (!season) return {};
 
   const coverage = getCoverage(season.cast);
-  const title = `나는 솔로 ${season.label} 출연진 인스타`;
-  const description = `나는 솔로 ${season.label} 출연진 ${coverage.total}명의 인스타그램 계정. 확인된 것만 모아 뒀고, 계정이 없는 사람은 없다고 적어 뒀다.`;
+  const special = season.special ? ` ${season.special}` : "";
+  const title = `나는 솔로 ${season.label}${special} 출연진 인스타`;
+  const description =
+    coverage.total === 0
+      ? `나는 솔로 ${season.label}${special} 출연진의 인스타그램 계정. 명단을 정리하는 중이다.`
+      : `나는 솔로 ${season.label}${special} 출연진 ${coverage.total}명의 인스타그램 계정. 확인된 것만 모아 뒀고, 계정이 없는 사람은 없다고 적어 뒀다.`;
   const path = seasonHref(season.id);
 
   return {
-    title,
+    // 제목에 이미 "나는 솔로" 가 들어 있어서 루트의 title.template 을 그대로 두면
+    // 사이트 이름이 뒤에 또 붙는다.
+    title: { absolute: title },
     description,
     // 같은 기수가 여러 경로로 잡히면 색인이 쪼개진다.
     alternates: { canonical: path },
@@ -59,17 +65,31 @@ export default async function Page({ params }: PageProps<"/seasons/[id]">) {
 
       <header className="px-5 pt-1.5">
         <h1 className="text-3xl font-black tracking-tighter">{season.label}</h1>
+        {season.special && (
+          <p className="mt-2 text-[13px] font-bold text-muted-foreground">
+            {season.special}
+          </p>
+        )}
         <p className="mt-1.5 text-[13px] text-muted-foreground">
           {airDate ? `${airDate} 방영 · ` : ""}
-          {coverage.total}명 중 {coverage.found}명 계정 확인
+          {coverage.total === 0
+            ? "출연진 명단 정리 중"
+            : `${coverage.total}명 중 ${coverage.found}명 계정 확인`}
         </p>
       </header>
 
-      <section className="mt-5 grid grid-cols-2 gap-3 px-5">
-        {season.cast.map((member) => (
-          <CastCard key={member.id} member={member} />
-        ))}
-      </section>
+      {season.cast.length > 0 ? (
+        <section className="mt-5 grid grid-cols-2 gap-3 px-5">
+          {season.cast.map((member) => (
+            <CastCard key={member.id} member={member} />
+          ))}
+        </section>
+      ) : (
+        <p className="mt-6 rounded-2xl bg-card px-5 py-8 text-center text-[13px] leading-relaxed text-muted-foreground mx-5">
+          아직 이 기수의 출연진 명단을 확인하지 못했다. 기수마다 인원이 달라서
+          짐작으로 채우지 않는다.
+        </p>
+      )}
 
       <p className="mt-8 px-5 text-xs leading-relaxed text-muted-foreground">
         방송에서 공개됐거나 본인이 공개로 둔 계정만 올린다. 잘못된 계정을

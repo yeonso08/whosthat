@@ -39,10 +39,16 @@ export function SeasonFeature({ season }: Props) {
             <span className="flex items-center gap-1.5 text-[11px] font-bold text-searching">
               <span className="size-1.5 rounded-full bg-searching" />
               방영 중
+              {season.special && (
+                <span className="font-lat font-semibold text-muted-foreground">
+                  · {season.special}
+                </span>
+              )}
             </span>
           ) : (
             <span className="font-lat text-[11px] font-semibold text-muted-foreground">
-              {airDate || "최신 기수"}
+              {[airDate, season.special].filter(Boolean).join(" · ") ||
+                "최신 기수"}
             </span>
           )}
           <span className="text-lg font-bold tracking-tight">
@@ -50,7 +56,9 @@ export function SeasonFeature({ season }: Props) {
           </span>
         </div>
         <span className="font-lat shrink-0 text-xs font-semibold text-muted-foreground">
-          {coverage.found} / {coverage.total} 확인
+          {coverage.total === 0
+            ? "명단 정리 중"
+            : `${coverage.found} / ${coverage.total} 확인`}
         </span>
       </div>
     </Link>

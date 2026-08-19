@@ -22,6 +22,7 @@ export function SeasonRow({ season }: Props) {
   const coverage = getCoverage(season.cast);
   const faces = season.cast.slice(0, FACE_COUNT);
   const airDate = formatAirDate(season.airDate);
+  const detail = [airDate, season.special].filter(Boolean).join(" · ");
 
   return (
     <Item className="gap-3.5 p-3" render={<Link href={seasonHref(season.id)} />}>
@@ -41,6 +42,14 @@ export function SeasonRow({ season }: Props) {
             />
           </div>
         ))}
+
+        {faces.length === 0 &&
+          Array.from({ length: FACE_COUNT }, (_, i) => (
+            <div
+              key={i}
+              className="-ml-2.5 size-9.5 rounded-full border-2 border-background bg-card"
+            />
+          ))}
       </ItemMedia>
 
       <ItemContent className="gap-0.5">
@@ -48,8 +57,10 @@ export function SeasonRow({ season }: Props) {
           {season.label}
         </ItemTitle>
         <ItemDescription className="font-lat text-xs">
-          {airDate ? `${airDate} · ` : ""}
-          {coverage.found} / {coverage.total} 확인
+          {detail ? `${detail} · ` : ""}
+          {coverage.total === 0
+            ? "명단 정리 중"
+            : `${coverage.found} / ${coverage.total} 확인`}
         </ItemDescription>
       </ItemContent>
 
