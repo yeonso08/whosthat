@@ -27,7 +27,7 @@ src/lib/brand.ts              BRAND_MARK(@)·BRAND_WORDMARK(whosthat) — 워드
 src/lib/types.ts              Program → Season → CastMember 모델
 src/lib/data.ts               JSON 로더 + 날짜 포맷
 src/data/na-neun-solo.json    실데이터 — 채우는 법은 src/data/README.md
-src/components/               cast-card, cast-avatar, season-row, season-feature, site-footer, back-link, wordmark, icons
+src/components/               cast-card, cast-avatar, season-row, season-feature, site-footer, site-header, back-link, wordmark, icons, theme-provider, mode-toggle
 ```
 
 Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 반드시 await 한다.
@@ -98,7 +98,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - 사진 대신 **가명 두 글자를 원형 배지로** 쓴다(`CastAvatar`). 상태별로 배지 색만 다르다 — found 는 밝게, none 은 죽이고, searching 은 `--searching` 색.
 - 기수 카드(`SeasonFeature`)의 사진 스트립도 없앴다. 대신 출연진 각각의 확인 상태를 **가는 막대 스트립**으로 보여준다 — 흑백 위주에 searching 만 황토색이라 색 규칙과 충돌하지 않는다.
 - 기수 상세는 사진 카드 2열 그리드가 아니라 **한 줄짜리 목록**이다. 사진이 없으니 격자로 채울 이유가 없다.
-- 사이트는 **다크 전용**이다. 라이트 모드가 없으므로 `globals.css` 의 `:root` 자체가 다크 팔레트고, `.dark` 클래스는 쓰지 않는다.
+- 사이트는 **라이트·다크 두 팔레트를 다 가진다**(2026-08-20 부로 "다크 전용" 원칙 폐기). `globals.css` 의 `:root` 가 라이트, `.dark` 가 다크다 — 둘 다 위 시안 D 팔레트를 흑백 축으로 그대로 짝지은 것이라 명도만 뒤집혔지 구조는 같다. `next-themes` 로 전환하고(`ThemeProvider`, `attribute="class"`), 기본값은 여전히 `dark`다 — 원래 시안의 첫인상을 지키려는 것이다. 전환 버튼(`ModeToggle`)은 네 화면 헤더 맨 위, 워드마크 옆에 있다 — `SiteHeader` 가 `Wordmark` 와 `ModeToggle` 을 한 줄로 묶어서 페이지마다 그 줄을 반복하지 않는다.
 - **색은 흑백뿐이다.** 유일한 유채색 `--searching`(황토 `#d9a44b`)은 "아직 못 찾음" 상태 전용이다. 강조·CTA·배지 같은 다른 용도로 번지게 하지 말 것.
 - 폰트: 한글 `Gothic A1`(`--font-sans`), 라틴·숫자 `Manrope`(`--font-lat`). 핸들·날짜·개수처럼 숫자가 섞인 곳은 `font-lat`.
 - 모서리 반경 12~16px, 전환 180~220ms.

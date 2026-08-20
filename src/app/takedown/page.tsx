@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { BackLink } from "@/components/back-link";
+import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
-import { Wordmark } from "@/components/wordmark";
 import { BRAND_WORDMARK } from "@/lib/brand";
 import { CONTACT_MAILTO, TAKEDOWN_HREF } from "@/lib/links";
 import { CONTACT_EMAIL } from "@/lib/site";
@@ -23,7 +23,7 @@ export default function Page() {
       {/* 홈을 안 거치고 검색으로 바로 들어오는 페이지라 어느 사이트에 하는
           요청인지 화면에서 밝혀 둔다. */}
       <header className="px-5 pt-6">
-        <Wordmark />
+        <SiteHeader />
       </header>
 
       <article className="px-5 pt-5">

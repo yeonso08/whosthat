@@ -1,6 +1,6 @@
 import { SeasonFeature } from "@/components/season-feature";
 import { SeasonRow } from "@/components/season-row";
-import { Wordmark } from "@/components/wordmark";
+import { SiteHeader } from "@/components/site-header";
 import { getProgram, getSeasons } from "@/lib/data";
 import { getCoverage } from "@/lib/types";
 
@@ -20,7 +20,7 @@ export default function Page() {
   return (
     <main>
       <header className="px-5 pt-6 pb-1">
-        <Wordmark />
+        <SiteHeader />
         <p className="mt-5 text-sm font-bold tracking-tight text-muted-foreground">
           {program.name}
         </p>

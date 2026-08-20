@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Gothic_A1, Manrope } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SiteFooter } from "@/components/site-footer";
+import { ThemeProvider } from "@/components/theme-provider";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -47,12 +48,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ko"
+      // next-themes 가 마운트 시점에 <html> 클래스를 다크/라이트로 고쳐 쓴다 —
+      // 서버가 모르는 값이라 하이드레이션 경고가 나므로 여기서만 억제한다.
+      suppressHydrationWarning
       className={`${gothic.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="mx-auto flex min-h-full w-full max-w-screen-sm flex-col">
-        {children}
-        {/* 레이아웃에 두면 기수를 아무리 늘려도 삭제 창구가 빠지는 화면이 없다. */}
-        <SiteFooter />
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          {children}
+          {/* 레이아웃에 두면 기수를 아무리 늘려도 삭제 창구가 빠지는 화면이 없다. */}
+          <SiteFooter />
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

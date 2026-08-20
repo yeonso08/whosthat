@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BackLink } from "@/components/back-link";
 import { CastCard } from "@/components/cast-card";
-import { Wordmark } from "@/components/wordmark";
+import { SiteHeader } from "@/components/site-header";
 import { formatAirDate, getSeason, getSeasons } from "@/lib/data";
 import { seasonHref } from "@/lib/links";
 import { getCoverage } from "@/lib/types";
@@ -49,7 +49,7 @@ export default async function Page({ params }: PageProps<"/seasons/[id]">) {
   return (
     <main>
       <header className="px-5 pt-6">
-        <Wordmark />
+        <SiteHeader />
 
         {/* 뒤로가기를 제목 줄에 붙인다. 화살표의 44px 탭 영역이 제목을 밀지
             않게 줄 전체를 왼쪽으로 당겨 화살표를 본문 여백선에 맞춘다. */}
