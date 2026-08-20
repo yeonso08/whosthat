@@ -1,14 +1,6 @@
 import type { ReactElement } from "react";
-import { CastAvatar } from "@/components/cast-avatar";
+import { CastPhoto } from "@/components/cast-photo";
 import { InstagramIcon } from "@/components/icons";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item";
 import { formatChecked } from "@/lib/data";
 import { instagramUrl } from "@/lib/links";
 import type { CastMember } from "@/lib/types";
@@ -16,7 +8,11 @@ import type { CastMember } from "@/lib/types";
 /** 카드와 그 안의 상태 줄이 같은 사람을 그리므로 타입을 함께 쓴다. */
 type Props = { member: CastMember };
 
-const CARD_STYLE = "rounded-2xl bg-card p-3.5";
+/** 2열 그리드라 모바일에선 화면 절반, 넓어지면 카드가 300px 에서 멈춘다. */
+const CARD_SIZES = "(min-width: 640px) 300px, 50vw";
+
+/** 사진 자리를 채우는 가명 배지의 글자 크기. 배지는 상속받아 쓴다. */
+const FALLBACK_TEXT = "text-[22px] tracking-tight";
 
 /**
  * 검색 결과에서 앵커로 내려왔을 때 카드가 화면 맨 위에 딱 붙지 않게 띄운다.
@@ -29,31 +25,37 @@ export function CastCard({ member }: Props) {
   const handle = member.instagramHandle;
   const description = describe(member);
 
-  const content = (
+  const body = (
     <>
-      <ItemMedia>
-        <CastAvatar alias={member.alias} status={member.status} />
-      </ItemMedia>
-
-      <ItemContent className="gap-0.5">
-        <ItemTitle
-          className={`text-base font-bold tracking-tight ${found ? "" : "text-muted-foreground"}`}
-        >
-          {member.alias}
-        </ItemTitle>
-        {description && (
-          <ItemDescription className="text-[12.5px]">
-            {description}
-          </ItemDescription>
-        )}
-        <CardStatus member={member} />
-      </ItemContent>
+      <div className={`relative aspect-[6/7] w-full ${FALLBACK_TEXT}`}>
+        <CastPhoto
+          src={member.profileImageUrl}
+          alias={member.alias}
+          status={member.status}
+          alt={`${member.alias} 사진`}
+          sizes={CARD_SIZES}
+        />
+      </div>
 
       {found && (
-        <ItemActions>
-          <InstagramIcon className="size-4 text-muted-foreground" />
-        </ItemActions>
+        <span className="absolute top-2.5 right-2.5 flex size-7.5 items-center justify-center rounded-full bg-background/65">
+          <InstagramIcon className="size-3.5 text-foreground" />
+        </span>
       )}
+
+      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-0.5 bg-gradient-to-t from-background/95 to-transparent px-3 pt-8 pb-3">
+        <span
+          className={`text-xl font-bold tracking-tight ${found ? "" : "text-muted-foreground"}`}
+        >
+          {member.alias}
+        </span>
+        {description && (
+          <span className="truncate text-[11.5px] text-muted-foreground">
+            {description}
+          </span>
+        )}
+        <CardStatus member={member} />
+      </div>
     </>
   );
 
@@ -61,26 +63,25 @@ export function CastCard({ member }: Props) {
   // 링크를 거는 대신 카드로만 둔다.
   if (!found || !handle) {
     return (
-      <Item id={member.id} className={`${CARD_STYLE} ${ANCHOR_OFFSET}`}>
-        {content}
-      </Item>
+      <div
+        id={member.id}
+        className={`relative overflow-hidden rounded-2xl bg-card ${ANCHOR_OFFSET}`}
+      >
+        {body}
+      </div>
     );
   }
 
   return (
-    <Item
+    <a
       id={member.id}
-      className={`${CARD_STYLE} ${ANCHOR_OFFSET} transition-colors hover:bg-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring`}
-      render={
-        <a
-          href={instagramUrl(handle)}
-          target="_blank"
-          rel="noopener noreferrer"
-        />
-      }
+      href={instagramUrl(handle)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`relative block overflow-hidden rounded-2xl bg-elevated ${ANCHOR_OFFSET} transition-opacity hover:opacity-85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring`}
     >
-      {content}
-    </Item>
+      {body}
+    </a>
   );
 }
 
@@ -92,7 +93,7 @@ function CardStatus({ member }: Props): ReactElement {
   switch (member.status) {
     case "found":
       return (
-        <span className="font-lat mt-0.5 truncate text-[12.5px] font-semibold">
+        <span className="font-lat mt-1 truncate text-[11.5px] font-semibold">
           @{member.instagramHandle}
         </span>
       );
@@ -102,7 +103,7 @@ function CardStatus({ member }: Props): ReactElement {
         ? formatChecked(member.lastVerified)
         : "";
       return (
-        <span className="mt-0.5 text-[12.5px] font-semibold text-muted-foreground">
+        <span className="mt-1 text-[11.5px] font-semibold text-muted-foreground">
           계정 없음{checked && ` · ${checked} 확인`}
         </span>
       );
@@ -110,7 +111,7 @@ function CardStatus({ member }: Props): ReactElement {
 
     case "searching":
       return (
-        <span className="mt-0.5 text-[12.5px] font-semibold text-searching">
+        <span className="mt-1 text-[11.5px] font-semibold text-searching">
           찾는 중
         </span>
       );
