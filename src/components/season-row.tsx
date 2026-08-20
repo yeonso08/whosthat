@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/item";
 import { formatAirDate } from "@/lib/data";
 import { seasonHref } from "@/lib/links";
-import { getCoverage, type Season } from "@/lib/types";
+import { formatCoverage, getCoverage, type Season } from "@/lib/types";
 
 /** 줄 왼쪽에 겹쳐 쌓는 얼굴 수. 더 넣으면 기수 이름이 밀린다. */
 const FACE_COUNT = 4;
@@ -52,9 +52,7 @@ export function SeasonRow({ season }: Props) {
         </ItemTitle>
         <ItemDescription className="font-lat text-xs">
           {detail ? `${detail} · ` : ""}
-          {coverage.total === 0
-            ? "명단 정리 중"
-            : `${coverage.found} / ${coverage.total} 확인`}
+          {formatCoverage(coverage)}
         </ItemDescription>
       </ItemContent>
 

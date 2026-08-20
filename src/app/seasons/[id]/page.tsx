@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BackLink } from "@/components/back-link";
 import { CastCard } from "@/components/cast-card";
-import { Wordmark } from "@/components/wordmark";
+import { SiteHeader } from "@/components/site-header";
 import { formatAirDate, getSeason, getSeasons } from "@/lib/data";
 import { seasonHref } from "@/lib/links";
 import { getCoverage } from "@/lib/types";
@@ -23,8 +23,8 @@ export async function generateMetadata({
   const title = `나는 솔로 ${season.label}${special} 출연진 인스타`;
   const description =
     coverage.total === 0
-      ? `나는 솔로 ${season.label}${special} 출연진의 인스타그램 계정. 명단을 정리하는 중이다.`
-      : `나는 솔로 ${season.label}${special} 출연진 ${coverage.total}명의 인스타그램 계정. 확인된 것만 모아 뒀고, 계정이 없는 사람은 없다고 적어 뒀다.`;
+      ? `나는 솔로 ${season.label}${special} 출연진의 인스타그램 계정. 명단을 정리하는 중입니다.`
+      : `나는 솔로 ${season.label}${special} 출연진 ${coverage.total}명의 인스타그램 계정. 확인된 것만 모아 뒀고, 계정이 없는 사람은 없다고 적어 뒀습니다.`;
   const path = seasonHref(season.id);
 
   return {
@@ -49,7 +49,7 @@ export default async function Page({ params }: PageProps<"/seasons/[id]">) {
   return (
     <main>
       <header className="px-5 pt-6">
-        <Wordmark />
+        <SiteHeader />
 
         {/* 뒤로가기를 제목 줄에 붙인다. 화살표의 44px 탭 영역이 제목을 밀지
             않게 줄 전체를 왼쪽으로 당겨 화살표를 본문 여백선에 맞춘다. */}
@@ -81,8 +81,8 @@ export default async function Page({ params }: PageProps<"/seasons/[id]">) {
         </section>
       ) : (
         <p className="mt-6 rounded-2xl bg-card px-5 py-8 text-center text-[13px] leading-relaxed text-muted-foreground mx-5">
-          아직 이 기수의 출연진 명단을 확인하지 못했다. 기수마다 인원이 달라서
-          짐작으로 채우지 않는다.
+          아직 이 기수의 출연진 명단을 확인하지 못했습니다. 기수마다 인원이
+          달라서 짐작으로 채우지 않습니다.
         </p>
       )}
     </main>

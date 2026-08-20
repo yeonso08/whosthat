@@ -53,9 +53,48 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* 시안 D "어둠 속 사진" — 사이트는 다크 전용이라 :root 자체가 다크 팔레트다.
-   색은 흑백뿐이고, 유일한 유채색 --searching 은 "아직 못 찾음" 상태에만 쓴다. */
+/* 시안 D "어둠 속 사진" 팔레트를 라이트·다크 양쪽으로 짝지었다. 색은 흑백뿐이고,
+   유일한 유채색 --searching 은 "아직 못 찾음" 상태에만 쓴다 — 두 팔레트 모두. */
 :root {
+  --background: #fafafa;
+  --foreground: #101013;
+  --card: #f1f1f3;
+  --card-foreground: #101013;
+  --elevated: #e6e6ea;
+  --photo: #dcdce1;
+  --photo-ink: #c9c9d0;
+  --searching: #92400e;
+  --popover: #ffffff;
+  --popover-foreground: #101013;
+  --primary: #101013;
+  --primary-foreground: #fafafa;
+  --secondary: #e6e6ea;
+  --secondary-foreground: #101013;
+  --muted: #e6e6ea;
+  --muted-foreground: #6b6b76;
+  --accent: #e6e6ea;
+  --accent-foreground: #101013;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: #e2e2e7;
+  --input: #e2e2e7;
+  --ring: #9a9aa4;
+  --chart-1: oklch(0.269 0 0);
+  --chart-2: oklch(0.371 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.556 0 0);
+  --chart-5: oklch(0.87 0 0);
+  --radius: 0.875rem;
+  --sidebar: #f1f1f3;
+  --sidebar-foreground: #101013;
+  --sidebar-primary: #101013;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #e6e6ea;
+  --sidebar-accent-foreground: #101013;
+  --sidebar-border: #e2e2e7;
+  --sidebar-ring: #9a9aa4;
+}
+
+.dark {
   --background: #0a0a0c;
   --foreground: #f4f4f6;
   --card: #141418;
@@ -83,7 +122,6 @@
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.875rem;
   --sidebar: #141418;
   --sidebar-foreground: #f4f4f6;
   --sidebar-primary: #f4f4f6;

@@ -69,3 +69,53 @@ export function getCoverage(cast: CastMember[]): Coverage {
 
   return { ...byStatus, total: cast.length };
 }
+
+/**
+ * "4 / 14 확인". 명단을 아직 못 채운 기수는 개수 대신 그 사실을 적는다 —
+ * "0 / 0 확인"은 아무도 못 찾았다는 뜻으로 읽혀서 사실과 다르다.
+ */
+export function formatCoverage(coverage: Coverage): string {
+  if (coverage.total === 0) return "명단 정리 중";
+  return `${coverage.found} / ${coverage.total} 확인`;
+}
+
+/**
+ * 검색이 훑는 최소 데이터.
+ *
+ * 이 인덱스는 통째로 클라이언트에 실려 나간다 — 원본 JSON(56KB)을 그대로
+ * 내려보내지 않으려고 화면에 쓰는 필드만 남긴 것이다. `source`·`lastVerified`
+ * 같은 근거 자료는 기수 상세에서만 필요하므로 여기 넣지 않는다.
+ */
+export type IndexedMember = {
+  id: string;
+  alias: string;
+  name?: string;
+  status: AccountStatus;
+  /** CastMember.instagramHandle 과 같은 값. 결과 줄에 핸들을 보여주려고 싣는다. */
+  handle?: string;
+};
+
+export type IndexedSeason = {
+  id: string;
+  label: string;
+  special?: string;
+  /** 결과 줄에 "12명 중 3명" 을 적으려고 미리 센다. 화면마다 다시 세지 않는다. */
+  coverage: Coverage;
+  cast: IndexedMember[];
+};
+
+export type SearchIndex = IndexedSeason[];
+
+/** 사람 결과는 어느 기수인지까지 알아야 이동할 곳이 정해진다. */
+export type MemberHit = {
+  member: IndexedMember;
+  seasonId: string;
+  seasonLabel: string;
+};
+
+export type SearchResults = {
+  seasons: IndexedSeason[];
+  members: MemberHit[];
+  /** 사람 결과가 상한에 걸려 잘렸다. 화면에서 좁히는 법을 안내한다. */
+  membersTruncated: boolean;
+};

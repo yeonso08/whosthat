@@ -1,7 +1,8 @@
 import { SeasonFeature } from "@/components/season-feature";
 import { SeasonRow } from "@/components/season-row";
-import { Wordmark } from "@/components/wordmark";
-import { getProgram, getSeasons } from "@/lib/data";
+import { SeasonSearch } from "@/components/season-search";
+import { SiteHeader } from "@/components/site-header";
+import { buildSearchIndex, getProgram, getSeasons } from "@/lib/data";
 import { getCoverage } from "@/lib/types";
 
 export default function Page() {
@@ -20,7 +21,7 @@ export default function Page() {
   return (
     <main>
       <header className="px-5 pt-6 pb-1">
-        <Wordmark />
+        <SiteHeader />
         <p className="mt-5 text-sm font-bold tracking-tight text-muted-foreground">
           {program.name}
         </p>
@@ -37,18 +38,21 @@ export default function Page() {
         </div>
       )}
 
-      {rest.length > 0 && (
-        <>
-          <h2 className="px-5 pt-7 pb-2 text-[13px] font-bold text-muted-foreground">
-            지난 기수
-          </h2>
-          <section className="px-2">
-            {rest.map((season) => (
-              <SeasonRow key={season.id} season={season} />
-            ))}
-          </section>
-        </>
-      )}
+      {/* 검색창이 목록 자리를 쥐고 있다 — 입력이 없을 때만 아래 목록이 보인다. */}
+      <SeasonSearch index={buildSearchIndex()}>
+        {rest.length > 0 && (
+          <>
+            <h2 className="px-5 pt-7 pb-2 text-[13px] font-bold text-muted-foreground">
+              지난 기수
+            </h2>
+            <section className="px-2">
+              {rest.map((season) => (
+                <SeasonRow key={season.id} season={season} />
+              ))}
+            </section>
+          </>
+        )}
+      </SeasonSearch>
     </main>
   );
 }
