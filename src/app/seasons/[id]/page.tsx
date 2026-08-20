@@ -53,7 +53,7 @@ export default async function Page({ params }: PageProps<"/seasons/[id]">) {
 
         {/* 뒤로가기를 제목 줄에 붙인다. 화살표의 44px 탭 영역이 제목을 밀지
             않게 줄 전체를 왼쪽으로 당겨 화살표를 본문 여백선에 맞춘다. */}
-        <div className="mt-5 -ml-3 flex items-center gap-1">
+        <div className="mt-5 -ml-3 flex items-start gap-1">
           <BackLink />
           <h1 className="text-3xl font-black tracking-tighter">
             {season.label}

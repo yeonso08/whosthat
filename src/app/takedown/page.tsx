@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { BackLink } from "@/components/back-link";
 import { Button } from "@/components/ui/button";
+import { Wordmark } from "@/components/wordmark";
+import { BRAND_WORDMARK } from "@/lib/brand";
 import { CONTACT_MAILTO, TAKEDOWN_HREF } from "@/lib/links";
 import { CONTACT_EMAIL } from "@/lib/site";
 
@@ -18,15 +20,24 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <main>
-      <div className="px-3 pt-3.5">
-        <BackLink />
-      </div>
+      {/* 홈을 안 거치고 검색으로 바로 들어오는 페이지라 어느 사이트에 하는
+          요청인지 화면에서 밝혀 둔다. */}
+      <header className="px-5 pt-6">
+        <Wordmark />
+      </header>
 
-      <article className="px-5 pt-1.5">
-        <h1 className="text-3xl font-black tracking-tighter">{TITLE}</h1>
+      <article className="px-5 pt-5">
+        {/* 화살표의 44px 탭 영역이 제목을 밀지 않게 줄 전체를 왼쪽으로 당긴다. */}
+        <div className="-ml-3 flex items-start gap-1">
+          <BackLink />
+          <h1 className="text-3xl font-black tracking-tighter">{TITLE}</h1>
+        </div>
         <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
-          이 사이트는 방송에서 공개됐거나 본인이 공개로 설정한 계정만 싣는다.
-          그래도 내리고 싶으면 내린다. 이유는 묻지 않는다.
+          <span className="font-lat font-semibold text-foreground">
+            {BRAND_WORDMARK}
+          </span>
+          는 방송에서 공개됐거나 본인이 공개로 설정한 계정만 싣는다. 그래도
+          내리고 싶으면 내린다. 이유는 묻지 않는다.
         </p>
 
         <h2 className="mt-8 text-sm font-bold">이런 요청을 받는다</h2>
