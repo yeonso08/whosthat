@@ -140,6 +140,8 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 다음: 계정 데이터 채우기 → 그 다음 검색 기능(데이터가 비어 있으면 검색할 게 없어 미뤄 뒀다) → 제보 폼(`PLANNING.md` 로드맵 2단계).
 
+**DB·백엔드는 아직 필요 없다.** 지금은 정적 JSON + SSG 로 충분하고, 데이터가 늘었다는 건 옮길 이유가 안 된다. 갈아탈 시점을 판단하는 기준은 `PLANNING.md` §7 "DB·백엔드는 언제 필요한가" 에 있다 — 조건이 실제로 걸리면 그때 먼저 말한다.
+
 ## Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
