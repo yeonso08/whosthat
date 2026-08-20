@@ -30,22 +30,60 @@ git push origin --delete <branch> && git branch -d <branch>
 ## 구조
 
 ```
-src/app/page.tsx              기수 목록
-src/app/seasons/[id]/page.tsx 기수 상세 (generateStaticParams 로 전 기수 프리렌더)
-src/app/takedown/page.tsx     삭제·정정 요청 창구
-src/app/privacy/page.tsx      개인정보 처리방침
-src/app/icon.tsx              파비콘 — @ 마크, 코드 생성(ImageResponse)
-src/app/apple-icon.tsx        iOS 홈 화면 아이콘 — 같은 마크, 180×180
-src/lib/brand.ts              BRAND_MARK(@)·BRAND_WORDMARK(whosthat) — 워드마크와 아이콘이 공유
-src/lib/types.ts              Program → Season → CastMember 모델
-src/lib/data.ts               JSON 로더 + 날짜 포맷 + 검색 인덱스 생성
-src/lib/search.ts             검색 매칭 — 데이터를 모른다(클라이언트로 넘어간다)
-src/data/na-neun-solo.json    실데이터 — 채우는 법은 src/data/README.md
-src/components/               cast-card, cast-photo, cast-avatar, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, icons, theme-provider, mode-toggle
-public/cast/                  출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
+src/app/[lang]/page.tsx              기수 목록 — [lang] 이 루트 세그먼트다(전 화면이 그 아래)
+src/app/[lang]/seasons/[id]/page.tsx 기수 상세 (언어 × 기수로 전부 프리렌더)
+src/app/[lang]/takedown/page.tsx     삭제·정정 요청 창구
+src/app/[lang]/privacy/page.tsx      개인정보 처리방침
+src/app/[lang]/layout.tsx            루트 레이아웃 — <html lang>, 언어별 metadata, generateStaticParams
+src/app/icon.tsx                     파비콘 — @ 마크, 코드 생성(ImageResponse). 언어를 안 탄다
+src/app/apple-icon.tsx               iOS 홈 화면 아이콘 — 같은 마크, 180×180
+src/app/sitemap.ts / robots.ts       언어마다 한 줄씩 + hreflang
+src/proxy.ts                         `/` 로 들어온 사람을 브라우저 언어로 보낸다 (Next 16 의 미들웨어)
+src/lib/locales.ts                   언어 목록 — 화면·클라이언트·프록시가 다 읽는 순수 모듈
+src/lib/i18n.ts                      사전 로더 + 데이터 어휘(가명 로마자·특집) + 날짜/현황 포맷
+src/dictionaries/{ko,en}.json        화면 문구
+src/lib/brand.ts                     BRAND_MARK(@)·BRAND_WORDMARK(whosthat) — 워드마크와 아이콘이 공유
+src/lib/links.ts                     내부 경로 — 전부 언어로 시작한다
+src/lib/types.ts                     Program → Season → CastMember 모델
+src/lib/data.ts                      JSON 로더 + 검색 인덱스 생성
+src/lib/search.ts                    검색 매칭 — 데이터를 모른다(클라이언트로 넘어간다)
+src/data/na-neun-solo.json           실데이터 — 채우는 법은 src/data/README.md
+src/components/                      cast-card, cast-photo, cast-avatar, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, icons, theme-provider, mode-toggle, locale-toggle
+public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 ```
 
 Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 반드시 await 한다.
+
+## 언어 — 한국어·영어 (일본어 예정)
+
+해외에서 한국 예능 출연진을 찾는 사람을 받으려고 2026-08-21 에 언어를 붙였다. **URL 이 언어를 정한다** — `/ko/seasons/s33`, `/en/seasons/s33`. 언어가 없는 주소는 두 갈래로 처리한다: `/` 는 `src/proxy.ts` 가 `Accept-Language` 를 보고 307 로 보내고, 언어를 붙이기 전의 옛 주소(`/seasons/s33`·`/takedown`·`/privacy`)는 `next.config.ts` 가 한국어로 308 한다.
+
+- **언어를 감지하는 순간은 `/` 하나뿐이다.** proxy 의 matcher 가 `/` 라서 나머지 경로는 엣지를 안 거치고 정적으로 나간다. 공유받은 `/ko/...` 링크가 읽는 사람 브라우저 설정 때문에 다른 언어로 튀지도 않는다.
+- **언어 선택을 쿠키로 기억하지 않는다.** 처리방침에 "쿠키는 쓰지 않는다"고 적어 뒀다 — 편의 하나 때문에 그 문장을 거짓으로 만들지 말 것. 전환 버튼이 주소를 바꾸므로 기억할 것도 없다.
+- 아는 언어가 하나도 안 걸리면 영어로 보낸다(`UNMATCHED_LOCALE`). `DEFAULT_LOCALE`(한국어)은 원문·canonical·`x-default` 의 기준이지 "모르면 한국어"라는 뜻이 아니다.
+
+### 문구는 사전에, 데이터 어휘는 `i18n.ts` 에
+
+- **화면에 보이는 글자를 컴포넌트에 박지 않는다.** `src/dictionaries/{ko,en}.json` 에 넣고 키로 부른다. 사전 모양은 한국어가 정한다(`Dictionary = typeof ko`) — `en.json` 에 키가 빠지면 컴파일 에러가 난다.
+- **데이터에서 나온 말은 사전이 아니라 `i18n.ts` 의 표다**: 가명 로마자 14개, 특집 이름 13개, 프로그램 이름. 고치는 때가 달라서 갈라 뒀다 — 문구는 화면을 보며 고치고, 어휘는 데이터를 채우며 는다.
+- 숫자가 낀 문장은 `{ }` 자리표시자 + `fill()` 이다. 문장을 조각내 이어 붙이면 어순이 다른 언어에서 반드시 어색해진다.
+- 날짜·현황은 `formatAirDate`·`formatChecked`·`formatCoverage` 가 언어를 받아 만든다(영어는 `Intl`). 컴포넌트에서 다시 자르거나 붙이지 말 것.
+
+### 언어를 어떻게 얻나
+
+- **서버 컴포넌트는 `currentLocale()` / `currentDictionary()` 로 스스로 가져온다**(`next/root-params`). `[lang]` 이 루트 세그먼트라 페이지가 컴포넌트마다 언어를 내려보내지 않아도 된다.
+- **클라이언트 컴포넌트는 그걸 못 쓴다**(Next 의 제약). `SeasonSearch`·`ModeToggle`·`LocaleToggle` 은 쓰는 문구만 props 로 받는다 — `i18n.ts` 를 import 하면 사전 두 벌이 클라이언트 번들에 딸려 온다. `import type` 은 컴파일에서 지워지므로 예외다.
+- **내부 링크는 `lib/links.ts` 의 함수로만 만든다.** 전부 첫 인자가 locale 이다. 손으로 `/seasons/...` 를 적으면 언어가 빠진 주소가 나오는데, 그건 눌러 보기 전까지 화면에 안 보인다.
+- 검색 인덱스는 서버가 그 언어로 **미리 만들어** 내려보낸다. 영어 인덱스에는 한글 원문이 `keywords` 로 함께 실린다 — 화면은 `Yeongsu` 지만 `영수` 로도 걸리게 하려는 것이다(화면에 안 나오는 검색 전용 필드).
+
+### 언어를 하나 더할 때
+
+세 곳이다: `locales.ts` 의 `LOCALES`, `src/dictionaries/<code>.json` 한 벌, `i18n.ts` 의 어휘 표(가명·특집)와 `OG_LOCALES`. 화면·sitemap·hreflang·정적 생성은 그 목록을 따라가므로 따로 손댈 게 없다.
+
+### 번역이 화면과 안 맞는 자리
+
+- **가명 배지(사진 없는 자리)는 언어를 안 따라간다.** 로마자로 바꾸면 40px 원에 안 들어가고, 앞 두 글자만 자르면 영수·영호·영식·영철이 전부 `Ye` 가 되어 배지가 있는 이유(빈 자리에 변화를 주는 것)가 통째로 사라진다. 그래서 겹친 원의 배지는 한글이고, 이름은 기수 상세 카드가 그 언어로 온전히 말한다.
+- **정책 두 페이지(`/takedown`·`/privacy`)의 영어는 번역본이다.** 맨 아래 `translationNote` 로 "다르면 한국어 원문이 기준" 이라고 밝힌다 — 지키지 못할 약속이 언어별로 갈리는 게 제일 위험하다. 한국어 사전에서는 이 키가 빈 문자열이라 화면에서 통째로 빠진다.
 
 ## 코드 규칙
 
@@ -63,13 +101,13 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 ### 의존 방향은 한 쪽으로만 (결합도)
 
 - `page → components → lib → data(JSON)`. 역방향 import 는 없다. `lib` 은 컴포넌트를 모르고, 컴포넌트는 JSON 을 모른다.
-- **JSON 을 직접 import 하는 파일은 `lib/data.ts` 하나뿐이다.** 제보 기능에서 DB 로 갈아탈 때(로드맵 2단계) 고칠 파일을 하나로 묶어 두는 게 목적이다. 페이지에서 `@/data/*.json` 을 부르고 싶어지면 `data.ts` 에 함수를 하나 더 만든다.
+- **출연진 JSON 을 직접 import 하는 파일은 `lib/data.ts` 하나뿐이다.** 제보 기능에서 DB 로 갈아탈 때(로드맵 2단계) 고칠 파일을 하나로 묶어 두는 게 목적이다. 페이지에서 `@/data/*.json` 을 부르고 싶어지면 `data.ts` 에 함수를 하나 더 만든다. (사전 JSON 은 별개다 — `i18n.ts` 가 읽는다. 옮길 대상이 아니라 코드에 가까운 자원이다.)
 - 컴포넌트는 **그리는 데 필요한 최소 타입만** props 로 받는다. `SeasonRow` 는 `Season`, `CastCard` 는 `CastMember` 다. 편하다고 `Program` 을 통째로 내려보내면 그 컴포넌트는 프로그램 구조가 바뀔 때마다 같이 깨진다.
 
 ### 한 파일에 한 역할 (단일 책임)
 
 - 카드를 그리는 건 `CastCard`, 상태 한 줄은 `CardStatus`, 가명 이니셜 배지는 `CastAvatar`. 역할이 갈리면 **같은 파일 안의 작은 컴포넌트로 먼저 쪼갠다** — 파일이나 폴더부터 만들지 않는다. 두 번째 사용처가 생기면 그때 파일로 뽑는다.
-- **포맷팅은 컴포넌트가 하지 않는다.** `formatAirDate`, `formatChecked` 처럼 `lib/data.ts` 에 두고 불러 쓴다. JSX 안에 `.split("-")` 이나 `.slice(2)` 가 보이면 자리를 잘못 잡은 것이다.
+- **포맷팅은 컴포넌트가 하지 않는다.** `formatAirDate`, `formatChecked`, `formatCoverage` 처럼 `lib/i18n.ts` 에 두고 불러 쓴다 — 전부 언어를 받는다. JSX 안에 `.split("-")` 이나 `.slice(2)` 가 보이면 자리를 잘못 잡은 것이다.
 - 데이터 정렬·집계도 마찬가지다. 기수 정렬은 `getSeasons`, 현황 집계는 `getCoverage` 가 한다. 페이지에서 `.sort()` 를 다시 부르지 않는다.
 
 ### 같이 바뀌는 것을 같이 둔다 (응집성)
@@ -80,7 +118,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 ### status 가 분기의 유일한 근원
 
 - `found / none / searching` 분기는 **`member.status` 로만** 한다. `instagramHandle` 이 있는지로 "찾았다"를 유추하지 말 것 — 애써 셋으로 나눈 상태가 그렇게 다시 둘로 무너진다.
-- 상태를 하나 추가하면 세 곳을 함께 고친다: `types.ts` 의 유니온, `CastCard` 의 `CardStatus`, `getCoverage`. **유니온만 늘리면 나머지 두 곳에서 컴파일 에러가 난다** — `CardStatus` 는 반환 타입을 못 박은 `switch`, `getCoverage` 는 `Record<AccountStatus, number>` 리터럴이라 그렇다. 새 분기를 추가할 때도 이 장치를 없애지 말 것.
+- 상태를 하나 추가하면 네 곳을 함께 고친다: `types.ts` 의 유니온, `CastCard` 의 `CardStatus`, `getCoverage`, 그리고 사전의 `status` 묶음(언어마다). **유니온만 늘리면 나머지 두 곳에서 컴파일 에러가 난다** — `CardStatus` 는 반환 타입을 못 박은 `switch`, `getCoverage` 는 `Record<AccountStatus, number>` 리터럴이라 그렇다. 새 분기를 추가할 때도 이 장치를 없애지 말 것.
 
 ### 추상화는 늦게
 
@@ -91,7 +129,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 - **코드 안에 그냥 박힌 숫자·문자열을 두지 않는다.** 파일 상단에 `SCREAMING_SNAKE_CASE` 상수로 올리고, **왜 그 값인지** 한 줄 주석을 단다. `FACE_COUNT`(더 넣으면 기수 이름이 밀린다), `CARD_SIZES` 가 그 형태다.
 - 기준은 "의미가 있는가"지 "몇 번 쓰였는가"가 아니다. 한 번만 쓰여도 그 값이 왜 4인지 설명이 필요하면 상수다. 반대로 `flex gap-3` 같은 Tailwind 클래스 문자열은 그대로 둔다 — 상수로 빼면 오히려 안 읽힌다.
-- **두 파일 이상에서 쓰이는 값은 파일 상단이 아니라 `lib` 으로 올린다.** 외부 URL(`https://instagram.com/`)과 내부 라우트(`/seasons/{id}`)가 지금 컴포넌트에 직접 박혀 있는데, 이런 건 헬퍼 하나로 모아 두 번째 호출부가 생길 때 같이 안 틀리게 한다.
+- **두 파일 이상에서 쓰이는 값은 파일 상단이 아니라 `lib` 으로 올린다.** 외부 URL(`https://instagram.com/`)과 내부 라우트(`/{lang}/seasons/{id}`)가 `lib/links.ts` 에 모여 있는 게 그 형태다 — 언어가 붙으면서 경로 규칙이 바뀌었을 때 고칠 곳이 한 파일이었다.
 - 화면에 보이는 문구도 같은 자리에서 반복되면 상수로 뺀다. 특히 `"찾는 중"`, `"계정 없음"` 처럼 **상태와 짝이 되는 문구**는 흩어지면 상태를 추가할 때 빠뜨린다.
 
 ### 타입은 컴포넌트 파일에 두지 않는다
@@ -108,6 +146,8 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - 방문자 입장에서 적는 문장(삭제 요청 페이지의 요청 예시 목록)은 그 사람 말투인 `~해 주세요` / `~있어요` 로 둔다. 사이트가 하는 말과 방문자가 하는 말을 섞지 않는다.
 - **반대로 코드 주석·`CLAUDE.md`·`PLANNING.md`·`src/data/README.md` 는 평서체다.** 읽는 사람이 다르다 — 이쪽은 짧고 단정한 쪽이 낫다. 화면 문구를 고칠 때 주석까지 같이 존댓말로 바꾸지 말 것.
 - 상태 라벨처럼 문장이 아닌 것(`찾는 중`, `계정 없음`, `명단 정리 중`, `4 / 14 확인`)은 그대로 명사구로 둔다. 억지로 `~습니다` 를 붙이지 않는다.
+- **영어도 같은 태도다**: 꾸미지 않은 평서문, 마케팅 어투 금지(`Discover`·`Explore` 류를 쓰지 않는다). 한국어 문구의 단정함을 그대로 옮긴다 — `We only list accounts that were made public…` 처럼.
+- **문구는 코드가 아니라 사전에 있다.** 화면 글자를 고칠 때 `.tsx` 를 열고 있으면 자리를 잘못 잡은 것이다(위 "언어" 절).
 
 ### 이름은 도메인 용어 그대로
 
@@ -149,7 +189,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ## 현재 상태
 
-네 화면(기수 목록·기수 상세·삭제 요청·처리방침)이 동작하고 빌드가 통과한다. SEO 배관(sitemap·robots·canonical·OG 이미지)까지 붙어 있고 전부 정적으로 프리렌더된다. Vercel 에 배포돼 있다 — https://whosthat-six.vercel.app (도메인은 추후 구매 예정). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. 실제 사진 파일은 아직 한 장도 없다.
+네 화면(기수 목록·기수 상세·삭제 요청·처리방침)이 **한국어·영어 두 벌**로 동작하고 빌드가 통과한다(80 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지)까지 붙어 있고 전부 정적이다 — 서버가 하는 일은 `/` 하나를 언어로 보내는 proxy 뿐이다. Vercel 에 배포돼 있다 — https://whosthat-six.vercel.app (도메인은 추후 구매 예정). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. 실제 사진 파일은 아직 한 장도 없다.
 
 브랜드 워드마크·파비콘·앱 아이콘(`@whosthat`)이 붙었다 — 위 "브랜드" 절 참고. 네 화면 헤더가 전부 같은 `‹ 제목` 인라인 구조를 쓴다.
 
@@ -165,6 +205,8 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 검색(`SeasonSearch`)은 **홈의 기수 목록 바로 위 검색창**이다. 헤더 돋보기 + `⌘K` 팔레트(shadcn `command`)로 먼저 만들었다가 반려됐다 — 목록 위 검색창이 맞다. 그래서 `command`·`dialog` 는 다시 걷어냈고 `cmdk` 의존도 지웠다.
 
+- **인덱스는 언어별로 만들어진다.** 영어 인덱스의 가명은 로마자고, 한글 원문은 `keywords` 로 함께 실려 `영수` 질의도 받는다(위 "언어" 절).
+
 - **입력이 비어 있으면 원래의 지난 기수 목록, 뭔가 입력하면 그 자리가 결과로 바뀐다.** 목록을 두 벌 그리지 않으려고 서버가 그린 목록을 `children` 으로 받는다 — `SeasonRow` 를 클라이언트 컴포넌트에서 import 하면 그게 쓰는 `lib/data` 를 타고 원본 JSON 이 번들에 딸려 온다.
 
 - **가명은 식별자가 아니다.** 318명이 쓰는 가명이 14개뿐이라 "영수" 한 단어는 26개 결과를 낸다. 그래서 ① 계정을 찾아 둔 사람(`found`)을 맨 위로 올리고 ② 기수 이름을 사람 쪽 검색 대상에 함께 넣어 `22기 영수` 로 좁혀지게 했다. 기수 토큰을 따로 골라내는 특수 처리는 없다 — 그 한 줄이 복합 질의를 통째로 받아낸다.
@@ -172,7 +214,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **인덱스는 `buildSearchIndex`(`data.ts`)가 서버에서 만들어 홈 페이지가 prop 으로 내린다.** 검색이 클라이언트 컴포넌트라 `lib/search.ts` 는 `lib/data.ts` 를 import 하지 않는다 — 한 파일에 섞으면 원본 JSON 56KB 가 클라이언트 번들에 딸려 들어간다. 페이지당 인덱스는 gzip 2KB 다(가명·상태가 반복돼 잘 압축된다).
 - 사람 결과는 `/seasons/{id}#{memberId}` 로 착지한다. 앵커는 `CastCard` 가 카드에 거는 DOM id 와 짝이다.
 
-다음: 계정 데이터 채우기 → 제보 폼(`PLANNING.md` 로드맵 2단계).
+다음: 계정 데이터 채우기 → 제보 폼(`PLANNING.md` 로드맵 2단계). 언어는 영어까지 붙었고 일본어가 다음 후보다 — 절차는 위 "언어를 하나 더할 때".
 
 **DB·백엔드는 아직 필요 없다.** 지금은 정적 JSON + SSG 로 충분하고, 데이터가 늘었다는 건 옮길 이유가 안 된다. 갈아탈 시점을 판단하는 기준은 `PLANNING.md` §7 "DB·백엔드는 언제 필요한가" 에 있다 — 조건이 실제로 걸리면 그때 먼저 말한다.
 

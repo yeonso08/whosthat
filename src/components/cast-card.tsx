@@ -1,12 +1,22 @@
 import type { ReactElement } from "react";
 import { CastPhoto } from "@/components/cast-photo";
 import { InstagramIcon } from "@/components/icons";
-import { formatChecked } from "@/lib/data";
+import {
+  currentLocale,
+  fill,
+  formatChecked,
+  getDictionary,
+  localizeAlias,
+  type Dictionary,
+  type Locale,
+} from "@/lib/i18n";
 import { instagramUrl } from "@/lib/links";
 import type { CastMember } from "@/lib/types";
 
 /** 카드와 그 안의 상태 줄이 같은 사람을 그리므로 타입을 함께 쓴다. */
 type Props = { member: CastMember };
+
+type StatusProps = Props & { dict: Dictionary; locale: Locale };
 
 /** 2열 그리드라 모바일에선 화면 절반, 넓어지면 카드가 300px 에서 멈춘다. */
 const CARD_SIZES = "(min-width: 640px) 300px, 50vw";
@@ -20,9 +30,13 @@ const FALLBACK_TEXT = "text-[22px] tracking-tight";
  */
 const ANCHOR_OFFSET = "scroll-mt-4";
 
-export function CastCard({ member }: Props) {
+export async function CastCard({ member }: Props) {
+  const locale = await currentLocale();
+  const dict = getDictionary(locale);
+
   const found = member.status === "found";
   const handle = member.instagramHandle;
+  const alias = localizeAlias(member.alias, locale);
   const description = describe(member);
 
   const body = (
@@ -30,9 +44,9 @@ export function CastCard({ member }: Props) {
       <div className={`relative aspect-[6/7] w-full ${FALLBACK_TEXT}`}>
         <CastPhoto
           src={member.profileImageUrl}
-          alias={member.alias}
+          alias={alias}
           status={member.status}
-          alt={`${member.alias} 사진`}
+          alt={fill(dict.season.photoAlt, { alias })}
           sizes={CARD_SIZES}
         />
       </div>
@@ -47,14 +61,14 @@ export function CastCard({ member }: Props) {
         <span
           className={`text-xl font-bold tracking-tight ${found ? "" : "text-muted-foreground"}`}
         >
-          {member.alias}
+          {alias}
         </span>
         {description && (
           <span className="truncate text-[11.5px] text-muted-foreground">
             {description}
           </span>
         )}
-        <CardStatus member={member} />
+        <CardStatus member={member} dict={dict} locale={locale} />
       </div>
     </>
   );
@@ -89,7 +103,7 @@ export function CastCard({ member }: Props) {
  * 반환 타입을 못 박아 두면 AccountStatus 에 상태가 하나 늘 때
  * 여기서 컴파일 에러가 난다 — 화면 문구를 빠뜨리지 않게 하는 장치다.
  */
-function CardStatus({ member }: Props): ReactElement {
+function CardStatus({ member, dict, locale }: StatusProps): ReactElement {
   switch (member.status) {
     case "found":
       return (
@@ -100,11 +114,14 @@ function CardStatus({ member }: Props): ReactElement {
 
     case "none": {
       const checked = member.lastVerified
-        ? formatChecked(member.lastVerified)
+        ? fill(dict.status.checked, {
+            date: formatChecked(member.lastVerified, locale),
+          })
         : "";
       return (
         <span className="mt-1 text-[11.5px] font-semibold text-muted-foreground">
-          계정 없음{checked && ` · ${checked} 확인`}
+          {dict.status.none}
+          {checked && ` · ${checked}`}
         </span>
       );
     }
@@ -112,7 +129,7 @@ function CardStatus({ member }: Props): ReactElement {
     case "searching":
       return (
         <span className="mt-1 text-[11.5px] font-semibold text-searching">
-          찾는 중
+          {dict.status.searching}
         </span>
       );
   }

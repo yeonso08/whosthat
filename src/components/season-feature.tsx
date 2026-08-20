@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { CastPhoto } from "@/components/cast-photo";
-import { formatAirDate } from "@/lib/data";
+import {
+  currentLocale,
+  formatCoverage,
+  getDictionary,
+  localizeSeason,
+} from "@/lib/i18n";
 import { seasonHref } from "@/lib/links";
-import { formatCoverage, getCoverage, type Season } from "@/lib/types";
+import { getCoverage, type Season } from "@/lib/types";
 
 /** 겹쳐 쌓는 얼굴 수. 목록 줄(4)보다 줄이 넓어 여섯까지 들어가고, 나머지는 +N 으로 센다. */
 const FACE_COUNT = 6;
@@ -18,36 +23,37 @@ const FACE_SHAPE =
 type Props = { season: Season };
 
 /** 목록 맨 위에 크게 세우는 최신(또는 방영 중) 기수. */
-export function SeasonFeature({ season }: Props) {
+export async function SeasonFeature({ season }: Props) {
+  const locale = await currentLocale();
+  const dict = getDictionary(locale);
+
   const coverage = getCoverage(season.cast);
   const faces = season.cast.slice(0, FACE_COUNT);
   const rest = coverage.total - faces.length;
-  const airDate = formatAirDate(season.airDate);
+  const { label, special, airDate } = localizeSeason(season, locale);
 
   return (
     <Link
-      href={seasonHref(season.id)}
+      href={seasonHref(locale, season.id)}
       className="block rounded-2xl bg-card p-4 transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       {season.onAir ? (
         <span className="flex items-center gap-1.5 text-[11px] font-bold text-searching">
           <span className="size-1.5 rounded-full bg-searching" />
-          방영 중
-          {season.special && (
+          {dict.home.onAir}
+          {special && (
             <span className="font-lat font-semibold text-muted-foreground">
-              · {season.special}
+              · {special}
             </span>
           )}
         </span>
       ) : (
         <span className="font-lat text-[11px] font-semibold text-muted-foreground">
-          {[airDate, season.special].filter(Boolean).join(" · ") || "최신 기수"}
+          {[airDate, special].filter(Boolean).join(" · ") || dict.home.latest}
         </span>
       )}
 
-      <p className="mt-2.5 text-2xl font-black tracking-tighter">
-        {season.label}
-      </p>
+      <p className="mt-2.5 text-2xl font-black tracking-tighter">{label}</p>
 
       <div className="mt-4 flex items-center justify-between gap-3">
         {/* 얼굴 겹침(-ml)을 상쇄해 첫 원을 제목 선에 맞춘다. */}
@@ -56,7 +62,10 @@ export function SeasonFeature({ season }: Props) {
             <div key={member.id} className={FACE_SHAPE}>
               <CastPhoto
                 src={member.profileImageUrl}
-                alias={member.alias}
+                // 배지는 사진 대신 놓는 워터마크라 언어를 안 따라간다 — 로마자로
+              // 바꾸면 원에 안 들어가고, 잘라 쓰면 영수·영호·영식이 전부 "Ye" 가
+              // 된다. 이름은 기수 상세의 카드가 그 언어로 온전히 말한다.
+              alias={member.alias}
                 status={member.status}
                 alt=""
                 sizes="44px"
@@ -71,7 +80,7 @@ export function SeasonFeature({ season }: Props) {
         </div>
 
         <span className="font-lat shrink-0 text-xs font-semibold text-muted-foreground">
-          {formatCoverage(coverage)}
+          {formatCoverage(coverage, locale)}
         </span>
       </div>
     </Link>

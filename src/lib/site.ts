@@ -23,9 +23,6 @@ function resolveSiteUrl(): string {
   return "http://localhost:3000";
 }
 
-/** 검색 결과와 공유 카드에 쓰는 사이트 이름. */
-export const SITE_NAME = "나는 솔로 출연진 인스타";
-
 /**
  * 삭제·정정 요청을 받는 주소.
  *

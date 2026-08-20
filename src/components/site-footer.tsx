@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BRAND_MARK, BRAND_WORDMARK } from "@/lib/brand";
-import { PRIVACY_HREF, TAKEDOWN_HREF } from "@/lib/links";
+import { currentDictionary, currentLocale } from "@/lib/i18n";
+import { privacyHref, takedownHref } from "@/lib/links";
 
 const LINK_STYLE = "underline underline-offset-4 hover:text-foreground";
 
@@ -14,19 +15,19 @@ const LINK_STYLE = "underline underline-offset-4 hover:text-foreground";
 const COPYRIGHT_YEAR = 2026;
 
 /** 모든 화면 바닥. 삭제 요청 창구는 어느 기수에서든 한 번에 닿아야 한다. */
-export function SiteFooter() {
+export async function SiteFooter() {
+  const locale = await currentLocale();
+  const dict = await currentDictionary();
+
   return (
     <footer className="mt-10 flex flex-col gap-2.5 border-t border-border px-5 pt-5 pb-8 text-xs leading-relaxed text-muted-foreground">
-      <p>
-        방송에서 공개됐거나 본인이 공개로 둔 계정만 올립니다. 확인한 것만
-        싣고, 추측은 싣지 않습니다.
-      </p>
+      <p>{dict.footer.note}</p>
       <p className="flex gap-4">
-        <Link href={TAKEDOWN_HREF} className={LINK_STYLE}>
-          삭제·정정 요청
+        <Link href={takedownHref(locale)} className={LINK_STYLE}>
+          {dict.footer.takedown}
         </Link>
-        <Link href={PRIVACY_HREF} className={LINK_STYLE}>
-          개인정보 처리방침
+        <Link href={privacyHref(locale)} className={LINK_STYLE}>
+          {dict.footer.privacy}
         </Link>
       </p>
       <p className="font-lat mt-1 text-[11px] text-muted-foreground/70">

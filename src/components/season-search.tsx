@@ -9,21 +9,22 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import type { Dictionary, Locale } from "@/lib/i18n";
 import { castMemberHref, seasonHref } from "@/lib/links";
 import { search } from "@/lib/search";
-import {
-  formatCoverage,
-  type IndexedMember,
-  type SearchIndex,
-} from "@/lib/types";
+import type { IndexedMember, SearchIndex } from "@/lib/types";
 
 type Props = {
   index: SearchIndex;
+  locale: Locale;
+  /** 사전을 통째로 들고 오면 두 언어가 클라이언트 번들에 실린다 — 쓰는 묶음만 받는다. */
+  text: Dictionary["search"];
+  status: Dictionary["status"];
   /** 검색 전에 보여 줄 것 — 홈의 "지난 기수" 목록이 그대로 들어온다. */
   children: ReactNode;
 };
 
-type HitProps = { member: IndexedMember };
+type HitProps = { member: IndexedMember; status: Dictionary["status"] };
 
 /** 지난 기수 목록의 제목 줄과 같은 자리·같은 무게를 쓴다. 검색 결과도 그 목록의 한 형태다. */
 const GROUP_HEADING = "px-5 pt-7 pb-2 text-[13px] font-bold text-muted-foreground";
@@ -39,7 +40,7 @@ const ROW =
  * children 으로 받는다 — `SeasonRow` 를 여기서 import 하면 그 컴포넌트가 쓰는
  * `lib/data` 를 타고 원본 JSON 이 클라이언트 번들로 딸려 온다.
  */
-export function SeasonSearch({ index, children }: Props) {
+export function SeasonSearch({ index, locale, text, status, children }: Props) {
   const [query, setQuery] = useState("");
   const results = useMemo(() => search(index, query), [index, query]);
   const searching = query.trim().length > 0;
@@ -55,13 +56,13 @@ export function SeasonSearch({ index, children }: Props) {
           <InputGroupInput
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="기수 · 특집 · 가명 검색"
-            aria-label="기수와 출연진 검색"
+            placeholder={text.placeholder}
+            aria-label={text.label}
           />
           {searching && (
             <InputGroupAddon align="inline-end">
               <InputGroupButton
-                aria-label="검색어 지우기"
+                aria-label={text.clear}
                 onClick={() => setQuery("")}
               >
                 <X />
@@ -75,18 +76,22 @@ export function SeasonSearch({ index, children }: Props) {
 
       {searching && nothing && (
         <p className="mt-6 mx-5 rounded-2xl bg-card px-5 py-8 text-center text-[13px] leading-relaxed text-muted-foreground">
-          찾는 항목이 없습니다.
+          {text.emptyTitle}
           <br />
-          기수 번호나 특집 이름으로도 찾을 수 있습니다.
+          {text.emptyHint}
         </p>
       )}
 
       {searching && results.seasons.length > 0 && (
         <>
-          <h2 className={GROUP_HEADING}>기수</h2>
+          <h2 className={GROUP_HEADING}>{text.seasonsHeading}</h2>
           <section className="px-2">
             {results.seasons.map((season) => (
-              <Link key={season.id} href={seasonHref(season.id)} className={ROW}>
+              <Link
+                key={season.id}
+                href={seasonHref(locale, season.id)}
+                className={ROW}
+              >
                 <span className="font-bold tracking-tight">{season.label}</span>
                 {season.special && (
                   <span className="truncate text-[13px] text-muted-foreground">
@@ -94,7 +99,7 @@ export function SeasonSearch({ index, children }: Props) {
                   </span>
                 )}
                 <span className="font-lat ml-auto shrink-0 text-xs text-muted-foreground">
-                  {formatCoverage(season.coverage)}
+                  {season.coverage}
                 </span>
               </Link>
             ))}
@@ -104,16 +109,16 @@ export function SeasonSearch({ index, children }: Props) {
 
       {searching && results.members.length > 0 && (
         <>
-          <h2 className={GROUP_HEADING}>출연진</h2>
+          <h2 className={GROUP_HEADING}>{text.castHeading}</h2>
           <section className="px-2">
             {results.members.map(({ member, seasonId, seasonLabel }) => (
               <Link
                 key={member.id}
-                href={castMemberHref(seasonId, member.id)}
+                href={castMemberHref(locale, seasonId, member.id)}
                 className={ROW}
               >
                 <span className="font-bold tracking-tight">{member.alias}</span>
-                <HitStatus member={member} />
+                <HitStatus member={member} status={status} />
                 <span className="font-lat ml-auto shrink-0 text-xs text-muted-foreground">
                   {seasonLabel}
                 </span>
@@ -123,8 +128,8 @@ export function SeasonSearch({ index, children }: Props) {
 
           {results.membersTruncated && (
             <p className="px-5 pt-2 text-[12px] leading-relaxed text-muted-foreground">
-              같은 가명이 기수마다 있습니다. 기수를 함께 입력하면 좁혀집니다 —
-              예: <span className="font-lat">22기 영수</span>
+              {text.truncated}{" "}
+              <span className="font-lat">{text.truncatedExample}</span>
             </p>
           )}
         </>
@@ -137,7 +142,7 @@ export function SeasonSearch({ index, children }: Props) {
  * 결과 한 줄의 상태 표시. `CastCard` 의 `CardStatus` 와 같은 장치다 — 반환
  * 타입을 못 박아 두면 `AccountStatus` 에 상태가 늘 때 여기서 컴파일 에러가 난다.
  */
-function HitStatus({ member }: HitProps): ReactElement {
+function HitStatus({ member, status }: HitProps): ReactElement {
   switch (member.status) {
     case "found":
       return (
@@ -149,13 +154,15 @@ function HitStatus({ member }: HitProps): ReactElement {
     case "none":
       return (
         <span className="truncate text-[13px] text-muted-foreground">
-          계정 없음
+          {status.none}
         </span>
       );
 
     case "searching":
       return (
-        <span className="truncate text-[13px] text-searching">찾는 중</span>
+        <span className="truncate text-[13px] text-searching">
+          {status.searching}
+        </span>
       );
   }
 }

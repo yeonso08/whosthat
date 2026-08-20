@@ -73,15 +73,6 @@ export function getCoverage(cast: CastMember[]): Coverage {
 }
 
 /**
- * "4 / 14 확인". 명단을 아직 못 채운 기수는 개수 대신 그 사실을 적는다 —
- * "0 / 0 확인"은 아무도 못 찾았다는 뜻으로 읽혀서 사실과 다르다.
- */
-export function formatCoverage(coverage: Coverage): string {
-  if (coverage.total === 0) return "명단 정리 중";
-  return `${coverage.found} / ${coverage.total} 확인`;
-}
-
-/**
  * 검색이 훑는 최소 데이터.
  *
  * 이 인덱스는 통째로 클라이언트에 실려 나간다 — 원본 JSON(56KB)을 그대로
@@ -95,14 +86,18 @@ export type IndexedMember = {
   status: AccountStatus;
   /** CastMember.instagramHandle 과 같은 값. 결과 줄에 핸들을 보여주려고 싣는다. */
   handle?: string;
+  /** 화면에 안 나오고 검색만 훑는 글자. 번역된 화면에서 원문(한글)을 받는 자리다. */
+  keywords?: string;
 };
 
 export type IndexedSeason = {
   id: string;
   label: string;
   special?: string;
-  /** 결과 줄에 "12명 중 3명" 을 적으려고 미리 센다. 화면마다 다시 세지 않는다. */
-  coverage: Coverage;
+  /** "4 / 14 확인" 처럼 이미 그 화면 언어로 만들어 둔 문구. 검색은 클라이언트라 사전을 못 본다. */
+  coverage: string;
+  /** 화면에 안 나오고 검색만 훑는 글자. 번역된 화면에서 원문(한글)을 받는 자리다. */
+  keywords?: string;
   cast: IndexedMember[];
 };
 

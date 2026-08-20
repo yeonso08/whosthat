@@ -38,11 +38,11 @@ export function search(index: SearchIndex, query: string): SearchResults {
   for (const season of index) {
     // 기수 이름을 사람 쪽 건초더미에도 넣는 게 "22기 영수" 를 받는 유일한
     // 장치다. 질의에서 기수 토큰을 따로 골라내는 특수 처리가 필요 없어진다.
-    const seasonText = `${season.label} ${season.special ?? ""}`;
+    const seasonText = `${season.label} ${season.special ?? ""} ${season.keywords ?? ""}`;
     if (matches(seasonText, tokens)) seasons.push(season);
 
     for (const member of season.cast) {
-      const text = `${seasonText} ${member.alias} ${member.name ?? ""} ${member.handle ?? ""}`;
+      const text = `${seasonText} ${member.alias} ${member.keywords ?? ""} ${member.name ?? ""} ${member.handle ?? ""}`;
       if (matches(text, tokens)) {
         members.push({
           member,

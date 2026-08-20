@@ -9,9 +9,13 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
-import { formatAirDate } from "@/lib/data";
+import {
+  currentLocale,
+  formatCoverage,
+  localizeSeason,
+} from "@/lib/i18n";
 import { seasonHref } from "@/lib/links";
-import { formatCoverage, getCoverage, type Season } from "@/lib/types";
+import { getCoverage, type Season } from "@/lib/types";
 
 /** 줄 왼쪽에 겹쳐 쌓는 얼굴 수. 더 넣으면 기수 이름이 밀린다. */
 const FACE_COUNT = 4;
@@ -25,20 +29,27 @@ const FACE_SHAPE =
 
 type Props = { season: Season };
 
-export function SeasonRow({ season }: Props) {
+export async function SeasonRow({ season }: Props) {
+  const locale = await currentLocale();
   const coverage = getCoverage(season.cast);
   const faces = season.cast.slice(0, FACE_COUNT);
-  const airDate = formatAirDate(season.airDate);
-  const detail = [airDate, season.special].filter(Boolean).join(" · ");
+  const { label, special, airDate } = localizeSeason(season, locale);
+  const detail = [airDate, special].filter(Boolean).join(" · ");
 
   return (
-    <Item className="gap-3.5 p-3" render={<Link href={seasonHref(season.id)} />}>
+    <Item
+      className="gap-3.5 p-3"
+      render={<Link href={seasonHref(locale, season.id)} />}
+    >
       {/* 기본값 두 개를 되돌린다 — 설명이 있으면 위로 붙는 정렬, 그리고 얼굴 겹침을 상쇄하는 gap. */}
       <ItemMedia className="translate-y-0 gap-0 self-center pl-2.5">
         {faces.map((member) => (
           <div key={member.id} className={FACE_SHAPE}>
             <CastPhoto
               src={member.profileImageUrl}
+              // 배지는 사진 대신 놓는 워터마크라 언어를 안 따라간다 — 로마자로
+              // 바꾸면 원에 안 들어가고, 잘라 쓰면 영수·영호·영식이 전부 "Ye" 가
+              // 된다. 이름은 기수 상세의 카드가 그 언어로 온전히 말한다.
               alias={member.alias}
               status={member.status}
               alt=""
@@ -55,11 +66,11 @@ export function SeasonRow({ season }: Props) {
 
       <ItemContent className="gap-0.5">
         <ItemTitle className="text-base font-bold tracking-tight">
-          {season.label}
+          {label}
         </ItemTitle>
         <ItemDescription className="font-lat text-xs">
           {detail ? `${detail} · ` : ""}
-          {formatCoverage(coverage)}
+          {formatCoverage(coverage, locale)}
         </ItemDescription>
       </ItemContent>
 
