@@ -18,8 +18,8 @@ export function SiteFooter() {
   return (
     <footer className="mt-10 flex flex-col gap-2.5 border-t border-border px-5 pt-5 pb-8 text-xs leading-relaxed text-muted-foreground">
       <p>
-        방송에서 공개됐거나 본인이 공개로 둔 계정만 올린다. 확인한 것만 싣고,
-        추측은 싣지 않는다.
+        방송에서 공개됐거나 본인이 공개로 둔 계정만 올립니다. 확인한 것만
+        싣고, 추측은 싣지 않습니다.
       </p>
       <p className="flex gap-4">
         <Link href={TAKEDOWN_HREF} className={LINK_STYLE}>

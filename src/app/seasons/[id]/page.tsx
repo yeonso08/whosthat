@@ -23,8 +23,8 @@ export async function generateMetadata({
   const title = `나는 솔로 ${season.label}${special} 출연진 인스타`;
   const description =
     coverage.total === 0
-      ? `나는 솔로 ${season.label}${special} 출연진의 인스타그램 계정. 명단을 정리하는 중이다.`
-      : `나는 솔로 ${season.label}${special} 출연진 ${coverage.total}명의 인스타그램 계정. 확인된 것만 모아 뒀고, 계정이 없는 사람은 없다고 적어 뒀다.`;
+      ? `나는 솔로 ${season.label}${special} 출연진의 인스타그램 계정. 명단을 정리하는 중입니다.`
+      : `나는 솔로 ${season.label}${special} 출연진 ${coverage.total}명의 인스타그램 계정. 확인된 것만 모아 뒀고, 계정이 없는 사람은 없다고 적어 뒀습니다.`;
   const path = seasonHref(season.id);
 
   return {
@@ -81,8 +81,8 @@ export default async function Page({ params }: PageProps<"/seasons/[id]">) {
         </section>
       ) : (
         <p className="mt-6 rounded-2xl bg-card px-5 py-8 text-center text-[13px] leading-relaxed text-muted-foreground mx-5">
-          아직 이 기수의 출연진 명단을 확인하지 못했다. 기수마다 인원이 달라서
-          짐작으로 채우지 않는다.
+          아직 이 기수의 출연진 명단을 확인하지 못했습니다. 기수마다 인원이
+          달라서 짐작으로 채우지 않습니다.
         </p>
       )}
     </main>

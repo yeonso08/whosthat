@@ -28,7 +28,7 @@ src/lib/types.ts              Program → Season → CastMember 모델
 src/lib/data.ts               JSON 로더 + 날짜 포맷 + 검색 인덱스 생성
 src/lib/search.ts             검색 매칭 — 데이터를 모른다(클라이언트로 넘어간다)
 src/data/na-neun-solo.json    실데이터 — 채우는 법은 src/data/README.md
-src/components/               cast-card, cast-avatar, season-row, season-feature, site-footer, site-header, site-search, back-link, wordmark, icons, theme-provider, mode-toggle
+src/components/               cast-card, cast-avatar, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, icons, theme-provider, mode-toggle
 ```
 
 Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 반드시 await 한다.
@@ -40,7 +40,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 ### 컴포넌트는 shadcn/ui 에 있는지 먼저 본다
 
 - **손으로 짜기 전에 레지스트리를 먼저 확인한다.** 있으면 그걸 쓴다. 받는 건 로컬 CLI 로 — `pnpm exec shadcn add <name>`. `dlx shadcn@latest` 는 설치된 버전(4.18.0)·스타일(`base-nova`)과 어긋날 수 있으니 쓰지 않는다.
-- **접근성이 걸린 것은 특히 직접 만들지 않는다.** dialog, dropdown, popover, tooltip, tabs, sheet, command, form, input. 포커스 트랩·키보드 이동·ARIA 를 손으로 다시 짜면 반드시 빠뜨린다. 로드맵상 검색은 `command`, 제보 폼은 `form` + `input` 부터 본다.
+- **접근성이 걸린 것은 특히 직접 만들지 않는다.** dialog, dropdown, popover, tooltip, tabs, sheet, command, form, input. 포커스 트랩·키보드 이동·ARIA 를 손으로 다시 짜면 반드시 빠뜨린다. 제보 폼은 `form` + `input` 부터 본다.
 - 아이콘도 같다. `lucide-react` 가 이미 깔려 있다(`components.json` 의 `iconLibrary: lucide`). 새 아이콘은 lucide 에서 가져오고, `components/icons.tsx` 에는 **lucide 에 없는 것만** 둔다(인스타그램 같은 브랜드 마크).
 - 받은 뒤에는 **시안 D 에 맞춰 고쳐 쓴다.** 들어온 순간 우리 코드라 수정해도 된다 — 다만 기본 스타일이 디자인 규칙(흑백, 유채색은 `searching` 전용, 반경 12~16px)을 이기게 두지 않는다.
 - **`components/ui/` 는 shadcn 자리, `components/` 바로 아래는 우리 자리.** 섞지 않아야 나중에 `add` 로 덮어써도 안전하다.
@@ -87,6 +87,13 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - 그 컴포넌트만 쓰는 Props 는 파일에 둬도 되지만, **`type Props` 로 이름 붙여 파일 상단 한 곳에** 선언한다. 함수 시그니처 안에 인라인으로 흩뿌리지 않는다(`cast-avatar.tsx` 가 이 형태다).
 - **그 Props 를 다른 파일이 참조하는 순간 `types.ts` 로 옮긴다.** 두 번째 사용처가 분리 기준이다.
 - 타입만 모아 두는 파일은 `types.ts` 하나로 충분하다. 프로그램이 늘어 이 파일이 커지면 도메인 단위(`types/cast.ts`, `types/season.ts`)로 나누고, 컴포넌트별로 쪼개지 않는다.
+
+### 화면 문구는 존댓말, 코드는 평서체
+
+- **사용자에게 보이는 글은 전부 `합니다`체다.** 본문, 빈 상태, 안내, 버튼, 그리고 `metadata` 의 description(검색 결과·공유 카드에 그대로 나간다)까지 포함이다. `찾는 게 없다` 가 아니라 `찾는 항목이 없습니다`.
+- 방문자 입장에서 적는 문장(삭제 요청 페이지의 요청 예시 목록)은 그 사람 말투인 `~해 주세요` / `~있어요` 로 둔다. 사이트가 하는 말과 방문자가 하는 말을 섞지 않는다.
+- **반대로 코드 주석·`CLAUDE.md`·`PLANNING.md`·`src/data/README.md` 는 평서체다.** 읽는 사람이 다르다 — 이쪽은 짧고 단정한 쪽이 낫다. 화면 문구를 고칠 때 주석까지 같이 존댓말로 바꾸지 말 것.
+- 상태 라벨처럼 문장이 아닌 것(`찾는 중`, `계정 없음`, `명단 정리 중`, `4 / 14 확인`)은 그대로 명사구로 둔다. 억지로 `~습니다` 를 붙이지 않는다.
 
 ### 이름은 도메인 용어 그대로
 
@@ -139,11 +146,13 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 연락처는 `lib/site.ts` 의 `CONTACT_EMAIL` 한 곳이다. 이 주소는 **실제로 열려 있어야 한다** — 반송되면 사이트가 지키지 못할 약속을 걸어 둔 셈이 된다.
 
-검색(`SiteSearch`)이 네 화면 헤더에 붙어 있다 — 돋보기 버튼과 `⌘K`. shadcn `command` 를 쓰되 `shouldFilter={false}` 로 기본 점수 매기기를 끄고 매칭은 `lib/search.ts` 가 한다.
+검색(`SeasonSearch`)은 **홈의 기수 목록 바로 위 검색창**이다. 헤더 돋보기 + `⌘K` 팔레트(shadcn `command`)로 먼저 만들었다가 반려됐다 — 목록 위 검색창이 맞다. 그래서 `command`·`dialog` 는 다시 걷어냈고 `cmdk` 의존도 지웠다.
+
+- **입력이 비어 있으면 원래의 지난 기수 목록, 뭔가 입력하면 그 자리가 결과로 바뀐다.** 목록을 두 벌 그리지 않으려고 서버가 그린 목록을 `children` 으로 받는다 — `SeasonRow` 를 클라이언트 컴포넌트에서 import 하면 그게 쓰는 `lib/data` 를 타고 원본 JSON 이 번들에 딸려 온다.
 
 - **가명은 식별자가 아니다.** 318명이 쓰는 가명이 14개뿐이라 "영수" 한 단어는 26개 결과를 낸다. 그래서 ① 계정을 찾아 둔 사람(`found`)을 맨 위로 올리고 ② 기수 이름을 사람 쪽 검색 대상에 함께 넣어 `22기 영수` 로 좁혀지게 했다. 기수 토큰을 따로 골라내는 특수 처리는 없다 — 그 한 줄이 복합 질의를 통째로 받아낸다.
-- 퍼지 매칭을 넣지 말 것. 가명이 한 글자씩만 다르라 오타를 관대하게 보면 "영수"에 "영식"·"영철"이 딸려 온다.
-- **인덱스는 `buildSearchIndex`(`data.ts`)가 서버에서 만들어 `SiteHeader` 가 prop 으로 내린다.** 검색이 클라이언트 컴포넌트라 `lib/search.ts` 는 `lib/data.ts` 를 import 하지 않는다 — 한 파일에 섞으면 원본 JSON 56KB 가 클라이언트 번들에 딸려 들어간다. 페이지당 인덱스는 gzip 2KB 다(가명·상태가 반복돼 잘 압축된다).
+- 퍼지 매칭을 넣지 말 것. 가명이 한 글자씩만 달라서 오타를 관대하게 보면 "영수"에 "영식"·"영철"이 딸려 온다.
+- **인덱스는 `buildSearchIndex`(`data.ts`)가 서버에서 만들어 홈 페이지가 prop 으로 내린다.** 검색이 클라이언트 컴포넌트라 `lib/search.ts` 는 `lib/data.ts` 를 import 하지 않는다 — 한 파일에 섞으면 원본 JSON 56KB 가 클라이언트 번들에 딸려 들어간다. 페이지당 인덱스는 gzip 2KB 다(가명·상태가 반복돼 잘 압축된다).
 - 사람 결과는 `/seasons/{id}#{memberId}` 로 착지한다. 앵커는 `CastCard` 가 카드에 거는 DOM id 와 짝이다.
 
 다음: 계정 데이터 채우기 → 제보 폼(`PLANNING.md` 로드맵 2단계).

@@ -14,11 +14,7 @@ import type {
   SearchResults,
 } from "./types";
 
-/**
- * 질의가 걸린 기수 결과의 상한. 아래 사람 결과가 화면 밖으로 밀리지 않게 끊는다.
- * 질의가 비었을 때는 이 상한을 쓰지 않는다 — 그때 목록은 결과가 아니라
- * "기수로 건너뛰기" 그 자체라서 33개가 다 보이는 게 맞다.
- */
+/** 기수 결과의 상한. 아래 사람 결과가 화면 밖으로 밀리지 않게 끊는다. */
 const MAX_SEASONS = 8;
 
 /**
@@ -30,9 +26,10 @@ const MAX_MEMBERS = 24;
 export function search(index: SearchIndex, query: string): SearchResults {
   const tokens = tokenize(query);
 
-  // 빈 질의는 기수 목록 그대로다. 열자마자 기수로 건너뛰는 창구가 된다.
+  // 빈 질의는 결과가 없는 게 맞다. 그때 화면에 남는 건 검색 결과가 아니라
+  // 원래의 기수 목록이고, 그건 `SeasonSearch` 가 children 으로 들고 있다.
   if (tokens.length === 0) {
-    return { seasons: index, members: [], membersTruncated: false };
+    return { seasons: [], members: [], membersTruncated: false };
   }
 
   const seasons: IndexedSeason[] = [];
