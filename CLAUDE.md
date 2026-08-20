@@ -21,10 +21,13 @@ src/app/page.tsx              기수 목록
 src/app/seasons/[id]/page.tsx 기수 상세 (generateStaticParams 로 전 기수 프리렌더)
 src/app/takedown/page.tsx     삭제·정정 요청 창구
 src/app/privacy/page.tsx      개인정보 처리방침
+src/app/icon.tsx              파비콘 — @ 마크, 코드 생성(ImageResponse)
+src/app/apple-icon.tsx        iOS 홈 화면 아이콘 — 같은 마크, 180×180
+src/lib/brand.ts              BRAND_MARK(@)·BRAND_WORDMARK(whosthat) — 워드마크와 아이콘이 공유
 src/lib/types.ts              Program → Season → CastMember 모델
 src/lib/data.ts               JSON 로더 + 날짜 포맷
 src/data/na-neun-solo.json    실데이터 — 채우는 법은 src/data/README.md
-src/components/               cast-card, cast-avatar, season-row, season-feature, site-footer, back-link, icons
+src/components/               cast-card, cast-avatar, season-row, season-feature, site-footer, back-link, wordmark, icons
 ```
 
 Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 반드시 await 한다.
@@ -102,6 +105,15 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 **색면 포스터풍으로 가지 말 것.** 굵은 디스플레이 서체 + 강한 색면 + 거대한 숫자 조합은 이 프로젝트에서 반복해서 반려됐다. 사진이 빠진 자리를 거대한 숫자나 색면으로 메우려 하지 말 것 — 이니셜 배지·진행 스트립·타이포 위계로 대신한다. 방향이 애매하면 시안을 더 찍기보다 레퍼런스를 물어보는 게 빠르다.
 
+### 브랜드 — `@whosthat`
+
+워드마크는 `@whosthat`, 마크는 그 앞의 `@` 하나다. **라틴 문자 기준이다** — 글로벌 확장 전제라 한글 워드마크는 후보에서 뺐다(1차 화면 문구는 한국어지만 브랜드는 그 범위에 묶지 않는다).
+
+- `BRAND_MARK`·`BRAND_WORDMARK` 는 `lib/brand.ts` 하나에 있다. 워드마크(`Wordmark` 컴포넌트)와 파비콘(`icon.tsx`)·앱 아이콘(`apple-icon.tsx`)이 같은 값을 쓰므로 두 번째 사용처가 생겼을 때 이미 여기로 올렸다.
+- 파비콘·앱 아이콘은 **도형이 아니라 Manrope 글리프(`@`)를 그대로 그린다.** 직접 그린 도형(원호+꼬리)으로 먼저 시도했지만 32px 에서 안쪽 구멍이 막히고 꼬리가 말려 로딩 스피너처럼 읽혔다 — 폰트 글리프는 안쪽 `a` 배와 세로획이 살아 있어 작은 크기에서도 `@` 로 읽힌다.
+- `Wordmark` 는 홈·기수 상세·정책 페이지(처리방침·삭제요청) 헤더에 있다. 정책 페이지는 검색으로 바로 착지하는 진입점이라 워드마크가 특히 중요하다 — 본문의 "이 사이트" 도 첫 문장에서 `BRAND_WORDMARK` 로 못박는다.
+- `BackLink` 는 바깥 여백을 갖지 않는다 — 정책 페이지는 제목 위 한 줄, 기수 상세는 제목 옆(`‹ 33기`)에 붙이므로 자리는 쓰는 쪽이 정한다. 제목이 두 줄로 접힐 때 화살표가 첫 줄에 붙게 `-mt-1` 로 광학 정렬한다.
+
 ## 데이터 규칙
 
 - 계정 상태는 `found` / `none` / `searching` 3가지다. **`none`("찾아봤는데 없다")은 결과지 실패가 아니다** — 방문자의 헛수고를 막는 게 이 사이트의 핵심 가치라 별개 상태로 둔다. `searching` 으로 방치하지 말 것.
@@ -113,6 +125,8 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 ## 현재 상태
 
 네 화면(기수 목록·기수 상세·삭제 요청·처리방침)이 동작하고 빌드가 통과한다. SEO 배관(sitemap·robots·canonical·OG 이미지)까지 붙어 있고 전부 정적으로 프리렌더된다. Vercel 에 배포돼 있다 — https://whosthat-six.vercel.app (도메인은 추후 구매 예정). 사진을 못 쓰게 되면서 `CastPhoto` 를 걷어내고 이니셜 배지(`CastAvatar`) 중심으로 다시 짰다 — 위 "디자인" 절 참고.
+
+브랜드 워드마크·파비콘·앱 아이콘(`@whosthat`)이 붙었다 — 위 "브랜드" 절 참고. 네 화면 헤더가 전부 같은 `‹ 제목` 인라인 구조를 쓴다.
 
 도메인은 `lib/site.ts` 한 곳에서 정해진다. Vercel 이 넣어 주는 `VERCEL_PROJECT_PRODUCTION_URL` 을 쓰므로 **평소엔 설정할 게 없고**, 커스텀 도메인을 Vercel 에 연결하면 자동으로 따라간다. Vercel 밖에 배포할 때만 `NEXT_PUBLIC_SITE_URL` 을 준다.
 
