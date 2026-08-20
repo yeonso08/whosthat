@@ -14,6 +14,19 @@ pnpm lint
 pnpm exec shadcn add <name>   # shadcn/ui 컴포넌트 추가 — 손으로 짜기 전에 먼저 확인
 ```
 
+## 브랜치·PR
+
+**`main` 에 직접 올리지 않는다. 흐름은 무조건 `작업 브랜치 → dev → main` 이다.**
+
+```bash
+git checkout -b <branch> dev          # dev 기준으로 딴다 — main 기준이면 PR 에 남의 커밋이 딸려 온다
+gh pr create --base dev               # --base 를 빼면 GitHub 기본 브랜치(main)로 잡힌다
+# 머지 후
+git push origin --delete <branch> && git branch -d <branch>
+```
+
+**저장소 상태로 이 규칙을 추론하지 말 것.** 반대로 읽히게 생겼다 — `origin/dev` 가 `main` 보다 뒤처져 있어 죽은 브랜치처럼 보이고, 머지된 PR #1(`feat/brand-wordmark-icon` → `main`)은 이 규칙을 어긴 예다. 그래도 규칙은 위가 맞다.
+
 ## 구조
 
 ```
@@ -144,7 +157,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 **계정을 채울 때는 `src/data/README.md` 의 "계정 검증 방법"을 먼저 읽을 것.** 계정 하나를 잘못 올리면 무관한 사람이 피해를 본다. 집계 사이트·블로그를 그대로 옮기다 실제로 여러 번 걸렸다(가짜 목록, 오타 핸들, 사진작가 계정 등). 반드시 인스타 페이지를 직접 열어 확인한다. 다음 배치 순서는 `PLANNING.md` §10.
 
-삭제·정정 요청 창구(`/takedown`)와 개인정보 처리방침(`/privacy`)이 붙어 있고, 푸터가 레이아웃에 있어 전 화면에서 닿는다. 푸터 맨 아래 카피라이트 연도는 `new Date()` 가 아니라 상수다 — 전 페이지가 SSG 라 그 값은 빌드 시각에 얼어붙는다. **삭제 요청 처리 방법은 `src/data/README.md` 의 "내려 달라는 요청이 오면" 을 따른다** — `searching` 으로 되돌리면 다음 배치에서 다시 올라온다.
+삭제·정정 요청 창구(`/takedown`)와 개인정보 처리방침(`/privacy`)이 붙어 있고, 푸터가 레이아웃에 있어 전 화면에서 닿는다. 푸터 맨 아래 카피라이트 연도는 `new Date()` 가 아니라 상수다 — 전 페이지가 SSG 라 그 값은 빌드 시각에 얼어붙는다. **삭제 요청 처리 방법은 `src/data/README.md` 의 "내려 달라는 요청이 오면" 을 따른다** — `searching` 으로 되돌리면 다음 배치에서 다시 올라온다. 계정과 사진을 **함께** 내린다(계정만 내리면 요청을 반만 처리한 것이다). 두 화면(`/takedown`·`/privacy`)도 사진을 명시하고 있으니, 사진 방침을 바꾸면 그 문구부터 같이 고친다.
 
 연락처는 `lib/site.ts` 의 `CONTACT_EMAIL` 한 곳이다. 이 주소는 **실제로 열려 있어야 한다** — 반송되면 사이트가 지키지 못할 약속을 걸어 둔 셈이 된다.
 
