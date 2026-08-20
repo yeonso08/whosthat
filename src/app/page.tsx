@@ -1,5 +1,6 @@
 import { SeasonFeature } from "@/components/season-feature";
 import { SeasonRow } from "@/components/season-row";
+import { Wordmark } from "@/components/wordmark";
 import { getProgram, getSeasons } from "@/lib/data";
 import { getCoverage } from "@/lib/types";
 
@@ -19,7 +20,8 @@ export default function Page() {
   return (
     <main>
       <header className="px-5 pt-6 pb-1">
-        <p className="text-sm font-bold tracking-tight text-muted-foreground">
+        <Wordmark />
+        <p className="mt-5 text-sm font-bold tracking-tight text-muted-foreground">
           {program.name}
         </p>
         <h1 className="mt-3 text-3xl font-black tracking-tighter">전체 기수</h1>

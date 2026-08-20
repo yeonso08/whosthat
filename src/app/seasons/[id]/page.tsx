@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BackLink } from "@/components/back-link";
 import { CastCard } from "@/components/cast-card";
+import { Wordmark } from "@/components/wordmark";
 import { formatAirDate, getSeason, getSeasons } from "@/lib/data";
 import { seasonHref } from "@/lib/links";
 import { getCoverage } from "@/lib/types";
@@ -47,10 +48,18 @@ export default async function Page({ params }: PageProps<"/seasons/[id]">) {
 
   return (
     <main>
-      <BackLink />
+      <header className="px-5 pt-6">
+        <Wordmark />
 
-      <header className="px-5 pt-1.5">
-        <h1 className="text-3xl font-black tracking-tighter">{season.label}</h1>
+        {/* 뒤로가기를 제목 줄에 붙인다. 화살표의 44px 탭 영역이 제목을 밀지
+            않게 줄 전체를 왼쪽으로 당겨 화살표를 본문 여백선에 맞춘다. */}
+        <div className="mt-5 -ml-3 flex items-center gap-1">
+          <BackLink />
+          <h1 className="text-3xl font-black tracking-tighter">
+            {season.label}
+          </h1>
+        </div>
+
         {season.special && (
           <p className="mt-2 text-[13px] font-bold text-muted-foreground">
             {season.special}

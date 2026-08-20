@@ -24,7 +24,9 @@ const BODY = "mt-2.5 text-[13px] leading-relaxed text-muted-foreground";
 export default function Page() {
   return (
     <main>
-      <BackLink />
+      <div className="px-3 pt-3.5">
+        <BackLink />
+      </div>
 
       <article className="px-5 pt-1.5">
         <h1 className="text-3xl font-black tracking-tighter">{TITLE}</h1>
