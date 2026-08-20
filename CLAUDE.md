@@ -74,6 +74,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **서버 컴포넌트는 `currentLocale()` / `currentDictionary()` 로 스스로 가져온다**(`next/root-params`). `[lang]` 이 루트 세그먼트라 페이지가 컴포넌트마다 언어를 내려보내지 않아도 된다.
 - **클라이언트 컴포넌트는 그걸 못 쓴다**(Next 의 제약). `SeasonSearch`·`ModeToggle`·`LocaleToggle` 은 쓰는 문구만 props 로 받는다 — `i18n.ts` 를 import 하면 사전 두 벌이 클라이언트 번들에 딸려 온다. `import type` 은 컴파일에서 지워지므로 예외다.
 - **내부 링크는 `lib/links.ts` 의 함수로만 만든다.** 전부 첫 인자가 locale 이다. 손으로 `/seasons/...` 를 적으면 언어가 빠진 주소가 나오는데, 그건 눌러 보기 전까지 화면에 안 보인다.
+- **언어 전환만 하드 내비게이션이다.** `LocaleToggle` 이 `next/link` 가 아니라 맨 `<a>` 를 쓰는 이유이고, 되돌리면 버그가 돌아온다 — 언어가 바뀌면 루트 레이아웃이 다시 그려지는데, 클라이언트 내비게이션으로 그러면 React 가 `<html>` 의 class 를 서버가 준 값으로 덮어쓴다. 거기엔 테마 클래스가 없어서(next-themes 가 런타임에 붙인다) 다크 모드가 한 프레임 벗겨지고 화면이 하얗게 번쩍인다. 콘솔에도 "Encountered a script tag while rendering React component" 가 같이 뜬다.
 - 검색 인덱스는 서버가 그 언어로 **미리 만들어** 내려보낸다. 영어 인덱스에는 한글 원문이 `keywords` 로 함께 실린다 — 화면은 `Yeongsu` 지만 `영수` 로도 걸리게 하려는 것이다(화면에 안 나오는 검색 전용 필드).
 
 ### 언어를 하나 더할 때
