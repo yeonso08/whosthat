@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { CastAvatar } from "@/components/cast-avatar";
+import { CastPhoto } from "@/components/cast-photo";
 import {
   Item,
   ItemActions,
@@ -16,6 +16,13 @@ import { formatCoverage, getCoverage, type Season } from "@/lib/types";
 /** 줄 왼쪽에 겹쳐 쌓는 얼굴 수. 더 넣으면 기수 이름이 밀린다. */
 const FACE_COUNT = 4;
 
+/**
+ * 겹쳐 쌓이는 원형 자리. 명단이 빈 기수의 빈 원까지 같은 모양을 써야 해서
+ * 뽑아 뒀다. text 는 사진이 없을 때 나오는 가명 배지가 상속받는다.
+ */
+const FACE_SHAPE =
+  "relative -ml-2.5 size-9.5 shrink-0 overflow-hidden rounded-full border-2 border-background text-[10px]";
+
 type Props = { season: Season };
 
 export function SeasonRow({ season }: Props) {
@@ -29,20 +36,20 @@ export function SeasonRow({ season }: Props) {
       {/* 기본값 두 개를 되돌린다 — 설명이 있으면 위로 붙는 정렬, 그리고 얼굴 겹침을 상쇄하는 gap. */}
       <ItemMedia className="translate-y-0 gap-0 self-center pl-2.5">
         {faces.map((member) => (
-          <CastAvatar
-            key={member.id}
-            alias={member.alias}
-            status={member.status}
-            variant="face"
-          />
+          <div key={member.id} className={FACE_SHAPE}>
+            <CastPhoto
+              src={member.profileImageUrl}
+              alias={member.alias}
+              status={member.status}
+              alt=""
+              sizes="38px"
+            />
+          </div>
         ))}
 
         {faces.length === 0 &&
           Array.from({ length: FACE_COUNT }, (_, i) => (
-            <div
-              key={i}
-              className="-ml-2.5 size-9.5 rounded-full border-2 border-background bg-card"
-            />
+            <div key={i} className={`${FACE_SHAPE} bg-card`} />
           ))}
       </ItemMedia>
 

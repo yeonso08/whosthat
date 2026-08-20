@@ -37,12 +37,13 @@ export default function Page() {
             {BRAND_WORDMARK}
           </span>
           는 방송에서 공개됐거나 본인이 공개로 설정한 계정만 싣습니다. 그래도
-          내리고 싶으시면 내립니다. 이유는 묻지 않습니다.
+          내리고 싶으시면 내립니다. 사진도 마찬가지입니다. 이유는 묻지 않습니다.
         </p>
 
         <h2 className="mt-8 text-sm font-bold">이런 요청을 받습니다</h2>
         <ul className="mt-2.5 flex list-disc flex-col gap-1.5 pl-4 text-[13px] leading-relaxed text-muted-foreground">
           <li>내 계정을 내려 주세요</li>
+          <li>내 사진을 내려 주세요</li>
           <li>내 실명·나이·직업을 지우거나 고쳐 주세요</li>
           <li>나와 상관없는 계정이 내 가명에 걸려 있어요</li>
           <li>기수나 가명이 잘못 적혀 있어요</li>
@@ -79,8 +80,8 @@ export default function Page() {
 
         <h2 className="mt-8 text-sm font-bold">처리 기간</h2>
         <p className="mt-2.5 text-[13px] leading-relaxed text-muted-foreground">
-          확인되면 바로 지웁니다. 늦어도 7일 안에 회신합니다. 한 번 내린 계정은
-          다시 올리지 않습니다.
+          확인되면 바로 지웁니다. 늦어도 7일 안에 회신합니다. 한 번 내린 계정과
+          사진은 다시 올리지 않습니다.
         </p>
       </article>
     </main>

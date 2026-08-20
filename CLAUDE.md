@@ -28,7 +28,8 @@ src/lib/types.ts              Program → Season → CastMember 모델
 src/lib/data.ts               JSON 로더 + 날짜 포맷 + 검색 인덱스 생성
 src/lib/search.ts             검색 매칭 — 데이터를 모른다(클라이언트로 넘어간다)
 src/data/na-neun-solo.json    실데이터 — 채우는 법은 src/data/README.md
-src/components/               cast-card, cast-avatar, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, icons, theme-provider, mode-toggle
+src/components/               cast-card, cast-photo, cast-avatar, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, icons, theme-provider, mode-toggle
+public/cast/                  출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 ```
 
 Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 반드시 await 한다.
@@ -70,7 +71,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ### 추상화는 늦게
 
-- 두 번째 사용처까지는 복붙이 낫다. `CastAvatar` 의 `variant` 는 기수 상세 행과 기수 목록 얼굴 표식 **두 곳이 실제로 생긴 뒤에** 붙인 것이다. 세 번째 variant 가 필요해지면 그때는 플래그를 늘리지 말고 컴포넌트를 나눈다.
+- 두 번째 사용처까지는 복붙이 낫다. 반대로 **쓰임이 줄면 플래그를 도로 뺀다** — `CastAvatar` 의 `variant` 는 사진이 돌아오면서 세 크기(카드·히어로 타일·목록 원)로 늘 뻔했지만, 크기와 모양을 감싸는 쪽에 맡기고 플래그를 통째로 없앴다. 배지는 글자 크기를 상속만 받는다.
 - 쓰이지 않는 옵션·설정·확장 포인트는 만들지 않는다.
 
 ### 값은 상수로 뽑는다
@@ -99,19 +100,19 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 - 기수는 `season`, 방송 가명은 `alias`, 실명은 `name`. `title` 이나 `label` 같은 일반 명사로 바꾸지 않는다 — 가명과 실명이 섞이는 순간 데이터 규칙(공개된 실명만)을 지키기 어려워진다.
 
-## 디자인 — 사진 없는 버전 (시안 D 이후)
+## 디자인 — 시안 D "어둠 속 사진"
 
-원래 시안 D "어둠 속 사진"은 사진이 화면을 채우는 넷플릭스·티빙 브라우징 문법이었다. **초상권·저작권 때문에 사진을 아예 못 쓰게 되면서 그 전제가 깨졌다** — `PLANNING.md` §9 ①이 이미 이 위험을 지적했었고, 결국 실현됐다. 그래서 사진·실루엣 자리를 없애고 타이포그래피 중심으로 다시 짰다.
+시안 D 는 사진이 화면을 채우는 넷플릭스·티빙 브라우징 문법이다. 초상권·저작권 우려로 사진을 한 번 걷어냈다가(2026-08-19) **2026-08-20 에 되돌렸다** — 사진 자리는 세 곳 다 원래대로다. 리스크 자체는 사라지지 않았으니 `PLANNING.md` §9 ① 을 먼저 읽고 무엇을 올릴지 정할 것.
 
-- 사진 대신 **가명 두 글자를 원형 배지로** 쓴다(`CastAvatar`). 상태별로 배지 색만 다르다 — found 는 밝게, none 은 죽이고, searching 은 `--searching` 색.
-- 기수 카드(`SeasonFeature`)의 사진 스트립도 없앴다. 대신 출연진 각각의 확인 상태를 **가는 막대 스트립**으로 보여준다 — 흑백 위주에 searching 만 황토색이라 색 규칙과 충돌하지 않는다.
-- 기수 상세는 사진 카드 2열 그리드가 아니라 **한 줄짜리 목록**이다. 사진이 없으니 격자로 채울 이유가 없다.
+- **사진 자리는 세 곳이다.** 기수 상세의 2열 카드 그리드(`CastCard`), 기수 목록 히어로의 3장 스트립(`SeasonFeature`), 기수 목록 줄에 겹쳐 쌓는 작은 원(`SeasonRow`). 셋 다 `CastPhoto` 를 쓴다.
+- **사진이 없는 사람은 가명 두 글자 배지(`CastAvatar`)로 대신 채운다.** 사진이 있는 쪽이 한동안 소수라 일괄 실루엣으로 두면 화면 전체가 같은 그림이 된다. 배지는 **저대비 워터마크**다 — 카드 크기에서 또렷하면 색면이 화면을 먹는다. 상태는 카드 아래 상태 줄이 또렷하게 말한다.
+- **자리 크기·모양·글자 크기는 감싸는 쪽이 정한다.** `CastPhoto`·`CastAvatar` 는 `h-full w-full` 로 채우기만 하고, `relative` 박스와 `text-[…]` 는 호출부에 있다(`CARD_SIZES`, `FALLBACK_TEXT`, `FACE_SHAPE`).
 - 사이트는 **라이트·다크 두 팔레트를 다 가진다**(2026-08-20 부로 "다크 전용" 원칙 폐기). `globals.css` 의 `:root` 가 라이트, `.dark` 가 다크다 — 둘 다 위 시안 D 팔레트를 흑백 축으로 그대로 짝지은 것이라 명도만 뒤집혔지 구조는 같다. `next-themes` 로 전환하고(`ThemeProvider`, `attribute="class"`), 기본값은 여전히 `dark`다 — 원래 시안의 첫인상을 지키려는 것이다. 전환 버튼(`ModeToggle`)은 네 화면 헤더 맨 위, 워드마크 옆에 있다 — `SiteHeader` 가 `Wordmark` 와 `ModeToggle` 을 한 줄로 묶어서 페이지마다 그 줄을 반복하지 않는다.
 - **색은 흑백뿐이다.** 유일한 유채색 `--searching`(황토 `#d9a44b`)은 "아직 못 찾음" 상태 전용이다. 강조·CTA·배지 같은 다른 용도로 번지게 하지 말 것.
 - 폰트: 한글 `Gothic A1`(`--font-sans`), 라틴·숫자 `Manrope`(`--font-lat`). 핸들·날짜·개수처럼 숫자가 섞인 곳은 `font-lat`.
 - 모서리 반경 12~16px, 전환 180~220ms.
 
-**색면 포스터풍으로 가지 말 것.** 굵은 디스플레이 서체 + 강한 색면 + 거대한 숫자 조합은 이 프로젝트에서 반복해서 반려됐다. 사진이 빠진 자리를 거대한 숫자나 색면으로 메우려 하지 말 것 — 이니셜 배지·진행 스트립·타이포 위계로 대신한다. 방향이 애매하면 시안을 더 찍기보다 레퍼런스를 물어보는 게 빠르다.
+**색면 포스터풍으로 가지 말 것.** 굵은 디스플레이 서체 + 강한 색면 + 거대한 숫자 조합은 이 프로젝트에서 반복해서 반려됐다. **사진 없는 자리를 메울 때 특히 걸린다** — 가명 배지를 처음엔 상태색 그대로 칠했더니 히어로 타일 세 장이 황토색 색면 띠가 됐다. 그래서 배지는 저대비다. 방향이 애매하면 시안을 더 찍기보다 레퍼런스를 물어보는 게 빠르다.
 
 ### 브랜드 — `@whosthat`
 
@@ -127,12 +128,13 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - 계정 상태는 `found` / `none` / `searching` 3가지다. **`none`("찾아봤는데 없다")은 결과지 실패가 아니다** — 방문자의 헛수고를 막는 게 이 사이트의 핵심 가치라 별개 상태로 둔다. `searching` 으로 방치하지 말 것.
 - **계정을 지어내지 않는다.** 확인한 것만 `found` 로 올린다. 비공개 계정·추정 계정·커뮤니티 추측은 넣지 않는다(`PLANNING.md` §9).
 - `found` 는 `lastVerified` 와 `source` 를 반드시 함께 채운다. 이 사이트를 믿을 근거가 그 두 줄이다.
-- **출연진 사진은 쓰지 않는다.** 방송 캡처는 제작사·방송사 저작권, 인스타 프로필 사진은 본인 저작권·초상권과 겹친다(`PLANNING.md` §9 ①). `CastMember` 에 이미지 필드 자체가 없다 — 다시 넣지 말 것.
+- **사진은 `profileImageUrl` 에 `/public` 아래 경로로 넣는다.** 남의 서버 이미지를 직접 걸지 않는다(핫링크 금지, `PLANNING.md` §9 ⑤). 비워 두면 화면에서 가명 배지가 대신 나온다.
+- **사진 방침은 "올려 두고 요청이 오면 내린다"(사후 대응)다.** 사전 허락을 다 받는 건 불가능하고 사진을 안 쓰면 시안 D 가 성립하지 않아서 내린 결정이다 — 배경은 `PLANNING.md` §9 ①. 이 방침은 **내리는 쪽이 빠를 때만 성립하므로 절차를 느슨하게 하지 말 것**: 삭제 요청이 오면 계정과 사진을 함께 내린다(`src/data/README.md`), 화면 문구(`/takedown`·`/privacy`)는 사진을 명시한 상태로 유지한다. 처리방침이 사실과 다른 게 사진을 싣는 것보다 위험하다.
 - 실명은 공개된 경우에만. 모르면 비우면 가명으로만 나온다.
 
 ## 현재 상태
 
-네 화면(기수 목록·기수 상세·삭제 요청·처리방침)이 동작하고 빌드가 통과한다. SEO 배관(sitemap·robots·canonical·OG 이미지)까지 붙어 있고 전부 정적으로 프리렌더된다. Vercel 에 배포돼 있다 — https://whosthat-six.vercel.app (도메인은 추후 구매 예정). 사진을 못 쓰게 되면서 `CastPhoto` 를 걷어내고 이니셜 배지(`CastAvatar`) 중심으로 다시 짰다 — 위 "디자인" 절 참고.
+네 화면(기수 목록·기수 상세·삭제 요청·처리방침)이 동작하고 빌드가 통과한다. SEO 배관(sitemap·robots·canonical·OG 이미지)까지 붙어 있고 전부 정적으로 프리렌더된다. Vercel 에 배포돼 있다 — https://whosthat-six.vercel.app (도메인은 추후 구매 예정). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. 실제 사진 파일은 아직 한 장도 없다.
 
 브랜드 워드마크·파비콘·앱 아이콘(`@whosthat`)이 붙었다 — 위 "브랜드" 절 참고. 네 화면 헤더가 전부 같은 `‹ 제목` 인라인 구조를 쓴다.
 
