@@ -25,9 +25,10 @@ src/app/icon.tsx              파비콘 — @ 마크, 코드 생성(ImageRespons
 src/app/apple-icon.tsx        iOS 홈 화면 아이콘 — 같은 마크, 180×180
 src/lib/brand.ts              BRAND_MARK(@)·BRAND_WORDMARK(whosthat) — 워드마크와 아이콘이 공유
 src/lib/types.ts              Program → Season → CastMember 모델
-src/lib/data.ts               JSON 로더 + 날짜 포맷
+src/lib/data.ts               JSON 로더 + 날짜 포맷 + 검색 인덱스 생성
+src/lib/search.ts             검색 매칭 — 데이터를 모른다(클라이언트로 넘어간다)
 src/data/na-neun-solo.json    실데이터 — 채우는 법은 src/data/README.md
-src/components/               cast-card, cast-avatar, season-row, season-feature, site-footer, site-header, back-link, wordmark, icons, theme-provider, mode-toggle
+src/components/               cast-card, cast-avatar, season-row, season-feature, site-footer, site-header, site-search, back-link, wordmark, icons, theme-provider, mode-toggle
 ```
 
 Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 반드시 await 한다.
@@ -138,7 +139,14 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 연락처는 `lib/site.ts` 의 `CONTACT_EMAIL` 한 곳이다. 이 주소는 **실제로 열려 있어야 한다** — 반송되면 사이트가 지키지 못할 약속을 걸어 둔 셈이 된다.
 
-다음: 계정 데이터 채우기 → 그 다음 검색 기능(데이터가 비어 있으면 검색할 게 없어 미뤄 뒀다) → 제보 폼(`PLANNING.md` 로드맵 2단계).
+검색(`SiteSearch`)이 네 화면 헤더에 붙어 있다 — 돋보기 버튼과 `⌘K`. shadcn `command` 를 쓰되 `shouldFilter={false}` 로 기본 점수 매기기를 끄고 매칭은 `lib/search.ts` 가 한다.
+
+- **가명은 식별자가 아니다.** 318명이 쓰는 가명이 14개뿐이라 "영수" 한 단어는 26개 결과를 낸다. 그래서 ① 계정을 찾아 둔 사람(`found`)을 맨 위로 올리고 ② 기수 이름을 사람 쪽 검색 대상에 함께 넣어 `22기 영수` 로 좁혀지게 했다. 기수 토큰을 따로 골라내는 특수 처리는 없다 — 그 한 줄이 복합 질의를 통째로 받아낸다.
+- 퍼지 매칭을 넣지 말 것. 가명이 한 글자씩만 다르라 오타를 관대하게 보면 "영수"에 "영식"·"영철"이 딸려 온다.
+- **인덱스는 `buildSearchIndex`(`data.ts`)가 서버에서 만들어 `SiteHeader` 가 prop 으로 내린다.** 검색이 클라이언트 컴포넌트라 `lib/search.ts` 는 `lib/data.ts` 를 import 하지 않는다 — 한 파일에 섞으면 원본 JSON 56KB 가 클라이언트 번들에 딸려 들어간다. 페이지당 인덱스는 gzip 2KB 다(가명·상태가 반복돼 잘 압축된다).
+- 사람 결과는 `/seasons/{id}#{memberId}` 로 착지한다. 앵커는 `CastCard` 가 카드에 거는 DOM id 와 짝이다.
+
+다음: 계정 데이터 채우기 → 제보 폼(`PLANNING.md` 로드맵 2단계).
 
 **DB·백엔드는 아직 필요 없다.** 지금은 정적 JSON + SSG 로 충분하고, 데이터가 늘었다는 건 옮길 이유가 안 된다. 갈아탈 시점을 판단하는 기준은 `PLANNING.md` §7 "DB·백엔드는 언제 필요한가" 에 있다 — 조건이 실제로 걸리면 그때 먼저 말한다.
 

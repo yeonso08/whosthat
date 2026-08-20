@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { formatAirDate } from "@/lib/data";
 import { seasonHref } from "@/lib/links";
-import { getCoverage, type AccountStatus, type Season } from "@/lib/types";
+import {
+  formatCoverage,
+  getCoverage,
+  type AccountStatus,
+  type Season,
+} from "@/lib/types";
 
 type Props = { season: Season };
 
@@ -55,9 +60,7 @@ export function SeasonFeature({ season }: Props) {
       )}
 
       <span className="font-lat mt-3 block text-xs font-semibold text-muted-foreground">
-        {coverage.total === 0
-          ? "명단 정리 중"
-          : `${coverage.found} / ${coverage.total} 확인`}
+        {formatCoverage(coverage)}
       </span>
     </Link>
   );

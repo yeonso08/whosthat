@@ -10,6 +10,16 @@ export function seasonHref(seasonId: string): string {
   return `/seasons/${seasonId}`;
 }
 
+/**
+ * 기수 상세 안의 한 사람. 검색 결과에서 곧장 그 줄로 내려간다.
+ *
+ * 앵커는 `CastCard` 가 카드에 거는 DOM id 와 짝이다 — 한쪽만 고치면 링크가
+ * 조용히 기수 맨 위로 떨어진다.
+ */
+export function castMemberHref(seasonId: string, memberId: string): string {
+  return `${seasonHref(seasonId)}#${memberId}`;
+}
+
 /** 삭제·정정 요청. `app/takedown` 과 짝이다. */
 export const TAKEDOWN_HREF = "/takedown";
 

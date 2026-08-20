@@ -16,6 +16,14 @@ import type { CastMember } from "@/lib/types";
 /** 카드와 그 안의 상태 줄이 같은 사람을 그리므로 타입을 함께 쓴다. */
 type Props = { member: CastMember };
 
+const CARD_STYLE = "rounded-2xl bg-card p-3.5";
+
+/**
+ * 검색 결과에서 앵커로 내려왔을 때 카드가 화면 맨 위에 딱 붙지 않게 띄운다.
+ * 붙어 있으면 위에 뭐가 더 있는지 안 보여서 목록의 첫 줄처럼 읽힌다.
+ */
+const ANCHOR_OFFSET = "scroll-mt-4";
+
 export function CastCard({ member }: Props) {
   const found = member.status === "found";
   const handle = member.instagramHandle;
@@ -52,12 +60,17 @@ export function CastCard({ member }: Props) {
   // handle 까지 봐야 타입이 좁혀진다. found 인데 핸들이 없는 건 데이터 오류라
   // 링크를 거는 대신 카드로만 둔다.
   if (!found || !handle) {
-    return <Item className="rounded-2xl bg-card p-3.5">{content}</Item>;
+    return (
+      <Item id={member.id} className={`${CARD_STYLE} ${ANCHOR_OFFSET}`}>
+        {content}
+      </Item>
+    );
   }
 
   return (
     <Item
-      className="rounded-2xl bg-card p-3.5 transition-colors hover:bg-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      id={member.id}
+      className={`${CARD_STYLE} ${ANCHOR_OFFSET} transition-colors hover:bg-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring`}
       render={
         <a
           href={instagramUrl(handle)}
