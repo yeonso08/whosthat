@@ -8,8 +8,6 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-elevated: var(--elevated);
-  --color-photo: var(--photo);
-  --color-photo-ink: var(--photo-ink);
   --color-searching: var(--searching);
   --font-sans: var(--font-sans);
   --font-lat: var(--font-lat);
@@ -61,8 +59,6 @@
   --card: #f1f1f3;
   --card-foreground: #101013;
   --elevated: #e6e6ea;
-  --photo: #dcdce1;
-  --photo-ink: #c9c9d0;
   --searching: #92400e;
   --popover: #ffffff;
   --popover-foreground: #101013;
@@ -100,8 +96,6 @@
   --card: #141418;
   --card-foreground: #f4f4f6;
   --elevated: #1d1d23;
-  --photo: #23232b;
-  --photo-ink: #33333e;
   --searching: #d9a44b;
   --popover: #1d1d23;
   --popover-foreground: #f4f4f6;

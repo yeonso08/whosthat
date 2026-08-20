@@ -1,33 +1,29 @@
 import type { AccountStatus } from "@/lib/types";
 
-type Props = {
-  alias: string;
-  status: AccountStatus;
-  /** row = 기수 상세의 목록 행, face = 기수 목록 줄에 겹쳐 쌓는 작은 표식. */
-  variant?: "row" | "face";
-};
+type Props = { alias: string; status: AccountStatus };
 
-/** 상태가 하나 늘면 여기서 컴파일 에러가 난다. */
+/**
+ * 상태가 하나 늘면 여기서 컴파일 에러가 난다.
+ *
+ * 전부 저대비다 — 사진 자리를 통째로 채우는 배지라, 카드 크기에서 또렷하면
+ * 색면이 화면을 먹는다(반려된 포스터 방향). 상태는 카드 아래 상태 줄이
+ * 또렷하게 말하므로 여기선 힌트만 준다.
+ */
 const STATUS_STYLE: Record<AccountStatus, string> = {
-  found: "bg-elevated text-foreground",
-  none: "bg-card text-muted-foreground",
-  searching: "bg-card text-searching",
+  found: "bg-elevated text-muted-foreground",
+  none: "bg-card text-elevated",
+  searching: "bg-card text-searching/45",
 };
 
 /**
- * 사진 대신 가명 두 글자를 원형 배지로 보여준다. 사진을 못 쓰게 되면서
- * (초상권 문제) 실루엣 자리를 대신하는 표식이라, 상태별로 색만 다르다.
+ * 사진이 아직 없는 사람 자리에 가명 두 글자를 대신 넣는다. 사진 자리를 통째로
+ * 채우고 모양(원형·사각)과 글자 크기는 감싸는 쪽이 정한다 — 같은 배지가 카드,
+ * 히어로 타일, 목록 줄의 작은 원까지 세 크기로 쓰이기 때문이다.
  */
-export function CastAvatar({ alias, status, variant = "row" }: Props) {
-  const isFace = variant === "face";
-
+export function CastAvatar({ alias, status }: Props) {
   return (
     <div
-      className={`flex shrink-0 items-center justify-center rounded-full font-bold ${
-        isFace
-          ? "-ml-2.5 size-9.5 border-2 border-background text-[10px]"
-          : "size-11 text-[13px]"
-      } ${STATUS_STYLE[status]}`}
+      className={`flex h-full w-full items-center justify-center font-bold ${STATUS_STYLE[status]}`}
     >
       {alias}
     </div>

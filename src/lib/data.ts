@@ -1,5 +1,13 @@
 import programJson from "@/data/na-neun-solo.json";
 import {
+  formatCoverage,
+  localizeAlias,
+  localizeSeasonLabel,
+  localizeSpecial,
+  seasonNumber,
+  type Locale,
+} from "./i18n";
+import {
   getCoverage,
   type Program,
   type SearchIndex,
@@ -23,24 +31,6 @@ export function getSeason(id: string): Season | undefined {
   return program.seasons.find((s) => s.id === id);
 }
 
-function seasonNumber(label: string): number {
-  return Number.parseInt(label, 10) || 0;
-}
-
-/** "2024-08" → "2024년 8월". 비어 있으면 빈 문자열. */
-export function formatAirDate(airDate: string): string {
-  const [year, month] = airDate.split("-");
-  if (!year || !month) return "";
-  return `${year}년 ${Number(month)}월`;
-}
-
-/** "2026-08-18" → "26.08.18" */
-export function formatChecked(date: string): string {
-  const [year, month, day] = date.split("-");
-  if (!year || !month || !day) return "";
-  return `${year.slice(2)}.${month}.${day}`;
-}
-
 /**
  * 검색이 훑을 최소 데이터. 서버에서 한 번 만들어 클라이언트로 넘긴다.
  *
@@ -49,18 +39,31 @@ export function formatChecked(date: string): string {
  * 원본 56KB 가 통째로 클라이언트 번들에 딸려 들어간다. JSON 을 아는 파일은
  * 계속 이 파일 하나여야 한다.
  */
-export function buildSearchIndex(): SearchIndex {
-  return getSeasons().map((season) => ({
-    id: season.id,
-    label: season.label,
-    ...(season.special ? { special: season.special } : {}),
-    coverage: getCoverage(season.cast),
-    cast: season.cast.map((member) => ({
-      id: member.id,
-      alias: member.alias,
-      ...(member.name ? { name: member.name } : {}),
-      status: member.status,
-      ...(member.instagramHandle ? { handle: member.instagramHandle } : {}),
-    })),
-  }));
+export function buildSearchIndex(locale: Locale): SearchIndex {
+  return getSeasons().map((season) => {
+    const special = season.special
+      ? localizeSpecial(season.special, locale)
+      : undefined;
+
+    // 영어 화면에서도 "33기"·"영수" 로 찾히게 원문을 함께 싣는다. 화면에 나오는
+    // 건 위의 번역된 값이고, 이 줄은 검색에만 쓰인다 — 한국 커뮤니티에서 본
+    // 이름을 그대로 붙여 넣는 사람이 영어권 방문자 중에도 있다.
+    const source = locale === "ko" ? "" : `${season.label} ${season.special ?? ""}`;
+
+    return {
+      id: season.id,
+      label: localizeSeasonLabel(season.label, locale),
+      ...(special ? { special } : {}),
+      ...(source.trim() ? { keywords: source } : {}),
+      coverage: formatCoverage(getCoverage(season.cast), locale),
+      cast: season.cast.map((member) => ({
+        id: member.id,
+        alias: localizeAlias(member.alias, locale),
+        ...(member.name ? { name: member.name } : {}),
+        ...(locale === "ko" ? {} : { keywords: member.alias }),
+        status: member.status,
+        ...(member.instagramHandle ? { handle: member.instagramHandle } : {}),
+      })),
+    };
+  });
 }

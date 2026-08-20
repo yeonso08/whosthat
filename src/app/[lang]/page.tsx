@@ -1,11 +1,22 @@
+import { notFound } from "next/navigation";
 import { SeasonFeature } from "@/components/season-feature";
 import { SeasonRow } from "@/components/season-row";
 import { SeasonSearch } from "@/components/season-search";
 import { SiteHeader } from "@/components/site-header";
 import { buildSearchIndex, getProgram, getSeasons } from "@/lib/data";
+import {
+  fill,
+  getDictionary,
+  isLocale,
+  localizeProgramName,
+} from "@/lib/i18n";
 import { getCoverage } from "@/lib/types";
 
-export default function Page() {
+export default async function Page({ params }: PageProps<"/[lang]">) {
+  const { lang } = await params;
+  if (!isLocale(lang)) notFound();
+
+  const dict = getDictionary(lang);
   const program = getProgram();
   const seasons = getSeasons();
   const [featured, ...rest] = seasons;
@@ -23,12 +34,17 @@ export default function Page() {
       <header className="px-5 pt-6 pb-1">
         <SiteHeader />
         <p className="mt-5 text-sm font-bold tracking-tight text-muted-foreground">
-          {program.name}
+          {localizeProgramName(program.id, lang)}
         </p>
-        <h1 className="mt-3 text-3xl font-black tracking-tighter">전체 기수</h1>
+        <h1 className="mt-3 text-3xl font-black tracking-tighter">
+          {dict.home.heading}
+        </h1>
         <p className="mt-1.5 text-[13px] text-muted-foreground">
-          {seasons.length}개 기수 · {totals.people}명 중 인스타 {totals.found}개
-          확인
+          {fill(dict.home.summary, {
+            seasons: seasons.length,
+            people: totals.people,
+            found: totals.found,
+          })}
         </p>
       </header>
 
@@ -39,11 +55,16 @@ export default function Page() {
       )}
 
       {/* 검색창이 목록 자리를 쥐고 있다 — 입력이 없을 때만 아래 목록이 보인다. */}
-      <SeasonSearch index={buildSearchIndex()}>
+      <SeasonSearch
+        index={buildSearchIndex(lang)}
+        locale={lang}
+        text={dict.search}
+        status={dict.status}
+      >
         {rest.length > 0 && (
           <>
             <h2 className="px-5 pt-7 pb-2 text-[13px] font-bold text-muted-foreground">
-              지난 기수
+              {dict.home.pastSeasons}
             </h2>
             <section className="px-2">
               {rest.map((season) => (
