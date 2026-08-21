@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { getSeasons } from "@/lib/data";
 import { languageAlternates } from "@/lib/i18n";
 import { LOCALES } from "@/lib/locales";
+import { isIndexable } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
 /**
@@ -12,7 +13,10 @@ import { SITE_URL } from "@/lib/site";
  * 넣으면 내용이 안 바뀌어도 매 배포마다 "수정됨"이 되어 크롤러가 신뢰를 잃는다.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const seasons = getSeasons();
+  // 명단이 빈 기수는 noindex 라 여기서도 뺀다 — 색인하지 말라고 적어 둔 페이지를
+  // sitemap 으로 제출하면 Search Console 이 그걸 오류로 잡는다. 둘의 기준이
+  // 갈라지지 않게 판단은 `isIndexable` 한 곳에서만 한다.
+  const seasons = getSeasons().filter(isIndexable);
 
   const pages = [
     { path: "", changeFrequency: "daily" as const, priority: 1 },
