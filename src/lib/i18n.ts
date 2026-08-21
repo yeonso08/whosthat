@@ -44,6 +44,11 @@ export function ogLocale(locale: Locale): string {
   return OG_LOCALES[locale];
 }
 
+/** 지금 화면 말고 나머지 언어들. `og:locale:alternate` 가 언어마다 한 줄씩 받는다. */
+export function ogAlternateLocales(locale: Locale): string[] {
+  return LOCALES.filter((other) => other !== locale).map(ogLocale);
+}
+
 /**
  * 같은 화면의 다른 언어 판 목록(hreflang). `path` 는 언어 뒤의 나머지 경로다.
  *

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/json-ld";
 import { SeasonFeature } from "@/components/season-feature";
 import { SeasonRow } from "@/components/season-row";
 import { SeasonSearch } from "@/components/season-search";
@@ -10,6 +11,7 @@ import {
   isLocale,
   localizeProgramName,
 } from "@/lib/i18n";
+import { websiteSchema } from "@/lib/seo";
 import { getCoverage } from "@/lib/types";
 
 export default async function Page({ params }: PageProps<"/[lang]">) {
@@ -31,6 +33,9 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
 
   return (
     <main>
+      {/* 사이트 이름을 검색 결과에 도메인 대신 띄우려면 홈에 이 마크업이 있어야 한다. */}
+      <JsonLd data={websiteSchema(lang)} />
+
       <header className="px-5 pt-6 pb-1">
         <SiteHeader />
         <p className="mt-5 text-sm font-bold tracking-tight text-muted-foreground">

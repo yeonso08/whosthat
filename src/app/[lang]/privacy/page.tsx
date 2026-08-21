@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BackLink } from "@/components/back-link";
+import { JsonLd } from "@/components/json-ld";
 import { SiteHeader } from "@/components/site-header";
 import { BRAND_WORDMARK } from "@/lib/brand";
 import { fill, getDictionary, isLocale, languageAlternates } from "@/lib/i18n";
 import { privacyHref, takedownHref } from "@/lib/links";
+import { breadcrumbSchema, openGraphBase } from "@/lib/seo";
 import { CONTACT_EMAIL } from "@/lib/site";
 
 export async function generateMetadata({
@@ -21,7 +23,13 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical: path, languages: languageAlternates("/privacy") },
-    openGraph: { type: "article", title, description, url: path },
+    openGraph: {
+      ...openGraphBase(lang),
+      type: "article",
+      title,
+      description,
+      url: path,
+    },
   };
 }
 
@@ -38,6 +46,10 @@ export default async function Page({ params }: PageProps<"/[lang]/privacy">) {
 
   return (
     <main>
+      <JsonLd
+        data={breadcrumbSchema(lang, { name: privacy.title, path: privacyHref(lang) })}
+      />
+
       {/* 홈을 안 거치고 검색으로 바로 들어오는 페이지라 누구의 방침인지
           화면에서 밝혀 둔다. */}
       <header className="px-5 pt-6">

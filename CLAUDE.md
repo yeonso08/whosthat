@@ -37,18 +37,19 @@ src/app/[lang]/privacy/page.tsx      개인정보 처리방침
 src/app/[lang]/layout.tsx            루트 레이아웃 — <html lang>, 언어별 metadata, generateStaticParams
 src/app/icon.tsx                     파비콘 — @ 마크, 코드 생성(ImageResponse). 언어를 안 탄다
 src/app/apple-icon.tsx               iOS 홈 화면 아이콘 — 같은 마크, 180×180
-src/app/sitemap.ts / robots.ts       언어마다 한 줄씩 + hreflang
+src/app/sitemap.ts / robots.ts       언어마다 한 줄씩 + hreflang (명단 빈 기수는 뺀다)
 src/proxy.ts                         `/` 로 들어온 사람을 브라우저 언어로 보낸다 (Next 16 의 미들웨어)
 src/lib/locales.ts                   언어 목록 — 화면·클라이언트·프록시가 다 읽는 순수 모듈
 src/lib/i18n.ts                      사전 로더 + 데이터 어휘(가명 로마자·특집) + 날짜/현황 포맷
 src/dictionaries/{ko,en}.json        화면 문구
 src/lib/brand.ts                     BRAND_MARK(@)·BRAND_WORDMARK(whosthat) — 워드마크와 아이콘이 공유
 src/lib/links.ts                     내부 경로 — 전부 언어로 시작한다
+src/lib/seo.ts                       색인 여부·OG 공통 필드·JSON-LD — 검색엔진에 보이는 것을 한 곳에
 src/lib/types.ts                     Program → Season → CastMember 모델
 src/lib/data.ts                      JSON 로더 + 검색 인덱스 생성
 src/lib/search.ts                    검색 매칭 — 데이터를 모른다(클라이언트로 넘어간다)
 src/data/na-neun-solo.json           실데이터 — 채우는 법은 src/data/README.md
-src/components/                      cast-card, cast-photo, cast-avatar, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, icons, theme-provider, mode-toggle, locale-toggle
+src/components/                      cast-card, cast-photo, cast-avatar, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 ```
 
@@ -85,6 +86,17 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 - **가명 배지(사진 없는 자리)는 언어를 안 따라간다.** 로마자로 바꾸면 40px 원에 안 들어가고, 앞 두 글자만 자르면 영수·영호·영식·영철이 전부 `Ye` 가 되어 배지가 있는 이유(빈 자리에 변화를 주는 것)가 통째로 사라진다. 그래서 겹친 원의 배지는 한글이고, 이름은 기수 상세 카드가 그 언어로 온전히 말한다.
 - **정책 두 페이지(`/takedown`·`/privacy`)의 영어는 번역본이다.** 맨 아래 `translationNote` 로 "다르면 한국어 원문이 기준" 이라고 밝힌다 — 지키지 못할 약속이 언어별로 갈리는 게 제일 위험하다. 한국어 사전에서는 이 키가 빈 문자열이라 화면에서 통째로 빠진다.
+
+## 검색 노출 — 판단은 `lib/seo.ts` 한 곳
+
+배관(canonical·hreflang·sitemap·robots·OG 이미지)은 처음부터 있었고, 남은 구멍은 2026-08-21 에 메웠다. 새 화면을 붙일 때 걸리는 건 아래 넷이다.
+
+- **`openGraph` 를 정의하는 페이지는 `openGraphBase(locale)` 를 펼치는 것으로 시작한다.** Next 의 metadata 는 얕게 병합돼서, 페이지가 `openGraph` 를 정의하는 순간 레이아웃의 `openGraph` 가 **통째로** 덮인다 — `og:site_name`·`og:locale`·`og:locale:alternate` 가 조용히 빠진다. 화면에선 안 보이고 공유 카드에서만 드러나서 늦게 발견된다(기수·정책 세 페이지가 실제로 그 상태였다).
+- **색인 여부는 `isIndexable(season)` 하나로 정하고, 두 곳에 함께 건다.** 명단이 빈 기수는 화면에 "명단 정리 중" 한 문장뿐이라 크롤러가 soft 404 로 읽고, 그 판정은 그 페이지로 끝나지 않고 사이트 전체 평가로 번진다. 그래서 `robots: noindex, follow`(기수 상세의 `generateMetadata`)와 sitemap 제외를 **같이** 한다 — 하나만 하면 어느 쪽으로든 어긋난다. noindex 페이지를 sitemap 으로 제출하면 Search Console 이 오류로 잡고, sitemap 에서만 빼면 홈의 링크를 타고 그대로 색인된다. 명단이 들어오면 저절로 돌아온다.
+- **JSON-LD 는 화면에 이미 있는 것만 옮긴다.** 홈은 `WebSite`(검색 결과에 도메인 대신 사이트 이름을 쓸지 Google 이 여기를 본다), 기수 상세와 정책 두 페이지는 `BreadcrumbList`, 기수 상세는 거기에 `ItemList` 가 더 붙는다. **`ItemList` 에는 `found` 인 사람만 넣는다** — 못 찾은 사람은 이을 `sameAs` 가 없어서 "사람이 있다"는 주장만 남고, 그건 화면에 없는 말을 마크업으로 더하는 것이다. 삭제 요청으로 계정을 내리면 마크업도 함께 사라진다(데이터에서 나오므로 따로 손댈 게 없다).
+- **기수 상세 머리글의 프로그램 이름을 빼지 말 것.** 제목은 `나는 솔로 33기 출연진 인스타` 인데 본문에는 `33기` 와 가명뿐이라 프로그램 이름이 한 글자도 없던 적이 있다 — 주 검색어를 본문이 뒷받침하지 못하는 상태였다. 홈 머리글과 같은 구조(프로그램 이름 한 줄 + 큰 제목)다.
+
+**검색엔진 등록(Google Search Console·네이버 서치어드바이저)은 아직 안 했다.** 코드가 아니라 운영이고, 검증과 색인이 호스트네임 단위로 쌓여서 커스텀 도메인 뒤로 미뤄 뒀다. 판단 근거와 뒤집을 조건은 `PLANNING.md` §10 맨 아래에 있다.
 
 ## 코드 규칙
 
@@ -190,7 +202,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ## 현재 상태
 
-네 화면(기수 목록·기수 상세·삭제 요청·처리방침)이 **한국어·영어 두 벌**로 동작하고 빌드가 통과한다(80 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지)까지 붙어 있고 전부 정적이다 — 서버가 하는 일은 `/` 하나를 언어로 보내는 proxy 뿐이다. Vercel 에 배포돼 있다 — https://whosthat-six.vercel.app (도메인은 추후 구매 예정). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. 실제 사진 파일은 아직 한 장도 없다.
+네 화면(기수 목록·기수 상세·삭제 요청·처리방침)이 **한국어·영어 두 벌**로 동작하고 빌드가 통과한다(80 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지·JSON-LD)까지 붙어 있고 전부 정적이다 — 서버가 하는 일은 `/` 하나를 언어로 보내는 proxy 뿐이다. Vercel 에 배포돼 있다 — https://whosthat-six.vercel.app (도메인은 추후 구매 예정). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. 실제 사진 파일은 아직 한 장도 없다.
 
 브랜드 워드마크·파비콘·앱 아이콘(`@whosthat`)이 붙었다 — 위 "브랜드" 절 참고. 네 화면 헤더가 전부 같은 `‹ 제목` 인라인 구조를 쓴다.
 
