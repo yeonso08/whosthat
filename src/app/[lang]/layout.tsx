@@ -9,9 +9,9 @@ import {
   isLocale,
   languageAlternates,
   LOCALES,
-  ogLocale,
 } from "@/lib/i18n";
 import { homeHref } from "@/lib/links";
+import { openGraphBase } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import "../globals.css";
 
@@ -54,9 +54,8 @@ export async function generateMetadata({
     description: dict.site.description,
     alternates: { canonical: home, languages: languageAlternates("") },
     openGraph: {
+      ...openGraphBase(lang),
       type: "website",
-      locale: ogLocale(lang),
-      siteName: dict.site.name,
       title: dict.site.name,
       description: dict.site.description,
       url: home,

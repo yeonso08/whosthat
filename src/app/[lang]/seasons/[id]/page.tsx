@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BackLink } from "@/components/back-link";
 import { CastCard } from "@/components/cast-card";
+import { JsonLd } from "@/components/json-ld";
 import { SiteHeader } from "@/components/site-header";
 import { getSeason, getSeasons } from "@/lib/data";
 import {
@@ -9,9 +10,11 @@ import {
   getDictionary,
   isLocale,
   languageAlternates,
+  localizeProgramName,
   localizeSeason,
 } from "@/lib/i18n";
 import { seasonHref } from "@/lib/links";
+import { isIndexable, openGraphBase, seasonSchema } from "@/lib/seo";
 import { getCoverage } from "@/lib/types";
 
 /** 언어는 루트 레이아웃이 만든다 — 여기서는 기수만 내고 둘이 곱해진다. */
@@ -57,7 +60,16 @@ export async function generateMetadata({
       canonical: path,
       languages: languageAlternates(`/seasons/${season.id}`),
     },
-    openGraph: { type: "article", title, description, url: path },
+    // 명단을 못 채운 기수는 색인에서 뺀다 — 이유는 `isIndexable` 에 적어 뒀다.
+    // 링크는 계속 따라가게 두므로(`follow`) 크롤러가 여기서 막히지는 않는다.
+    ...(isIndexable(season) ? {} : { robots: { index: false, follow: true } }),
+    openGraph: {
+      ...openGraphBase(lang),
+      type: "article",
+      title,
+      description,
+      url: path,
+    },
   };
 }
 
@@ -76,12 +88,21 @@ export default async function Page({
 
   return (
     <main>
+      <JsonLd data={seasonSchema(season, lang)} />
+
       <header className="px-5 pt-6">
         <SiteHeader />
 
+        {/* 제목이 "33기" 뿐이면 이 화면에 프로그램 이름이 한 글자도 안 남는다 —
+            검색어는 "나는 솔로 33기" 인데 본문이 그걸 뒷받침하지 못한다.
+            홈의 머리글과 같은 구조다. */}
+        <p className="mt-5 text-sm font-bold tracking-tight text-muted-foreground">
+          {localizeProgramName(season.programId, lang)}
+        </p>
+
         {/* 뒤로가기를 제목 줄에 붙인다. 화살표의 44px 탭 영역이 제목을 밀지
             않게 줄 전체를 왼쪽으로 당겨 화살표를 본문 여백선에 맞춘다. */}
-        <div className="mt-5 -ml-3 flex items-start gap-1">
+        <div className="mt-3 -ml-3 flex items-start gap-1">
           <BackLink />
           <h1 className="text-3xl font-black tracking-tighter">{label}</h1>
         </div>
