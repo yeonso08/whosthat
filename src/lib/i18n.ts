@@ -90,7 +90,7 @@ export function fill(
 }
 
 /**
- * 방송 가명의 로마자 표기. 14개가 318명에 반복되므로 여기만 채우면 전부 덮인다.
+ * 방송 가명의 로마자 표기. 21개가 406명에 반복되므로 여기만 채우면 전부 덮인다.
  *
  * 국립국어원 로마자 표기법을 따르되 `희` 만 예외로 `hee` 다 — 규정대로면
  * `Jeonghui` 인데, 영어권에서 그렇게 검색하는 사람이 없다.
@@ -98,17 +98,24 @@ export function fill(
 const ROMANIZED_ALIASES: Record<string, string> = {
   경수: "Gyeongsu",
   광수: "Gwangsu",
+  미경: "Migyeong",
   상철: "Sangcheol",
   순자: "Sunja",
   영수: "Yeongsu",
   영숙: "Yeongsuk",
+  영순: "Yeongsun",
   영식: "Yeongsik",
   영자: "Yeongja",
   영철: "Yeongcheol",
   영호: "Yeongho",
   옥순: "Oksun",
+  정수: "Jeongsu",
   정숙: "Jeongsuk",
+  정순: "Jeongsun",
+  정식: "Jeongsik",
+  정자: "Jeongja",
   정희: "Jeonghee",
+  종수: "Jongsu",
   현숙: "Hyeonsuk",
 };
 
