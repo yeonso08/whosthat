@@ -12,7 +12,7 @@ import {
 } from "@/lib/i18n";
 import { homeHref } from "@/lib/links";
 import { openGraphBase } from "@/lib/seo";
-import { SITE_URL } from "@/lib/site";
+import { NAVER_SITE_VERIFICATION, SITE_URL } from "@/lib/site";
 import "../globals.css";
 
 const gothic = Gothic_A1({
@@ -61,6 +61,10 @@ export async function generateMetadata({
       url: home,
     },
     twitter: { card: "summary_large_image" },
+    // 구글은 DNS TXT 로 확인해서 여기 없다. 네이버만 태그를 요구한다.
+    verification: {
+      other: { "naver-site-verification": NAVER_SITE_VERIFICATION },
+    },
   };
 }
 
