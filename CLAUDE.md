@@ -51,6 +51,7 @@ src/lib/search.ts                    검색 매칭 — 데이터를 모른다(�
 src/data/na-neun-solo.json           실데이터 — 채우는 법은 src/data/README.md
 src/components/                      cast-card, cast-photo, cast-avatar, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
+public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
 ```
 
 Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 반드시 await 한다.
@@ -236,6 +237,10 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 **광고(구글 애드센스)를 붙였다**(2026-08-24). 값은 두 곳이 짝이다 — `lib/site.ts` 의 `ADSENSE_CLIENT_ID`(`ca-pub-…`)와 `public/ads.txt`(`pub-…`). 번호가 어긋나면 애드센스가 "승인되지 않은 판매자"로 잡아 수익이 막힌다. 스크립트는 루트 레이아웃이 걸고, ID 가 비면 아예 안 건다 — 틀린 ID 로 요청이 나가는 게 안 나가는 것보다 나쁘다.
 
+**광고 자리를 코드로 만들지 않는다 — 자동 광고다.** 스니펫 한 줄이 전부고 구글이 위치를 정한다. 종류별 토글은 애드센스 콘솔에 있는데, **전면 광고(vignette)는 꺼야 한다** — 기수 목록과 상세를 계속 오가는 사이트라 페이지를 넘길 때마다 화면을 덮으면 "검색 없이 바로 찾는다"가 무너진다. 위치가 디자인과 안 맞으면 그때 수동 광고 단위로 바꾼다(코드 작업).
+
+**운영 상태**(2026-08-24): 소유권 확인·검토 요청·GDPR 동의 메시지까지 끝났고 심사 결과를 기다리는 중이다. 소유권은 **ads.txt 방식**으로 통과했다 — 코드 스니펫 방식은 실패했는데, 애드센스에 등록된 사이트가 apex(`nukko.net`)고 실제 사이트는 `www` 라 그런 것으로 보인다. 동의 메시지는 구글 CMP 의 **3선택 형식**(동의·동의하지 않음·옵션 관리)이다 — 2선택은 첫 화면에 거부 버튼이 없어서, 거부가 동의만큼 쉬워야 한다는 GDPR 원칙에 어긋난다. 미국 주 규정 메시지는 만들지 않았다(CCPA 는 매출·이용자 수 기준이 있어 대상이 아니고, 없어도 구글이 광고를 막지 않는다).
+
 **광고를 떼거나 바꾸면 `/privacy` 부터 되돌린다.** 처리방침의 세 문단이 광고를 전제하고 쓰여 있다 — `visitor2`(무쿠키 주장을 Vercel Analytics 로 한정), `processor`(Google LLC 가 제3자로 들어가 있다), `ads`(게재 중이라고 말한다). 광고를 떼고 이 문구를 두면 처리방침이 반대 방향으로 거짓말을 한다. 문구가 바뀌면 `effectiveDate` 도 함께 옮긴다.
 
 연락처는 `lib/site.ts` 의 `CONTACT_EMAIL` 한 곳이다. 이 주소는 **실제로 열려 있어야 한다** — 반송되면 사이트가 지키지 못할 약속을 걸어 둔 셈이 된다. `whosthat.archive@gmail.com` 에서 `nukko.team@gmail.com` 으로 옮겼다(2026-08-24) — 브랜드 이름과 짝이 맞는 주소다. 새 주소로 다시 옮길 때도 **주소를 먼저 만들고** 코드를 고친다 — 순서를 바꾸면 그사이 들어온 삭제 요청이 통째로 사라진다.
@@ -251,7 +256,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **인덱스는 `buildSearchIndex`(`data.ts`)가 서버에서 만들어 홈 페이지가 prop 으로 내린다.** 검색이 클라이언트 컴포넌트라 `lib/search.ts` 는 `lib/data.ts` 를 import 하지 않는다 — 한 파일에 섞으면 원본 JSON 112KB 가 클라이언트 번들에 딸려 들어간다. 페이지당 인덱스는 gzip 2KB 다(가명·상태가 반복돼 잘 압축된다).
 - 사람 결과는 `/seasons/{id}#{memberId}` 로 착지한다. 앵커는 `CastCard` 가 카드에 거는 DOM id 와 짝이다.
 
-다음: 계정 데이터 채우기 → 제보 폼(`PLANNING.md` 로드맵 2단계). 언어는 영어까지 붙었고 일본어가 다음 후보다 — 절차는 위 "언어를 하나 더할 때".
+다음: 계정 데이터 채우기 · 사진 채우기(파이프라인은 붙었고 파일이 0장이다 — `src/data/README.md` 의 "사진을 올릴 때") → 제보 폼(`PLANNING.md` 로드맵 2단계). 언어는 영어까지 붙었고 일본어가 다음 후보다 — 절차는 위 "언어를 하나 더할 때".
 
 **DB·백엔드는 아직 필요 없다.** 지금은 정적 JSON + SSG 로 충분하고, 데이터가 늘었다는 건 옮길 이유가 안 된다. 갈아탈 시점을 판단하는 기준은 `PLANNING.md` §7 "DB·백엔드는 언제 필요한가" 에 있다 — 조건이 실제로 걸리면 그때 먼저 말한다.
 
