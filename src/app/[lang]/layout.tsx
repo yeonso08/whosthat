@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Gothic_A1, Manrope } from "next/font/google";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { SiteFooter } from "@/components/site-footer";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -12,7 +13,7 @@ import {
 } from "@/lib/i18n";
 import { homeHref } from "@/lib/links";
 import { openGraphBase } from "@/lib/seo";
-import { NAVER_SITE_VERIFICATION, SITE_URL } from "@/lib/site";
+import { ADSENSE_CLIENT_ID, NAVER_SITE_VERIFICATION, SITE_URL } from "@/lib/site";
 import "../globals.css";
 
 const gothic = Gothic_A1({
@@ -90,6 +91,16 @@ export default async function RootLayout({
           <SiteFooter />
         </ThemeProvider>
         <Analytics />
+        {/* 자동 광고. 게시자 ID 가 비어 있으면 안 건다 — 틀린 ID 로 요청이
+            나가면 애드센스가 정책 위반으로 잡는다. */}
+        {ADSENSE_CLIENT_ID && (
+          <Script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
+        )}
       </body>
     </html>
   );

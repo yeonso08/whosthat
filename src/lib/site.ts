@@ -48,5 +48,18 @@ export const CONTACT_EMAIL = "nukko.team@gmail.com";
  */
 export const NAVER_SITE_VERIFICATION = "f56f484cb0064465cd6e845f845153a34a2733be";
 
+/**
+ * 애드센스 게시자 ID(`ca-pub-...`). 애드센스 콘솔에서 받아 넣는다.
+ *
+ * **비어 있으면 광고 스크립트를 아예 안 건다.** 틀린 ID 로 요청이 나가면
+ * 애드센스가 정책 위반으로 잡으므로, 값이 없을 때는 안 붙는 쪽이 맞다.
+ *
+ * 값을 넣을 때 `public/ads.txt` 도 같은 pub 번호로 함께 만든다 — 둘이
+ * 어긋나면 애드센스가 "승인되지 않은 판매자" 로 경고하고 수익이 막힌다.
+ * 그리고 `/privacy` 의 광고·맡기는 곳 문단이 이미 광고를 전제로 쓰여 있으니,
+ * 이 값을 비운 채로 배포하면 처리방침이 사실과 어긋난다.
+ */
+export const ADSENSE_CLIENT_ID = "";
+
 /** OG 카드 규격. 1200×630 은 카카오톡·페이스북·X 가 공통으로 받는 크기다. */
 export const OG_SIZE = { width: 1200, height: 630 };
