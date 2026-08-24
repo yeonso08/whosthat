@@ -100,9 +100,9 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ### 커스텀 도메인을 연결할 때
 
-**코드는 고칠 게 없다.** `lib/site.ts` 가 Vercel 이 넣어 주는 `VERCEL_PROJECT_PRODUCTION_URL` 을 읽으므로 canonical·hreflang·sitemap·robots·JSON-LD·OG 이미지가 전부 따라간다. `NEXT_PUBLIC_SITE_URL` 은 Vercel 밖에 배포할 때만 준다. 할 일은 Vercel 설정과 검색엔진 콘솔 쪽이다.
+**코드는 고칠 게 없다.** `lib/site.ts` 가 도메인을 정하는 유일한 곳이고, canonical·hreflang·sitemap·robots·JSON-LD·OG 이미지가 전부 그 값을 따라간다. 할 일은 Vercel 설정과 검색엔진 콘솔 쪽이다.
 
-1. **Vercel 에서 새 도메인을 Primary 로 지정한다.** 안 하면 `.vercel.app` 과 새 도메인이 같은 내용을 동시에 서빙해서 색인이 둘로 쪼개진다. Primary 로 잡으면 나머지 도메인이 그쪽으로 308 한다.
+1. **`NEXT_PUBLIC_SITE_URL` 을 Production 환경변수로 준다**(`https://www.nukko.net`). **"Primary 도메인 지정" 같은 설정은 Vercel 에 없다** — `VERCEL_PROJECT_PRODUCTION_URL` 은 [문서](https://vercel.com/docs/environment-variables/system-environment-variables)대로 **"가장 짧은 커스텀 도메인"을 자동으로** 고른다. apex 와 `www` 를 함께 등록하면 짧은 쪽은 언제나 apex 인데, apex 는 `www` 로 308 하는 리다이렉트 전용이라 그대로 두면 canonical·sitemap 이 **열면 딴 데로 튕기는 주소**를 가리킨다. 그래서 이 프로젝트는 자동값에 기대지 않고 못박는다 — `NEXT_PUBLIC_SITE_URL` 은 원래 "Vercel 밖에 배포할 때"용이었지만, 이 구성에서는 Vercel 위에서도 필요하다.
 2. **배포 후 `curl https://<새도메인>/sitemap.xml` 로 `<loc>` 을 확인한다.** 여기가 옛 도메인으로 나오면 프로젝트 설정에서 시스템 환경변수 접근이 꺼진 것이다(`lib/site.ts` 주석). 이건 에러 없이 조용히 틀리는 종류라 눈으로 봐야 안다.
 3. **그 다음이 검색엔진 등록이다.** 두 곳 다 등록 → sitemap 제출 순이다. `.vercel.app` 을 GSC 에 이미 등록해 뒀다면 주소 변경 도구를 쓰고, 안 했다면 새 도메인만 새로 등록하면 된다. 네이버는 주소 변경 도구가 없어서 어느 쪽이든 새로 등록이다.
 4. **소유 확인 코드가 필요하면 `metadata.verification` 이다**(루트 레이아웃). 아직 안 붙어 있다. 두 곳 다 HTML 파일 업로드 방식도 받는데, 그건 `public/` 에 그대로 넣으면 된다.
@@ -221,7 +221,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 브랜드 워드마크·파비콘·앱 아이콘(`@누꼬`/`@nukko`)이 붙었다 — 위 "브랜드" 절 참고. 네 화면 헤더가 전부 같은 `‹ 제목` 인라인 구조를 쓴다.
 
-도메인은 `lib/site.ts` 한 곳에서 정해진다. Vercel 이 넣어 주는 `VERCEL_PROJECT_PRODUCTION_URL` 을 쓰므로 **평소엔 설정할 게 없고**, 커스텀 도메인을 Vercel 에 연결하면 자동으로 따라간다. Vercel 밖에 배포할 때만 `NEXT_PUBLIC_SITE_URL` 을 준다.
+도메인은 `lib/site.ts` 한 곳에서 정해진다. **`NEXT_PUBLIC_SITE_URL`(Production)에 `https://www.nukko.net` 을 박아 뒀다** — Vercel 자동값(`VERCEL_PROJECT_PRODUCTION_URL`)은 "가장 짧은 커스텀 도메인"을 고르는데, 그러면 리다이렉트 전용인 apex(`nukko.net`)가 뽑힌다. 이유는 위 "커스텀 도메인을 연결할 때" 1번에 있다.
 
 기수 골격은 1~33기 전부 들어가 있고 명단도 전부 채워졌다(408명, 2026-08-21). 계정은 320명이 `found` 고 나머지는 `searching` 이다 — 아직 못 채운 건 방영 중이라 계정이 잠긴 33기와 각 기수에 한둘씩 남은 자리다. 빈 `cast` 는 이제 없다.
 
