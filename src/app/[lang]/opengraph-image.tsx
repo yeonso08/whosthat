@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { BRAND_MARK, BRAND_WORDMARK } from "@/lib/brand";
+import { BRAND_WORDMARK } from "@/lib/brand";
 import { getProgram, getSeasons } from "@/lib/data";
 import {
   fill,
@@ -14,9 +14,10 @@ import { getCoverage } from "@/lib/types";
 
 /**
  * 언어별 사이트 이름 대신 브랜드를 쓴다 — alt 는 정적이라 언어를 못 받는다.
- * 그래서 도메인과 같은 라틴 표기로 고정한다.
+ * 그래서 도메인과 같은 라틴 표기로 고정한다. 마크는 이제 도형이라 글로 옮길
+ * 말이 없어 이름만 쓴다.
  */
-export const alt = `${BRAND_MARK}${BRAND_WORDMARK.en}`;
+export const alt = BRAND_WORDMARK.en;
 export const size = OG_SIZE;
 export const contentType = "image/png";
 

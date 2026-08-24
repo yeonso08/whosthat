@@ -35,7 +35,7 @@ function resolveSiteUrl(): string {
  * 요청이 통째로 사라지고, 사이트는 지키지 못할 약속을 걸어 둔 셈이 된다.
  * 개인 메일 대신 이 사이트 전용 주소를 쓴다 — 공개되면 수집되기 때문이다.
  */
-export const CONTACT_EMAIL = "whosthat.archive@gmail.com";
+export const CONTACT_EMAIL = "nukko.team@gmail.com";
 
 /**
  * 네이버 서치어드바이저 소유확인 코드.

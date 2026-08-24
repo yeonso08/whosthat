@@ -18,7 +18,7 @@ export function loadKoreanFont(
   return loadFont("Gothic A1", text, weight);
 }
 
-/** 라틴·숫자용. 브랜드 마크(`@`)와 핸들이 이 폰트다. */
+/** 라틴·숫자용. 영어 워드마크·핸들이 이 폰트다. 브랜드 마크는 이제 도형이라 폰트가 필요 없다. */
 export function loadLatinFont(
   text: string,
   weight: 700 | 800,
