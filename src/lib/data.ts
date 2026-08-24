@@ -45,9 +45,9 @@ export function buildSearchIndex(locale: Locale): SearchIndex {
       ? localizeSpecial(season.special, locale)
       : undefined;
 
-    // 영어 화면에서도 "33기"·"영수" 로 찾히게 원문을 함께 싣는다. 화면에 나오는
-    // 건 위의 번역된 값이고, 이 줄은 검색에만 쓰인다 — 한국 커뮤니티에서 본
-    // 이름을 그대로 붙여 넣는 사람이 영어권 방문자 중에도 있다.
+    // 번역된 화면에서도 "33기"·"영수" 로 찾히게 원문을 함께 싣는다. 화면에
+    // 나오는 건 위의 번역된 값이고, 이 줄은 검색에만 쓰인다 — 한국 커뮤니티에서
+    // 본 이름을 그대로 붙여 넣는 사람이 해외 방문자 중에도 있다.
     const source = locale === "ko" ? "" : `${season.label} ${season.special ?? ""}`;
 
     return {

@@ -14,6 +14,7 @@
 import { lang } from "next/root-params";
 import { notFound } from "next/navigation";
 import en from "@/dictionaries/en.json";
+import ja from "@/dictionaries/ja.json";
 import ko from "@/dictionaries/ko.json";
 import { DEFAULT_LOCALE, LOCALES, isLocale, type Locale } from "./locales";
 import type { Coverage, Season } from "./types";
@@ -23,18 +24,22 @@ import type { Coverage, Season } from "./types";
 export {
   DEFAULT_LOCALE,
   LOCALES,
+  LOCALE_NAMES,
   isLocale,
-  otherLocale,
   type Locale,
 } from "./locales";
 
-/** 사전의 모양은 한국어가 정한다 — en.json 에 키가 빠지면 여기서 컴파일 에러가 난다. */
+/** 사전의 모양은 한국어가 정한다 — 다른 사전에 키가 빠지면 여기서 컴파일 에러가 난다. */
 export type Dictionary = typeof ko;
 
-const DICTIONARIES: Record<Locale, Dictionary> = { ko, en };
+const DICTIONARIES: Record<Locale, Dictionary> = { ko, en, ja };
 
 /** OG 프로토콜의 locale 표기. `og:locale` 은 언어 코드만으로는 부족하다. */
-const OG_LOCALES: Record<Locale, string> = { ko: "ko_KR", en: "en_US" };
+const OG_LOCALES: Record<Locale, string> = {
+  ko: "ko_KR",
+  en: "en_US",
+  ja: "ja_JP",
+};
 
 export function getDictionary(locale: Locale): Dictionary {
   return DICTIONARIES[locale];
@@ -90,61 +95,111 @@ export function fill(
 }
 
 /**
- * 방송 가명의 로마자 표기. 21개가 406명에 반복되므로 여기만 채우면 전부 덮인다.
+ * 방송 가명의 언어별 표기. 21개가 408명에 반복되므로 여기만 채우면 전부 덮인다.
  *
- * 국립국어원 로마자 표기법을 따르되 `희` 만 예외로 `hee` 다 — 규정대로면
+ * 로마자는 국립국어원 표기법을 따르되 `희` 만 예외로 `hee` 다 — 규정대로면
  * `Jeonghui` 인데, 영어권에서 그렇게 검색하는 사람이 없다.
+ *
+ * 가타카나는 한국 예능·연예인을 다루는 일본 매체의 표기 관행을 따른다. **다만
+ * `정수` 와 `종수` 는 관행대로면 둘 다 `ジョンス` 로 겹친다** — 1·2·3기는 그
+ * 둘이 같은 기수에 함께 있어서, 그대로 두면 한 화면에 이름이 같은 사람이 둘
+ * 생긴다. 사람을 갈라 주는 게 이 사이트의 존재 이유라, 실제로 둘 다 쓰이는
+ * 표기 중에서 `정`→`チョン`·`종`→`ジョン` 으로 갈라 못박았다.
+ *
+ * 한국어는 데이터가 원문이라 표가 비어 있다 — 늘 아래 `?? alias` 로 떨어진다.
  */
-const ROMANIZED_ALIASES: Record<string, string> = {
-  경수: "Gyeongsu",
-  광수: "Gwangsu",
-  미경: "Migyeong",
-  상철: "Sangcheol",
-  순자: "Sunja",
-  영수: "Yeongsu",
-  영숙: "Yeongsuk",
-  영순: "Yeongsun",
-  영식: "Yeongsik",
-  영자: "Yeongja",
-  영철: "Yeongcheol",
-  영호: "Yeongho",
-  옥순: "Oksun",
-  정수: "Jeongsu",
-  정숙: "Jeongsuk",
-  정순: "Jeongsun",
-  정식: "Jeongsik",
-  정자: "Jeongja",
-  정희: "Jeonghee",
-  종수: "Jongsu",
-  현숙: "Hyeonsuk",
+const ALIASES: Record<Locale, Record<string, string>> = {
+  ko: {},
+  en: {
+    경수: "Gyeongsu",
+    광수: "Gwangsu",
+    미경: "Migyeong",
+    상철: "Sangcheol",
+    순자: "Sunja",
+    영수: "Yeongsu",
+    영숙: "Yeongsuk",
+    영순: "Yeongsun",
+    영식: "Yeongsik",
+    영자: "Yeongja",
+    영철: "Yeongcheol",
+    영호: "Yeongho",
+    옥순: "Oksun",
+    정수: "Jeongsu",
+    정숙: "Jeongsuk",
+    정순: "Jeongsun",
+    정식: "Jeongsik",
+    정자: "Jeongja",
+    정희: "Jeonghee",
+    종수: "Jongsu",
+    현숙: "Hyeonsuk",
+  },
+  ja: {
+    경수: "キョンス",
+    광수: "クァンス",
+    미경: "ミギョン",
+    상철: "サンチョル",
+    순자: "スンジャ",
+    영수: "ヨンス",
+    영숙: "ヨンスク",
+    영순: "ヨンスン",
+    영식: "ヨンシク",
+    영자: "ヨンジャ",
+    영철: "ヨンチョル",
+    영호: "ヨンホ",
+    옥순: "オクスン",
+    정수: "チョンス",
+    정숙: "チョンスク",
+    정순: "チョンスン",
+    정식: "チョンシク",
+    정자: "チョンジャ",
+    정희: "チョンヒ",
+    종수: "ジョンス",
+    현숙: "ヒョンスク",
+  },
 };
 
 /** 특집 이름. 13종뿐이라 통째로 적는다 — "N차"를 따로 조립하면 서수 규칙까지 떠안는다. */
-const TRANSLATED_SPECIALS: Record<string, string> = {
-  "1차 모태솔로 특집": "1st Never-Dated Special",
-  "2차 모태솔로 특집": "2nd Never-Dated Special",
-  "3차 모태솔로 특집": "3rd Never-Dated Special",
-  "돌싱 특집": "Divorcee Special",
-  "2차 돌싱 특집": "2nd Divorcee Special",
-  "3차 돌싱 특집": "3rd Divorcee Special",
-  "4차 돌싱 특집": "4th Divorcee Special",
-  "5차 돌싱 특집": "5th Divorcee Special",
-  "40대 특집": "40s Special",
-  "2차 40대 특집": "2nd 40s Special",
-  "40대 골드 특집": "40s Gold Special",
-  "질투 특집": "Jealousy Special",
-  "연상연하 특집": "Age-Gap Special",
+const SPECIALS: Record<Locale, Record<string, string>> = {
+  ko: {},
+  en: {
+    "1차 모태솔로 특집": "1st Never-Dated Special",
+    "2차 모태솔로 특집": "2nd Never-Dated Special",
+    "3차 모태솔로 특집": "3rd Never-Dated Special",
+    "돌싱 특집": "Divorcee Special",
+    "2차 돌싱 특집": "2nd Divorcee Special",
+    "3차 돌싱 특집": "3rd Divorcee Special",
+    "4차 돌싱 특집": "4th Divorcee Special",
+    "5차 돌싱 특집": "5th Divorcee Special",
+    "40대 특집": "40s Special",
+    "2차 40대 특집": "2nd 40s Special",
+    "40대 골드 특집": "40s Gold Special",
+    "질투 특집": "Jealousy Special",
+    "연상연하 특집": "Age-Gap Special",
+  },
+  ja: {
+    "1차 모태솔로 특집": "第1回 恋愛未経験特集",
+    "2차 모태솔로 특집": "第2回 恋愛未経験特集",
+    "3차 모태솔로 특집": "第3回 恋愛未経験特集",
+    "돌싱 특집": "バツイチ特集",
+    "2차 돌싱 특집": "第2回 バツイチ特集",
+    "3차 돌싱 특집": "第3回 バツイチ特集",
+    "4차 돌싱 특집": "第4回 バツイチ特集",
+    "5차 돌싱 특집": "第5回 バツイチ特集",
+    "40대 특집": "40代特集",
+    "2차 40대 특집": "第2回 40代特集",
+    "40대 골드 특집": "40代ゴールド特集",
+    "질투 특집": "嫉妬特集",
+    "연상연하 특집": "年の差特集",
+  },
 };
 
-/** 한국어 화면은 데이터를 그대로 쓴다. 표에 없는 값도 원문 그대로 나간다. */
+/** 표에 없는 값은 원문 그대로 나간다. */
 export function localizeAlias(alias: string, locale: Locale): string {
-  if (locale === "ko") return alias;
-  return ROMANIZED_ALIASES[alias] ?? alias;
+  return ALIASES[locale][alias] ?? alias;
 }
 
 export function localizeSpecial(special: string, locale: Locale): string {
-  if (locale === "ko") return special;
-  return TRANSLATED_SPECIALS[special] ?? special;
+  return SPECIALS[locale][special] ?? special;
 }
 
 export function localizeProgramName(programId: string, locale: Locale): string {
