@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Languages } from "lucide-react";
+import { Check, Globe } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +22,11 @@ type Props = {
  * 언어 선택. 보고 있던 화면의 다른 언어 판으로 간다 — 33기를 보다 고르면
  * 33기의 일본어 화면이지 홈이 아니다.
  *
+ * 아이콘은 지구본이다. lucide 의 `Languages`(文A)가 의미로는 더 정확하지만 구글
+ * 번역 마크로 읽히는데, 이 사이트의 번역은 기계번역이 아니고 정책 페이지가
+ * "번역본이고 원문은 한국어" 라고 따로 말한다. 16px 에서 두 글자가 뭉개지는
+ * 것도 걸렸다.
+ *
  * **줄마다 `next/link` 가 아니라 맨 링크(`DropdownMenuLinkItem`)다. 되돌리지
  * 말 것.** 언어가 바뀌면
  * 루트 레이아웃(`app/[lang]/layout.tsx`)이 통째로 다시 그려지는데, 클라이언트
@@ -42,7 +47,7 @@ export function LocaleToggle({ current, label }: Props) {
       <DropdownMenuTrigger
         render={
           <Button variant="ghost" size="icon-sm" aria-label={label}>
-            <Languages />
+            <Globe />
           </Button>
         }
       />
