@@ -35,14 +35,14 @@ src/app/[lang]/seasons/[id]/page.tsx 기수 상세 (언어 × 기수로 전부 �
 src/app/[lang]/takedown/page.tsx     삭제·정정 요청 창구
 src/app/[lang]/privacy/page.tsx      개인정보 처리방침
 src/app/[lang]/layout.tsx            루트 레이아웃 — <html lang>, 언어별 metadata, generateStaticParams
-src/app/icon.tsx                     파비콘 — @ 마크, 코드 생성(ImageResponse). 언어를 안 탄다
+src/app/icon.tsx                     파비콘 — ㄲ 마크, 코드 생성(ImageResponse). 언어를 안 탄다
 src/app/apple-icon.tsx               iOS 홈 화면 아이콘 — 같은 마크, 180×180
 src/app/sitemap.ts / robots.ts       언어마다 한 줄씩 + hreflang (명단 빈 기수는 뺀다)
 src/proxy.ts                         `/` 로 들어온 사람을 브라우저 언어로 보낸다 (Next 16 의 미들웨어)
 src/lib/locales.ts                   언어 목록 — 화면·클라이언트·프록시가 다 읽는 순수 모듈
 src/lib/i18n.ts                      사전 로더 + 데이터 어휘(가명 로마자·특집) + 날짜/현황 포맷
 src/dictionaries/{ko,en}.json        화면 문구
-src/lib/brand.ts                     BRAND_MARK(@) — 언어 불변, 아이콘과 공유 / BRAND_WORDMARK(누꼬·nukko) — 언어별
+src/lib/brand.ts                     BRAND_MARK_PATHS(ㄲ 좌표) — 언어 불변, 아이콘과 공유 / BRAND_WORDMARK(누꼬·nukko) — 언어별
 src/lib/links.ts                     내부 경로 — 전부 언어로 시작한다
 src/lib/seo.ts                       색인 여부·OG 공통 필드·JSON-LD — 검색엔진에 보이는 것을 한 곳에
 src/lib/types.ts                     Program → Season → CastMember 모델
@@ -193,16 +193,18 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 **색면 포스터풍으로 가지 말 것.** 굵은 디스플레이 서체 + 강한 색면 + 거대한 숫자 조합은 이 프로젝트에서 반복해서 반려됐다. **사진 없는 자리를 메울 때 특히 걸린다** — 가명 배지를 처음엔 상태색 그대로 칠했더니 히어로 타일 세 장이 황토색 색면 띠가 됐다. 그래서 배지는 저대비고, 그 타일 자체도 결국 겹친 원 줄로 낮췄다. 방향이 애매하면 시안을 더 찍기보다 레퍼런스를 물어보는 게 빠르다.
 
-### 브랜드 — `@누꼬` / `@nukko`
+### 브랜드 — ㄲ 마크 + `누꼬` / `nukko`
 
-워드마크는 `@누꼬`(ko)·`@nukko`(en), 마크는 그 앞의 `@` 하나다. 도메인이 `nukko.net` 으로 정해지면서 `@whosthat` 에서 갈아 끼웠다(2026-08-24).
+워드마크는 [ㄲ 마크] `누꼬`(ko)·[ㄲ 마크] `nukko`(en). 마크는 겹친 두 원(얼굴·계정을 잇는 모양)의 둘레를 따라 ㄱ 을 하나씩 깎아 만든 모노그램(ㄲ)이다 — 누꼬의 ㄲ, nukko 의 kk. `@` 마크(인스타그램을 가리키던 글자)를 2026-08-24 에 통째로 교체했다 — 남들이 다 쓰는 기성 글자·기성 도형(원·물음표·말풍선 등도 검토 후 기각) 대신, 이름 속 글자에서 나온 도형이라야 이 브랜드만 가질 수 있다는 결론이었다.
 
-- **마크는 언어를 타지 않고, 이름만 탄다.** `@` 가 가리키는 건 브랜드가 아니라 인스타그램이라 이름이 바뀌어도 그대로다 — 파비콘·앱 아이콘은 한 줄도 안 고쳤다. 애초에 그 둘은 `[lang]` 바깥이라 언어를 못 받으므로, 두 언어가 한 글자를 공유하는 것 말고 다른 수가 없다.
+- **마크는 도형(SVG)이지 글자가 아니다.** 좌표는 `lib/brand.ts` 의 `BRAND_MARK_VIEWBOX`·`BRAND_MARK_PATHS` — 두 개의 `<path>`(각각 수평 획 + 라운드 코너 + 수직 획)가 `stroke-linecap: round` 로 그려진다. 이 획 끝 처리가 사이트의 반경 규칙(12–16px)과 같은 태도라 각진 ㄱ 대신 이 모양을 골랐다.
+- **마크는 언어를 타지 않고, 이름만 탄다.** `[lang]` 바깥인 파비콘·앱 아이콘이 애초에 언어를 못 받으므로, 두 언어가 같은 도형을 공유하는 것 말고 다른 수가 없다. 이름(`BRAND_WORDMARK`)만 로케일별로 갈아 끼운다.
 - **한글 워드마크를 반려했던 규칙이 뒤집혔다.** `whosthat` 시절엔 "브랜드를 번역하지 않는다"는 이유로 한글을 뺐는데, `누꼬` 는 `nukko` 의 번역이 아니라 **원문**이다(경상도 사투리). 그 규칙을 그대로 적용하면 한국어 화면이 원문 대신 로마자 표기를 쓰는 꼴이 된다. 이름이 사투리인 동안만 성립하는 예외지 "브랜드도 번역한다"로 넓히지 말 것.
-- **서체는 이름만 갈아 끼운다**(`BRAND_WORDMARK_FONT`). 마크는 어느 언어에서도 `font-lat`(Manrope)이다 — Gothic A1 의 `@` 는 안쪽 `a` 배가 작고 둥글어서, 이름과 같은 서체로 두면 언어를 전환할 때 마크가 다른 글자로 읽히고 파비콘의 `@` 와도 어긋난다. 한글 쪽 값이 빈 문자열이 아니라 `font-sans` 인 건 이 값이 `font-lat` 을 이미 걸어 둔 상자(푸터 카피라이트 줄) 안에도 들어가기 때문이다.
-- **언어를 못 받는 자리는 라틴 표기로 고정한다.** OG 이미지의 `alt` 는 정적 export 라 locale 을 못 받으므로 `BRAND_WORDMARK.en`(도메인과 같은 표기)을 쓴다. 반대로 `websiteSchema` 의 `alternateName` 은 locale 을 받으므로 화면 워드마크와 같은 언어로 준다 — 검색 결과에 뜬 이름과 눌러서 도착한 화면이 어긋나면 안 된다.
-- `BRAND_MARK`·`BRAND_WORDMARK`·`BRAND_WORDMARK_FONT` 는 `lib/brand.ts` 하나에 있다. 워드마크(`Wordmark` 컴포넌트)와 파비콘(`icon.tsx`)·앱 아이콘(`apple-icon.tsx`)이 같은 값을 쓰므로 두 번째 사용처가 생겼을 때 이미 여기로 올렸다.
-- 파비콘·앱 아이콘은 **도형이 아니라 Manrope 글리프(`@`)를 그대로 그린다.** 직접 그린 도형(원호+꼬리)으로 먼저 시도했지만 32px 에서 안쪽 구멍이 막히고 꼬리가 말려 로딩 스피너처럼 읽혔다 — 폰트 글리프는 안쪽 `a` 배와 세로획이 살아 있어 작은 크기에서도 `@` 로 읽힌다.
+- **서체는 이름만 갈아 끼운다**(`BRAND_WORDMARK_FONT`). 마크가 도형이 된 뒤로는 이 표가 서체 문제에서 완전히 자유롭다 — 예전엔 `@` 를 어느 서체로 그릴지가 걸렸지만(Gothic A1 의 `@` 는 안쪽 `a` 배가 작고 둥글어 이름과 서체가 갈리면 마크가 다른 글자로 읽혔다), 이제 마크는 서체 자체가 없다. 한글 쪽 값이 빈 문자열이 아니라 `font-sans` 인 건 이 값이 `font-lat` 을 이미 걸어 둔 상자(푸터 카피라이트 줄) 안에도 들어가기 때문이다.
+- **워드마크의 마크·이름 정렬은 `items-center` 다.** 마크가 텍스트가 아니라 도형이라 베이스라인 개념이 없다 — `items-baseline` 을 쓰면 오히려 광학 중심이 어긋난다. (`@` 시절엔 두 서체의 라인 메트릭 차이로 세로 위치가 어긋나는 버그가 있었다 — 도형으로 바꾸면서 그 버그의 원인 자체가 사라졌다.)
+- **언어를 못 받는 자리는 라틴 표기로 고정한다.** OG 이미지의 `alt` 는 정적 export 라 locale 을 못 받으므로 `BRAND_WORDMARK.en`(도메인과 같은 표기)만 쓴다 — 마크는 도형이라 글로 옮길 말이 없다. 반대로 `websiteSchema` 의 `alternateName` 은 locale 을 받으므로 화면 워드마크와 같은 언어로 준다 — 검색 결과에 뜬 이름과 눌러서 도착한 화면이 어긋나면 안 된다.
+- `BrandMark` 컴포넌트(`components/icons.tsx`)가 좌표를 그린다. `className`(Tailwind)과 `style`(인라인) 둘 다 받는 이유는 렌더 경로가 둘로 갈리기 때문이다 — 화면 컴포넌트(`Wordmark`·`SiteFooter`)는 `className` 만 쓰고, `icon.tsx`·`apple-icon.tsx` 는 satori(ImageResponse) 위에서 렌더되는데 satori 가 Tailwind 클래스를 못 읽어서 `style` 로 크기·색을 준다.
+- **파비콘·앱 아이콘은 폰트가 필요 없다.** 마크가 벡터라 `loadLatinFont` 호출도, `fonts` 배열도 없다 — `@` 글리프 시절엔 Manrope 서브셋을 매번 받아야 했다. 폭은 타일 대비 비율(`MARK_WIDTH_RATIO`)로 정하고 높이는 `BRAND_MARK_ASPECT`(88:64)로 뺀다. 앱 아이콘 쪽 비율이 더 작은 건 iOS 마스크가 모서리를 먹어서 여백을 더 줘야 하기 때문이다.
 - `Wordmark` 는 홈·기수 상세·정책 페이지(처리방침·삭제요청) 헤더에 있다. 정책 페이지는 검색으로 바로 착지하는 진입점이라 워드마크가 특히 중요하다 — 본문의 "이 사이트" 도 첫 문장에서 `BRAND_WORDMARK` 로 못박는다.
 - `BackLink` 는 바깥 여백을 갖지 않는다 — 정책 페이지는 제목 위 한 줄, 기수 상세는 제목 옆(`‹ 33기`)에 붙이므로 자리는 쓰는 쪽이 정한다. 제목이 두 줄로 접힐 때 화살표가 첫 줄에 붙게 `-mt-1` 로 광학 정렬한다.
 
@@ -219,7 +221,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 네 화면(기수 목록·기수 상세·삭제 요청·처리방침)이 **한국어·영어 두 벌**로 동작하고 빌드가 통과한다(80 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지·JSON-LD)까지 붙어 있고 전부 정적이다 — 서버가 하는 일은 `/` 하나를 언어로 보내는 proxy 뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (2026-08-24 에 커스텀 도메인 연결, Cloudflare Registrar 등록·DNS. 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. 실제 사진 파일은 아직 한 장도 없다.
 
-브랜드 워드마크·파비콘·앱 아이콘(`@누꼬`/`@nukko`)이 붙었다 — 위 "브랜드" 절 참고. 네 화면 헤더가 전부 같은 `‹ 제목` 인라인 구조를 쓴다.
+브랜드 워드마크·파비콘·앱 아이콘([ㄲ 마크] `누꼬`/[ㄲ 마크] `nukko`)이 붙었다 — 위 "브랜드" 절 참고. 네 화면 헤더가 전부 같은 `‹ 제목` 인라인 구조를 쓴다.
 
 도메인은 `lib/site.ts` 한 곳에서 정해진다. **`NEXT_PUBLIC_SITE_URL`(Production)에 `https://www.nukko.net` 을 박아 뒀다** — Vercel 자동값(`VERCEL_PROJECT_PRODUCTION_URL`)은 "가장 짧은 커스텀 도메인"을 고르는데, 그러면 리다이렉트 전용인 apex(`nukko.net`)가 뽑힌다. 이유는 위 "커스텀 도메인을 연결할 때" 1번에 있다.
 
