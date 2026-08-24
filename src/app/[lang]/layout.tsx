@@ -24,7 +24,7 @@ const gothic = Gothic_A1({
 const manrope = Manrope({
   variable: "--font-lat",
   subsets: ["latin"],
-  // 800 은 워드마크(`@whosthat`) 전용이다. 본문에는 쓰지 않는다.
+  // 800 은 워드마크(`@nukko`) 전용이다. 본문에는 쓰지 않는다.
   weight: ["500", "600", "700", "800"],
 });
 

@@ -13,8 +13,11 @@ import { loadKoreanFont, loadLatinFont } from "@/lib/og";
 import { OG_SIZE } from "@/lib/site";
 import { getCoverage } from "@/lib/types";
 
-/** 언어별 사이트 이름 대신 브랜드를 쓴다 — alt 는 정적이라 언어를 못 받는다. */
-export const alt = `${BRAND_MARK}${BRAND_WORDMARK}`;
+/**
+ * 언어별 사이트 이름 대신 브랜드를 쓴다 — alt 는 정적이라 언어를 못 받는다.
+ * 그래서 도메인과 같은 라틴 표기로 고정한다.
+ */
+export const alt = `${BRAND_MARK}${BRAND_WORDMARK.en}`;
 export const size = OG_SIZE;
 export const contentType = "image/png";
 

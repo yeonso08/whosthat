@@ -69,8 +69,9 @@ export function websiteSchema(locale: Locale): Schema {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: dict.site.name,
-    // 브랜드는 라틴 기준이라 언어를 안 탄다. 사이트 이름 후보로 함께 준다.
-    alternateName: BRAND_WORDMARK,
+    // 사이트 이름 후보로 함께 준다. 화면 워드마크와 같은 언어라야 검색 결과에
+    // 뜬 이름과 눌러서 도착한 화면이 어긋나지 않는다.
+    alternateName: BRAND_WORDMARK[locale],
     url: SITE_URL,
     description: dict.site.description,
     inLanguage: locale,

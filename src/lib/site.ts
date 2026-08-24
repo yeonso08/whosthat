@@ -10,11 +10,16 @@
 export const SITE_URL = resolveSiteUrl();
 
 function resolveSiteUrl(): string {
-  // 직접 산 도메인. 설정하면 항상 이게 이긴다.
+  // 손으로 못박은 도메인. 설정하면 항상 이게 이긴다.
+  //
+  // 이 프로젝트는 Vercel 위에서도 이걸 쓴다 — 아래 자동값이 "가장 짧은 커스텀
+  // 도메인"을 고르는데, apex(`nukko.net`)와 `www` 를 함께 등록해 두면 짧은 쪽은
+  // 언제나 apex 다. 그런데 apex 는 `www` 로 308 하는 리다이렉트 전용이라, 그대로
+  // 두면 canonical 과 sitemap 이 열면 딴 데로 튕기는 주소를 가리킨다.
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
   if (explicit) return explicit;
 
-  // Vercel 이 넣어 주는 프로덕션 도메인. 커스텀 도메인을 붙이면 그쪽으로 바뀌고,
+  // Vercel 이 넣어 주는 프로덕션 도메인. 위 값이 없을 때의 차선책이다.
   // 프리뷰 배포에서도 프로덕션 주소가 들어와서 canonical 이 흩어지지 않는다.
   // (프로젝트 설정에서 시스템 환경변수 접근이 꺼져 있으면 값이 없다.)
   const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;

@@ -4,7 +4,7 @@ import { BackLink } from "@/components/back-link";
 import { JsonLd } from "@/components/json-ld";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
-import { BRAND_WORDMARK } from "@/lib/brand";
+import { BRAND_WORDMARK, BRAND_WORDMARK_FONT } from "@/lib/brand";
 import { getDictionary, isLocale, languageAlternates } from "@/lib/i18n";
 import { contactMailto, takedownHref } from "@/lib/links";
 import { breadcrumbSchema, openGraphBase } from "@/lib/seo";
@@ -66,8 +66,10 @@ export default async function Page({ params }: PageProps<"/[lang]/takedown">) {
         </div>
         <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
           {beforeBrand}
-          <span className="font-lat font-semibold text-foreground">
-            {BRAND_WORDMARK}
+          <span
+            className={`${BRAND_WORDMARK_FONT[lang]} font-semibold text-foreground`}
+          >
+            {BRAND_WORDMARK[lang]}
           </span>
           {afterBrand}
         </p>

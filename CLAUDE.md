@@ -42,7 +42,7 @@ src/proxy.ts                         `/` 로 들어온 사람을 브라우저 �
 src/lib/locales.ts                   언어 목록 — 화면·클라이언트·프록시가 다 읽는 순수 모듈
 src/lib/i18n.ts                      사전 로더 + 데이터 어휘(가명 로마자·특집) + 날짜/현황 포맷
 src/dictionaries/{ko,en}.json        화면 문구
-src/lib/brand.ts                     BRAND_MARK(@)·BRAND_WORDMARK(whosthat) — 워드마크와 아이콘이 공유
+src/lib/brand.ts                     BRAND_MARK(@) — 언어 불변, 아이콘과 공유 / BRAND_WORDMARK(누꼬·nukko) — 언어별
 src/lib/links.ts                     내부 경로 — 전부 언어로 시작한다
 src/lib/seo.ts                       색인 여부·OG 공통 필드·JSON-LD — 검색엔진에 보이는 것을 한 곳에
 src/lib/types.ts                     Program → Season → CastMember 모델
@@ -100,9 +100,9 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ### 커스텀 도메인을 연결할 때
 
-**코드는 고칠 게 없다.** `lib/site.ts` 가 Vercel 이 넣어 주는 `VERCEL_PROJECT_PRODUCTION_URL` 을 읽으므로 canonical·hreflang·sitemap·robots·JSON-LD·OG 이미지가 전부 따라간다. `NEXT_PUBLIC_SITE_URL` 은 Vercel 밖에 배포할 때만 준다. 할 일은 Vercel 설정과 검색엔진 콘솔 쪽이다.
+**코드는 고칠 게 없다.** `lib/site.ts` 가 도메인을 정하는 유일한 곳이고, canonical·hreflang·sitemap·robots·JSON-LD·OG 이미지가 전부 그 값을 따라간다. 할 일은 Vercel 설정과 검색엔진 콘솔 쪽이다.
 
-1. **Vercel 에서 새 도메인을 Primary 로 지정한다.** 안 하면 `.vercel.app` 과 새 도메인이 같은 내용을 동시에 서빙해서 색인이 둘로 쪼개진다. Primary 로 잡으면 나머지 도메인이 그쪽으로 308 한다.
+1. **`NEXT_PUBLIC_SITE_URL` 을 Production 환경변수로 준다**(`https://www.nukko.net`). **"Primary 도메인 지정" 같은 설정은 Vercel 에 없다** — `VERCEL_PROJECT_PRODUCTION_URL` 은 [문서](https://vercel.com/docs/environment-variables/system-environment-variables)대로 **"가장 짧은 커스텀 도메인"을 자동으로** 고른다. apex 와 `www` 를 함께 등록하면 짧은 쪽은 언제나 apex 인데, apex 는 `www` 로 308 하는 리다이렉트 전용이라 그대로 두면 canonical·sitemap 이 **열면 딴 데로 튕기는 주소**를 가리킨다. 그래서 이 프로젝트는 자동값에 기대지 않고 못박는다 — `NEXT_PUBLIC_SITE_URL` 은 원래 "Vercel 밖에 배포할 때"용이었지만, 이 구성에서는 Vercel 위에서도 필요하다.
 2. **배포 후 `curl https://<새도메인>/sitemap.xml` 로 `<loc>` 을 확인한다.** 여기가 옛 도메인으로 나오면 프로젝트 설정에서 시스템 환경변수 접근이 꺼진 것이다(`lib/site.ts` 주석). 이건 에러 없이 조용히 틀리는 종류라 눈으로 봐야 안다.
 3. **그 다음이 검색엔진 등록이다.** 두 곳 다 등록 → sitemap 제출 순이다. `.vercel.app` 을 GSC 에 이미 등록해 뒀다면 주소 변경 도구를 쓰고, 안 했다면 새 도메인만 새로 등록하면 된다. 네이버는 주소 변경 도구가 없어서 어느 쪽이든 새로 등록이다.
 4. **소유 확인 코드가 필요하면 `metadata.verification` 이다**(루트 레이아웃). 아직 안 붙어 있다. 두 곳 다 HTML 파일 업로드 방식도 받는데, 그건 `public/` 에 그대로 넣으면 된다.
@@ -193,11 +193,15 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 **색면 포스터풍으로 가지 말 것.** 굵은 디스플레이 서체 + 강한 색면 + 거대한 숫자 조합은 이 프로젝트에서 반복해서 반려됐다. **사진 없는 자리를 메울 때 특히 걸린다** — 가명 배지를 처음엔 상태색 그대로 칠했더니 히어로 타일 세 장이 황토색 색면 띠가 됐다. 그래서 배지는 저대비고, 그 타일 자체도 결국 겹친 원 줄로 낮췄다. 방향이 애매하면 시안을 더 찍기보다 레퍼런스를 물어보는 게 빠르다.
 
-### 브랜드 — `@whosthat`
+### 브랜드 — `@누꼬` / `@nukko`
 
-워드마크는 `@whosthat`, 마크는 그 앞의 `@` 하나다. **라틴 문자 기준이다** — 글로벌 확장 전제라 한글 워드마크는 후보에서 뺐다(1차 화면 문구는 한국어지만 브랜드는 그 범위에 묶지 않는다).
+워드마크는 `@누꼬`(ko)·`@nukko`(en), 마크는 그 앞의 `@` 하나다. 도메인이 `nukko.net` 으로 정해지면서 `@whosthat` 에서 갈아 끼웠다(2026-08-24).
 
-- `BRAND_MARK`·`BRAND_WORDMARK` 는 `lib/brand.ts` 하나에 있다. 워드마크(`Wordmark` 컴포넌트)와 파비콘(`icon.tsx`)·앱 아이콘(`apple-icon.tsx`)이 같은 값을 쓰므로 두 번째 사용처가 생겼을 때 이미 여기로 올렸다.
+- **마크는 언어를 타지 않고, 이름만 탄다.** `@` 가 가리키는 건 브랜드가 아니라 인스타그램이라 이름이 바뀌어도 그대로다 — 파비콘·앱 아이콘은 한 줄도 안 고쳤다. 애초에 그 둘은 `[lang]` 바깥이라 언어를 못 받으므로, 두 언어가 한 글자를 공유하는 것 말고 다른 수가 없다.
+- **한글 워드마크를 반려했던 규칙이 뒤집혔다.** `whosthat` 시절엔 "브랜드를 번역하지 않는다"는 이유로 한글을 뺐는데, `누꼬` 는 `nukko` 의 번역이 아니라 **원문**이다(경상도 사투리). 그 규칙을 그대로 적용하면 한국어 화면이 원문 대신 로마자 표기를 쓰는 꼴이 된다. 이름이 사투리인 동안만 성립하는 예외지 "브랜드도 번역한다"로 넓히지 말 것.
+- **서체는 이름만 갈아 끼운다**(`BRAND_WORDMARK_FONT`). 마크는 어느 언어에서도 `font-lat`(Manrope)이다 — Gothic A1 의 `@` 는 안쪽 `a` 배가 작고 둥글어서, 이름과 같은 서체로 두면 언어를 전환할 때 마크가 다른 글자로 읽히고 파비콘의 `@` 와도 어긋난다. 한글 쪽 값이 빈 문자열이 아니라 `font-sans` 인 건 이 값이 `font-lat` 을 이미 걸어 둔 상자(푸터 카피라이트 줄) 안에도 들어가기 때문이다.
+- **언어를 못 받는 자리는 라틴 표기로 고정한다.** OG 이미지의 `alt` 는 정적 export 라 locale 을 못 받으므로 `BRAND_WORDMARK.en`(도메인과 같은 표기)을 쓴다. 반대로 `websiteSchema` 의 `alternateName` 은 locale 을 받으므로 화면 워드마크와 같은 언어로 준다 — 검색 결과에 뜬 이름과 눌러서 도착한 화면이 어긋나면 안 된다.
+- `BRAND_MARK`·`BRAND_WORDMARK`·`BRAND_WORDMARK_FONT` 는 `lib/brand.ts` 하나에 있다. 워드마크(`Wordmark` 컴포넌트)와 파비콘(`icon.tsx`)·앱 아이콘(`apple-icon.tsx`)이 같은 값을 쓰므로 두 번째 사용처가 생겼을 때 이미 여기로 올렸다.
 - 파비콘·앱 아이콘은 **도형이 아니라 Manrope 글리프(`@`)를 그대로 그린다.** 직접 그린 도형(원호+꼬리)으로 먼저 시도했지만 32px 에서 안쪽 구멍이 막히고 꼬리가 말려 로딩 스피너처럼 읽혔다 — 폰트 글리프는 안쪽 `a` 배와 세로획이 살아 있어 작은 크기에서도 `@` 로 읽힌다.
 - `Wordmark` 는 홈·기수 상세·정책 페이지(처리방침·삭제요청) 헤더에 있다. 정책 페이지는 검색으로 바로 착지하는 진입점이라 워드마크가 특히 중요하다 — 본문의 "이 사이트" 도 첫 문장에서 `BRAND_WORDMARK` 로 못박는다.
 - `BackLink` 는 바깥 여백을 갖지 않는다 — 정책 페이지는 제목 위 한 줄, 기수 상세는 제목 옆(`‹ 33기`)에 붙이므로 자리는 쓰는 쪽이 정한다. 제목이 두 줄로 접힐 때 화살표가 첫 줄에 붙게 `-mt-1` 로 광학 정렬한다.
@@ -213,11 +217,11 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ## 현재 상태
 
-네 화면(기수 목록·기수 상세·삭제 요청·처리방침)이 **한국어·영어 두 벌**로 동작하고 빌드가 통과한다(80 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지·JSON-LD)까지 붙어 있고 전부 정적이다 — 서버가 하는 일은 `/` 하나를 언어로 보내는 proxy 뿐이다. Vercel 에 배포돼 있다 — https://whosthat-six.vercel.app (도메인은 추후 구매 예정). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. 실제 사진 파일은 아직 한 장도 없다.
+네 화면(기수 목록·기수 상세·삭제 요청·처리방침)이 **한국어·영어 두 벌**로 동작하고 빌드가 통과한다(80 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지·JSON-LD)까지 붙어 있고 전부 정적이다 — 서버가 하는 일은 `/` 하나를 언어로 보내는 proxy 뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (2026-08-24 에 커스텀 도메인 연결, Cloudflare Registrar 등록·DNS. 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. 실제 사진 파일은 아직 한 장도 없다.
 
-브랜드 워드마크·파비콘·앱 아이콘(`@whosthat`)이 붙었다 — 위 "브랜드" 절 참고. 네 화면 헤더가 전부 같은 `‹ 제목` 인라인 구조를 쓴다.
+브랜드 워드마크·파비콘·앱 아이콘(`@누꼬`/`@nukko`)이 붙었다 — 위 "브랜드" 절 참고. 네 화면 헤더가 전부 같은 `‹ 제목` 인라인 구조를 쓴다.
 
-도메인은 `lib/site.ts` 한 곳에서 정해진다. Vercel 이 넣어 주는 `VERCEL_PROJECT_PRODUCTION_URL` 을 쓰므로 **평소엔 설정할 게 없고**, 커스텀 도메인을 Vercel 에 연결하면 자동으로 따라간다. Vercel 밖에 배포할 때만 `NEXT_PUBLIC_SITE_URL` 을 준다.
+도메인은 `lib/site.ts` 한 곳에서 정해진다. **`NEXT_PUBLIC_SITE_URL`(Production)에 `https://www.nukko.net` 을 박아 뒀다** — Vercel 자동값(`VERCEL_PROJECT_PRODUCTION_URL`)은 "가장 짧은 커스텀 도메인"을 고르는데, 그러면 리다이렉트 전용인 apex(`nukko.net`)가 뽑힌다. 이유는 위 "커스텀 도메인을 연결할 때" 1번에 있다.
 
 기수 골격은 1~33기 전부 들어가 있고 명단도 전부 채워졌다(408명, 2026-08-21). 계정은 320명이 `found` 고 나머지는 `searching` 이다 — 아직 못 채운 건 방영 중이라 계정이 잠긴 33기와 각 기수에 한둘씩 남은 자리다. 빈 `cast` 는 이제 없다.
 
@@ -225,7 +229,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 삭제·정정 요청 창구(`/takedown`)와 개인정보 처리방침(`/privacy`)이 붙어 있고, 푸터가 레이아웃에 있어 전 화면에서 닿는다. 푸터 맨 아래 카피라이트 연도는 `new Date()` 가 아니라 상수다 — 전 페이지가 SSG 라 그 값은 빌드 시각에 얼어붙는다. **삭제 요청 처리 방법은 `src/data/README.md` 의 "내려 달라는 요청이 오면" 을 따른다** — `searching` 으로 되돌리면 다음 배치에서 다시 올라온다. 계정과 사진을 **함께** 내린다(계정만 내리면 요청을 반만 처리한 것이다). 두 화면(`/takedown`·`/privacy`)도 사진을 명시하고 있으니, 사진 방침을 바꾸면 그 문구부터 같이 고친다.
 
-연락처는 `lib/site.ts` 의 `CONTACT_EMAIL` 한 곳이다. 이 주소는 **실제로 열려 있어야 한다** — 반송되면 사이트가 지키지 못할 약속을 걸어 둔 셈이 된다.
+연락처는 `lib/site.ts` 의 `CONTACT_EMAIL` 한 곳이다. 이 주소는 **실제로 열려 있어야 한다** — 반송되면 사이트가 지키지 못할 약속을 걸어 둔 셈이 된다. 브랜드가 `nukko` 로 바뀐 뒤에도 **아직 `whosthat.archive@gmail.com` 이다.** 새 주소로 옮기려면 **주소를 먼저 만들고** 코드를 고친다 — 순서를 바꾸면 그사이 들어온 삭제 요청이 통째로 사라진다.
 
 검색(`SeasonSearch`)은 **홈의 기수 목록 바로 위 검색창**이다. 헤더 돋보기 + `⌘K` 팔레트(shadcn `command`)로 먼저 만들었다가 반려됐다 — 목록 위 검색창이 맞다. 그래서 `command`·`dialog` 는 다시 걷어냈고 `cmdk` 의존도 지웠다.
 
