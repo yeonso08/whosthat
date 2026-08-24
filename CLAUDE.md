@@ -96,7 +96,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **JSON-LD 는 화면에 이미 있는 것만 옮긴다.** 홈은 `WebSite`(검색 결과에 도메인 대신 사이트 이름을 쓸지 Google 이 여기를 본다), 기수 상세와 정책 두 페이지는 `BreadcrumbList`, 기수 상세는 거기에 `ItemList` 가 더 붙는다. **`ItemList` 에는 `found` 인 사람만 넣는다** — 못 찾은 사람은 이을 `sameAs` 가 없어서 "사람이 있다"는 주장만 남고, 그건 화면에 없는 말을 마크업으로 더하는 것이다. 삭제 요청으로 계정을 내리면 마크업도 함께 사라진다(데이터에서 나오므로 따로 손댈 게 없다).
 - **기수 상세 머리글의 프로그램 이름을 빼지 말 것.** 제목은 `나는 솔로 33기 출연진 인스타` 인데 본문에는 `33기` 와 가명뿐이라 프로그램 이름이 한 글자도 없던 적이 있다 — 주 검색어를 본문이 뒷받침하지 못하는 상태였다. 홈 머리글과 같은 구조(프로그램 이름 한 줄 + 큰 제목)다.
 
-**검색엔진 등록(Google Search Console·네이버 서치어드바이저)은 커스텀 도메인을 연결한 뒤에 한다.** 코드가 아니라 운영이고, 검증과 색인이 호스트네임 단위로 쌓여서 순서를 바꾸면 같은 일을 두 번 한다. 근거는 `PLANNING.md` §10. 이 프로젝트는 2026-08-24 에 실제로 밟았다 — 절차는 바로 아래에 있고, 다음에 도메인을 옮길 때도 같은 순서를 따른다.
+**검색엔진 등록(Google Search Console·네이버 서치어드바이저·Bing Webmaster Tools)은 커스텀 도메인을 연결한 뒤에 한다.** 코드가 아니라 운영이고, 검증과 색인이 호스트네임 단위로 쌓여서 순서를 바꾸면 같은 일을 두 번 한다. 근거는 `PLANNING.md` §10. 이 프로젝트는 2026-08-24 에 실제로 밟았다 — 절차는 바로 아래에 있고, 다음에 도메인을 옮길 때도 같은 순서를 따른다.
 
 ### 커스텀 도메인을 연결할 때
 
@@ -104,8 +104,8 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 1. **`NEXT_PUBLIC_SITE_URL` 을 Production 환경변수로 준다**(`https://www.nukko.net`). **"Primary 도메인 지정" 같은 설정은 Vercel 에 없다** — `VERCEL_PROJECT_PRODUCTION_URL` 은 [문서](https://vercel.com/docs/environment-variables/system-environment-variables)대로 **"가장 짧은 커스텀 도메인"을 자동으로** 고른다. apex 와 `www` 를 함께 등록하면 짧은 쪽은 언제나 apex 인데, apex 는 `www` 로 308 하는 리다이렉트 전용이라 그대로 두면 canonical·sitemap 이 **열면 딴 데로 튕기는 주소**를 가리킨다. 그래서 이 프로젝트는 자동값에 기대지 않고 못박는다 — `NEXT_PUBLIC_SITE_URL` 은 원래 "Vercel 밖에 배포할 때"용이었지만, 이 구성에서는 Vercel 위에서도 필요하다.
 2. **배포 후 `curl https://<새도메인>/sitemap.xml` 로 `<loc>` 을 확인한다.** 여기가 옛 도메인으로 나오면 프로젝트 설정에서 시스템 환경변수 접근이 꺼진 것이다(`lib/site.ts` 주석). 이건 에러 없이 조용히 틀리는 종류라 눈으로 봐야 안다.
-3. **그 다음이 검색엔진 등록이다.** 두 곳 다 등록 → sitemap 제출 순이다. `.vercel.app` 을 GSC 에 이미 등록해 뒀다면 주소 변경 도구를 쓰고, 안 했다면 새 도메인만 새로 등록하면 된다. 네이버는 주소 변경 도구가 없어서 어느 쪽이든 새로 등록이다.
-4. **소유 확인 코드가 필요하면 `metadata.verification` 이다**(루트 레이아웃). 구글은 도메인 속성 + DNS TXT 라 코드에 안 남지만, 네이버는 DNS 방식이 없어서 붙어 있다 — 값은 `lib/site.ts` 의 `NAVER_SITE_VERIFICATION`. 두 곳 다 HTML 파일 업로드 방식도 받는데, 그건 `public/` 에 그대로 넣으면 된다.
+3. **그 다음이 검색엔진 등록이다.** 세 곳 다 등록 → sitemap 제출 순이다. `.vercel.app` 을 GSC 에 이미 등록해 뒀다면 주소 변경 도구를 쓰고, 안 했다면 새 도메인만 새로 등록하면 된다. 네이버는 주소 변경 도구가 없어서 어느 쪽이든 새로 등록이다.
+4. **소유 확인 코드가 필요하면 `metadata.verification` 이다**(루트 레이아웃). 구글은 도메인 속성 + DNS TXT 라 코드에 안 남지만, 네이버는 DNS 방식이 없어서 붙어 있다 — 값은 `lib/site.ts` 의 `NAVER_SITE_VERIFICATION`. **Bing 은 "Import from Google Search Console"** 을 쓰면 구글 쪽 확인을 그대로 물려받아서 코드도 새 값도 필요 없다 — 그게 안 될 때만 네이버처럼 메타 태그 방식으로 간다. 세 곳 다 HTML 파일 업로드 방식도 받는데, 그건 `public/` 에 그대로 넣으면 된다.
 
 배포 후 확인은 `validator.schema.org`(타입을 안 가린다)와 `search.google.com/test/rich-results`(탐색경로만 잡힌다 — `WebSite`·`ItemList` 가 여기서 안 보이는 건 정상이다) 두 곳이다.
 
@@ -223,7 +223,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 도메인은 `lib/site.ts` 한 곳에서 정해진다. **`NEXT_PUBLIC_SITE_URL`(Production)에 `https://www.nukko.net` 을 박아 뒀다** — Vercel 자동값(`VERCEL_PROJECT_PRODUCTION_URL`)은 "가장 짧은 커스텀 도메인"을 고르는데, 그러면 리다이렉트 전용인 apex(`nukko.net`)가 뽑힌다. 이유는 위 "커스텀 도메인을 연결할 때" 1번에 있다.
 
-**검색엔진 등록도 끝났다**(2026-08-24). Google Search Console(도메인 속성, DNS TXT)·네이버 서치어드바이저(HTML 메타 태그) 둘 다 소유확인과 sitemap 제출까지 마쳤다 — 절차는 위 "커스텀 도메인을 연결할 때". 남은 건 색인을 기다리는 것뿐이다.
+**검색엔진 등록도 끝났다**(2026-08-24). Google Search Console(도메인 속성, DNS TXT)·네이버 서치어드바이저(HTML 메타 태그)는 소유확인·sitemap 제출까지 직접 확인했다. **Bing Webmaster Tools** 는 GSC 에서 Import 로 가져왔다 — 코드 변경이 없어서 값을 남길 파일이 없다. 절차는 위 "커스텀 도메인을 연결할 때". 남은 건 색인을 기다리는 것뿐이다.
 
 기수 골격은 1~33기 전부 들어가 있고 명단도 전부 채워졌다(408명, 2026-08-21). 계정은 320명이 `found` 고 나머지는 `searching` 이다 — 아직 못 채운 건 방영 중이라 계정이 잠긴 33기와 각 기수에 한둘씩 남은 자리다. 빈 `cast` 는 이제 없다.
 
