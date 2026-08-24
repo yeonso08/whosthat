@@ -223,7 +223,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 도메인은 `lib/site.ts` 한 곳에서 정해진다. **`NEXT_PUBLIC_SITE_URL`(Production)에 `https://www.nukko.net` 을 박아 뒀다** — Vercel 자동값(`VERCEL_PROJECT_PRODUCTION_URL`)은 "가장 짧은 커스텀 도메인"을 고르는데, 그러면 리다이렉트 전용인 apex(`nukko.net`)가 뽑힌다. 이유는 위 "커스텀 도메인을 연결할 때" 1번에 있다.
 
-**검색엔진 등록도 끝났다**(2026-08-24). Google Search Console(도메인 속성, DNS TXT)·네이버 서치어드바이저(HTML 메타 태그)는 소유확인·sitemap 제출까지 직접 확인했다. **Bing Webmaster Tools** 는 GSC 에서 Import 로 가져왔다 — 코드 변경이 없어서 값을 남길 파일이 없다. 절차는 위 "커스텀 도메인을 연결할 때". 남은 건 색인을 기다리는 것뿐이다.
+**검색엔진 등록도 끝났다**(2026-08-24). Google Search Console(도메인 속성, DNS TXT)·네이버 서치어드바이저(HTML 메타 태그)는 소유확인·sitemap 제출까지 직접 확인했다. **Bing Webmaster Tools** 는 GSC 에서 Import 로 가져왔다 — 코드 변경이 없어서 값을 남길 파일이 없고, sitemap 도 소유확인과 함께 자동으로 넘어왔다(콘솔에서 확인). 절차는 위 "커스텀 도메인을 연결할 때". 남은 건 색인을 기다리는 것뿐이다.
 
 기수 골격은 1~33기 전부 들어가 있고 명단도 전부 채워졌다(408명, 2026-08-21). 계정은 320명이 `found` 고 나머지는 `searching` 이다 — 아직 못 채운 건 방영 중이라 계정이 잠긴 33기와 각 기수에 한둘씩 남은 자리다. 빈 `cast` 는 이제 없다.
 
