@@ -1,9 +1,6 @@
 import Link from "next/link";
-import {
-  BRAND_MARK,
-  BRAND_WORDMARK,
-  BRAND_WORDMARK_FONT,
-} from "@/lib/brand";
+import { BrandMark } from "@/components/icons";
+import { BRAND_WORDMARK, BRAND_WORDMARK_FONT } from "@/lib/brand";
 import { currentDictionary, currentLocale } from "@/lib/i18n";
 import { privacyHref, takedownHref } from "@/lib/links";
 
@@ -34,9 +31,12 @@ export async function SiteFooter() {
           {dict.footer.privacy}
         </Link>
       </p>
-      {/* 연도·마크는 `font-lat`(Manrope), 이름만 언어에 따라 갈아 끼운다. */}
-      <p className="font-lat mt-1 text-[11px] text-muted-foreground/70">
-        © {COPYRIGHT_YEAR} {BRAND_MARK}
+      {/* 연도는 `font-lat`(Manrope), 이름만 언어에 따라 갈아 끼운다. */}
+      <p className="font-lat mt-1 flex items-center gap-1 text-[11px] text-muted-foreground/70">
+        <span>
+          © {COPYRIGHT_YEAR}
+        </span>
+        <BrandMark className="h-[0.85em] w-auto" />
         <span className={BRAND_WORDMARK_FONT[locale]}>
           {BRAND_WORDMARK[locale]}
         </span>
