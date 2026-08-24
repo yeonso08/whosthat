@@ -42,7 +42,7 @@ src/proxy.ts                         `/` 로 들어온 사람을 브라우저 �
 src/lib/locales.ts                   언어 목록 — 화면·클라이언트·프록시가 다 읽는 순수 모듈
 src/lib/i18n.ts                      사전 로더 + 데이터 어휘(가명 로마자·특집) + 날짜/현황 포맷
 src/dictionaries/{ko,en}.json        화면 문구
-src/lib/brand.ts                     BRAND_MARK(@)·BRAND_WORDMARK(whosthat) — 워드마크와 아이콘이 공유
+src/lib/brand.ts                     BRAND_MARK(@) — 언어 불변, 아이콘과 공유 / BRAND_WORDMARK(누꼬·nukko) — 언어별
 src/lib/links.ts                     내부 경로 — 전부 언어로 시작한다
 src/lib/seo.ts                       색인 여부·OG 공통 필드·JSON-LD — 검색엔진에 보이는 것을 한 곳에
 src/lib/types.ts                     Program → Season → CastMember 모델
