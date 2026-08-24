@@ -92,17 +92,18 @@
     "cast2": "All of it comes from the broadcast and from public sources — never collected from the person directly. Private accounts and unverified guesses are not published. If you ask us to take something down, photos included, we do it without asking why.",
     "visitorHeading": "Visitor information",
     "visitor1": "There are no accounts and no logins. No screen on this site asks for your name or contact details.",
-    "visitor2": "We use Vercel Web Analytics for traffic stats. Which pages were opened, where visitors came from, and rough device and browser types are counted anonymously. No cookies are used, and visitors are not identified individually.",
+    "visitor2": "We use Vercel Web Analytics for traffic stats. Which pages were opened, where visitors came from, and rough device and browser types are counted anonymously. These stats use no cookies and do not identify visitors individually.",
     "visitor3": "If you email us, your address and message stay in that mailbox. We delete them once the request is handled.",
     "processorHeading": "Who we rely on",
-    "processor": "Hosting and traffic stats run on Vercel Inc. (USA). Visiting the site leaves an access record there. Nothing is handed to or sold to anyone else.",
+    "processor": "Hosting and traffic stats run on Vercel Inc. (USA). Visiting the site leaves an access record there. Ads are served by Google LLC (USA). Nothing is handed to or sold to anyone else.",
     "adsHeading": "Ads",
-    "ads": "There are no ads right now. Adding them would mean the ad provider setting cookies, so we would update this document first.",
+    "ads": "We show ads through Google AdSense. Google and its advertising partners may use cookies to select ads based on your visits to this and other sites. You can turn personalized ads off in Google's ad settings.",
+    "adsLink": "Google's advertising technologies",
     "rightsHeading": "Your rights",
     "rights": "You can ask to see, correct, or delete information about yourself. We do not ask why, and once it is confirmed we delete it right away.",
     "contactHeading": "Contact",
     "effective": "Effective {date}",
-    "effectiveDate": "August 19, 2026",
+    "effectiveDate": "August 24, 2026",
     "translationNote": "This English text is a translation. Where the two differ, the Korean original governs."
   }
 }

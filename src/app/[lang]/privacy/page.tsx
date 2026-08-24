@@ -33,6 +33,12 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * 구글이 광고에 쿠키를 어떻게 쓰는지 밝힌 공식 문서. 아래 광고 문단은 그걸
+ * 두 줄로 줄인 것이라, 원문을 방문자가 직접 열어 볼 수 있어야 한다.
+ */
+const GOOGLE_ADS_POLICY_URL = "https://policies.google.com/technologies/ads";
+
 const HEADING = "mt-8 text-sm font-bold";
 const BODY = "mt-2.5 text-[13px] leading-relaxed text-muted-foreground";
 
@@ -87,7 +93,17 @@ export default async function Page({ params }: PageProps<"/[lang]/privacy">) {
         <p className={BODY}>{privacy.processor}</p>
 
         <h2 className={HEADING}>{privacy.adsHeading}</h2>
-        <p className={BODY}>{privacy.ads}</p>
+        <p className={BODY}>
+          {privacy.ads}{" "}
+          <a
+            href={GOOGLE_ADS_POLICY_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-4 hover:text-foreground"
+          >
+            {privacy.adsLink}
+          </a>
+        </p>
 
         <h2 className={HEADING}>{privacy.rightsHeading}</h2>
         <p className={BODY}>
