@@ -37,5 +37,16 @@ function resolveSiteUrl(): string {
  */
 export const CONTACT_EMAIL = "whosthat.archive@gmail.com";
 
+/**
+ * 네이버 서치어드바이저 소유확인 코드.
+ *
+ * 구글은 DNS TXT 로 확인해서 코드에 아무것도 안 남지만, 네이버는 DNS 방식이
+ * 없어서 메타 태그밖에 못 쓴다.
+ *
+ * 도메인과 짝이라 SITE_URL 옆에 둔다 — 검증은 호스트네임 단위로 쌓여서, 위
+ * 주소가 바뀌면 이 값도 새로 받아야 한다. 지우면 소유확인이 풀린다.
+ */
+export const NAVER_SITE_VERIFICATION = "f56f484cb0064465cd6e845f845153a34a2733be";
+
 /** OG 카드 규격. 1200×630 은 카카오톡·페이스북·X 가 공통으로 받는 크기다. */
 export const OG_SIZE = { width: 1200, height: 630 };
