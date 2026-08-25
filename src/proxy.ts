@@ -50,8 +50,10 @@ function pickLocale(header: string | null): Locale {
     .filter((entry) => entry.tag && !Number.isNaN(entry.quality))
     .sort((a, b) => b.quality - a.quality);
 
-  const hit = ranked.find((entry) => isLocale(entry.tag));
-  if (hit) return hit.tag as Locale;
+  // 태그를 먼저 꺼내고 나서 거른다 — `.find()` 안에서 좁히면 그 결과가 콜백
+  // 밖으로 안 나와서 캐스트를 붙이게 된다.
+  const hit = ranked.map((entry) => entry.tag).find(isLocale);
+  if (hit) return hit;
 
   // 여기까지 왔으면 아는 언어가 하나도 안 걸린 것이다.
   return UNMATCHED_LOCALE;

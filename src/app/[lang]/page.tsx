@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/json-ld";
+import { GroupHeading, PageEyebrow, PageTitle } from "@/components/page-heading";
 import { SeasonFeature } from "@/components/season-feature";
 import { SeasonRow } from "@/components/season-row";
 import { SeasonSearch } from "@/components/season-search";
@@ -12,7 +13,7 @@ import {
   localizeProgramName,
 } from "@/lib/i18n";
 import { websiteSchema } from "@/lib/seo";
-import { getCoverage } from "@/lib/types";
+import { getTotals } from "@/lib/types";
 
 export default async function Page({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
@@ -23,13 +24,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
   const seasons = getSeasons();
   const [featured, ...rest] = seasons;
 
-  const totals = seasons.reduce(
-    (acc, season) => {
-      const c = getCoverage(season.cast);
-      return { people: acc.people + c.total, found: acc.found + c.found };
-    },
-    { people: 0, found: 0 },
-  );
+  const totals = getTotals(seasons);
 
   return (
     <main>
@@ -38,18 +33,10 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
 
       <header className="px-5 pt-6 pb-1">
         <SiteHeader />
-        <p className="mt-5 text-sm font-bold tracking-tight text-muted-foreground">
-          {localizeProgramName(program.id, lang)}
-        </p>
-        <h1 className="mt-3 text-3xl font-black tracking-tighter">
-          {dict.home.heading}
-        </h1>
+        <PageEyebrow>{localizeProgramName(program.id, lang)}</PageEyebrow>
+        <PageTitle className="mt-3">{dict.home.heading}</PageTitle>
         <p className="mt-1.5 text-[13px] text-muted-foreground">
-          {fill(dict.home.summary, {
-            seasons: seasons.length,
-            people: totals.people,
-            found: totals.found,
-          })}
+          {fill(dict.home.summary, totals)}
         </p>
       </header>
 
@@ -68,9 +55,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
       >
         {rest.length > 0 && (
           <>
-            <h2 className="px-5 pt-7 pb-2 text-[13px] font-bold text-muted-foreground">
-              {dict.home.pastSeasons}
-            </h2>
+            <GroupHeading>{dict.home.pastSeasons}</GroupHeading>
             <section className="px-2">
               {rest.map((season) => (
                 <SeasonRow key={season.id} season={season} />

@@ -31,3 +31,15 @@ export const LOCALE_NAMES: Record<Locale, string> = {
 export function isLocale(value: string): value is Locale {
   return (LOCALES as readonly string[]).includes(value);
 }
+
+/**
+ * 언어가 아닌 값이 들어왔을 때 기본 언어로 눙친다.
+ *
+ * **화면에서는 쓰지 말 것** — 주소창에 `/de` 를 쳐 넣은 사람에게 한국어를
+ * 보여 주면 없는 번역이 있는 척이 된다. 화면은 `currentLocale()` 이 `notFound()`
+ * 로 끊는다. 이건 404 를 낼 수 없는 자리를 위한 것이다: OG 이미지는 공유될 때
+ * 반드시 뭔가를 그려야 해서 빈손으로 돌아올 수 없다.
+ */
+export function resolveLocale(value: string | undefined): Locale {
+  return value && isLocale(value) ? value : DEFAULT_LOCALE;
+}

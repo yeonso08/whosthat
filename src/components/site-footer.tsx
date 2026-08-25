@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { BrandMark } from "@/components/icons";
-import { BRAND_WORDMARK, BRAND_WORDMARK_FONT, BRAND_WORDMARK_NUDGE } from "@/lib/brand";
+import { POLICY_LINK } from "@/components/policy-page";
+import { BrandName } from "@/components/wordmark";
 import { currentDictionary, currentLocale } from "@/lib/i18n";
 import { privacyHref, takedownHref } from "@/lib/links";
-
-const LINK_STYLE = "underline underline-offset-4 hover:text-foreground";
 
 /**
  * 카피라이트에 박는 연도. 사이트를 연 해다.
@@ -24,10 +23,10 @@ export async function SiteFooter() {
     <footer className="mt-10 flex flex-col gap-2.5 border-t border-border px-5 pt-5 pb-8 text-xs leading-relaxed text-muted-foreground">
       <p>{dict.footer.note}</p>
       <p className="flex gap-4">
-        <Link href={takedownHref(locale)} className={LINK_STYLE}>
+        <Link href={takedownHref(locale)} className={POLICY_LINK}>
           {dict.footer.takedown}
         </Link>
-        <Link href={privacyHref(locale)} className={LINK_STYLE}>
+        <Link href={privacyHref(locale)} className={POLICY_LINK}>
           {dict.footer.privacy}
         </Link>
       </p>
@@ -37,9 +36,7 @@ export async function SiteFooter() {
           © {COPYRIGHT_YEAR}
         </span>
         <BrandMark className="h-[0.85em] w-auto" />
-        <span className={`${BRAND_WORDMARK_FONT[locale]} ${BRAND_WORDMARK_NUDGE[locale]}`}>
-          {BRAND_WORDMARK[locale]}
-        </span>
+        <BrandName />
       </p>
     </footer>
   );

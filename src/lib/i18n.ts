@@ -16,6 +16,7 @@ import { notFound } from "next/navigation";
 import en from "@/dictionaries/en.json";
 import ja from "@/dictionaries/ja.json";
 import ko from "@/dictionaries/ko.json";
+import { localePath } from "./links";
 import { DEFAULT_LOCALE, LOCALES, isLocale, type Locale } from "./locales";
 import type { Coverage, Season } from "./types";
 
@@ -62,8 +63,10 @@ export function ogAlternateLocales(locale: Locale): string[] {
  */
 export function languageAlternates(path: string): Record<string, string> {
   return {
-    ...Object.fromEntries(LOCALES.map((locale) => [locale, `/${locale}${path}`])),
-    "x-default": `/${DEFAULT_LOCALE}${path}`,
+    ...Object.fromEntries(
+      LOCALES.map((locale) => [locale, localePath(locale, path)]),
+    ),
+    "x-default": localePath(DEFAULT_LOCALE, path),
   };
 }
 
@@ -220,32 +223,46 @@ export function localizeSeasonLabel(label: string, locale: Locale): string {
   });
 }
 
+/**
+ * `YYYY-MM(-DD)` 를 그 언어의 날짜로. 한국어는 위 두 함수가 직접 조립하고
+ * 여기까지 오지 않는다.
+ *
+ * **`timeZone: "UTC"` 가 이 함수의 존재 이유다** — 빼면 빌드 머신의 시간대에
+ * 따라 달이 하나 밀린다. 두 번 적어 두면 한쪽만 고치게 되는 종류의 값이다.
+ */
+function formatUtcDate(
+  parts: string[],
+  locale: Locale,
+  options: Intl.DateTimeFormatOptions,
+): string {
+  const [year, month, day] = parts;
+  return new Intl.DateTimeFormat(locale, { ...options, timeZone: "UTC" }).format(
+    Date.UTC(Number(year), Number(month) - 1, day ? Number(day) : 1),
+  );
+}
+
 /** "2024-08" → "2024년 8월" / "August 2024". 비어 있으면 빈 문자열. */
-export function formatAirDate(airDate: string, locale: Locale): string {
-  const [year, month] = airDate.split("-");
+function formatAirDate(airDate: string, locale: Locale): string {
+  const parts = airDate.split("-");
+  const [year, month] = parts;
   if (!year || !month) return "";
   if (locale === "ko") return `${year}년 ${Number(month)}월`;
 
-  return new Intl.DateTimeFormat(locale, {
-    year: "numeric",
-    month: "long",
-    // 빌드 머신의 시간대에 따라 달이 하나 밀리지 않게 못 박는다.
-    timeZone: "UTC",
-  }).format(Date.UTC(Number(year), Number(month) - 1, 1));
+  return formatUtcDate(parts, locale, { year: "numeric", month: "long" });
 }
 
 /** "2026-08-18" → "26.08.18" / "Aug 18, 2026" */
 export function formatChecked(date: string, locale: Locale): string {
-  const [year, month, day] = date.split("-");
+  const parts = date.split("-");
+  const [year, month, day] = parts;
   if (!year || !month || !day) return "";
   if (locale === "ko") return `${year.slice(2)}.${month}.${day}`;
 
-  return new Intl.DateTimeFormat(locale, {
+  return formatUtcDate(parts, locale, {
     year: "numeric",
     month: "short",
     day: "numeric",
-    timeZone: "UTC",
-  }).format(Date.UTC(Number(year), Number(month) - 1, Number(day)));
+  });
 }
 
 /**
