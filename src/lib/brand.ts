@@ -62,3 +62,25 @@ export const BRAND_WORDMARK_FONT: Record<Locale, string> = {
   en: "font-lat",
   ja: "font-lat",
 };
+
+/**
+ * 이름 부분의 세로 광학 보정.
+ *
+ * `items-center` 는 마크와 이름의 **줄 상자**를 정확히 맞춘다 — 실측해 보면
+ * 두 상자의 높이·중심이 픽셀 단위로 같다. 어긋나는 건 그 상자 안에서 글자가
+ * 실제로 잉크를 칠하는 위치다: Gothic A1 의 한글 글리프는 Manrope 의 라틴
+ * 소문자보다 베이스라인 아래쪽으로 덜 내려간다(획순 구조상 받침·모음이
+ * 위쪽에 몰린다). 그래서 `누꼬` 는 상자 중심보다 살짝 위에서 잉크가 맺히고,
+ * 마크의 광학 중심과 어긋나 보인다 — 헤더 크기(15px)에서 약 1.4px, 푸터
+ * 크기(11px)에서 약 0.8px, 실측치.
+ *
+ * 고정 px 대신 `em` 인 이유는 이 값이 헤더(`Wordmark`)와 푸터(`SiteFooter`)
+ * 두 자리에서 서로 다른 글자 크기로 쓰이기 때문이다 — 비율로 두면 크기가
+ * 바뀌어도 같은 보정이 먹는다. 영어·일본어는 둘 다 라틴 이름(`nukko`)이라
+ * 보정이 필요 없다.
+ */
+export const BRAND_WORDMARK_NUDGE: Record<Locale, string> = {
+  ko: "translate-y-[0.1em]",
+  en: "",
+  ja: "",
+};

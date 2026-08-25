@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { BrandMark } from "@/components/icons";
-import { BRAND_WORDMARK, BRAND_WORDMARK_FONT } from "@/lib/brand";
+import { BRAND_WORDMARK, BRAND_WORDMARK_FONT, BRAND_WORDMARK_NUDGE } from "@/lib/brand";
 import { currentLocale } from "@/lib/i18n";
 import { homeHref } from "@/lib/links";
 
@@ -12,8 +12,9 @@ import { homeHref } from "@/lib/links";
  * 거드는 자리고, 혼자 설 때(파비콘·앱 아이콘)만 흰색으로 올라간다.
  *
  * `items-center` 로 맞추는 건 마크가 이제 글자가 아니라 도형이라서다 — 텍스트
- * 베이스라인 개념이 없으니 광학 중심으로 맞추는 편이 자연스럽고, 두 서체의
- * 라인 메트릭 차이(예전 `@` 버그의 원인)도 애초에 문제가 되지 않는다.
+ * 베이스라인 개념이 없으니 광학 중심으로 맞추는 편이 자연스럽다. 다만 줄
+ * 상자가 맞아도 글자가 그 상자 안 어디에 잉크를 칠하는지는 서체마다 달라서,
+ * 한국어만 `BRAND_WORDMARK_NUDGE` 로 살짝 보정한다 — 이유는 `lib/brand.ts`.
  */
 export async function Wordmark() {
   const locale = await currentLocale();
@@ -24,7 +25,7 @@ export async function Wordmark() {
       className="inline-flex w-fit items-center gap-1.5 text-[15px] font-extrabold tracking-[-0.04em] transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       <BrandMark className="h-[1.3em] w-auto text-muted-foreground" />
-      <span className={BRAND_WORDMARK_FONT[locale]}>
+      <span className={`${BRAND_WORDMARK_FONT[locale]} ${BRAND_WORDMARK_NUDGE[locale]}`}>
         {BRAND_WORDMARK[locale]}
       </span>
     </Link>
