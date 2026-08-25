@@ -72,6 +72,29 @@ export function getCoverage(cast: CastMember[]): Coverage {
   return { ...byStatus, total: cast.length };
 }
 
+/** 사이트 전체 집계. 키 이름은 사전의 자리표시자(`{seasons}`·`{people}`·`{found}`)와 맞춰 둔다. */
+export type Totals = { seasons: number; people: number; found: number };
+
+/**
+ * 홈 머리글과 홈 OG 카드가 같은 숫자를 말하게 한다.
+ *
+ * 두 곳에서 각자 세던 것을 모았다 — 공유 카드는 눌러서 도착할 화면을 미리
+ * 보여 주는 것이라, 숫자가 어긋나면 카드가 그 페이지에 대해 거짓말을 한다.
+ */
+export function getTotals(seasons: Season[]): Totals {
+  return seasons.reduce<Totals>(
+    (acc, season) => {
+      const coverage = getCoverage(season.cast);
+      return {
+        seasons: acc.seasons + 1,
+        people: acc.people + coverage.total,
+        found: acc.found + coverage.found,
+      };
+    },
+    { seasons: 0, people: 0, found: 0 },
+  );
+}
+
 /**
  * 검색이 훑는 최소 데이터.
  *

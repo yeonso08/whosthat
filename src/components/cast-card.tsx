@@ -16,7 +16,8 @@ import type { CastMember } from "@/lib/types";
 /** 카드와 그 안의 상태 줄이 같은 사람을 그리므로 타입을 함께 쓴다. */
 type Props = { member: CastMember };
 
-type StatusProps = Props & { dict: Dictionary; locale: Locale };
+/** 사전을 통째로 받지 않는다 — 이 줄이 읽는 건 `status` 묶음뿐이다. */
+type StatusProps = Props & { status: Dictionary["status"]; locale: Locale };
 
 /** 2열 그리드라 모바일에선 화면 절반, 넓어지면 카드가 300px 에서 멈춘다. */
 const CARD_SIZES = "(min-width: 640px) 300px, 50vw";
@@ -68,7 +69,7 @@ export async function CastCard({ member }: Props) {
             {description}
           </span>
         )}
-        <CardStatus member={member} dict={dict} locale={locale} />
+        <CardStatus member={member} status={dict.status} locale={locale} />
       </div>
     </>
   );
@@ -92,7 +93,7 @@ export async function CastCard({ member }: Props) {
       href={instagramUrl(handle)}
       target="_blank"
       rel="noopener noreferrer"
-      className={`relative block overflow-hidden rounded-2xl bg-elevated ${ANCHOR_OFFSET} transition-opacity hover:opacity-85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring`}
+      className={`focus-ring relative block overflow-hidden rounded-2xl bg-elevated ${ANCHOR_OFFSET} transition-opacity hover:opacity-85`}
     >
       {body}
     </a>
@@ -103,7 +104,7 @@ export async function CastCard({ member }: Props) {
  * 반환 타입을 못 박아 두면 AccountStatus 에 상태가 하나 늘 때
  * 여기서 컴파일 에러가 난다 — 화면 문구를 빠뜨리지 않게 하는 장치다.
  */
-function CardStatus({ member, dict, locale }: StatusProps): ReactElement {
+function CardStatus({ member, status, locale }: StatusProps): ReactElement {
   switch (member.status) {
     case "found":
       return (
@@ -114,13 +115,13 @@ function CardStatus({ member, dict, locale }: StatusProps): ReactElement {
 
     case "none": {
       const checked = member.lastVerified
-        ? fill(dict.status.checked, {
+        ? fill(status.checked, {
             date: formatChecked(member.lastVerified, locale),
           })
         : "";
       return (
         <span className="mt-1 text-[11.5px] font-semibold text-muted-foreground">
-          {dict.status.none}
+          {status.none}
           {checked && ` · ${checked}`}
         </span>
       );
@@ -129,7 +130,7 @@ function CardStatus({ member, dict, locale }: StatusProps): ReactElement {
     case "searching":
       return (
         <span className="mt-1 text-[11.5px] font-semibold text-searching">
-          {dict.status.searching}
+          {status.searching}
         </span>
       );
   }

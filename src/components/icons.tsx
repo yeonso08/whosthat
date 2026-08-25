@@ -1,5 +1,10 @@
 import type { CSSProperties } from "react";
-import { BRAND_MARK_PATHS, BRAND_MARK_VIEWBOX } from "@/lib/brand";
+import {
+  BRAND_IMAGE_COLORS,
+  BRAND_MARK_ASPECT,
+  BRAND_MARK_PATHS,
+  BRAND_MARK_VIEWBOX,
+} from "@/lib/brand";
 
 type IconProps = { className?: string; style?: CSSProperties };
 
@@ -29,7 +34,45 @@ export function BrandMark({ className, style }: IconProps) {
   );
 }
 
-export function InstagramIcon({ className }: IconProps) {
+/**
+ * 파비콘·앱 아이콘이 그리는 타일 — 어두운 판 가운데 마크 하나.
+ *
+ * 두 라우트가 크기와 여백만 다르다. satori(`ImageResponse`) 위에서 렌더되므로
+ * Tailwind 가 아니라 인라인 style 이고, 색도 CSS 토큰이 아니라 값으로 온다.
+ */
+export function BrandTile({
+  tileSize,
+  markWidthRatio,
+}: {
+  tileSize: number;
+  /** 타일 폭 대비 마크 폭. 남는 폭이 안쪽 여백이 된다. */
+  markWidthRatio: number;
+}) {
+  const width = tileSize * markWidthRatio;
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: BRAND_IMAGE_COLORS.background,
+      }}
+    >
+      <BrandMark
+        style={{
+          width,
+          height: width / BRAND_MARK_ASPECT,
+          color: BRAND_IMAGE_COLORS.foreground,
+        }}
+      />
+    </div>
+  );
+}
+
+export function InstagramIcon({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"

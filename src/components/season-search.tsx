@@ -3,6 +3,8 @@
 import { Search, X } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState, type ReactElement, type ReactNode } from "react";
+import { EmptyCard } from "@/components/empty-card";
+import { GroupHeading } from "@/components/page-heading";
 import {
   InputGroup,
   InputGroupAddon,
@@ -26,11 +28,8 @@ type Props = {
 
 type HitProps = { member: IndexedMember; status: Dictionary["status"] };
 
-/** 지난 기수 목록의 제목 줄과 같은 자리·같은 무게를 쓴다. 검색 결과도 그 목록의 한 형태다. */
-const GROUP_HEADING = "px-5 pt-7 pb-2 text-[13px] font-bold text-muted-foreground";
-
 const ROW =
-  "flex items-center gap-2 rounded-2xl px-3.5 py-3 transition-colors hover:bg-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+  "focus-ring flex items-center gap-2 rounded-2xl px-3.5 py-3 transition-colors hover:bg-card";
 
 /**
  * 기수 목록 위에 놓는 검색창.
@@ -75,16 +74,16 @@ export function SeasonSearch({ index, locale, text, status, children }: Props) {
       {!searching && children}
 
       {searching && nothing && (
-        <p className="mt-6 mx-5 rounded-2xl bg-card px-5 py-8 text-center text-[13px] leading-relaxed text-muted-foreground">
+        <EmptyCard>
           {text.emptyTitle}
           <br />
           {text.emptyHint}
-        </p>
+        </EmptyCard>
       )}
 
       {searching && results.seasons.length > 0 && (
         <>
-          <h2 className={GROUP_HEADING}>{text.seasonsHeading}</h2>
+          <GroupHeading>{text.seasonsHeading}</GroupHeading>
           <section className="px-2">
             {results.seasons.map((season) => (
               <Link
@@ -109,7 +108,7 @@ export function SeasonSearch({ index, locale, text, status, children }: Props) {
 
       {searching && results.members.length > 0 && (
         <>
-          <h2 className={GROUP_HEADING}>{text.castHeading}</h2>
+          <GroupHeading>{text.castHeading}</GroupHeading>
           <section className="px-2">
             {results.members.map(({ member, seasonId, seasonLabel }) => (
               <Link

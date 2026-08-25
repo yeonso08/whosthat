@@ -1,26 +1,18 @@
-import { ImageResponse } from "next/og";
-import { BRAND_WORDMARK } from "@/lib/brand";
 import { getProgram, getSeason, getSeasons } from "@/lib/data";
 import {
   fill,
   getDictionary,
-  isLocale,
   localizeProgramName,
   localizeSeasonLabel,
 } from "@/lib/i18n";
-import { DEFAULT_LOCALE } from "@/lib/locales";
-import { loadOgFont, ogFontFamily } from "@/lib/og";
+import { resolveLocale } from "@/lib/locales";
+import { OG_ALT, OG_CONTENT_TYPE, ogImageResponse } from "@/lib/og";
 import { OG_SIZE } from "@/lib/site";
 import { getCoverage } from "@/lib/types";
 
-/**
- * 언어별 사이트 이름 대신 브랜드를 쓴다 — alt 는 정적이라 언어를 못 받는다.
- * 그래서 도메인과 같은 라틴 표기로 고정한다. 마크는 이제 도형이라 글로 옮길
- * 말이 없어 이름만 쓴다.
- */
-export const alt = BRAND_WORDMARK.en;
+export const alt = OG_ALT;
 export const size = OG_SIZE;
-export const contentType = "image/png";
+export const contentType = OG_CONTENT_TYPE;
 
 /**
  * 없으면 이 라우트만 요청마다 서버에서 렌더된다 — 공유될 때마다 Google Fonts
@@ -35,56 +27,20 @@ export default async function Image({
   params,
 }: PageProps<"/[lang]/seasons/[id]">) {
   const { lang, id } = await params;
-  const locale = isLocale(lang) ? lang : DEFAULT_LOCALE;
+  const locale = resolveLocale(lang);
   const dict = getDictionary(locale);
 
   const season = getSeason(id);
   const coverage = getCoverage(season?.cast ?? []);
 
-  const program = localizeProgramName(getProgram().id, locale);
-  const label = season ? localizeSeasonLabel(season.label, locale) : "";
-  const stat = fill(dict.og.seasonStat, {
-    total: coverage.total,
-    found: coverage.found,
+  return ogImageResponse({
+    locale,
+    scale: "label",
+    eyebrow: localizeProgramName(getProgram().id, locale),
+    headline: season ? localizeSeasonLabel(season.label, locale) : "",
+    stat: fill(dict.og.seasonStat, {
+      total: coverage.total,
+      found: coverage.found,
+    }),
   });
-
-  const fontFamily = ogFontFamily(locale);
-  const text = program + label + stat;
-
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          background: "#0a0a0c",
-          color: "#f4f4f6",
-          padding: "0 88px",
-          fontFamily,
-        }}
-      >
-        <div style={{ fontSize: 40, color: "#90909b" }}>{program}</div>
-        <div style={{ fontSize: 140, letterSpacing: "-0.04em", marginTop: 8 }}>
-          {label}
-        </div>
-        <div style={{ fontSize: 38, color: "#90909b", marginTop: 24 }}>
-          {stat}
-        </div>
-      </div>
-    ),
-    {
-      ...size,
-      fonts: [
-        {
-          name: fontFamily,
-          data: await loadOgFont(locale, text, 700),
-          style: "normal",
-          weight: 700,
-        },
-      ],
-    },
-  );
 }
