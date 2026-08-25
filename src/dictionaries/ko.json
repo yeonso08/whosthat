@@ -7,8 +7,7 @@
   "nav": {
     "back": "기수 목록으로",
     "theme": "라이트·다크 모드 전환",
-    "language": "English 로 보기",
-    "languageShort": "EN"
+    "language": "언어 선택"
   },
   "home": {
     "heading": "전체 기수",

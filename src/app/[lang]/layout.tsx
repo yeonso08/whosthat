@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Gothic_A1, Manrope } from "next/font/google";
+import { Gothic_A1, Manrope, Zen_Kaku_Gothic_New } from "next/font/google";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
@@ -10,6 +10,7 @@ import {
   isLocale,
   languageAlternates,
   LOCALES,
+  type Locale,
 } from "@/lib/i18n";
 import { homeHref } from "@/lib/links";
 import { openGraphBase } from "@/lib/seo";
@@ -22,12 +23,33 @@ const gothic = Gothic_A1({
   weight: ["300", "500", "700", "900"],
 });
 
+/**
+ * 일본어 화면의 본문 서체. **Gothic A1 은 한글·라틴 전용이라 가나·한자
+ * 글리프가 아예 없다** — 그대로 두면 일본어 화면이 통째로 시스템 폰트로
+ * 떨어진다.
+ *
+ * 기하학적 산세리프라 Gothic A1·Manrope 와 형태 언어가 같다. 다른 언어
+ * 화면에서는 이 클래스를 안 걸어서 받지도 않는다(아래 `SANS_FONT`).
+ */
+const zenKaku = Zen_Kaku_Gothic_New({
+  variable: "--font-sans",
+  subsets: ["latin"],
+  weight: ["300", "500", "700", "900"],
+});
+
 const manrope = Manrope({
   variable: "--font-lat",
   subsets: ["latin"],
-  // 800 은 워드마크(`@nukko`) 전용이다. 본문에는 쓰지 않는다.
+  // 800 은 워드마크(`nukko`) 전용이다. 본문에는 쓰지 않는다.
   weight: ["500", "600", "700", "800"],
 });
+
+/** 둘 다 `--font-sans` 를 채우므로 화면에는 한 번에 하나만 걸린다. */
+const SANS_FONT: Record<Locale, { variable: string }> = {
+  ko: gothic,
+  en: gothic,
+  ja: zenKaku,
+};
 
 /** 언어를 하나 더하면 전 화면이 그 언어로 한 벌 더 프리렌더된다. */
 export function generateStaticParams() {
@@ -82,7 +104,7 @@ export default async function RootLayout({
       // next-themes 가 마운트 시점에 <html> 클래스를 다크/라이트로 고쳐 쓴다 —
       // 서버가 모르는 값이라 하이드레이션 경고가 나므로 여기서만 억제한다.
       suppressHydrationWarning
-      className={`${gothic.variable} ${manrope.variable} h-full antialiased`}
+      className={`${SANS_FONT[lang].variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="mx-auto flex min-h-full w-full max-w-screen-sm flex-col">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>

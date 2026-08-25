@@ -39,9 +39,9 @@ src/app/icon.tsx                     파비콘 — ㄲ 마크, 코드 생성(Ima
 src/app/apple-icon.tsx               iOS 홈 화면 아이콘 — 같은 마크, 180×180
 src/app/sitemap.ts / robots.ts       언어마다 한 줄씩 + hreflang (명단 빈 기수는 뺀다)
 src/proxy.ts                         `/` 로 들어온 사람을 브라우저 언어로 보낸다 (Next 16 의 미들웨어)
-src/lib/locales.ts                   언어 목록 — 화면·클라이언트·프록시가 다 읽는 순수 모듈
-src/lib/i18n.ts                      사전 로더 + 데이터 어휘(가명 로마자·특집) + 날짜/현황 포맷
-src/dictionaries/{ko,en}.json        화면 문구
+src/lib/locales.ts                   언어 목록 + 언어 이름 — 화면·클라이언트·프록시가 다 읽는 순수 모듈
+src/lib/i18n.ts                      사전 로더 + 데이터 어휘(가명·특집) + 날짜/현황 포맷
+src/dictionaries/{ko,en,ja}.json     화면 문구
 src/lib/brand.ts                     BRAND_MARK_PATHS(ㄲ 좌표) — 언어 불변, 아이콘과 공유 / BRAND_WORDMARK(누꼬·nukko) — 언어별
 src/lib/links.ts                     내부 경로 — 전부 언어로 시작한다
 src/lib/seo.ts                       색인 여부·OG 공통 필드·JSON-LD — 검색엔진에 보이는 것을 한 곳에
@@ -51,41 +51,48 @@ src/lib/search.ts                    검색 매칭 — 데이터를 모른다(�
 src/data/na-neun-solo.json           실데이터 — 채우는 법은 src/data/README.md
 src/components/                      cast-card, cast-photo, cast-avatar, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
+public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
 ```
 
 Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 반드시 await 한다.
 
-## 언어 — 한국어·영어 (일본어 예정)
+## 언어 — 한국어·영어·일본어
 
-해외에서 한국 예능 출연진을 찾는 사람을 받으려고 2026-08-21 에 언어를 붙였다. **URL 이 언어를 정한다** — `/ko/seasons/s33`, `/en/seasons/s33`. 언어가 없는 주소는 두 갈래로 처리한다: `/` 는 `src/proxy.ts` 가 `Accept-Language` 를 보고 307 로 보내고, 언어를 붙이기 전의 옛 주소(`/seasons/s33`·`/takedown`·`/privacy`)는 `next.config.ts` 가 한국어로 308 한다.
+해외에서 한국 예능 출연진을 찾는 사람을 받으려고 2026-08-21 에 언어를 붙였고, 일본어를 2026-08-25 에 더했다. **URL 이 언어를 정한다** — `/ko/seasons/s33`, `/en/seasons/s33`, `/ja/seasons/s33`. 언어가 없는 주소는 두 갈래로 처리한다: `/` 는 `src/proxy.ts` 가 `Accept-Language` 를 보고 307 로 보내고, 언어를 붙이기 전의 옛 주소(`/seasons/s33`·`/takedown`·`/privacy`)는 `next.config.ts` 가 한국어로 308 한다.
 
 - **언어를 감지하는 순간은 `/` 하나뿐이다.** proxy 의 matcher 가 `/` 라서 나머지 경로는 엣지를 안 거치고 정적으로 나간다. 공유받은 `/ko/...` 링크가 읽는 사람 브라우저 설정 때문에 다른 언어로 튀지도 않는다.
-- **언어 선택을 쿠키로 기억하지 않는다.** 처리방침에 "쿠키는 쓰지 않는다"고 적어 뒀다 — 편의 하나 때문에 그 문장을 거짓으로 만들지 말 것. 전환 버튼이 주소를 바꾸므로 기억할 것도 없다.
+- **언어 선택을 쿠키로 기억하지 않는다.** 처리방침에 "쿠키는 쓰지 않는다"고 적어 뒀다 — 편의 하나 때문에 그 문장을 거짓으로 만들지 말 것. 선택 목록이 주소를 바꾸므로 기억할 것도 없다.
+- **헤더의 언어 버튼은 드롭다운이다**(`LocaleToggle`, shadcn `dropdown-menu`). 셋이 되면서 순환 토글을 접었다 — 두 언어일 땐 "누르면 다른 쪽" 이 자명했지만, 셋부터는 다음에 뭐가 나올지 눌러 봐야 알게 된다. 목록의 언어 이름(`LOCALE_NAMES`)은 **그 언어로 적는다** — 한국어를 못 읽는 사람이 "일본어" 라고 적힌 줄을 찾을 수는 없다. 그래서 화면 언어를 안 타고 사전이 아니라 `locales.ts` 에 있다.
 - 아는 언어가 하나도 안 걸리면 영어로 보낸다(`UNMATCHED_LOCALE`). `DEFAULT_LOCALE`(한국어)은 원문·canonical·`x-default` 의 기준이지 "모르면 한국어"라는 뜻이 아니다.
 
 ### 문구는 사전에, 데이터 어휘는 `i18n.ts` 에
 
-- **화면에 보이는 글자를 컴포넌트에 박지 않는다.** `src/dictionaries/{ko,en}.json` 에 넣고 키로 부른다. 사전 모양은 한국어가 정한다(`Dictionary = typeof ko`) — `en.json` 에 키가 빠지면 컴파일 에러가 난다.
-- **데이터에서 나온 말은 사전이 아니라 `i18n.ts` 의 표다**: 가명 로마자 21개, 특집 이름 13개, 프로그램 이름. 고치는 때가 달라서 갈라 뒀다 — 문구는 화면을 보며 고치고, 어휘는 데이터를 채우며 는다.
+- **화면에 보이는 글자를 컴포넌트에 박지 않는다.** `src/dictionaries/{ko,en,ja}.json` 에 넣고 키로 부른다. 사전 모양은 한국어가 정한다(`Dictionary = typeof ko`) — 다른 사전에 키가 빠지면 컴파일 에러가 난다.
+- **데이터에서 나온 말은 사전이 아니라 `i18n.ts` 의 표다**: 가명 21개(`ALIASES`), 특집 이름 13개(`SPECIALS`), 프로그램 이름. 고치는 때가 달라서 갈라 뒀다 — 문구는 화면을 보며 고치고, 어휘는 데이터를 채우며 는다. 두 표 다 언어별로 한 칸씩이고 **한국어 칸은 비어 있다** — 데이터가 원문이라 늘 `?? alias` 로 떨어진다.
+- **가명 표기가 사람을 못 가르면 표기를 바꾼다.** 일본어 가타카나는 관행대로면 `정수`·`종수` 가 둘 다 `ジョンス` 로 겹치는데, 1·2·3기는 그 둘이 같은 기수에 있어서 한 화면에 이름이 같은 사람이 둘 생긴다. 사람을 갈라 주는 게 이 사이트라 실제로 둘 다 쓰이는 표기 중에서 `정`→`チョン`·`종`→`ジョン` 으로 못박았다. 언어를 더할 때 표를 채우고 나면 **21개가 서로 다른지 먼저 확인할 것.**
 - 숫자가 낀 문장은 `{ }` 자리표시자 + `fill()` 이다. 문장을 조각내 이어 붙이면 어순이 다른 언어에서 반드시 어색해진다.
-- 날짜·현황은 `formatAirDate`·`formatChecked`·`formatCoverage` 가 언어를 받아 만든다(영어는 `Intl`). 컴포넌트에서 다시 자르거나 붙이지 말 것.
+- 날짜·현황은 `formatAirDate`·`formatChecked`·`formatCoverage` 가 언어를 받아 만든다(한국어만 손으로 짜고 나머지는 `Intl`). 컴포넌트에서 다시 자르거나 붙이지 말 것.
 
 ### 언어를 어떻게 얻나
 
 - **서버 컴포넌트는 `currentLocale()` / `currentDictionary()` 로 스스로 가져온다**(`next/root-params`). `[lang]` 이 루트 세그먼트라 페이지가 컴포넌트마다 언어를 내려보내지 않아도 된다.
-- **클라이언트 컴포넌트는 그걸 못 쓴다**(Next 의 제약). `SeasonSearch`·`ModeToggle`·`LocaleToggle` 은 쓰는 문구만 props 로 받는다 — `i18n.ts` 를 import 하면 사전 두 벌이 클라이언트 번들에 딸려 온다. `import type` 은 컴파일에서 지워지므로 예외다.
+- **클라이언트 컴포넌트는 그걸 못 쓴다**(Next 의 제약). `SeasonSearch`·`ModeToggle`·`LocaleToggle` 은 쓰는 문구만 props 로 받는다 — `i18n.ts` 를 import 하면 사전 세 벌이 클라이언트 번들에 딸려 온다. `import type` 은 컴파일에서 지워지므로 예외다. (`LocaleToggle` 이 `locales.ts` 를 값으로 import 하는 건 괜찮다 — 그 파일이 사전을 안 읽는 이유가 이거다.)
 - **내부 링크는 `lib/links.ts` 의 함수로만 만든다.** 전부 첫 인자가 locale 이다. 손으로 `/seasons/...` 를 적으면 언어가 빠진 주소가 나오는데, 그건 눌러 보기 전까지 화면에 안 보인다.
-- **언어 전환만 하드 내비게이션이다.** `LocaleToggle` 이 `next/link` 가 아니라 맨 `<a>` 를 쓰는 이유이고, 되돌리면 버그가 돌아온다 — 언어가 바뀌면 루트 레이아웃이 다시 그려지는데, 클라이언트 내비게이션으로 그러면 React 가 `<html>` 의 class 를 서버가 준 값으로 덮어쓴다. 거기엔 테마 클래스가 없어서(next-themes 가 런타임에 붙인다) 다크 모드가 한 프레임 벗겨지고 화면이 하얗게 번쩍인다. 콘솔에도 "Encountered a script tag while rendering React component" 가 같이 뜬다.
-- 검색 인덱스는 서버가 그 언어로 **미리 만들어** 내려보낸다. 영어 인덱스에는 한글 원문이 `keywords` 로 함께 실린다 — 화면은 `Yeongsu` 지만 `영수` 로도 걸리게 하려는 것이다(화면에 안 나오는 검색 전용 필드).
+- **언어 전환만 하드 내비게이션이다.** `LocaleToggle` 의 줄이 `next/link` 가 아니라 맨 링크인 이유이고, 되돌리면 버그가 돌아온다 — 언어가 바뀌면 루트 레이아웃이 다시 그려지는데, 클라이언트 내비게이션으로 그러면 React 가 `<html>` 의 class 를 서버가 준 값으로 덮어쓴다. 거기엔 테마 클래스가 없어서(next-themes 가 런타임에 붙인다) 다크 모드가 한 프레임 벗겨지고 화면이 하얗게 번쩍인다. 콘솔에도 "Encountered a script tag while rendering React component" 가 같이 뜬다.
+- **그 줄은 `DropdownMenuItem` + `render={<a>}` 가 아니라 `DropdownMenuLinkItem` 이다.** 전자는 클릭이 삼켜져 아무 데도 안 간다 — 메뉴만 닫히고 주소가 그대로라 눈으로는 "안 눌렸나" 로 보인다. Base UI 가 링크용으로 따로 둔 부품(`Menu.LinkItem`)이 있고, shadcn 이 그 껍데기를 안 만들어 줘서 `components/ui/dropdown-menu.tsx` 에 직접 넣어 뒀다.
+- 검색 인덱스는 서버가 그 언어로 **미리 만들어** 내려보낸다. 한국어가 아닌 인덱스에는 한글 원문이 `keywords` 로 함께 실린다 — 화면은 `Yeongsu`·`ヨンス` 지만 `영수` 로도 걸리게 하려는 것이다(화면에 안 나오는 검색 전용 필드).
 
 ### 언어를 하나 더할 때
 
-세 곳이다: `locales.ts` 의 `LOCALES`, `src/dictionaries/<code>.json` 한 벌, `i18n.ts` 의 어휘 표(가명·특집)와 `OG_LOCALES`. 화면·sitemap·hreflang·정적 생성은 그 목록을 따라가므로 따로 손댈 게 없다.
+네 곳이다: `locales.ts` 의 `LOCALES`·`LOCALE_NAMES`, `src/dictionaries/<code>.json` 한 벌, `i18n.ts` 의 어휘 표(`ALIASES`·`SPECIALS`)와 `OG_LOCALES`, 그리고 **서체 두 자리**. 화면·sitemap·hreflang·정적 생성은 그 목록을 따라가므로 따로 손댈 게 없다 — `Record<Locale, …>` 로 못박은 표들이 빠진 칸마다 컴파일 에러를 낸다.
+
+**서체가 네 번째 자리다.** 글자 집합이 안 겹치면 폰트를 한 벌로 못 쓴다 — Gothic A1 에는 가나·한자가, Zen Kaku Gothic New 에는 한글이 없다. 그래서 화면은 `layout.tsx` 의 `SANS_FONT` 가, OG 이미지는 `lib/og.ts` 의 `OG_FONTS` 가 언어마다 하나씩 고른다. 화면 쪽은 그 언어일 때만 클래스를 걸어서 다른 언어가 안 받고, OG 쪽은 그 이미지에 그리는 글자만 `text=` 서브셋으로 받는다. **화면과 OG 는 같은 서체라야 한다** — 공유 카드와 눌러서 도착한 화면이 다른 글꼴이면 같은 사이트로 안 읽힌다.
 
 ### 번역이 화면과 안 맞는 자리
 
-- **가명 배지(사진 없는 자리)는 언어를 안 따라간다.** 로마자로 바꾸면 40px 원에 안 들어가고, 앞 두 글자만 자르면 영수·영호·영식·영철이 전부 `Ye` 가 되어 배지가 있는 이유(빈 자리에 변화를 주는 것)가 통째로 사라진다. 그래서 겹친 원의 배지는 한글이고, 이름은 기수 상세 카드가 그 언어로 온전히 말한다.
-- **정책 두 페이지(`/takedown`·`/privacy`)의 영어는 번역본이다.** 맨 아래 `translationNote` 로 "다르면 한국어 원문이 기준" 이라고 밝힌다 — 지키지 못할 약속이 언어별로 갈리는 게 제일 위험하다. 한국어 사전에서는 이 키가 빈 문자열이라 화면에서 통째로 빠진다.
+- **가명 배지(사진 없는 자리)는 언어를 안 따라간다.** 로마자로 바꾸면 40px 원에 안 들어가고, 앞 두 글자만 자르면 영수·영호·영식·영철이 전부 `Ye` 가 되어 배지가 있는 이유(빈 자리에 변화를 주는 것)가 통째로 사라진다. 가타카나도 `ヨンチョル` 처럼 길어져 마찬가지다. 그래서 겹친 원의 배지는 한글이고, 이름은 기수 상세 카드가 그 언어로 온전히 말한다.
+- **워드마크는 한국어만 원문이다.** `누꼬`(ko)·`nukko`(en·ja) — 일본어를 `ヌッコ` 로 옮기면 그건 원문이 아니라 음역이고, "브랜드를 번역하지 않는다" 는 규칙을 언어마다 하나씩 깨는 셈이 된다. 가명을 가타카나로 적는 것과 다른 문제다: 가명은 일본어 문장 안에서 읽히는 데이터고, 워드마크는 도메인(`nukko.net`)과 짝인 고유명이다.
+- **정책 두 페이지(`/takedown`·`/privacy`)의 번역본은 원문이 아니다.** 맨 아래 `translationNote` 로 "다르면 한국어 원문이 기준" 이라고 밝힌다 — 지키지 못할 약속이 언어별로 갈리는 게 제일 위험하다. 한국어 사전에서는 이 키가 빈 문자열이라 화면에서 통째로 빠진다.
 
 ## 검색 노출 — 판단은 `lib/seo.ts` 한 곳
 
@@ -119,7 +126,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **접근성이 걸린 것은 특히 직접 만들지 않는다.** dialog, dropdown, popover, tooltip, tabs, sheet, command, form, input. 포커스 트랩·키보드 이동·ARIA 를 손으로 다시 짜면 반드시 빠뜨린다. 제보 폼은 `form` + `input` 부터 본다.
 - 아이콘도 같다. `lucide-react` 가 이미 깔려 있다(`components.json` 의 `iconLibrary: lucide`). 새 아이콘은 lucide 에서 가져오고, `components/icons.tsx` 에는 **lucide 에 없는 것만** 둔다(인스타그램 같은 브랜드 마크).
 - 받은 뒤에는 **시안 D 에 맞춰 고쳐 쓴다.** 들어온 순간 우리 코드라 수정해도 된다 — 다만 기본 스타일이 디자인 규칙(흑백, 유채색은 `searching` 전용, 반경 12~16px)을 이기게 두지 않는다.
-- **`components/ui/` 는 shadcn 자리, `components/` 바로 아래는 우리 자리.** 섞지 않아야 나중에 `add` 로 덮어써도 안전하다.
+- **`components/ui/` 는 shadcn 자리, `components/` 바로 아래는 우리 자리.** 섞지 않아야 나중에 `add` 로 덮어써도 안전하다. 다만 **레지스트리가 빠뜨린 부품은 그 파일에 채워 넣는다** — `dropdown-menu.tsx` 의 `DropdownMenuLinkItem` 이 그렇다(Base UI 의 `Menu.LinkItem` 껍데기). 도메인이 아니라 그 부품의 형제라서 여기가 맞고, `add` 로 덮어쓸 때 같이 날아가니 그때 다시 넣어야 한다.
 - 직접 만드는 건 레지스트리에 없거나 **도메인이 들어갈 때**다. `CastCard` 는 `found/none/searching` 3상태를 아는 컴포넌트라 우리 것이 맞다.
 
 ### 의존 방향은 한 쪽으로만 (결합도)
@@ -199,12 +206,12 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 - **마크는 도형(SVG)이지 글자가 아니다.** 좌표는 `lib/brand.ts` 의 `BRAND_MARK_VIEWBOX`·`BRAND_MARK_PATHS` — 두 개의 `<path>`(각각 수평 획 + 라운드 코너 + 수직 획)가 `stroke-linecap: round` 로 그려진다. 이 획 끝 처리가 사이트의 반경 규칙(12–16px)과 같은 태도라 각진 ㄱ 대신 이 모양을 골랐다.
 - **마크는 언어를 타지 않고, 이름만 탄다.** `[lang]` 바깥인 파비콘·앱 아이콘이 애초에 언어를 못 받으므로, 두 언어가 같은 도형을 공유하는 것 말고 다른 수가 없다. 이름(`BRAND_WORDMARK`)만 로케일별로 갈아 끼운다.
-- **한글 워드마크를 반려했던 규칙이 뒤집혔다.** `whosthat` 시절엔 "브랜드를 번역하지 않는다"는 이유로 한글을 뺐는데, `누꼬` 는 `nukko` 의 번역이 아니라 **원문**이다(경상도 사투리). 그 규칙을 그대로 적용하면 한국어 화면이 원문 대신 로마자 표기를 쓰는 꼴이 된다. 이름이 사투리인 동안만 성립하는 예외지 "브랜드도 번역한다"로 넓히지 말 것.
+- **한글 워드마크를 반려했던 규칙이 뒤집혔다.** `whosthat` 시절엔 "브랜드를 번역하지 않는다"는 이유로 한글을 뺐는데, `누꼬` 는 `nukko` 의 번역이 아니라 **원문**이다(경상도 사투리). 그 규칙을 그대로 적용하면 한국어 화면이 원문 대신 로마자 표기를 쓰는 꼴이 된다. 이름이 사투리인 동안만 성립하는 예외지 "브랜드도 번역한다"로 넓히지 말 것. **일본어가 `ヌッコ` 가 아니라 `nukko` 인 게 그 선이다** — 가타카나는 원문이 아니라 음역이라, 옮기는 순간 예외가 언어마다 하나씩 생긴다.
 - **서체는 이름만 갈아 끼운다**(`BRAND_WORDMARK_FONT`). 마크가 도형이 된 뒤로는 이 표가 서체 문제에서 완전히 자유롭다 — 예전엔 `@` 를 어느 서체로 그릴지가 걸렸지만(Gothic A1 의 `@` 는 안쪽 `a` 배가 작고 둥글어 이름과 서체가 갈리면 마크가 다른 글자로 읽혔다), 이제 마크는 서체 자체가 없다. 한글 쪽 값이 빈 문자열이 아니라 `font-sans` 인 건 이 값이 `font-lat` 을 이미 걸어 둔 상자(푸터 카피라이트 줄) 안에도 들어가기 때문이다.
 - **워드마크의 마크·이름 정렬은 `items-center` 다.** 마크가 텍스트가 아니라 도형이라 베이스라인 개념이 없다 — `items-baseline` 을 쓰면 오히려 광학 중심이 어긋난다. (`@` 시절엔 두 서체의 라인 메트릭 차이로 세로 위치가 어긋나는 버그가 있었다 — 도형으로 바꾸면서 그 버그의 원인 자체가 사라졌다.)
 - **언어를 못 받는 자리는 라틴 표기로 고정한다.** OG 이미지의 `alt` 는 정적 export 라 locale 을 못 받으므로 `BRAND_WORDMARK.en`(도메인과 같은 표기)만 쓴다 — 마크는 도형이라 글로 옮길 말이 없다. 반대로 `websiteSchema` 의 `alternateName` 은 locale 을 받으므로 화면 워드마크와 같은 언어로 준다 — 검색 결과에 뜬 이름과 눌러서 도착한 화면이 어긋나면 안 된다.
 - `BrandMark` 컴포넌트(`components/icons.tsx`)가 좌표를 그린다. `className`(Tailwind)과 `style`(인라인) 둘 다 받는 이유는 렌더 경로가 둘로 갈리기 때문이다 — 화면 컴포넌트(`Wordmark`·`SiteFooter`)는 `className` 만 쓰고, `icon.tsx`·`apple-icon.tsx` 는 satori(ImageResponse) 위에서 렌더되는데 satori 가 Tailwind 클래스를 못 읽어서 `style` 로 크기·색을 준다.
-- **파비콘·앱 아이콘은 폰트가 필요 없다.** 마크가 벡터라 `loadLatinFont` 호출도, `fonts` 배열도 없다 — `@` 글리프 시절엔 Manrope 서브셋을 매번 받아야 했다. 폭은 타일 대비 비율(`MARK_WIDTH_RATIO`)로 정하고 높이는 `BRAND_MARK_ASPECT`(88:64)로 뺀다. 앱 아이콘 쪽 비율이 더 작은 건 iOS 마스크가 모서리를 먹어서 여백을 더 줘야 하기 때문이다.
+- **파비콘·앱 아이콘은 폰트가 필요 없다.** 마크가 벡터라 폰트 로더 호출도, `fonts` 배열도 없다 — `@` 글리프 시절엔 Manrope 서브셋을 매번 받아야 했다. 폭은 타일 대비 비율(`MARK_WIDTH_RATIO`)로 정하고 높이는 `BRAND_MARK_ASPECT`(88:64)로 뺀다. 앱 아이콘 쪽 비율이 더 작은 건 iOS 마스크가 모서리를 먹어서 여백을 더 줘야 하기 때문이다.
 - `Wordmark` 는 홈·기수 상세·정책 페이지(처리방침·삭제요청) 헤더에 있다. 정책 페이지는 검색으로 바로 착지하는 진입점이라 워드마크가 특히 중요하다 — 본문의 "이 사이트" 도 첫 문장에서 `BRAND_WORDMARK` 로 못박는다.
 - `BackLink` 는 바깥 여백을 갖지 않는다 — 정책 페이지는 제목 위 한 줄, 기수 상세는 제목 옆(`‹ 33기`)에 붙이므로 자리는 쓰는 쪽이 정한다. 제목이 두 줄로 접힐 때 화살표가 첫 줄에 붙게 `-mt-1` 로 광학 정렬한다.
 
@@ -220,9 +227,9 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ## 현재 상태
 
-네 화면(기수 목록·기수 상세·삭제 요청·처리방침)이 **한국어·영어 두 벌**로 동작하고 빌드가 통과한다(80 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지·JSON-LD)까지 붙어 있고 전부 정적이다 — 서버가 하는 일은 `/` 하나를 언어로 보내는 proxy 뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (2026-08-24 에 커스텀 도메인 연결, Cloudflare Registrar 등록·DNS. 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. 실제 사진 파일은 아직 한 장도 없다.
+네 화면(기수 목록·기수 상세·삭제 요청·처리방침)이 **한국어·영어·일본어 세 벌**로 동작하고 빌드가 통과한다(117 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지·JSON-LD)까지 붙어 있고 전부 정적이다 — 서버가 하는 일은 `/` 하나를 언어로 보내는 proxy 뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (2026-08-24 에 커스텀 도메인 연결, Cloudflare Registrar 등록·DNS. 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. 실제 사진 파일은 아직 한 장도 없다.
 
-브랜드 워드마크·파비콘·앱 아이콘([ㄲ 마크] `누꼬`/[ㄲ 마크] `nukko`)이 붙었다 — 위 "브랜드" 절 참고. 네 화면 헤더가 전부 같은 `‹ 제목` 인라인 구조를 쓴다.
+브랜드 워드마크·파비콘·앱 아이콘([ㄲ 마크] `누꼬`(ko)/[ㄲ 마크] `nukko`(en·ja))이 붙었다 — 위 "브랜드" 절 참고. 네 화면 헤더가 전부 같은 `‹ 제목` 인라인 구조를 쓴다.
 
 도메인은 `lib/site.ts` 한 곳에서 정해진다. **`NEXT_PUBLIC_SITE_URL`(Production)에 `https://www.nukko.net` 을 박아 뒀다** — Vercel 자동값(`VERCEL_PROJECT_PRODUCTION_URL`)은 "가장 짧은 커스텀 도메인"을 고르는데, 그러면 리다이렉트 전용인 apex(`nukko.net`)가 뽑힌다. 이유는 위 "커스텀 도메인을 연결할 때" 1번에 있다.
 
@@ -235,6 +242,10 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 삭제·정정 요청 창구(`/takedown`)와 개인정보 처리방침(`/privacy`)이 붙어 있고, 푸터가 레이아웃에 있어 전 화면에서 닿는다. 푸터 맨 아래 카피라이트 연도는 `new Date()` 가 아니라 상수다 — 전 페이지가 SSG 라 그 값은 빌드 시각에 얼어붙는다. **삭제 요청 처리 방법은 `src/data/README.md` 의 "내려 달라는 요청이 오면" 을 따른다** — `searching` 으로 되돌리면 다음 배치에서 다시 올라온다. 계정과 사진을 **함께** 내린다(계정만 내리면 요청을 반만 처리한 것이다). 두 화면(`/takedown`·`/privacy`)도 사진을 명시하고 있으니, 사진 방침을 바꾸면 그 문구부터 같이 고친다.
 
 **광고(구글 애드센스)를 붙였다**(2026-08-24). 값은 두 곳이 짝이다 — `lib/site.ts` 의 `ADSENSE_CLIENT_ID`(`ca-pub-…`)와 `public/ads.txt`(`pub-…`). 번호가 어긋나면 애드센스가 "승인되지 않은 판매자"로 잡아 수익이 막힌다. 스크립트는 루트 레이아웃이 걸고, ID 가 비면 아예 안 건다 — 틀린 ID 로 요청이 나가는 게 안 나가는 것보다 나쁘다.
+
+**광고 자리를 코드로 만들지 않는다 — 자동 광고다.** 스니펫 한 줄이 전부고 구글이 위치를 정한다. 종류별 토글은 애드센스 콘솔에 있는데, **전면 광고(vignette)는 꺼야 한다** — 기수 목록과 상세를 계속 오가는 사이트라 페이지를 넘길 때마다 화면을 덮으면 "검색 없이 바로 찾는다"가 무너진다. 위치가 디자인과 안 맞으면 그때 수동 광고 단위로 바꾼다(코드 작업).
+
+**운영 상태**(2026-08-24): 소유권 확인·검토 요청·GDPR 동의 메시지까지 끝났고 심사 결과를 기다리는 중이다. 소유권은 **ads.txt 방식**으로 통과했다 — 코드 스니펫 방식은 실패했는데, 애드센스에 등록된 사이트가 apex(`nukko.net`)고 실제 사이트는 `www` 라 그런 것으로 보인다. 동의 메시지는 구글 CMP 의 **3선택 형식**(동의·동의하지 않음·옵션 관리)이다 — 2선택은 첫 화면에 거부 버튼이 없어서, 거부가 동의만큼 쉬워야 한다는 GDPR 원칙에 어긋난다. 미국 주 규정 메시지는 만들지 않았다(CCPA 는 매출·이용자 수 기준이 있어 대상이 아니고, 없어도 구글이 광고를 막지 않는다).
 
 **광고를 떼거나 바꾸면 `/privacy` 부터 되돌린다.** 처리방침의 세 문단이 광고를 전제하고 쓰여 있다 — `visitor2`(무쿠키 주장을 Vercel Analytics 로 한정), `processor`(Google LLC 가 제3자로 들어가 있다), `ads`(게재 중이라고 말한다). 광고를 떼고 이 문구를 두면 처리방침이 반대 방향으로 거짓말을 한다. 문구가 바뀌면 `effectiveDate` 도 함께 옮긴다.
 
@@ -251,7 +262,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **인덱스는 `buildSearchIndex`(`data.ts`)가 서버에서 만들어 홈 페이지가 prop 으로 내린다.** 검색이 클라이언트 컴포넌트라 `lib/search.ts` 는 `lib/data.ts` 를 import 하지 않는다 — 한 파일에 섞으면 원본 JSON 112KB 가 클라이언트 번들에 딸려 들어간다. 페이지당 인덱스는 gzip 2KB 다(가명·상태가 반복돼 잘 압축된다).
 - 사람 결과는 `/seasons/{id}#{memberId}` 로 착지한다. 앵커는 `CastCard` 가 카드에 거는 DOM id 와 짝이다.
 
-다음: 계정 데이터 채우기 → 제보 폼(`PLANNING.md` 로드맵 2단계). 언어는 영어까지 붙었고 일본어가 다음 후보다 — 절차는 위 "언어를 하나 더할 때".
+다음: 계정 데이터 채우기 · 사진 채우기(파이프라인은 붙었고 파일이 0장이다 — `src/data/README.md` 의 "사진을 올릴 때") → 제보 폼(`PLANNING.md` 로드맵 2단계). 언어는 일본어까지 셋이고, 더 붙일 때 절차는 위 "언어를 하나 더할 때".
 
 **DB·백엔드는 아직 필요 없다.** 지금은 정적 JSON + SSG 로 충분하고, 데이터가 늘었다는 건 옮길 이유가 안 된다. 갈아탈 시점을 판단하는 기준은 `PLANNING.md` §7 "DB·백엔드는 언제 필요한가" 에 있다 — 조건이 실제로 걸리면 그때 먼저 말한다.
 

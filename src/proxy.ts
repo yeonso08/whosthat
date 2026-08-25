@@ -28,10 +28,10 @@ export function proxy(request: NextRequest) {
 }
 
 /**
- * `Accept-Language: ja,en-US;q=0.9,en;q=0.8` → "en".
+ * `Accept-Language: de,en-US;q=0.9,en;q=0.8` → "en".
  *
- * negotiator 같은 라이브러리를 넣지 않는다 — 언어가 둘뿐이고, 규칙은 q 값 순으로
- * 훑으며 아는 언어를 먼저 만나면 그걸 쓰는 게 전부다.
+ * negotiator 같은 라이브러리를 넣지 않는다 — 규칙은 q 값 순으로 훑으며 아는
+ * 언어를 먼저 만나면 그걸 쓰는 게 전부라, 언어가 늘어도 이대로 굴러간다.
  */
 function pickLocale(header: string | null): Locale {
   if (!header) return DEFAULT_LOCALE;

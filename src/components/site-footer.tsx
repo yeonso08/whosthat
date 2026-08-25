@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { BrandMark } from "@/components/icons";
-import { BRAND_WORDMARK, BRAND_WORDMARK_FONT } from "@/lib/brand";
+import { BRAND_WORDMARK, BRAND_WORDMARK_FONT, BRAND_WORDMARK_NUDGE } from "@/lib/brand";
 import { currentDictionary, currentLocale } from "@/lib/i18n";
 import { privacyHref, takedownHref } from "@/lib/links";
 
@@ -37,7 +37,7 @@ export async function SiteFooter() {
           © {COPYRIGHT_YEAR}
         </span>
         <BrandMark className="h-[0.85em] w-auto" />
-        <span className={BRAND_WORDMARK_FONT[locale]}>
+        <span className={`${BRAND_WORDMARK_FONT[locale]} ${BRAND_WORDMARK_NUDGE[locale]}`}>
           {BRAND_WORDMARK[locale]}
         </span>
       </p>
