@@ -35,6 +35,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# 값이 아니라 문서다 — 위 한 줄이 삼키면 클론한 사람에게 설정 안내가 안 간다.
+!.env.example
 
 # vercel
 .vercel

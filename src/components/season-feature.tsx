@@ -35,7 +35,7 @@ export async function SeasonFeature({ season }: Props) {
   return (
     <Link
       href={seasonHref(locale, season.id)}
-      className="block rounded-2xl bg-card p-4 transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className="focus-ring block rounded-2xl bg-card p-4 transition-opacity hover:opacity-90"
     >
       {season.onAir ? (
         <span className="flex items-center gap-1.5 text-[11px] font-bold text-searching">
@@ -63,9 +63,9 @@ export async function SeasonFeature({ season }: Props) {
               <CastPhoto
                 src={member.profileImageUrl}
                 // 배지는 사진 대신 놓는 워터마크라 언어를 안 따라간다 — 로마자로
-              // 바꾸면 원에 안 들어가고, 잘라 쓰면 영수·영호·영식이 전부 "Ye" 가
-              // 된다. 이름은 기수 상세의 카드가 그 언어로 온전히 말한다.
-              alias={member.alias}
+                // 바꾸면 원에 안 들어가고, 잘라 쓰면 영수·영호·영식이 전부 "Ye" 가
+                // 된다. 이름은 기수 상세의 카드가 그 언어로 온전히 말한다.
+                alias={member.alias}
                 status={member.status}
                 alt=""
                 sizes="44px"

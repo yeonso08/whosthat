@@ -84,3 +84,18 @@ export const BRAND_WORDMARK_NUDGE: Record<Locale, string> = {
   en: "",
   ja: "",
 };
+
+/**
+ * 이미지 라우트(파비콘·앱 아이콘·OG 카드)가 쓰는 색.
+ *
+ * satori(`ImageResponse`)는 CSS 를 실행하지 않아서 `globals.css` 의 토큰을 못
+ * 읽는다 — 값으로 박는 수밖에 없다. 다크 팔레트의 `--background`·`--foreground`·
+ * `--muted-foreground` 와 같은 값이고, **한쪽만 고치면 어긋난 채로 아무 에러도
+ * 안 난다.** 공유 카드는 늘 어두운 판으로 그린다(라이트 모드에서도 그렇다) —
+ * 카드가 뜨는 자리는 방문자의 테마를 모른다.
+ */
+export const BRAND_IMAGE_COLORS = {
+  background: "#0a0a0c",
+  foreground: "#f4f4f6",
+  muted: "#90909b",
+};

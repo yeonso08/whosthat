@@ -1,37 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BackLink } from "@/components/back-link";
-import { JsonLd } from "@/components/json-ld";
-import { SiteHeader } from "@/components/site-header";
-import { BRAND_WORDMARK, BRAND_WORDMARK_FONT } from "@/lib/brand";
-import { fill, getDictionary, isLocale, languageAlternates } from "@/lib/i18n";
+import {
+  POLICY_BODY,
+  POLICY_HEADING,
+  POLICY_LINK,
+  PolicyPage,
+  TranslationNote,
+} from "@/components/policy-page";
+import { BrandSentence } from "@/components/wordmark";
+import { fill, getDictionary, isLocale } from "@/lib/i18n";
 import { privacyHref, takedownHref } from "@/lib/links";
-import { breadcrumbSchema, openGraphBase } from "@/lib/seo";
+import { breadcrumbSchema, policyMetadata } from "@/lib/seo";
 import { CONTACT_EMAIL } from "@/lib/site";
-
-export async function generateMetadata({
-  params,
-}: PageProps<"/[lang]/privacy">): Promise<Metadata> {
-  const { lang } = await params;
-  if (!isLocale(lang)) return {};
-
-  const { title, description } = getDictionary(lang).privacy;
-  const path = privacyHref(lang);
-
-  return {
-    title,
-    description,
-    alternates: { canonical: path, languages: languageAlternates("/privacy") },
-    openGraph: {
-      ...openGraphBase(lang),
-      type: "article",
-      title,
-      description,
-      url: path,
-    },
-  };
-}
 
 /**
  * 구글이 광고에 쿠키를 어떻게 쓰는지 밝힌 공식 문서. 아래 광고 문단은 그걸
@@ -39,8 +20,14 @@ export async function generateMetadata({
  */
 const GOOGLE_ADS_POLICY_URL = "https://policies.google.com/technologies/ads";
 
-const HEADING = "mt-8 text-sm font-bold";
-const BODY = "mt-2.5 text-[13px] leading-relaxed text-muted-foreground";
+export async function generateMetadata({
+  params,
+}: PageProps<"/[lang]/privacy">): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) return {};
+
+  return policyMetadata(lang, "privacy");
+}
 
 export default async function Page({ params }: PageProps<"/[lang]/privacy">) {
   const { lang } = await params;
@@ -48,88 +35,60 @@ export default async function Page({ params }: PageProps<"/[lang]/privacy">) {
 
   const dict = getDictionary(lang);
   const privacy = dict.privacy;
-  const [beforeBrand, afterBrand] = privacy.intro.split("{brand}");
 
   return (
-    <main>
-      <JsonLd
-        data={breadcrumbSchema(lang, { name: privacy.title, path: privacyHref(lang) })}
-      />
+    <PolicyPage
+      title={privacy.title}
+      schema={breadcrumbSchema(lang, {
+        name: privacy.title,
+        path: privacyHref(lang),
+      })}
+    >
+      <p className={POLICY_BODY}>
+        <BrandSentence text={privacy.intro} />
+      </p>
 
-      {/* 홈을 안 거치고 검색으로 바로 들어오는 페이지라 누구의 방침인지
-          화면에서 밝혀 둔다. */}
-      <header className="px-5 pt-6">
-        <SiteHeader />
-      </header>
+      <h2 className={POLICY_HEADING}>{privacy.castHeading}</h2>
+      <p className={POLICY_BODY}>{privacy.cast1}</p>
+      <p className={POLICY_BODY}>{privacy.cast2}</p>
 
-      <article className="px-5 pt-5">
-        {/* 화살표의 44px 탭 영역이 제목을 밀지 않게 줄 전체를 왼쪽으로 당긴다. */}
-        <div className="-ml-3 flex items-start gap-1">
-          <BackLink />
-          <h1 className="text-3xl font-black tracking-tighter">
-            {privacy.title}
-          </h1>
-        </div>
-        <p className={BODY}>
-          {beforeBrand}
-          <span
-            className={`${BRAND_WORDMARK_FONT[lang]} font-semibold text-foreground`}
-          >
-            {BRAND_WORDMARK[lang]}
-          </span>
-          {afterBrand}
-        </p>
+      <h2 className={POLICY_HEADING}>{privacy.visitorHeading}</h2>
+      <p className={POLICY_BODY}>{privacy.visitor1}</p>
+      <p className={POLICY_BODY}>{privacy.visitor2}</p>
+      <p className={POLICY_BODY}>{privacy.visitor3}</p>
 
-        <h2 className={HEADING}>{privacy.castHeading}</h2>
-        <p className={BODY}>{privacy.cast1}</p>
-        <p className={BODY}>{privacy.cast2}</p>
+      <h2 className={POLICY_HEADING}>{privacy.processorHeading}</h2>
+      <p className={POLICY_BODY}>{privacy.processor}</p>
 
-        <h2 className={HEADING}>{privacy.visitorHeading}</h2>
-        <p className={BODY}>{privacy.visitor1}</p>
-        <p className={BODY}>{privacy.visitor2}</p>
-        <p className={BODY}>{privacy.visitor3}</p>
+      <h2 className={POLICY_HEADING}>{privacy.adsHeading}</h2>
+      <p className={POLICY_BODY}>
+        {privacy.ads}{" "}
+        <a
+          href={GOOGLE_ADS_POLICY_URL}
+          target="_blank"
+          rel="noreferrer"
+          className={POLICY_LINK}
+        >
+          {privacy.adsLink}
+        </a>
+      </p>
 
-        <h2 className={HEADING}>{privacy.processorHeading}</h2>
-        <p className={BODY}>{privacy.processor}</p>
+      <h2 className={POLICY_HEADING}>{privacy.rightsHeading}</h2>
+      <p className={POLICY_BODY}>
+        {privacy.rights}{" "}
+        <Link href={takedownHref(lang)} className={POLICY_LINK}>
+          {dict.takedown.title}
+        </Link>
+      </p>
 
-        <h2 className={HEADING}>{privacy.adsHeading}</h2>
-        <p className={BODY}>
-          {privacy.ads}{" "}
-          <a
-            href={GOOGLE_ADS_POLICY_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="underline underline-offset-4 hover:text-foreground"
-          >
-            {privacy.adsLink}
-          </a>
-        </p>
+      <h2 className={POLICY_HEADING}>{privacy.contactHeading}</h2>
+      <p className={`font-lat ${POLICY_BODY}`}>{CONTACT_EMAIL}</p>
 
-        <h2 className={HEADING}>{privacy.rightsHeading}</h2>
-        <p className={BODY}>
-          {privacy.rights}{" "}
-          <Link
-            href={takedownHref(lang)}
-            className="underline underline-offset-4 hover:text-foreground"
-          >
-            {dict.takedown.title}
-          </Link>
-        </p>
+      <p className="mt-8 text-xs text-muted-foreground">
+        {fill(privacy.effective, { date: privacy.effectiveDate })}
+      </p>
 
-        <h2 className={HEADING}>{privacy.contactHeading}</h2>
-        <p className={`font-lat ${BODY}`}>{CONTACT_EMAIL}</p>
-
-        <p className="mt-8 text-xs text-muted-foreground">
-          {fill(privacy.effective, { date: privacy.effectiveDate })}
-        </p>
-
-        {/* 번역본이라는 사실 자체가 약속의 일부다 — 원문이 어느 쪽인지 밝힌다. */}
-        {privacy.translationNote && (
-          <p className="mt-2 text-xs text-muted-foreground">
-            {privacy.translationNote}
-          </p>
-        )}
-      </article>
-    </main>
+      <TranslationNote note={privacy.translationNote} className="mt-2" />
+    </PolicyPage>
   );
 }

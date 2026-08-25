@@ -9,18 +9,27 @@
  * 서버 전용이다 — 사전과 SITE_URL 을 읽는다.
  */
 
+import type { Metadata } from "next";
 import { BRAND_WORDMARK } from "./brand";
 import {
   fill,
   getDictionary,
+  languageAlternates,
   localizeAlias,
   localizeSeason,
   ogAlternateLocales,
   ogLocale,
   type Locale,
 } from "./i18n";
-import { homeHref, instagramUrl, seasonHref } from "./links";
-import { SITE_URL } from "./site";
+import {
+  homeHref,
+  instagramUrl,
+  localePath,
+  seasonHref,
+  PRIVACY_PATH,
+  TAKEDOWN_PATH,
+} from "./links";
+import { absoluteUrl, SITE_URL } from "./site";
 import { getCoverage, type Season } from "./types";
 
 /** JSON-LD 한 덩어리. 스키마가 자유 형식이라 여기까지만 좁힌다. */
@@ -52,6 +61,40 @@ export function openGraphBase(locale: Locale) {
     locale: ogLocale(locale),
     // 이 화면의 다른 언어 판이 있다는 표시. 카카오톡·페이스북이 읽는다.
     alternateLocale: ogAlternateLocales(locale),
+  };
+}
+
+/** 정책 페이지의 경로. 화면 링크(`links.ts`)와 같은 문자열을 canonical 이 본다. */
+const POLICY_PATHS = {
+  takedown: TAKEDOWN_PATH,
+  privacy: PRIVACY_PATH,
+} as const;
+
+/**
+ * 정책 두 페이지(`/takedown`·`/privacy`)의 metadata.
+ *
+ * 둘은 제목·설명만 다르고 나머지가 같다. 각자 적어 두면 한쪽만 고쳐 어긋나는데,
+ * 어긋난 자리가 canonical·hreflang 이면 화면에서는 끝내 안 보인다.
+ */
+export function policyMetadata(
+  locale: Locale,
+  page: keyof typeof POLICY_PATHS,
+): Metadata {
+  const { title, description } = getDictionary(locale)[page];
+  const path = POLICY_PATHS[page];
+  const url = localePath(locale, path);
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url, languages: languageAlternates(path) },
+    openGraph: {
+      ...openGraphBase(locale),
+      type: "article",
+      title,
+      description,
+      url,
+    },
   };
 }
 
@@ -100,7 +143,7 @@ export function breadcrumbSchema(
       "@type": "ListItem",
       position: index + 1,
       name: crumb.name,
-      item: `${SITE_URL}${crumb.path}`,
+      item: absoluteUrl(crumb.path),
     })),
   };
 }

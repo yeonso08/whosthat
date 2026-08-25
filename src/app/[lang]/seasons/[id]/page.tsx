@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BackLink } from "@/components/back-link";
 import { CastCard } from "@/components/cast-card";
+import { EmptyCard } from "@/components/empty-card";
 import { JsonLd } from "@/components/json-ld";
+import { PageEyebrow, PageTitle } from "@/components/page-heading";
 import { SiteHeader } from "@/components/site-header";
 import { getSeason, getSeasons } from "@/lib/data";
 import {
@@ -13,7 +15,7 @@ import {
   localizeProgramName,
   localizeSeason,
 } from "@/lib/i18n";
-import { seasonHref } from "@/lib/links";
+import { seasonHref, seasonPath } from "@/lib/links";
 import { isIndexable, openGraphBase, seasonSchema } from "@/lib/seo";
 import { getCoverage } from "@/lib/types";
 
@@ -58,7 +60,7 @@ export async function generateMetadata({
     // 같은 기수가 여러 경로로 잡히면 색인이 쪼개진다.
     alternates: {
       canonical: path,
-      languages: languageAlternates(`/seasons/${season.id}`),
+      languages: languageAlternates(seasonPath(season.id)),
     },
     // 명단을 못 채운 기수는 색인에서 뺀다 — 이유는 `isIndexable` 에 적어 뒀다.
     // 링크는 계속 따라가게 두므로(`follow`) 크롤러가 여기서 막히지는 않는다.
@@ -93,18 +95,13 @@ export default async function Page({
       <header className="px-5 pt-6">
         <SiteHeader />
 
-        {/* 제목이 "33기" 뿐이면 이 화면에 프로그램 이름이 한 글자도 안 남는다 —
-            검색어는 "나는 솔로 33기" 인데 본문이 그걸 뒷받침하지 못한다.
-            홈의 머리글과 같은 구조다. */}
-        <p className="mt-5 text-sm font-bold tracking-tight text-muted-foreground">
-          {localizeProgramName(season.programId, lang)}
-        </p>
+        <PageEyebrow>{localizeProgramName(season.programId, lang)}</PageEyebrow>
 
         {/* 뒤로가기를 제목 줄에 붙인다. 화살표의 44px 탭 영역이 제목을 밀지
             않게 줄 전체를 왼쪽으로 당겨 화살표를 본문 여백선에 맞춘다. */}
         <div className="mt-3 -ml-3 flex items-start gap-1">
           <BackLink />
-          <h1 className="text-3xl font-black tracking-tighter">{label}</h1>
+          <PageTitle>{label}</PageTitle>
         </div>
 
         {special && (
@@ -130,9 +127,7 @@ export default async function Page({
           ))}
         </section>
       ) : (
-        <p className="mt-6 rounded-2xl bg-card px-5 py-8 text-center text-[13px] leading-relaxed text-muted-foreground mx-5">
-          {dict.season.castPendingBody}
-        </p>
+        <EmptyCard>{dict.season.castPendingBody}</EmptyCard>
       )}
     </main>
   );

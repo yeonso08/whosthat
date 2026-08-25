@@ -12,6 +12,7 @@ https://www.nukko.net
 pnpm dev      # 개발 서버 (3000)
 pnpm build    # 프로덕션 빌드 — 전 기수 페이지를 SSG 로 뽑는다
 pnpm lint
+pnpm typecheck
 ```
 
 Next.js 16 App Router · Tailwind v4 · shadcn/ui · pnpm. 데이터는 `src/data/*.json` 정적 파일이고 서버가 없다.

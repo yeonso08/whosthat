@@ -5,21 +5,40 @@
  * 내부 경로는 **전부 언어로 시작한다**(`/ko/seasons/s33`). 언어를 빼먹은 링크는
  * 눌러 보기 전까지 안 보이므로, 경로를 손으로 조립하지 말고 여기 함수를 쓴다.
  *
- * 값 import 는 `site.ts` 하나뿐이다 — 언어 전환 버튼이 클라이언트 컴포넌트라
- * 이 파일도 클라이언트로 딸려 들어간다. 사전(`i18n.ts`)은 타입만 가져온다.
+ * **값 import 가 없다.** 언어 전환 버튼이 클라이언트 컴포넌트라 이 파일도
+ * 클라이언트로 딸려 들어간다 — 여기서 뭔가를 값으로 가져오면 그것까지 번들에
+ * 실린다. 사전(`i18n.ts`)도 도메인(`site.ts`)도 타입만 스치거나 아예 안 본다.
  */
 
 import type { Locale } from "./locales";
-import { CONTACT_EMAIL } from "./site";
+
+/**
+ * 언어 앞자리를 뗀 경로. hreflang·sitemap 이 언어를 곱하기 전의 형태로 받는다.
+ *
+ * canonical·hreflang·sitemap 이 같은 문자열을 봐야 한다 — 한쪽만 리터럴로 적어
+ * 두면 경로를 바꿀 때 나머지가 조용히 옛 주소를 가리킨다.
+ */
+export const HOME_PATH = "";
+export const TAKEDOWN_PATH = "/takedown";
+export const PRIVACY_PATH = "/privacy";
+
+export function seasonPath(seasonId: string): string {
+  return `/seasons/${seasonId}`;
+}
+
+/** 언어 없는 경로에 언어를 앞에 붙인다. 내부 링크는 전부 여기를 거친다. */
+export function localePath(locale: Locale, path: string): string {
+  return `/${locale}${path}`;
+}
 
 /** 그 언어의 기수 목록. `app/[lang]` 과 짝이다. */
 export function homeHref(locale: Locale): string {
-  return `/${locale}`;
+  return localePath(locale, HOME_PATH);
 }
 
 /** 기수 상세 경로. `app/[lang]/seasons/[id]` 와 짝이다. */
 export function seasonHref(locale: Locale, seasonId: string): string {
-  return `/${locale}/seasons/${seasonId}`;
+  return localePath(locale, seasonPath(seasonId));
 }
 
 /**
@@ -38,12 +57,12 @@ export function castMemberHref(
 
 /** 삭제·정정 요청. `app/[lang]/takedown` 과 짝이다. */
 export function takedownHref(locale: Locale): string {
-  return `/${locale}/takedown`;
+  return localePath(locale, TAKEDOWN_PATH);
 }
 
 /** 개인정보 처리방침. `app/[lang]/privacy` 와 짝이다. */
 export function privacyHref(locale: Locale): string {
-  return `/${locale}/privacy`;
+  return localePath(locale, PRIVACY_PATH);
 }
 
 /**
@@ -60,12 +79,4 @@ export function switchLocalePath(pathname: string, locale: Locale): string {
 /** 인스타그램 프로필 주소. handle 은 `@` 없이 넣는다. */
 export function instagramUrl(handle: string): string {
   return `https://instagram.com/${handle}`;
-}
-
-/**
- * 삭제·정정 요청 메일. 제목을 미리 채워 둔다 — 어느 기수 이야기인지 빠진
- * 메일이 오면 되묻느라 그만큼 늦어진다. 제목도 화면 언어를 따라간다.
- */
-export function contactMailto(subject: string): string {
-  return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}`;
 }

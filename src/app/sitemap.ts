@@ -1,9 +1,16 @@
 import type { MetadataRoute } from "next";
 import { getSeasons } from "@/lib/data";
 import { languageAlternates } from "@/lib/i18n";
+import {
+  HOME_PATH,
+  localePath,
+  PRIVACY_PATH,
+  seasonPath,
+  TAKEDOWN_PATH,
+} from "@/lib/links";
 import { LOCALES } from "@/lib/locales";
 import { isIndexable } from "@/lib/seo";
-import { SITE_URL } from "@/lib/site";
+import { absoluteUrl } from "@/lib/site";
 
 /**
  * 기수가 늘면 자동으로 따라온다 — generateStaticParams 와 같은 목록을 쓴다.
@@ -19,16 +26,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const seasons = getSeasons().filter(isIndexable);
 
   const pages = [
-    { path: "", changeFrequency: "daily" as const, priority: 1 },
+    { path: HOME_PATH, changeFrequency: "daily" as const, priority: 1 },
     ...seasons.map((season) => ({
-      path: `/seasons/${season.id}`,
+      path: seasonPath(season.id),
       lastModified: lastVerifiedIn(season.cast),
       // 방영 중인 기수는 계정이 계속 붙는다. 지난 기수는 거의 안 바뀐다.
       changeFrequency: season.onAir ? ("daily" as const) : ("monthly" as const),
       priority: season.onAir ? 0.9 : 0.7,
     })),
     // 삭제 창구는 당사자가 검색으로도 닿아야 해서 색인에 올린다.
-    ...["/takedown", "/privacy"].map((path) => ({
+    ...[TAKEDOWN_PATH, PRIVACY_PATH].map((path) => ({
       path,
       changeFrequency: "yearly" as const,
       priority: 0.3,
@@ -39,7 +46,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // 그래야 크롤러가 같은 내용의 중복이 아니라 번역으로 읽는다.
   return pages.flatMap(({ path, ...meta }) =>
     LOCALES.map((locale) => ({
-      url: `${SITE_URL}/${locale}${path}`,
+      url: absoluteUrl(localePath(locale, path)),
       ...meta,
       alternates: { languages: absolute(languageAlternates(path)) },
     })),
@@ -49,7 +56,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 /** hreflang 은 절대 URL 이라야 한다. 화면 쪽 alternates 는 상대경로를 쓴다. */
 function absolute(languages: Record<string, string>): Record<string, string> {
   return Object.fromEntries(
-    Object.entries(languages).map(([key, path]) => [key, `${SITE_URL}${path}`]),
+    Object.entries(languages).map(([key, path]) => [key, absoluteUrl(path)]),
   );
 }
 

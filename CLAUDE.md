@@ -1,6 +1,6 @@
 @AGENTS.md
 
-# whosthat
+# 누꼬 (nukko)
 
 예능 출연진의 인스타그램 계정을 기수별로 모아 두는 아카이브. 1차 대상은 "나는 솔로", 이후 넷플릭스 프로그램으로 확장한다. 배경과 범위는 `PLANNING.md`에 있다.
 
@@ -10,6 +10,7 @@
 pnpm dev      # 개발 서버 (3000)
 pnpm build    # 프로덕션 빌드 — 기수 페이지를 전부 SSG로 뽑는다
 pnpm lint
+pnpm typecheck   # tsc --noEmit — 빌드보다 빠르게 타입만 본다
 
 pnpm exec shadcn add <name>   # shadcn/ui 컴포넌트 추가 — 손으로 짜기 전에 먼저 확인
 ```
@@ -35,21 +36,24 @@ src/app/[lang]/seasons/[id]/page.tsx 기수 상세 (언어 × 기수로 전부 �
 src/app/[lang]/takedown/page.tsx     삭제·정정 요청 창구
 src/app/[lang]/privacy/page.tsx      개인정보 처리방침
 src/app/[lang]/layout.tsx            루트 레이아웃 — <html lang>, 언어별 metadata, generateStaticParams
-src/app/icon.tsx                     파비콘 — ㄲ 마크, 코드 생성(ImageResponse). 언어를 안 탄다
-src/app/apple-icon.tsx               iOS 홈 화면 아이콘 — 같은 마크, 180×180
+src/app/icon.tsx                     파비콘 — 크기·여백만 정하고 그림은 BrandTile 이 그린다. 언어를 안 탄다
+src/app/apple-icon.tsx               iOS 홈 화면 아이콘 — 같은 타일, 180×180
+src/app/[lang]/opengraph-image.tsx   공유 카드 — 글자만 고르고 판은 lib/og.tsx 가 그린다 (기수 상세도 한 벌)
 src/app/sitemap.ts / robots.ts       언어마다 한 줄씩 + hreflang (명단 빈 기수는 뺀다)
 src/proxy.ts                         `/` 로 들어온 사람을 브라우저 언어로 보낸다 (Next 16 의 미들웨어)
 src/lib/locales.ts                   언어 목록 + 언어 이름 — 화면·클라이언트·프록시가 다 읽는 순수 모듈
 src/lib/i18n.ts                      사전 로더 + 데이터 어휘(가명·특집) + 날짜/현황 포맷
 src/dictionaries/{ko,en,ja}.json     화면 문구
-src/lib/brand.ts                     BRAND_MARK_PATHS(ㄲ 좌표) — 언어 불변, 아이콘과 공유 / BRAND_WORDMARK(누꼬·nukko) — 언어별
-src/lib/links.ts                     내부 경로 — 전부 언어로 시작한다
-src/lib/seo.ts                       색인 여부·OG 공통 필드·JSON-LD — 검색엔진에 보이는 것을 한 곳에
-src/lib/types.ts                     Program → Season → CastMember 모델
+src/lib/brand.ts                     BRAND_MARK_PATHS(ㄲ 좌표) — 언어 불변, 아이콘과 공유 / BRAND_WORDMARK(누꼬·nukko) — 언어별 / BRAND_IMAGE_COLORS — satori 가 CSS 토큰을 못 읽어서 값으로 박은 색
+src/lib/links.ts                     내부 경로 — 전부 언어로 시작한다. 값 import 가 없다(클라이언트로 딸려 간다)
+src/lib/site.ts                      도메인·연락처·광고 ID — absoluteUrl·contactMailto 도 여기다
+src/lib/og.tsx                       공유 카드 한 장 + OG 서체 로더. `.tsx` 인 건 카드 판을 여기서 그리기 때문이다
+src/lib/seo.ts                       색인 여부·OG 공통 필드·정책 페이지 metadata·JSON-LD — 검색엔진에 보이는 것을 한 곳에
+src/lib/types.ts                     Program → Season → CastMember 모델 + getCoverage·getTotals
 src/lib/data.ts                      JSON 로더 + 검색 인덱스 생성
 src/lib/search.ts                    검색 매칭 — 데이터를 모른다(클라이언트로 넘어간다)
 src/data/na-neun-solo.json           실데이터 — 채우는 법은 src/data/README.md
-src/components/                      cast-card, cast-photo, cast-avatar, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, icons, json-ld, theme-provider, mode-toggle, locale-toggle
+src/components/                      cast-card, cast-photo, cast-avatar, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
 ```
@@ -86,7 +90,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 네 곳이다: `locales.ts` 의 `LOCALES`·`LOCALE_NAMES`, `src/dictionaries/<code>.json` 한 벌, `i18n.ts` 의 어휘 표(`ALIASES`·`SPECIALS`)와 `OG_LOCALES`, 그리고 **서체 두 자리**. 화면·sitemap·hreflang·정적 생성은 그 목록을 따라가므로 따로 손댈 게 없다 — `Record<Locale, …>` 로 못박은 표들이 빠진 칸마다 컴파일 에러를 낸다.
 
-**서체가 네 번째 자리다.** 글자 집합이 안 겹치면 폰트를 한 벌로 못 쓴다 — Gothic A1 에는 가나·한자가, Zen Kaku Gothic New 에는 한글이 없다. 그래서 화면은 `layout.tsx` 의 `SANS_FONT` 가, OG 이미지는 `lib/og.ts` 의 `OG_FONTS` 가 언어마다 하나씩 고른다. 화면 쪽은 그 언어일 때만 클래스를 걸어서 다른 언어가 안 받고, OG 쪽은 그 이미지에 그리는 글자만 `text=` 서브셋으로 받는다. **화면과 OG 는 같은 서체라야 한다** — 공유 카드와 눌러서 도착한 화면이 다른 글꼴이면 같은 사이트로 안 읽힌다.
+**서체가 네 번째 자리다.** 글자 집합이 안 겹치면 폰트를 한 벌로 못 쓴다 — Gothic A1 에는 가나·한자가, Zen Kaku Gothic New 에는 한글이 없다. 그래서 화면은 `layout.tsx` 의 `SANS_FONT` 가, OG 이미지는 `lib/og.tsx` 의 `OG_FONTS` 가 언어마다 하나씩 고른다. 화면 쪽은 그 언어일 때만 클래스를 걸어서 다른 언어가 안 받고, OG 쪽은 그 이미지에 그리는 글자만 `text=` 서브셋으로 받는다. **화면과 OG 는 같은 서체라야 한다** — 공유 카드와 눌러서 도착한 화면이 다른 글꼴이면 같은 사이트로 안 읽힌다.
 
 ### 번역이 화면과 안 맞는 자리
 
@@ -98,9 +102,12 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 배관(canonical·hreflang·sitemap·robots·OG 이미지)은 처음부터 있었고, 남은 구멍은 2026-08-21 에 메웠다. 새 화면을 붙일 때 걸리는 건 아래 넷이다.
 
+- **공유 카드는 `lib/og.tsx` 의 `ogImageResponse()` 한 판이다.** 라우트는 글자 넷(언어·활자 크기·작은 줄·큰 줄·현황)만 고르고 판·색·폰트 서브셋은 안 만진다. 두 라우트가 각자 그리던 시절엔 90줄 중 85줄이 같았는데, 어긋나도 링크를 실제로 공유해 보기 전까지 안 보인다. 활자 크기가 두 벌인 건 큰 줄에 뭐가 오느냐가 달라서다 — 홈은 문장, 기수는 `33기` 한 덩어리다.
 - **`openGraph` 를 정의하는 페이지는 `openGraphBase(locale)` 를 펼치는 것으로 시작한다.** Next 의 metadata 는 얕게 병합돼서, 페이지가 `openGraph` 를 정의하는 순간 레이아웃의 `openGraph` 가 **통째로** 덮인다 — `og:site_name`·`og:locale`·`og:locale:alternate` 가 조용히 빠진다. 화면에선 안 보이고 공유 카드에서만 드러나서 늦게 발견된다(기수·정책 세 페이지가 실제로 그 상태였다).
 - **색인 여부는 `isIndexable(season)` 하나로 정하고, 두 곳에 함께 건다.** 명단이 빈 기수는 화면에 "명단 정리 중" 한 문장뿐이라 크롤러가 soft 404 로 읽고, 그 판정은 그 페이지로 끝나지 않고 사이트 전체 평가로 번진다. 그래서 `robots: noindex, follow`(기수 상세의 `generateMetadata`)와 sitemap 제외를 **같이** 한다 — 하나만 하면 어느 쪽으로든 어긋난다. noindex 페이지를 sitemap 으로 제출하면 Search Console 이 오류로 잡고, sitemap 에서만 빼면 홈의 링크를 타고 그대로 색인된다. 명단이 들어오면 저절로 돌아온다.
 - **JSON-LD 는 화면에 이미 있는 것만 옮긴다.** 홈은 `WebSite`(검색 결과에 도메인 대신 사이트 이름을 쓸지 Google 이 여기를 본다), 기수 상세와 정책 두 페이지는 `BreadcrumbList`, 기수 상세는 거기에 `ItemList` 가 더 붙는다. **`ItemList` 에는 `found` 인 사람만 넣는다** — 못 찾은 사람은 이을 `sameAs` 가 없어서 "사람이 있다"는 주장만 남고, 그건 화면에 없는 말을 마크업으로 더하는 것이다. 삭제 요청으로 계정을 내리면 마크업도 함께 사라진다(데이터에서 나오므로 따로 손댈 게 없다).
+- **언어 없는 경로를 리터럴로 적지 말 것.** canonical·hreflang·sitemap 이 같은 문자열을 봐야 한다 — `links.ts` 의 `seasonPath()`·`TAKEDOWN_PATH`·`PRIVACY_PATH` 가 그 한 벌이고, 언어를 앞에 붙이는 것도 `localePath()` 하나다. 예전엔 `languageAlternates("/takedown")` 과 sitemap 의 `["/takedown", "/privacy"]` 가 각자 적혀 있었다 — 경로를 바꾸면 화면 링크만 따라오고 canonical 은 옛 주소를 가리키는데, 그건 화면에서 끝내 안 보인다.
+- **정책 두 페이지의 metadata 는 `policyMetadata(locale, page)` 다.** 둘은 제목·설명만 다르고 나머지가 같아서, 각자 적어 두면 한쪽만 고치게 된다. 새 정책 페이지를 붙이면 `seo.ts` 의 `POLICY_PATHS` 에 한 줄 더한다.
 - **기수 상세 머리글의 프로그램 이름을 빼지 말 것.** 제목은 `나는 솔로 33기 출연진 인스타` 인데 본문에는 `33기` 와 가명뿐이라 프로그램 이름이 한 글자도 없던 적이 있다 — 주 검색어를 본문이 뒷받침하지 못하는 상태였다. 홈 머리글과 같은 구조(프로그램 이름 한 줄 + 큰 제목)다.
 
 **검색엔진 등록(Google Search Console·네이버 서치어드바이저·Bing Webmaster Tools)은 커스텀 도메인을 연결한 뒤에 한다.** 코드가 아니라 운영이고, 검증과 색인이 호스트네임 단위로 쌓여서 순서를 바꾸면 같은 일을 두 번 한다. 근거는 `PLANNING.md` §10. 이 프로젝트는 2026-08-24 에 실제로 밟았다 — 절차는 바로 아래에 있고, 다음에 도메인을 옮길 때도 같은 순서를 따른다.
@@ -160,6 +167,8 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 - **코드 안에 그냥 박힌 숫자·문자열을 두지 않는다.** 파일 상단에 `SCREAMING_SNAKE_CASE` 상수로 올리고, **왜 그 값인지** 한 줄 주석을 단다. `FACE_COUNT`(더 넣으면 기수 이름이 밀린다), `CARD_SIZES` 가 그 형태다.
 - 기준은 "의미가 있는가"지 "몇 번 쓰였는가"가 아니다. 한 번만 쓰여도 그 값이 왜 4인지 설명이 필요하면 상수다. 반대로 `flex gap-3` 같은 Tailwind 클래스 문자열은 그대로 둔다 — 상수로 빼면 오히려 안 읽힌다.
+- **다만 그 클래스 뭉치가 화면에서 이름을 가진 자리면 컴포넌트로 뽑는다.** `PageTitle`·`PageEyebrow`·`GroupHeading`(`components/page-heading.tsx`), `EmptyCard`, 정책 문서의 `POLICY_HEADING`·`POLICY_BODY`·`POLICY_LINK` 가 그 형태다 — 넷 화면이 같은 크기의 제목을 쓴다는 게 우연이 아니라 규칙이라, 손으로 네 번 적으면 한 곳만 어긋난다. **자리(바깥 여백)는 여전히 쓰는 쪽이 정한다** — `BackLink` 와 같은 태도다.
+- **포커스 링은 `focus-ring` 유틸리티다**(`globals.css` 의 `@utility`). 네 자리가 같은 `focus-visible:outline-*` 세 줄을 각자 적고 있었다. 키보드로만 보이는 것이라 한 자리에서 빠져도 눈으로는 안 걸린다 — 새로 누를 수 있는 것을 만들면 이 클래스를 건다.
 - **두 파일 이상에서 쓰이는 값은 파일 상단이 아니라 `lib` 으로 올린다.** 외부 URL(`https://instagram.com/`)과 내부 라우트(`/{lang}/seasons/{id}`)가 `lib/links.ts` 에 모여 있는 게 그 형태다 — 언어가 붙으면서 경로 규칙이 바뀌었을 때 고칠 곳이 한 파일이었다.
 - 화면에 보이는 문구도 같은 자리에서 반복되면 상수로 뺀다. 특히 `"찾는 중"`, `"계정 없음"` 처럼 **상태와 짝이 되는 문구**는 흩어지면 상태를 추가할 때 빠뜨린다.
 
@@ -208,10 +217,13 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **마크는 언어를 타지 않고, 이름만 탄다.** `[lang]` 바깥인 파비콘·앱 아이콘이 애초에 언어를 못 받으므로, 두 언어가 같은 도형을 공유하는 것 말고 다른 수가 없다. 이름(`BRAND_WORDMARK`)만 로케일별로 갈아 끼운다.
 - **한글 워드마크를 반려했던 규칙이 뒤집혔다.** `whosthat` 시절엔 "브랜드를 번역하지 않는다"는 이유로 한글을 뺐는데, `누꼬` 는 `nukko` 의 번역이 아니라 **원문**이다(경상도 사투리). 그 규칙을 그대로 적용하면 한국어 화면이 원문 대신 로마자 표기를 쓰는 꼴이 된다. 이름이 사투리인 동안만 성립하는 예외지 "브랜드도 번역한다"로 넓히지 말 것. **일본어가 `ヌッコ` 가 아니라 `nukko` 인 게 그 선이다** — 가타카나는 원문이 아니라 음역이라, 옮기는 순간 예외가 언어마다 하나씩 생긴다.
 - **서체는 이름만 갈아 끼운다**(`BRAND_WORDMARK_FONT`). 마크가 도형이 된 뒤로는 이 표가 서체 문제에서 완전히 자유롭다 — 예전엔 `@` 를 어느 서체로 그릴지가 걸렸지만(Gothic A1 의 `@` 는 안쪽 `a` 배가 작고 둥글어 이름과 서체가 갈리면 마크가 다른 글자로 읽혔다), 이제 마크는 서체 자체가 없다. 한글 쪽 값이 빈 문자열이 아니라 `font-sans` 인 건 이 값이 `font-lat` 을 이미 걸어 둔 상자(푸터 카피라이트 줄) 안에도 들어가기 때문이다.
-- **워드마크의 마크·이름 정렬은 `items-center` 다.** 마크가 텍스트가 아니라 도형이라 베이스라인 개념이 없다 — `items-baseline` 을 쓰면 오히려 광학 중심이 어긋난다. (`@` 시절엔 두 서체의 라인 메트릭 차이로 세로 위치가 어긋나는 버그가 있었다 — 도형으로 바꾸면서 그 버그의 원인 자체가 사라졌다.)
+- **워드마크의 마크·이름 정렬은 `items-center` 다.** 마크가 텍스트가 아니라 도형이라 베이스라인 개념이 없다 — `items-baseline` 을 쓰면 오히려 광학 중심이 어긋난다. (`@` 시절엔 **마크와 이름 사이**에 두 서체의 라인 메트릭 차이로 세로 위치가 어긋나는 버그가 있었다 — 도형으로 바꾸면서 그 버그는 사라졌다.)
+- **다만 `items-center` 는 줄 상자만 맞춘다 — 상자 안에서 글자가 잉크를 칠하는 위치까지 맞춰 주진 않는다.** 한글 이름(`누꼬`, Gothic A1)이 라틴 이름(`nukko`, Manrope)보다 베이스라인 위쪽으로 더 쏠려 있어서, 상자 중심은 픽셀 단위로 같은데도 한글만 마크보다 살짝 떠 보이는 게 실제로 발견됐다(2026-08-25, 헤더 15px 기준 1.44px). `BRAND_WORDMARK_NUDGE` 로 한국어에만 `translate-y-[0.1em]` 보정을 건다 — `em` 인 건 이 워드마크가 헤더(15px)·푸터(11px) 두 크기로 쓰여서 고정 px 로는 한쪽만 맞기 때문이다. 언어를 더할 때 그 언어 이름이 한글도 라틴도 아니면(예: 가나 혼합), 이 상자에서 다시 실측해 볼 것 — 서체마다 다르지 굳이 셋 다 같다고 가정할 이유가 없다.
+- **이름을 손으로 적지 말고 `BrandName` 을 쓴다**(`components/wordmark.tsx`). 이름·서체·광학 보정 세 표를 늘 함께 읽어야 하는데, 손으로 조립하면 보정을 빠뜨리기 쉽다 — 실제로 정책 두 페이지가 `BRAND_WORDMARK_NUDGE` 없이 렌더되어, 한국어에서만 같은 이름이 헤더·푸터와 다른 높이로 떠 있었다(2026-08-25 에 이 컴포넌트로 묶으며 고침). 문장 안에 들어가는 자리는 `BrandSentence` 가 사전의 `{brand}` 를 갈아 끼운다.
 - **언어를 못 받는 자리는 라틴 표기로 고정한다.** OG 이미지의 `alt` 는 정적 export 라 locale 을 못 받으므로 `BRAND_WORDMARK.en`(도메인과 같은 표기)만 쓴다 — 마크는 도형이라 글로 옮길 말이 없다. 반대로 `websiteSchema` 의 `alternateName` 은 locale 을 받으므로 화면 워드마크와 같은 언어로 준다 — 검색 결과에 뜬 이름과 눌러서 도착한 화면이 어긋나면 안 된다.
-- `BrandMark` 컴포넌트(`components/icons.tsx`)가 좌표를 그린다. `className`(Tailwind)과 `style`(인라인) 둘 다 받는 이유는 렌더 경로가 둘로 갈리기 때문이다 — 화면 컴포넌트(`Wordmark`·`SiteFooter`)는 `className` 만 쓰고, `icon.tsx`·`apple-icon.tsx` 는 satori(ImageResponse) 위에서 렌더되는데 satori 가 Tailwind 클래스를 못 읽어서 `style` 로 크기·색을 준다.
-- **파비콘·앱 아이콘은 폰트가 필요 없다.** 마크가 벡터라 폰트 로더 호출도, `fonts` 배열도 없다 — `@` 글리프 시절엔 Manrope 서브셋을 매번 받아야 했다. 폭은 타일 대비 비율(`MARK_WIDTH_RATIO`)로 정하고 높이는 `BRAND_MARK_ASPECT`(88:64)로 뺀다. 앱 아이콘 쪽 비율이 더 작은 건 iOS 마스크가 모서리를 먹어서 여백을 더 줘야 하기 때문이다.
+- `BrandMark` 컴포넌트(`components/icons.tsx`)가 좌표를 그린다. `className`(Tailwind)과 `style`(인라인) 둘 다 받는 이유는 렌더 경로가 둘로 갈리기 때문이다 — 화면 컴포넌트(`Wordmark`·`SiteFooter`)는 `className` 만 쓰고, `BrandTile`(파비콘·앱 아이콘)은 satori(ImageResponse) 위에서 렌더되는데 satori 가 Tailwind 클래스를 못 읽어서 `style` 로 크기·색을 준다.
+- **satori 위의 색은 `BRAND_IMAGE_COLORS` 다.** 파비콘·앱 아이콘·OG 카드가 다 CSS 를 실행하지 않는 판 위에 그려져서 `globals.css` 의 토큰을 못 읽는다 — 다크 팔레트의 세 값을 그대로 옮겨 적어 뒀고, **한쪽만 고치면 어긋난 채로 아무 에러도 안 난다.** 공유 카드는 방문자 테마를 모르므로 라이트 모드에서도 어두운 판이다.
+- **파비콘·앱 아이콘은 폰트가 필요 없다.** 마크가 벡터라 폰트 로더 호출도, `fonts` 배열도 없다 — `@` 글리프 시절엔 Manrope 서브셋을 매번 받아야 했다. 두 라우트는 크기(`size`)와 여백 비율(`MARK_WIDTH_RATIO`)만 정하고 그림은 `BrandTile` 한 곳이 그린다 — 높이는 `BRAND_MARK_ASPECT`(88:64)로 뺀다. 앱 아이콘 쪽 비율이 더 작은 건 iOS 마스크가 모서리를 먹어서 여백을 더 줘야 하기 때문이다.
 - `Wordmark` 는 홈·기수 상세·정책 페이지(처리방침·삭제요청) 헤더에 있다. 정책 페이지는 검색으로 바로 착지하는 진입점이라 워드마크가 특히 중요하다 — 본문의 "이 사이트" 도 첫 문장에서 `BRAND_WORDMARK` 로 못박는다.
 - `BackLink` 는 바깥 여백을 갖지 않는다 — 정책 페이지는 제목 위 한 줄, 기수 상세는 제목 옆(`‹ 33기`)에 붙이므로 자리는 쓰는 쪽이 정한다. 제목이 두 줄로 접힐 때 화살표가 첫 줄에 붙게 `-mt-1` 로 광학 정렬한다.
 
@@ -246,6 +258,10 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 **광고 자리를 코드로 만들지 않는다 — 자동 광고다.** 스니펫 한 줄이 전부고 구글이 위치를 정한다. 종류별 토글은 애드센스 콘솔에 있는데, **전면 광고(vignette)는 꺼야 한다** — 기수 목록과 상세를 계속 오가는 사이트라 페이지를 넘길 때마다 화면을 덮으면 "검색 없이 바로 찾는다"가 무너진다. 위치가 디자인과 안 맞으면 그때 수동 광고 단위로 바꾼다(코드 작업).
 
 **운영 상태**(2026-08-24): 소유권 확인·검토 요청·GDPR 동의 메시지까지 끝났고 심사 결과를 기다리는 중이다. 소유권은 **ads.txt 방식**으로 통과했다 — 코드 스니펫 방식은 실패했는데, 애드센스에 등록된 사이트가 apex(`nukko.net`)고 실제 사이트는 `www` 라 그런 것으로 보인다. 동의 메시지는 구글 CMP 의 **3선택 형식**(동의·동의하지 않음·옵션 관리)이다 — 2선택은 첫 화면에 거부 버튼이 없어서, 거부가 동의만큼 쉬워야 한다는 GDPR 원칙에 어긋난다. 미국 주 규정 메시지는 만들지 않았다(CCPA 는 매출·이용자 수 기준이 있어 대상이 아니고, 없어도 구글이 광고를 막지 않는다).
+
+**정리 한 번 돌았다**(2026-08-25). 죽은 CSS 토큰(`--sidebar-*`·`--chart-*`·`create-next-app` 잔재)과 안 쓰는 shadcn 파일(`textarea`·`separator`)을 걷어내고, 중복을 다음 다섯 곳으로 모았다: 공유 카드(`lib/og.tsx`), 브랜드 타일(`BrandTile`), 정책 페이지 껍데기(`PolicyPage`)와 그 metadata(`policyMetadata`), 브랜드 이름(`BrandName`), 사이트 집계(`getTotals`). 경로 리터럴은 `links.ts` 로, 절대 URL 은 `absoluteUrl` 로 모았고, `contactMailto` 를 `links.ts` 에서 `site.ts` 로 옮겨 **클라이언트 번들에서 `site.ts` 를 뺐다**(언어 전환 버튼이 `links.ts` 를 타고 끌고 들어오던 것이다). 화면 동작은 그대로고 빌드도 117 페이지 그대로다.
+
+**아직 안 건드린 것들**(알고 남긴 것이므로 "발견"으로 다시 올리지 말 것): 벤더링된 shadcn 파일의 안 쓰는 export(`dropdown-menu` 16개 중 4개만 쓴다 — `add` 로 덮어쓰면 되돌아온다), `Program.type`·`Program.platform`·`CastMember.gender`(읽는 곳이 없지만 데이터에는 들어 있는 모델 면), `SeasonFeature`·`SeasonRow` 의 `FACE_SHAPE` 두 벌(크기가 달라서 합치면 플래그가 생긴다 — "추상화는 늦게" 절 참고).
 
 **광고를 떼거나 바꾸면 `/privacy` 부터 되돌린다.** 처리방침의 세 문단이 광고를 전제하고 쓰여 있다 — `visitor2`(무쿠키 주장을 Vercel Analytics 로 한정), `processor`(Google LLC 가 제3자로 들어가 있다), `ads`(게재 중이라고 말한다). 광고를 떼고 이 문구를 두면 처리방침이 반대 방향으로 거짓말을 한다. 문구가 바뀌면 `effectiveDate` 도 함께 옮긴다.
 

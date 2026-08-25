@@ -9,6 +9,14 @@
  */
 export const SITE_URL = resolveSiteUrl();
 
+/**
+ * 절대 URL. 상대경로를 못 쓰는 자리가 쓴다 — hreflang(sitemap)과 JSON-LD 의
+ * `item` 은 규격상 절대 주소라야 하고, 화면 쪽 `alternates` 는 상대경로를 쓴다.
+ */
+export function absoluteUrl(path: string): string {
+  return `${SITE_URL}${path}`;
+}
+
 function resolveSiteUrl(): string {
   // 손으로 못박은 도메인. 설정하면 항상 이게 이긴다.
   //
@@ -36,6 +44,18 @@ function resolveSiteUrl(): string {
  * 개인 메일 대신 이 사이트 전용 주소를 쓴다 — 공개되면 수집되기 때문이다.
  */
 export const CONTACT_EMAIL = "nukko.team@gmail.com";
+
+/**
+ * 삭제·정정 요청 메일. 제목을 미리 채워 둔다 — 어느 기수 이야기인지 빠진
+ * 메일이 오면 되묻느라 그만큼 늦어진다. 제목도 화면 언어를 따라간다.
+ *
+ * 주소와 같은 파일에 둔다. `links.ts` 에 있었지만 그 파일은 클라이언트로도
+ * 딸려 가는데, 이 함수의 호출처는 서버 렌더되는 `/takedown` 한 곳뿐이라
+ * 이 파일 전체를 클라이언트 번들로 끌고 들어갈 이유가 없었다.
+ */
+export function contactMailto(subject: string): string {
+  return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}`;
+}
 
 /**
  * 네이버 서치어드바이저 소유확인 코드.
