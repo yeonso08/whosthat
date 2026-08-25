@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Gothic_A1, Manrope, Zen_Kaku_Gothic_New } from "next/font/google";
 import { notFound } from "next/navigation";
-import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { SiteFooter } from "@/components/site-footer";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -114,13 +113,15 @@ export default async function RootLayout({
         </ThemeProvider>
         <Analytics />
         {/* 자동 광고. 게시자 ID 가 비어 있으면 안 건다 — 틀린 ID 로 요청이
-            나가면 애드센스가 정책 위반으로 잡는다. */}
+            나가면 애드센스가 정책 위반으로 잡는다.
+            next/script 가 아니라 맨 태그다 — <Script> 가 붙이는 data-nscript 를
+            adsbygoogle.js 가 모르는 속성이라며 콘솔에 경고로 남긴다. async src
+            짜리는 React 가 알아서 <head> 로 올리고 중복도 지운다. */}
         {ADSENSE_CLIENT_ID && (
-          <Script
+          <script
             async
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
             crossOrigin="anonymous"
-            strategy="afterInteractive"
           />
         )}
       </body>
