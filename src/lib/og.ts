@@ -8,22 +8,35 @@
  * 브라우저 UA 없이 요청하면 woff2 대신 truetype 을 주는데, satori 가 woff2 를
  * 못 읽어서 이 동작에 기대고 있다.
  */
+
+import type { Locale } from "./locales";
+
 const FONT_CSS = "https://fonts.googleapis.com/css2";
 
-/** 한글 본문·제목용. OG 이미지가 쓴다. */
-export function loadKoreanFont(
-  text: string,
-  weight: 700 | 900,
-): Promise<ArrayBuffer> {
-  return loadFont("Gothic A1", text, weight);
+/**
+ * 언어별 OG 서체. 화면 서체와 같은 것을 고른다 — 공유 카드와 눌러서 도착한
+ * 화면이 다른 글꼴이면 같은 사이트로 안 읽힌다.
+ *
+ * 글자 집합이 겹치지 않아서 한 벌로는 안 된다: Gothic A1 에는 가나·한자가,
+ * Zen Kaku Gothic New 에는 한글이 없다. 영어는 라틴뿐이라 Manrope 로 족하다.
+ */
+const OG_FONTS: Record<Locale, string> = {
+  ko: "Gothic A1",
+  en: "Manrope",
+  ja: "Zen Kaku Gothic New",
+};
+
+export function ogFontFamily(locale: Locale): string {
+  return OG_FONTS[locale];
 }
 
-/** 라틴·숫자용. 영어 워드마크·핸들이 이 폰트다. 브랜드 마크는 이제 도형이라 폰트가 필요 없다. */
-export function loadLatinFont(
+/** 그 이미지에 실제로 그리는 글자만 받는다. `text` 를 빠뜨리면 폰트를 통째로 받는다. */
+export function loadOgFont(
+  locale: Locale,
   text: string,
-  weight: 700 | 800,
+  weight: 700 | 800 | 900,
 ): Promise<ArrayBuffer> {
-  return loadFont("Manrope", text, weight);
+  return loadFont(OG_FONTS[locale], text, weight);
 }
 
 async function loadFont(

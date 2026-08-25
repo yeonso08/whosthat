@@ -9,7 +9,7 @@ import {
   localizeSeasonLabel,
 } from "@/lib/i18n";
 import { DEFAULT_LOCALE } from "@/lib/locales";
-import { loadKoreanFont, loadLatinFont } from "@/lib/og";
+import { loadOgFont, ogFontFamily } from "@/lib/og";
 import { OG_SIZE } from "@/lib/site";
 import { getCoverage } from "@/lib/types";
 
@@ -48,8 +48,7 @@ export default async function Image({
     found: coverage.found,
   });
 
-  const korean = locale === "ko";
-  const fontFamily = korean ? "Gothic A1" : "Manrope";
+  const fontFamily = ogFontFamily(locale);
   const text = program + label + stat;
 
   return new ImageResponse(
@@ -81,9 +80,7 @@ export default async function Image({
       fonts: [
         {
           name: fontFamily,
-          data: korean
-            ? await loadKoreanFont(text, 700)
-            : await loadLatinFont(text, 700),
+          data: await loadOgFont(locale, text, 700),
           style: "normal",
           weight: 700,
         },

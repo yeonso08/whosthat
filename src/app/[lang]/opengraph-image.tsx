@@ -8,7 +8,7 @@ import {
   localizeProgramName,
 } from "@/lib/i18n";
 import { DEFAULT_LOCALE, LOCALES } from "@/lib/locales";
-import { loadKoreanFont, loadLatinFont } from "@/lib/og";
+import { loadOgFont, ogFontFamily } from "@/lib/og";
 import { OG_SIZE } from "@/lib/site";
 import { getCoverage } from "@/lib/types";
 
@@ -48,9 +48,7 @@ export default async function Image({ params }: PageProps<"/[lang]">) {
     found: totals.found,
   });
 
-  // 한글이 한 글자라도 있으면 한글 폰트라야 한다. 영어 화면은 라틴 폰트로 족하다.
-  const korean = locale === "ko";
-  const fontFamily = korean ? "Gothic A1" : "Manrope";
+  const fontFamily = ogFontFamily(locale);
   const text = program + heading + stat;
 
   return new ImageResponse(
@@ -82,9 +80,7 @@ export default async function Image({ params }: PageProps<"/[lang]">) {
       fonts: [
         {
           name: fontFamily,
-          data: korean
-            ? await loadKoreanFont(text, 700)
-            : await loadLatinFont(text, 700),
+          data: await loadOgFont(locale, text, 700),
           style: "normal",
           weight: 700,
         },

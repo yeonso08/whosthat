@@ -1,7 +1,7 @@
 /**
  * 브랜드 이름의 조각.
  *
- * 워드마크는 `[ㄲ 마크] 누꼬`(ko)·`[ㄲ 마크] nukko`(en) — 마크는 겹친 두 원에서
+ * 워드마크는 `[ㄲ 마크] 누꼬`(ko)·`[ㄲ 마크] nukko`(en·ja) — 마크는 겹친 두 원에서
  * ㄱ 두 개를 깎은 모노그램(ㄲ)이다. 헤더 워드마크와 파비콘·앱 아이콘이 같은
  * 도형을 그리므로 한 곳에 둔다.
  */
@@ -16,7 +16,7 @@ import type { Locale } from "./locales";
  * 두 훅으로 읽히는 이중 독해가 이 마크의 자산이다.
  *
  * **언어를 타지 않는다.** `icon.tsx`·`apple-icon.tsx` 는 `[lang]` 바깥이라
- * 애초에 언어를 못 받고, 두 언어가 이 도형을 공유하는 이유이기도 하다.
+ * 애초에 언어를 못 받고, 언어들이 이 도형을 공유하는 이유이기도 하다.
  *
  * `stroke-linecap: round` 로 그리므로 획 끝이 사이트의 반경 규칙(12–16px)과
  * 같은 태도를 공유한다 — 각진 ㄱ 대신 이 모양을 고른 이유다.
@@ -36,10 +36,17 @@ export const BRAND_MARK_ASPECT = 88 / 64;
  * `누꼬` 는 `nukko` 의 번역이 아니라 **원문**이라 언어를 따라간다 — 한국어 화면이
  * 원문 대신 로마자 표기를 쓸 이유가 없다. (`whosthat` 시절 한글 워드마크를 반려한
  * 건 그때는 그게 번역이었기 때문이다. 이름이 사투리로 바뀌면서 조건이 뒤집혔다.)
+ *
+ * **그 예외는 한국어에서만 성립한다.** 일본어가 `ヌッコ` 가 아니라 `nukko` 인
+ * 이유다 — 가타카나로 옮기면 그건 원문이 아니라 음역이고, "브랜드를 번역하지
+ * 않는다" 는 규칙을 언어마다 하나씩 깨는 셈이 된다. 가명을 가타카나로 적는
+ * 것과 다른 문제다: 가명은 일본어 문장 안에서 읽히는 **데이터**고, 이건 도메인
+ * (`nukko.net`)과 짝을 이루는 고유명이다.
  */
 export const BRAND_WORDMARK: Record<Locale, string> = {
   ko: "누꼬",
   en: "nukko",
+  ja: "nukko",
 };
 
 /**
@@ -53,4 +60,5 @@ export const BRAND_WORDMARK: Record<Locale, string> = {
 export const BRAND_WORDMARK_FONT: Record<Locale, string> = {
   ko: "font-sans",
   en: "font-lat",
+  ja: "font-lat",
 };

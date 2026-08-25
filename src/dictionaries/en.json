@@ -7,8 +7,7 @@
   "nav": {
     "back": "Back to seasons",
     "theme": "Toggle light and dark mode",
-    "language": "한국어로 보기",
-    "languageShort": "한국어"
+    "language": "Choose a language"
   },
   "home": {
     "heading": "All seasons",
