@@ -42,7 +42,7 @@ export default async function Page({ params }: PageProps<"/[lang]/takedown">) {
       </p>
 
       <h2 className={POLICY_HEADING}>{dict.requestsHeading}</h2>
-      <ul className="mt-2.5 flex list-disc flex-col gap-1.5 pl-4 text-[13px] leading-relaxed text-muted-foreground">
+      <ul className="mt-3 flex list-disc flex-col gap-2 pl-4 text-[13.5px] leading-relaxed text-muted-foreground">
         {dict.requests.map((request) => (
           <li key={request}>{request}</li>
         ))}
@@ -58,13 +58,15 @@ export default async function Page({ params }: PageProps<"/[lang]/takedown">) {
         {dict.howAfter}
       </p>
       <Button
-        className="mt-4 w-full"
+        // 이 화면에서 유일하게 누르는 것이라 손가락 자리(48px)까지 키우고
+        // 판과 같은 반경을 준다 — 8px 짜리 회색 막대는 안내문의 일부로 읽힌다.
+        className="mt-5 h-12 w-full rounded-2xl text-[15px] font-bold"
         nativeButton={false}
         render={<a href={contactMailto(dict.mailSubject)} />}
       >
         {dict.button}
       </Button>
-      <p className="font-lat mt-2.5 text-center text-xs text-muted-foreground">
+      <p className="font-lat mt-3 text-center text-xs text-muted-foreground">
         {CONTACT_EMAIL}
       </p>
 

@@ -19,28 +19,47 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
       {/* 사이트 이름을 검색 결과에 도메인 대신 띄우려면 홈에 이 마크업이 있어야 한다. */}
       <JsonLd data={websiteSchema(lang)} />
 
-      <header className="gutter pt-7 lg:pt-10">
+      {/*
+       * **홈만 가운데로 세운다**(2026-08-31). 1280px 컨테이너에 프로그램이 둘뿐이라
+       * 왼쪽 정렬로는 화면의 오른쪽 절반이 통째로 비었다 — 열을 늘리거나 카드를
+       * 키워서 메울 수 있는 종류가 아니다(프로그램이 둘인 게 사실이니까).
+       * 가운데로 모으면 같은 여백이 "덜 그려진 화면" 이 아니라 착지 화면의 여유로
+       * 읽힌다.
+       *
+       * 안쪽 화면(프로그램·기수)은 그대로 왼쪽 정렬이다 — 거기는 읽고 훑는
+       * 화면이라 눈이 돌아갈 왼쪽 세로선이 있어야 한다.
+       */}
+      <header className="gutter pt-16 text-center lg:pt-24">
         {/* 워드마크 바로 아래라 "누꼬 / 출연진 인스타" 로 읽힌다 — 이름과 하는 일이
             한 덩어리다. 사이트 전체 집계를 여기 한 줄 더 적지 않는 건 아래 카드가
             프로그램마다 그 숫자를 이미 말하기 때문이다. */}
-        <PageTitle>{dict.home.heading}</PageTitle>
+        <PageTitle className="lg:text-[44px]">{dict.home.heading}</PageTitle>
       </header>
 
       {/* 검색창이 목록 자리를 쥐고 있다 — 입력이 없을 때만 아래 카드가 보인다.
           홈의 인덱스는 프로그램을 안 가린다: 착지하자마자 사람을 찾는 게 이
           사이트의 존재 이유라, 프로그램을 먼저 고르게 만들지 않는다. */}
       <SeasonSearch
+        hero
         index={buildSearchIndex(lang)}
         locale={lang}
         text={dict.search}
         status={dict.status}
       >
         <>
-          <GroupHeading>{dict.home.programsHeading}</GroupHeading>
-          {/* 포스터 격자다 — 프로그램이 늘어도 홈이 스크롤 지옥이 되지 않고,
-              홀수로 남는 타일도 구멍이 안 난다. 세로 간격이 넓은 건 포스터
-              아래 두 줄이 다음 줄 포스터에 붙지 않게 하려는 것이다. */}
-          <section className="gutter grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:gap-x-4 lg:gap-y-8">
+          <GroupHeading className="text-center">
+            {dict.home.programsHeading}
+          </GroupHeading>
+          {/*
+           * 포스터 진열대다 — 격자가 아니라 가운데로 모이는 줄바꿈이라, 프로그램이
+           * 둘일 때도 스무 개일 때도 마지막 줄이 왼쪽에 몰리지 않는다. 판 크기는
+           * 화면이 아니라 포스터가 정한다(고정 폭) — 컨테이너를 열로 나누면 둘뿐인
+           * 지금 판이 손톱만 해진다.
+           *
+           * 세로 간격이 넓은 건 포스터 아래 현황 줄이 다음 줄 포스터에 붙지 않게
+           * 하려는 것이다.
+           */}
+          <section className="gutter flex flex-wrap justify-center gap-x-4 gap-y-9 lg:gap-x-6">
             {programs.map((program) => (
               <ProgramCard key={program.id} program={program} />
             ))}

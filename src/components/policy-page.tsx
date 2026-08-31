@@ -7,11 +7,11 @@ import { homeHref } from "@/lib/links";
 import type { Schema } from "@/lib/seo";
 
 /** 정책 문서의 소제목. */
-export const POLICY_HEADING = "mt-8 text-sm font-bold";
+export const POLICY_HEADING = "mt-9 text-[15px] font-bold tracking-[-0.02em]";
 
 /** 정책 문서의 본문 한 문단. */
 export const POLICY_BODY =
-  "mt-2.5 text-[13px] leading-relaxed text-muted-foreground";
+  "mt-3 text-[13.5px] leading-[1.75] text-muted-foreground";
 
 /** 문장 안에 박히는 낱말 강조. */
 export const POLICY_STRONG = "font-semibold text-foreground";
@@ -43,10 +43,9 @@ export async function PolicyPage({ title, schema, children }: Props) {
     <main>
       <JsonLd data={schema} />
 
-      <header className="gutter pt-6">
-      </header>
-
-      <article className="gutter max-w-[68ch] pt-5">
+      {/* 산문은 컨테이너를 다 쓰지 않고, 화면 가운데에 선다 — 1280px 왼쪽에
+          붙은 68ch 기둥은 오른쪽이 통째로 빈 화면으로 읽힌다. */}
+      <article className="gutter mx-auto max-w-[68ch] pt-10 lg:pt-14">
         {/* 화살표의 44px 탭 영역이 제목을 밀지 않게 줄 전체를 왼쪽으로 당긴다. */}
         <div className="-ml-3 flex items-start gap-1">
           <BackLink href={homeHref(locale)} label={dict.nav.backHome} />

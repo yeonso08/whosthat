@@ -17,18 +17,24 @@ import { getTotals, type Program } from "@/lib/types";
 const POSTER = "aspect-[2/3]";
 
 /**
- * 포스터 모서리. 사이트 반경 규칙(12–16px)의 아래끝이다 — 카드보다 조여야
- * 상자가 아니라 그림으로 읽힌다.
+ * 판 하나의 폭. **화면을 열로 나누지 않고 판이 자기 폭을 갖는다** — 프로그램이
+ * 둘뿐인 지금 컨테이너를 5열로 나누면 판이 손톱만 해지고, 스무 개가 되면 줄이
+ * 알아서 접힌다. 좁은 화면에서만 두 장이 한 줄에 들어가게 절반을 쓴다
+ * (`gap-x-4` 16px 의 절반을 뺀 값이라 격자 두 열과 같은 자리에 선다).
  */
-const POSTER_RADIUS = "rounded-xl";
+const POSTER_WIDTH = "w-[calc(50%-0.5rem)] sm:w-[184px] lg:w-[212px]";
 
 /**
- * 판 하나의 폭. **격자의 열 수와 짝이다** — 홈이 2→3→4→5열로 늘어나므로 여기도
- * 같은 중단점을 밟아야 `next/image` 가 맞는 크기를 고른다. 한쪽만 고치면 화면은
- * 멀쩡한데 필요 이상으로 큰 파일이 내려간다.
+ * 포스터 모서리. 사이트에서 제일 큰 반경이다 — 판이 커서 같은 각도라도 덜
+ * 둥글어 보인다.
  */
-const POSTER_SIZES =
-  "(min-width: 1024px) 240px, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw";
+const POSTER_RADIUS = "rounded-2xl";
+
+/**
+ * `next/image` 에 알려 주는 판의 폭. **`POSTER_WIDTH` 와 짝이다** — 한쪽만
+ * 고치면 화면은 멀쩡한데 필요 이상으로 큰 파일이 내려간다.
+ */
+const POSTER_SIZES = "(min-width: 1024px) 212px, (min-width: 640px) 184px, 50vw";
 
 /**
  * 포스터가 아직 없을 때 판을 채우는 활자.
@@ -43,7 +49,7 @@ const POSTER_SIZES =
  * 낱말은 그때만 꺾이게 한다.
  */
 const POSTER_TITLE =
-  "mt-auto text-[30px] leading-[0.94] font-black tracking-tighter break-keep [overflow-wrap:anywhere]";
+  "mt-auto text-[26px] leading-[1.1] font-bold tracking-[-0.03em] break-keep [overflow-wrap:anywhere]";
 
 /**
  * 방송사·플랫폼. 티빙이 판 모서리에 채널 배지를 얹는 자리와 같다.
@@ -79,14 +85,17 @@ export async function ProgramCard({ program }: Props) {
   const { people, found } = getTotals(seasons);
 
   return (
-    <Link href={programHref(locale, program.id)} className="focus-ring group block">
+    <Link
+      href={programHref(locale, program.id)}
+      className={`focus-ring group block ${POSTER_WIDTH}`}
+    >
       {/* 포스터가 없을 때 판의 깊이는 세로 그러데이션 하나로 낸다 — 흑백
           팔레트에서 색을 안 쓰고 "칠해진 면" 을 만드는 유일한 수단이고, 두
           토큰 사이라 라이트·다크가 알아서 뒤집힌다. 테두리 실선은 판의
           가장자리를 끊어 준다 — 그림이 없는 판은 배경에 번져서 어디까지가 한
           장인지 흐려진다(그림이 걸리면 그 일을 그림이 한다). */}
       <div
-        className={`relative flex ${POSTER} ${POSTER_RADIUS} flex-col overflow-hidden bg-gradient-to-b from-elevated to-card p-3.5 ring-1 ring-border transition-opacity ring-inset group-hover:opacity-85`}
+        className={`lift relative flex ${POSTER} ${POSTER_RADIUS} flex-col overflow-hidden bg-gradient-to-b from-elevated to-card p-4 shadow-soft ring-1 ring-border/60 ring-inset`}
       >
         {program.posterUrl && (
           <Image
@@ -94,7 +103,9 @@ export async function ProgramCard({ program }: Props) {
             alt={fill(dict.program.posterAlt, { program: strings.name })}
             fill
             sizes={POSTER_SIZES}
-            className="object-cover"
+            // 판이 떠오를 때 그림도 아주 조금 밀고 들어온다 — 판만 올라가면
+            // 그림이 판 안에서 미끄러지는 것처럼 보인다.
+            className="object-cover transition-transform duration-300 ease-soft group-hover:scale-[1.04]"
           />
         )}
 
@@ -127,7 +138,7 @@ export async function ProgramCard({ program }: Props) {
         )}
       </div>
 
-      <p className="font-lat mt-2.5 truncate text-[11px] font-semibold text-muted-foreground">
+      <p className="font-lat mt-3 truncate text-center text-[12px] font-semibold text-muted-foreground">
         {people === 0
           ? dict.season.coveragePending
           : fill(dict.season.coverage, { found, total: people })}

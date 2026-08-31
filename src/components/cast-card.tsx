@@ -60,23 +60,33 @@ export async function CastCard({ member }: Props) {
       )}
 
       {found && (
-        <span className="absolute top-2.5 right-2.5 flex size-7 items-center justify-center rounded-full bg-background/70">
-          <InstagramIcon className="size-3.5 text-foreground" />
+        // 계정이 있다는 표시. 사진 위에도 얹히므로 뒤를 흐려서 어떤 그림 위에서도
+        // 마크가 살아 있게 한다.
+        <span className="absolute top-3 right-3 flex size-8 items-center justify-center rounded-full bg-background/70 backdrop-blur-md">
+          <InstagramIcon className="size-4 text-foreground" />
         </span>
       )}
 
-      {/* 그러데이션은 사진 위에서 글자를 읽히게 하는 것이고, 사진이 없으면 눌릴
-          것이 없어 그냥 판의 아래쪽을 가라앉힌다. 둘 다 같은 값으로 굴러간다. */}
-      <div className="absolute inset-x-0 bottom-0 flex flex-col bg-gradient-to-t from-background/95 via-background/55 to-transparent px-3.5 pt-12 pb-3.5">
+      {/* 그러데이션은 **사진 위에서 글자를 읽히게 하는 장치라 사진이 있을 때만
+          깐다.** 없는 판에 깔면 위(판 그러데이션)·가운데·아래(이 그러데이션)로
+          띠가 세 겹 생겨 판이 탁해진다 — 눌러야 할 그림이 없는데 눌러서다.
+          글자 블록의 자리와 모양은 어느 쪽이든 같다. */}
+      <div
+        className={`absolute inset-x-0 bottom-0 flex flex-col px-4 pt-14 pb-4 ${
+          member.profileImageUrl
+            ? "bg-gradient-to-t from-background/95 via-background/60 to-transparent"
+            : ""
+        }`}
+      >
         <span
-          className={`text-xl leading-tight font-black tracking-tight break-keep ${
+          className={`text-[19px] leading-[1.25] font-bold tracking-[-0.02em] break-keep ${
             found ? "" : "text-muted-foreground"
           }`}
         >
           {alias}
         </span>
         {description && (
-          <span className="mt-0.5 truncate text-[11.5px] text-muted-foreground">
+          <span className="mt-1 truncate text-[12px] text-muted-foreground">
             {description}
           </span>
         )}
@@ -85,9 +95,16 @@ export async function CastCard({ member }: Props) {
     </>
   );
 
-  // 사진이 없을 때 판이 배경에 번지지 않게 세로 그러데이션과 실선을 준다 —
-  // 포스터 판과 같은 처리다.
-  const shell = `relative ${ANCHOR_OFFSET} block aspect-[6/7] overflow-hidden rounded-2xl ring-1 ring-border ring-inset ${
+  /*
+   * 판은 정사각형이다. 세로로 길었던 때는 사진이 한 장도 없는 동안 격자가
+   * 통째로 큰 빈 상자 열댓 개였다 — 채울 그림이 없는데 자리만 세로로 길었다.
+   * 정사각형은 인스타 프로필 사진이 잘리지 않는 비율이기도 해서, 사진이
+   * 들어와도 그대로 쓴다.
+   *
+   * 테두리 실선 대신 그림자로 판을 세운다 — 실선만 있으면 오려 붙인 종이로
+   * 보인다. 포스터 판과 같은 처리다.
+   */
+  const shell = `relative ${ANCHOR_OFFSET} block aspect-square overflow-hidden rounded-2xl shadow-soft ring-1 ring-border/60 ring-inset ${
     member.profileImageUrl
       ? "bg-card"
       : "bg-gradient-to-b from-elevated to-card"
@@ -109,7 +126,7 @@ export async function CastCard({ member }: Props) {
       href={instagramUrl(handle)}
       target="_blank"
       rel="noopener noreferrer"
-      className={`focus-ring ${shell} transition-opacity hover:opacity-85`}
+      className={`focus-ring lift ${shell}`}
     >
       {body}
     </a>
@@ -126,7 +143,7 @@ function CardStatus({ member, status, locale }: StatusProps): ReactElement {
       // **이 사이트에서 색이 도는 자리는 여기 하나다.** 방문자가 가지러 온 값이고,
       // 고정폭이라 한 글자씩 짚어 읽힌다 — 핸들은 문장이 아니라 식별자다.
       return (
-        <span className="font-mono mt-1.5 truncate text-[11.5px] font-medium text-verified">
+        <span className="font-mono mt-2 truncate text-[12px] font-medium text-verified">
           @{member.instagramHandle}
         </span>
       );
@@ -138,7 +155,7 @@ function CardStatus({ member, status, locale }: StatusProps): ReactElement {
           })
         : "";
       return (
-        <span className="mt-1.5 text-[11.5px] font-semibold text-muted-foreground">
+        <span className="mt-2 text-[12px] font-semibold text-muted-foreground">
           {status.none}
           {checked && ` · ${checked}`}
         </span>
@@ -147,7 +164,7 @@ function CardStatus({ member, status, locale }: StatusProps): ReactElement {
 
     case "searching":
       return (
-        <span className="mt-1.5 text-[11.5px] font-semibold text-searching">
+        <span className="mt-2 text-[12px] font-semibold text-searching">
           {status.searching}
         </span>
       );

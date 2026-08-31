@@ -4,6 +4,7 @@ import { Search, X } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState, type ReactElement, type ReactNode } from "react";
 import { EmptyCard } from "@/components/empty-card";
+import { ListCard } from "@/components/list-card";
 import { GroupHeading } from "@/components/page-heading";
 import {
   InputGroup,
@@ -27,14 +28,24 @@ type Props = {
    */
   text: Dictionary["search"];
   status: Dictionary["status"];
+  /**
+   * 홈처럼 화면이 가운데로 서는 자리. 검색창과 결과 묶음이 좁은 기둥으로
+   * 모인다 — 1280px 을 다 쓰면 글자 하나 없는 띠가 되고, 홈에서는 그 띠가
+   * 가운데 정렬된 머리글과도 어긋난다.
+   */
+  hero?: boolean;
   /** 검색 전에 보여 줄 것 — 홈의 "지난 기수" 목록이 그대로 들어온다. */
   children: ReactNode;
 };
 
 type HitProps = { member: IndexedMember; status: Dictionary["status"] };
 
+/**
+ * 결과 한 줄. `SeasonRow` 와 같은 판(`ListCard`) 안에 들어가므로 높이·여백을
+ * 그쪽에 맞춘다 — 검색 전후로 줄 높이가 달라지면 목록이 튀어 보인다.
+ */
 const ROW =
-  "focus-ring flex items-center gap-2 rounded-2xl px-3.5 py-3 transition-colors hover:bg-card";
+  "focus-ring press flex items-center gap-2.5 px-4 py-3.5 hover:bg-elevated/60 lg:px-5";
 
 /**
  * 기수 목록 위에 놓는 검색창.
@@ -44,29 +55,49 @@ const ROW =
  * children 으로 받는다 — `SeasonRow` 를 여기서 import 하면 그 컴포넌트가 쓰는
  * `lib/data` 를 타고 원본 JSON 이 클라이언트 번들로 딸려 온다.
  */
-export function SeasonSearch({ index, locale, text, status, children }: Props) {
+export function SeasonSearch({
+  index,
+  locale,
+  text,
+  status,
+  hero = false,
+  children,
+}: Props) {
   const [query, setQuery] = useState("");
   const results = useMemo(() => search(index, query), [index, query]);
   const searching = query.trim().length > 0;
   const nothing = results.seasons.length === 0 && results.members.length === 0;
 
+  // 홈은 좁은 기둥으로 모으고, 프로그램 화면은 그 화면이 이미 폭을 묶고 있어
+  // 여기서 또 줄이면 위아래 카드와 오른쪽 끝이 어긋난다.
+  const column = hero ? "mx-auto w-full max-w-[560px]" : "";
+  const resultsColumn = hero ? "mx-auto w-full max-w-[640px]" : "";
+
   return (
     <>
-      <div className="gutter pt-7">
-        {/* 넓은 화면에서 폭을 묶는다 — 컨테이너를 다 쓰면 글자 하나 없는 띠가 된다. */}
-        <InputGroup className="h-11 rounded-2xl border-transparent bg-card lg:h-12 lg:max-w-2xl">
+      <div className={`gutter ${hero ? "pt-8 lg:pt-10" : "pt-7"}`}>
+        {/*
+         * 테두리 대신 그림자로 세운 입력창. 선으로 그린 상자는 폼 필드로
+         * 읽히는데, 이 사이트에서 이건 폼이 아니라 화면의 주인공이다 —
+         * 착지하자마자 사람을 찾는 게 존재 이유라 제일 먼저 눈에 걸려야 한다.
+         */}
+        <InputGroup
+          className={`h-13 rounded-2xl border-transparent bg-card px-1.5 shadow-soft transition-shadow duration-200 ease-soft focus-within:shadow-lifted lg:h-14 ${column}`}
+        >
           <InputGroupAddon>
-            <Search className="size-4 text-muted-foreground" />
+            <Search className="size-4.5 text-muted-foreground" />
           </InputGroupAddon>
           <InputGroupInput
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={text.placeholder}
             aria-label={text.label}
+            className="text-[15px] md:text-[15px]"
           />
           {searching && (
             <InputGroupAddon align="inline-end">
               <InputGroupButton
+                className="size-8 rounded-full"
                 aria-label={text.clear}
                 onClick={() => setQuery("")}
               >
@@ -80,7 +111,7 @@ export function SeasonSearch({ index, locale, text, status, children }: Props) {
       {!searching && children}
 
       {searching && nothing && (
-        <EmptyCard>
+        <EmptyCard className={resultsColumn}>
           {text.emptyTitle}
           <br />
           {text.emptyHint}
@@ -88,9 +119,9 @@ export function SeasonSearch({ index, locale, text, status, children }: Props) {
       )}
 
       {searching && results.seasons.length > 0 && (
-        <>
+        <div className={resultsColumn}>
           <GroupHeading>{text.seasonsHeading}</GroupHeading>
-          <section className="gutter-inset">
+          <ListCard>
             {results.seasons.map((season) => (
               <Link
                 key={season.id}
@@ -114,14 +145,14 @@ export function SeasonSearch({ index, locale, text, status, children }: Props) {
                 </span>
               </Link>
             ))}
-          </section>
-        </>
+          </ListCard>
+        </div>
       )}
 
       {searching && results.members.length > 0 && (
-        <>
+        <div className={resultsColumn}>
           <GroupHeading>{text.castHeading}</GroupHeading>
-          <section className="gutter-inset">
+          <ListCard>
             {results.members.map(({ member, programId, seasonId, seasonLabel }) => (
               <Link
                 key={`${programId}-${member.id}`}
@@ -135,15 +166,15 @@ export function SeasonSearch({ index, locale, text, status, children }: Props) {
                 </span>
               </Link>
             ))}
-          </section>
+          </ListCard>
 
           {results.membersTruncated && (
-            <p className="gutter pt-2 text-[12px] leading-relaxed text-muted-foreground">
+            <p className="gutter pt-3 text-[12px] leading-relaxed text-muted-foreground">
               {text.truncated}{" "}
               <span className="font-lat">{text.truncatedExample}</span>
             </p>
           )}
-        </>
+        </div>
       )}
     </>
   );

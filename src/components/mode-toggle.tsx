@@ -17,7 +17,10 @@ export function ModeToggle({ label }: Props) {
   return (
     <Button
       variant="ghost"
-      size="icon-sm"
+      size="icon"
+      // 원형이고 손가락 자리(36px)만큼 키웠다 — 상단 바의 다른 것들이 다
+      // 둥근 알약이라 사각 버튼 둘만 각져 보였다.
+      className="size-9 rounded-full"
       aria-label={label}
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >

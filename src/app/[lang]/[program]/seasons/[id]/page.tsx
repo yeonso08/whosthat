@@ -104,8 +104,7 @@ export default async function Page({
     <main>
       <JsonLd data={seasonSchema(program, season, lang)} />
 
-      <header className="gutter pt-7 lg:pt-10">
-
+      <header className="gutter pt-8 lg:pt-12">
         <PageEyebrow>{programName}</PageEyebrow>
 
         {/* 뒤로가기를 제목 줄에 붙인다. 화살표의 44px 탭 영역이 제목을 밀지
@@ -120,11 +119,11 @@ export default async function Page({
         </div>
 
         {special && (
-          <p className="mt-2 text-[13px] font-bold text-muted-foreground">
+          <p className="mt-2.5 text-[13px] font-bold text-muted-foreground">
             {special}
           </p>
         )}
-        <p className="mt-1.5 text-[13px] text-muted-foreground">
+        <p className="mt-2 text-[13px] text-muted-foreground">
           {airDate ? `${fill(dict.season.aired, { date: airDate })} · ` : ""}
           {coverage.total === 0
             ? dict.season.castPending
@@ -136,7 +135,7 @@ export default async function Page({
       </header>
 
       {season.cast.length > 0 ? (
-        <section className="gutter mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:gap-4">
+        <section className="gutter mt-7 grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:gap-5">
           {season.cast.map((member) => (
             <CastCard key={member.id} member={member} />
           ))}
