@@ -19,7 +19,12 @@ import type { IndexedMember, SearchIndex } from "@/lib/types";
 type Props = {
   index: SearchIndex;
   locale: Locale;
-  /** 사전을 통째로 들고 오면 두 언어가 클라이언트 번들에 실린다 — 쓰는 묶음만 받는다. */
+  /**
+   * 사전을 통째로 들고 오면 세 언어가 클라이언트 번들에 실린다 — 쓰는 묶음만 받는다.
+   *
+   * 프로그램 화면은 `placeholder`·`seasonsHeading` 을 그 프로그램의 말로 갈아
+   * 끼워 넘긴다(`기수` / `시즌`). 사전의 값은 둘이 섞이는 홈에서만 쓰인다.
+   */
   text: Dictionary["search"];
   status: Dictionary["status"];
   /** 검색 전에 보여 줄 것 — 홈의 "지난 기수" 목록이 그대로 들어온다. */
@@ -88,9 +93,15 @@ export function SeasonSearch({ index, locale, text, status, children }: Props) {
             {results.seasons.map((season) => (
               <Link
                 key={season.id}
-                href={seasonHref(locale, season.id)}
+                href={seasonHref(locale, season.programId, season.id)}
                 className={ROW}
               >
+                {/* 프로그램 이름은 여러 프로그램을 한 인덱스에 담았을 때만 실린다. */}
+                {season.programName && (
+                  <span className="shrink-0 text-[13px] text-muted-foreground">
+                    {season.programName}
+                  </span>
+                )}
                 <span className="font-bold tracking-tight">{season.label}</span>
                 {season.special && (
                   <span className="truncate text-[13px] text-muted-foreground">
@@ -110,10 +121,10 @@ export function SeasonSearch({ index, locale, text, status, children }: Props) {
         <>
           <GroupHeading>{text.castHeading}</GroupHeading>
           <section className="px-2">
-            {results.members.map(({ member, seasonId, seasonLabel }) => (
+            {results.members.map(({ member, programId, seasonId, seasonLabel }) => (
               <Link
-                key={member.id}
-                href={castMemberHref(locale, seasonId, member.id)}
+                key={`${programId}-${member.id}`}
+                href={castMemberHref(locale, programId, seasonId, member.id)}
                 className={ROW}
               >
                 <span className="font-bold tracking-tight">{member.alias}</span>

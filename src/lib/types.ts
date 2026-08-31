@@ -31,8 +31,12 @@ export type CastMember = {
 export type Season = {
   id: string;
   programId: string;
-  /** 예: "20기" */
-  label: string;
+  /**
+   * 기수·시즌 번호. 화면에 보이는 라벨("20기"·"시즌 4")은 저장하지 않고
+   * 프로그램별로 사전이 만든다 — 프로그램마다 부르는 말이 다르기 때문이다.
+   * 정렬도 이 값을 본다.
+   */
+  number: number;
   /** 예: "2024-08". 확인 못 한 기수는 빈 문자열로 두고 화면에서 생략한다. */
   airDate: string;
   /** 예: "3차 모태솔로 특집". 특집이 아닌 기수는 없다. */
@@ -47,6 +51,7 @@ export type Season = {
 
 export type Program = {
   id: string;
+  /** 한국어 원문. 다른 언어 이름은 사전의 `site.programs` 가 갖는다. */
   name: string;
   type: string;
   platform: string;
@@ -95,6 +100,24 @@ export function getTotals(seasons: Season[]): Totals {
   );
 }
 
+/** 사이트 전체 집계. 키 이름은 홈 사전의 자리표시자(`{programs}`)와 맞춰 둔다. */
+export type SiteTotals = { programs: number; people: number; found: number };
+
+/** 홈 머리글과 홈 OG 카드가 같은 숫자를 말하게 한다 — `getTotals` 와 같은 이유다. */
+export function getSiteTotals(programs: Program[]): SiteTotals {
+  return programs.reduce<SiteTotals>(
+    (acc, program) => {
+      const totals = getTotals(program.seasons);
+      return {
+        programs: acc.programs + 1,
+        people: acc.people + totals.people,
+        found: acc.found + totals.found,
+      };
+    },
+    { programs: 0, people: 0, found: 0 },
+  );
+}
+
 /**
  * 검색이 훑는 최소 데이터.
  *
@@ -115,6 +138,14 @@ export type IndexedMember = {
 
 export type IndexedSeason = {
   id: string;
+  /** 결과 줄이 어느 프로그램의 시즌으로 이동할지 정한다. */
+  programId: string;
+  /**
+   * 여러 프로그램을 한 인덱스에 담았을 때만 채운다 — 홈 검색의 결과 줄이
+   * 프로그램을 밝히는 자리다. 프로그램 화면의 인덱스는 한 프로그램뿐이라
+   * 매 줄에 같은 이름을 반복할 이유가 없어서 비운다.
+   */
+  programName?: string;
   label: string;
   special?: string;
   /** "4 / 14 확인" 처럼 이미 그 화면 언어로 만들어 둔 문구. 검색은 클라이언트라 사전을 못 본다. */
@@ -129,6 +160,7 @@ export type SearchIndex = IndexedSeason[];
 /** 사람 결과는 어느 기수인지까지 알아야 이동할 곳이 정해진다. */
 export type MemberHit = {
   member: IndexedMember;
+  programId: string;
   seasonId: string;
   seasonLabel: string;
 };

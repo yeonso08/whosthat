@@ -1,0 +1,48 @@
+{
+  "id": "solo-hell",
+  "name": "솔로지옥",
+  "type": "예능",
+  "platform": "Netflix",
+  "seasons": [
+    {
+      "id": "s5",
+      "programId": "solo-hell",
+      "number": 5,
+      "airDate": "2026-01",
+      "onAir": false,
+      "cast": []
+    },
+    {
+      "id": "s4",
+      "programId": "solo-hell",
+      "number": 4,
+      "airDate": "2025-01",
+      "onAir": false,
+      "cast": []
+    },
+    {
+      "id": "s3",
+      "programId": "solo-hell",
+      "number": 3,
+      "airDate": "2023-12",
+      "onAir": false,
+      "cast": []
+    },
+    {
+      "id": "s2",
+      "programId": "solo-hell",
+      "number": 2,
+      "airDate": "2022-12",
+      "onAir": false,
+      "cast": []
+    },
+    {
+      "id": "s1",
+      "programId": "solo-hell",
+      "number": 1,
+      "airDate": "2021-12",
+      "onAir": false,
+      "cast": []
+    }
+  ]
+}

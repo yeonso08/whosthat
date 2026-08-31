@@ -2,7 +2,8 @@
  * 그 언어로 화면에 뭐라고 적는지. 언어 목록 자체는 `locales.ts` 에 있다.
  *
  * 언어를 하나 더하려면 세 곳이다: `locales.ts` 의 목록, 사전 JSON 한 벌,
- * 그리고 이 파일의 어휘 표(가명 로마자·특집 이름). 화면 문구는 사전에, **데이터
+ * 그리고 이 파일의 어휘 표(가명 로마자·특집 이름). 프로그램마다 다른 말(이름·기수
+ * 라벨·목록 제목)은 사전의 `site.programs` 에 있다. 화면 문구는 사전에, **데이터
  * 어휘**는 이 파일에 두는데, 고치는 사람이 다르기 때문이다 — 문구는 화면을 보며
  * 고치고, 어휘는 데이터를 채우며 는다.
  *
@@ -18,7 +19,7 @@ import ja from "@/dictionaries/ja.json";
 import ko from "@/dictionaries/ko.json";
 import { localePath } from "./links";
 import { DEFAULT_LOCALE, LOCALES, isLocale, type Locale } from "./locales";
-import type { Coverage, Season } from "./types";
+import type { Coverage, Season, Totals } from "./types";
 
 // 언어 목록은 `locales.ts` 가 갖고 있지만, 화면 쪽 파일이 두 군데서 가져오지
 // 않게 여기서 그대로 내보낸다.
@@ -32,6 +33,15 @@ export {
 
 /** 사전의 모양은 한국어가 정한다 — 다른 사전에 키가 빠지면 여기서 컴파일 에러가 난다. */
 export type Dictionary = typeof ko;
+
+/**
+ * 프로그램 하나가 화면에서 쓰는 말.
+ *
+ * **프로그램마다 기수를 부르는 말이 다르다** — 나는 솔로는 `33기`, 솔로지옥은
+ * `시즌 4` 다. 낱말만 표로 두고 문장에 끼워 넣으면 어순이 다른 언어에서 반드시
+ * 어색해지므로, 그 낱말이 들어가는 문장을 통째로 프로그램마다 적는다.
+ */
+export type ProgramStrings = Dictionary["site"]["programs"]["na-neun-solo"];
 
 const DICTIONARIES: Record<Locale, Dictionary> = { ko, en, ja };
 
@@ -205,22 +215,35 @@ export function localizeSpecial(special: string, locale: Locale): string {
   return SPECIALS[locale][special] ?? special;
 }
 
+/**
+ * 그 프로그램이 이 언어로 쓰는 말 한 벌.
+ *
+ * 사전에 없는 프로그램이면 던진다 — 데이터에는 있는데 화면에 부를 말이 없다는
+ * 뜻이라, 조용히 id 를 그대로 그리면 `solo-hell` 이 제목으로 나가 버린다.
+ * 전 페이지가 SSG 라 이 에러는 빌드에서 잡힌다.
+ */
+export function programStrings(
+  programId: string,
+  locale: Locale,
+): ProgramStrings {
+  const table: Record<string, ProgramStrings | undefined> =
+    getDictionary(locale).site.programs;
+  const strings = table[programId];
+  if (!strings) throw new Error(`사전에 없는 프로그램: ${programId}`);
+  return strings;
+}
+
 export function localizeProgramName(programId: string, locale: Locale): string {
-  const names: Record<string, string> = getDictionary(locale).site.programs;
-  return names[programId] ?? programId;
+  return programStrings(programId, locale).name;
 }
 
-/** "33기" → 33. 정렬과 "Season 33" 이 같은 값을 본다. */
-export function seasonNumber(label: string): number {
-  return Number.parseInt(label, 10) || 0;
-}
-
-/** "33기" → "Season 33". 라벨을 언어별로 저장하지 않고 번호에서 만든다. */
-export function localizeSeasonLabel(label: string, locale: Locale): string {
-  if (locale === "ko") return label;
-  return fill(getDictionary(locale).season.label, {
-    n: seasonNumber(label),
-  });
+/** 33 → "33기" / "Season 33" / "シーズン33". 라벨은 저장하지 않고 번호에서 만든다. */
+export function localizeSeasonLabel(
+  programId: string,
+  number: number,
+  locale: Locale,
+): string {
+  return fill(programStrings(programId, locale).seasonLabel, { n: number });
 }
 
 /**
@@ -278,10 +301,29 @@ export function formatCoverage(coverage: Coverage, locale: Locale): string {
   });
 }
 
+/**
+ * 프로그램 화면의 부제 한 줄. "{seasons}개 기수 · {people}명 중 인스타 {found}개 확인".
+ *
+ * 명단이 한 줄도 없는 프로그램은 개수 대신 그 사실을 적는다 — "0명 중 0개 확인"은
+ * 아무도 못 찾았다는 뜻으로 읽혀서 사실과 다르다(`formatCoverage` 와 같은 이유).
+ * 화면과 공유 카드가 여기를 함께 봐서 서로 다른 말을 하지 않는다.
+ */
+export function formatProgramSummary(
+  programId: string,
+  totals: Totals,
+  locale: Locale,
+): string {
+  const strings = programStrings(programId, locale);
+  return fill(
+    totals.people === 0 ? strings.summaryPending : strings.summary,
+    totals,
+  );
+}
+
 /** 기수 카드가 쓰는 문구 묶음. 라벨과 특집이 늘 같이 필요해서 함께 만든다. */
 export function localizeSeason(season: Season, locale: Locale) {
   return {
-    label: localizeSeasonLabel(season.label, locale),
+    label: localizeSeasonLabel(season.programId, season.number, locale),
     special: season.special ? localizeSpecial(season.special, locale) : "",
     airDate: formatAirDate(season.airDate, locale),
   };

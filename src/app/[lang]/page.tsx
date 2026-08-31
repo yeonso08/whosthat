@@ -1,30 +1,20 @@
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/json-ld";
-import { GroupHeading, PageEyebrow, PageTitle } from "@/components/page-heading";
-import { SeasonFeature } from "@/components/season-feature";
-import { SeasonRow } from "@/components/season-row";
+import { PageTitle } from "@/components/page-heading";
+import { ProgramRow } from "@/components/program-row";
 import { SeasonSearch } from "@/components/season-search";
 import { SiteHeader } from "@/components/site-header";
-import { buildSearchIndex, getProgram, getSeasons } from "@/lib/data";
-import {
-  fill,
-  getDictionary,
-  isLocale,
-  localizeProgramName,
-} from "@/lib/i18n";
+import { buildSearchIndex, getPrograms } from "@/lib/data";
+import { fill, getDictionary, isLocale } from "@/lib/i18n";
 import { websiteSchema } from "@/lib/seo";
-import { getTotals } from "@/lib/types";
+import { getSiteTotals } from "@/lib/types";
 
 export default async function Page({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
 
   const dict = getDictionary(lang);
-  const program = getProgram();
-  const seasons = getSeasons();
-  const [featured, ...rest] = seasons;
-
-  const totals = getTotals(seasons);
+  const programs = getPrograms();
 
   return (
     <main>
@@ -33,36 +23,25 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
 
       <header className="px-5 pt-6 pb-1">
         <SiteHeader />
-        <PageEyebrow>{localizeProgramName(program.id, lang)}</PageEyebrow>
-        <PageTitle className="mt-3">{dict.home.heading}</PageTitle>
+        <PageTitle className="mt-6">{dict.home.heading}</PageTitle>
         <p className="mt-1.5 text-[13px] text-muted-foreground">
-          {fill(dict.home.summary, totals)}
+          {fill(dict.home.summary, getSiteTotals(programs))}
         </p>
       </header>
 
-      {featured && (
-        <div className="mt-5 px-5">
-          <SeasonFeature season={featured} />
-        </div>
-      )}
-
-      {/* 검색창이 목록 자리를 쥐고 있다 — 입력이 없을 때만 아래 목록이 보인다. */}
+      {/* 홈의 인덱스는 프로그램을 안 가린다 — 착지하자마자 사람을 찾는 게 이
+          사이트의 존재 이유라, 프로그램을 먼저 고르게 만들지 않는다. */}
       <SeasonSearch
         index={buildSearchIndex(lang)}
         locale={lang}
         text={dict.search}
         status={dict.status}
       >
-        {rest.length > 0 && (
-          <>
-            <GroupHeading>{dict.home.pastSeasons}</GroupHeading>
-            <section className="px-2">
-              {rest.map((season) => (
-                <SeasonRow key={season.id} season={season} />
-              ))}
-            </section>
-          </>
-        )}
+        <section className="px-2 pt-2">
+          {programs.map((program) => (
+            <ProgramRow key={program.id} program={program} />
+          ))}
+        </section>
       </SeasonSearch>
     </main>
   );

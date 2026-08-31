@@ -7,7 +7,7 @@
     {
       "id": "s33",
       "programId": "na-neun-solo",
-      "label": "33기",
+      "number": 33,
       "airDate": "2026-08",
       "special": "3차 모태솔로 특집",
       "onAir": true,
@@ -89,7 +89,7 @@
     {
       "id": "s32",
       "programId": "na-neun-solo",
-      "label": "32기",
+      "number": 32,
       "airDate": "2026-06",
       "special": "5차 돌싱 특집",
       "onAir": false,
@@ -219,7 +219,7 @@
     {
       "id": "s31",
       "programId": "na-neun-solo",
-      "label": "31기",
+      "number": 31,
       "airDate": "2026-04",
       "special": "질투 특집",
       "onAir": false,
@@ -343,7 +343,7 @@
     {
       "id": "s30",
       "programId": "na-neun-solo",
-      "label": "30기",
+      "number": 30,
       "airDate": "2026-01",
       "onAir": false,
       "cast": [
@@ -451,7 +451,7 @@
     {
       "id": "s29",
       "programId": "na-neun-solo",
-      "label": "29기",
+      "number": 29,
       "airDate": "2025-11",
       "special": "연상연하 특집",
       "onAir": false,
@@ -563,7 +563,7 @@
     {
       "id": "s28",
       "programId": "na-neun-solo",
-      "label": "28기",
+      "number": 28,
       "airDate": "2025-09",
       "special": "4차 돌싱 특집",
       "onAir": false,
@@ -699,7 +699,7 @@
     {
       "id": "s27",
       "programId": "na-neun-solo",
-      "label": "27기",
+      "number": 27,
       "airDate": "2025-07",
       "onAir": false,
       "cast": [
@@ -817,7 +817,7 @@
     {
       "id": "s26",
       "programId": "na-neun-solo",
-      "label": "26기",
+      "number": 26,
       "airDate": "2025-04",
       "special": "40대 골드 특집",
       "onAir": false,
@@ -939,7 +939,7 @@
     {
       "id": "s25",
       "programId": "na-neun-solo",
-      "label": "25기",
+      "number": 25,
       "airDate": "2025-03",
       "onAir": false,
       "cast": [
@@ -1038,7 +1038,7 @@
     {
       "id": "s24",
       "programId": "na-neun-solo",
-      "label": "24기",
+      "number": 24,
       "airDate": "2024-12",
       "onAir": false,
       "cast": [
@@ -1154,7 +1154,7 @@
     {
       "id": "s23",
       "programId": "na-neun-solo",
-      "label": "23기",
+      "number": 23,
       "airDate": "2024-10",
       "onAir": false,
       "cast": [
@@ -1265,7 +1265,7 @@
     {
       "id": "s22",
       "programId": "na-neun-solo",
-      "label": "22기",
+      "number": 22,
       "airDate": "2024-08",
       "special": "3차 돌싱 특집",
       "onAir": false,
@@ -1401,7 +1401,7 @@
     {
       "id": "s21",
       "programId": "na-neun-solo",
-      "label": "21기",
+      "number": 21,
       "airDate": "2024-06",
       "onAir": false,
       "cast": [
@@ -1518,7 +1518,7 @@
     {
       "id": "s20",
       "programId": "na-neun-solo",
-      "label": "20기",
+      "number": 20,
       "airDate": "2024-04",
       "onAir": false,
       "cast": [
@@ -1635,7 +1635,7 @@
     {
       "id": "s19",
       "programId": "na-neun-solo",
-      "label": "19기",
+      "number": 19,
       "airDate": "2024-02",
       "special": "2차 모태솔로 특집",
       "onAir": false,
@@ -1747,7 +1747,7 @@
     {
       "id": "s18",
       "programId": "na-neun-solo",
-      "label": "18기",
+      "number": 18,
       "airDate": "2023-12",
       "onAir": false,
       "cast": [
@@ -1864,7 +1864,7 @@
     {
       "id": "s17",
       "programId": "na-neun-solo",
-      "label": "17기",
+      "number": 17,
       "airDate": "2023-10",
       "onAir": false,
       "cast": [
@@ -1978,7 +1978,7 @@
     {
       "id": "s16",
       "programId": "na-neun-solo",
-      "label": "16기",
+      "number": 16,
       "airDate": "2023-07",
       "special": "2차 돌싱 특집",
       "onAir": false,
@@ -2093,7 +2093,7 @@
     {
       "id": "s15",
       "programId": "na-neun-solo",
-      "label": "15기",
+      "number": 15,
       "airDate": "2023-06",
       "onAir": false,
       "cast": [
@@ -2207,7 +2207,7 @@
     {
       "id": "s14",
       "programId": "na-neun-solo",
-      "label": "14기",
+      "number": 14,
       "airDate": "2023-04",
       "special": "2차 40대 특집",
       "onAir": false,
@@ -2316,7 +2316,7 @@
     {
       "id": "s13",
       "programId": "na-neun-solo",
-      "label": "13기",
+      "number": 13,
       "airDate": "2023-02",
       "onAir": false,
       "cast": [
@@ -2430,7 +2430,7 @@
     {
       "id": "s12",
       "programId": "na-neun-solo",
-      "label": "12기",
+      "number": 12,
       "airDate": "2022-12",
       "special": "1차 모태솔로 특집",
       "onAir": false,
@@ -2533,7 +2533,7 @@
     {
       "id": "s11",
       "programId": "na-neun-solo",
-      "label": "11기",
+      "number": 11,
       "airDate": "2022-11",
       "onAir": false,
       "cast": [
@@ -2641,7 +2641,7 @@
     {
       "id": "s10",
       "programId": "na-neun-solo",
-      "label": "10기",
+      "number": 10,
       "airDate": "2022-08",
       "special": "돌싱 특집",
       "onAir": false,
@@ -2753,7 +2753,7 @@
     {
       "id": "s9",
       "programId": "na-neun-solo",
-      "label": "9기",
+      "number": 9,
       "airDate": "2022-06",
       "onAir": false,
       "cast": [
@@ -2855,7 +2855,7 @@
     {
       "id": "s8",
       "programId": "na-neun-solo",
-      "label": "8기",
+      "number": 8,
       "airDate": "2022-05",
       "onAir": false,
       "cast": [
@@ -2969,7 +2969,7 @@
     {
       "id": "s7",
       "programId": "na-neun-solo",
-      "label": "7기",
+      "number": 7,
       "airDate": "2022-04",
       "special": "40대 특집",
       "onAir": false,
@@ -3069,7 +3069,7 @@
     {
       "id": "s6",
       "programId": "na-neun-solo",
-      "label": "6기",
+      "number": 6,
       "airDate": "2022-02",
       "onAir": false,
       "cast": [
@@ -3180,7 +3180,7 @@
     {
       "id": "s5",
       "programId": "na-neun-solo",
-      "label": "5기",
+      "number": 5,
       "airDate": "2021-12",
       "onAir": false,
       "cast": [
@@ -3288,7 +3288,7 @@
     {
       "id": "s4",
       "programId": "na-neun-solo",
-      "label": "4기",
+      "number": 4,
       "airDate": "2021-11",
       "onAir": false,
       "cast": [
@@ -3396,7 +3396,7 @@
     {
       "id": "s3",
       "programId": "na-neun-solo",
-      "label": "3기",
+      "number": 3,
       "airDate": "2021-10",
       "onAir": false,
       "cast": [
@@ -3507,7 +3507,7 @@
     {
       "id": "s2",
       "programId": "na-neun-solo",
-      "label": "2기",
+      "number": 2,
       "airDate": "2021-09",
       "onAir": false,
       "cast": [
@@ -3609,7 +3609,7 @@
     {
       "id": "s1",
       "programId": "na-neun-solo",
-      "label": "1기",
+      "number": 1,
       "airDate": "2021-07",
       "onAir": false,
       "cast": [

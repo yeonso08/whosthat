@@ -3,6 +3,8 @@ import { BackLink } from "@/components/back-link";
 import { JsonLd } from "@/components/json-ld";
 import { PageTitle } from "@/components/page-heading";
 import { SiteHeader } from "@/components/site-header";
+import { currentDictionary, currentLocale } from "@/lib/i18n";
+import { homeHref } from "@/lib/links";
 import type { Schema } from "@/lib/seo";
 
 /** 정책 문서의 소제목. */
@@ -34,7 +36,10 @@ type Props = {
  * 둘은 홈을 안 거치고 검색으로 바로 착지하는 페이지다 — 그래서 워드마크로
  * 어느 사이트의 방침인지 화면에서 밝히는 것까지가 이 껍데기의 몫이다.
  */
-export function PolicyPage({ title, schema, children }: Props) {
+export async function PolicyPage({ title, schema, children }: Props) {
+  const locale = await currentLocale();
+  const dict = await currentDictionary();
+
   return (
     <main>
       <JsonLd data={schema} />
@@ -46,7 +51,7 @@ export function PolicyPage({ title, schema, children }: Props) {
       <article className="px-5 pt-5">
         {/* 화살표의 44px 탭 영역이 제목을 밀지 않게 줄 전체를 왼쪽으로 당긴다. */}
         <div className="-ml-3 flex items-start gap-1">
-          <BackLink />
+          <BackLink href={homeHref(locale)} label={dict.nav.backHome} />
           <PageTitle>{title}</PageTitle>
         </div>
         {children}

@@ -39,7 +39,7 @@ export async function SeasonRow({ season }: Props) {
   return (
     <Item
       className="gap-3.5 p-3"
-      render={<Link href={seasonHref(locale, season.id)} />}
+      render={<Link href={seasonHref(locale, season.programId, season.id)} />}
     >
       {/* 기본값 두 개를 되돌린다 — 설명이 있으면 위로 붙는 정렬, 그리고 얼굴 겹침을 상쇄하는 gap. */}
       <ItemMedia className="translate-y-0 gap-0 self-center pl-2.5">

@@ -2,7 +2,7 @@
 
 # 누꼬 (nukko)
 
-예능 출연진의 인스타그램 계정을 기수별로 모아 두는 아카이브. 1차 대상은 "나는 솔로", 이후 넷플릭스 프로그램으로 확장한다. 배경과 범위는 `PLANNING.md`에 있다.
+예능 출연진의 인스타그램 계정을 프로그램·기수별로 모아 두는 아카이브. "나는 솔로" 로 시작해 2026-08-31 에 "솔로지옥"(넷플릭스)을 붙였다. 배경과 범위는 `PLANNING.md`에 있다.
 
 ## 명령어
 
@@ -31,38 +31,55 @@ git push origin --delete <branch> && git branch -d <branch>
 ## 구조
 
 ```
-src/app/[lang]/page.tsx              기수 목록 — [lang] 이 루트 세그먼트다(전 화면이 그 아래)
-src/app/[lang]/seasons/[id]/page.tsx 기수 상세 (언어 × 기수로 전부 프리렌더)
+src/app/[lang]/page.tsx              프로그램 목록(홈) — [lang] 이 루트 세그먼트다(전 화면이 그 아래)
+src/app/[lang]/[program]/page.tsx    한 프로그램의 기수 목록 (히어로 + 검색 + 목록)
+src/app/[lang]/[program]/seasons/[id]/page.tsx 기수 상세 (언어 × 프로그램 × 기수로 전부 프리렌더)
 src/app/[lang]/takedown/page.tsx     삭제·정정 요청 창구
 src/app/[lang]/privacy/page.tsx      개인정보 처리방침
 src/app/[lang]/layout.tsx            루트 레이아웃 — <html lang>, 언어별 metadata, generateStaticParams
 src/app/icon.tsx                     파비콘 — 크기·여백만 정하고 그림은 BrandTile 이 그린다. 언어를 안 탄다
 src/app/apple-icon.tsx               iOS 홈 화면 아이콘 — 같은 타일, 180×180
-src/app/[lang]/opengraph-image.tsx   공유 카드 — 글자만 고르고 판은 lib/og.tsx 가 그린다 (기수 상세도 한 벌)
-src/app/sitemap.ts / robots.ts       언어마다 한 줄씩 + hreflang (명단 빈 기수는 뺀다)
+src/app/[lang]/opengraph-image.tsx   공유 카드 — 글자만 고르고 판은 lib/og.tsx 가 그린다 (프로그램·기수 상세도 한 벌씩)
+src/app/sitemap.ts / robots.ts       언어마다 한 줄씩 + hreflang (명단 빈 기수·그런 기수뿐인 프로그램은 뺀다)
 src/proxy.ts                         `/` 로 들어온 사람을 브라우저 언어로 보낸다 (Next 16 의 미들웨어)
 src/lib/locales.ts                   언어 목록 + 언어 이름 — 화면·클라이언트·프록시가 다 읽는 순수 모듈
-src/lib/i18n.ts                      사전 로더 + 데이터 어휘(가명·특집) + 날짜/현황 포맷
+src/lib/i18n.ts                      사전 로더 + 데이터 어휘(가명·특집) + 프로그램 문구 조회(programStrings) + 날짜/현황 포맷
 src/dictionaries/{ko,en,ja}.json     화면 문구
 src/lib/brand.ts                     BRAND_MARK_PATHS(ㄲ 좌표) — 언어 불변, 아이콘과 공유 / BRAND_WORDMARK(누꼬·nukko) — 언어별 / BRAND_IMAGE_COLORS — satori 가 CSS 토큰을 못 읽어서 값으로 박은 색
-src/lib/links.ts                     내부 경로 — 전부 언어로 시작한다. 값 import 가 없다(클라이언트로 딸려 간다)
+src/lib/links.ts                     내부 경로 — 전부 `언어/프로그램` 으로 시작한다. 값 import 가 없다(클라이언트로 딸려 간다)
 src/lib/site.ts                      도메인·연락처·광고 ID — absoluteUrl·contactMailto 도 여기다
 src/lib/og.tsx                       공유 카드 한 장 + OG 서체 로더. `.tsx` 인 건 카드 판을 여기서 그리기 때문이다
 src/lib/seo.ts                       색인 여부·OG 공통 필드·정책 페이지 metadata·JSON-LD — 검색엔진에 보이는 것을 한 곳에
-src/lib/types.ts                     Program → Season → CastMember 모델 + getCoverage·getTotals
-src/lib/data.ts                      JSON 로더 + 검색 인덱스 생성
+src/lib/types.ts                     Program → Season → CastMember 모델 + getCoverage·getTotals·getSiteTotals
+src/lib/data.ts                      프로그램 JSON 로더(PROGRAMS 배열) + 검색 인덱스 생성
 src/lib/search.ts                    검색 매칭 — 데이터를 모른다(클라이언트로 넘어간다)
-src/data/na-neun-solo.json           실데이터 — 채우는 법은 src/data/README.md
-src/components/                      cast-card, cast-photo, cast-avatar, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
+src/data/na-neun-solo.json           실데이터(1~33기, 408명) — 채우는 법은 src/data/README.md
+src/data/solo-hell.json              솔로지옥 시즌 1~5 골격 — 명단이 아직 비어 있다
+src/components/                      cast-card, cast-photo, cast-avatar, program-row, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
 ```
 
 Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 반드시 await 한다.
 
+## 프로그램 — 나는 솔로 · 솔로지옥
+
+프로그램이 둘이 되면서 화면이 세 단계가 됐다: **홈(프로그램 목록) → 프로그램(기수 목록) → 기수 상세**. 그전에는 홈이 곧 나는 솔로의 기수 목록이었다. 프로그램을 하나 더 붙이는 절차는 `src/data/README.md` 의 "프로그램을 추가할 때" 에 있다.
+
+- **주소가 프로그램을 정한다** — `/ko/na-neun-solo/seasons/s33`, `/ko/solo-hell/seasons/s4`. **기수 `id` 는 프로그램 안에서만 고유하다**(`s1` 이 두 프로그램에 다 있다). 그래서 `getSeason` 도 `seasonPath` 도 첫 인자가 프로그램이다 — 기수 id 만 들고 다니면 어느 프로그램인지 정해지지 않는다.
+- **옛 주소는 `next.config.ts` 가 308 한다.** 두 세대가 겹쳐 있다 — 언어가 붙기 전(`/seasons/s33`)과 프로그램이 붙기 전(`/ko/seasons/s33`)이다. **둘 다 한 번에 최종 주소로 보낸다**: 리다이렉트를 두 번 태우면 크롤러가 체인을 싫어하고 링크 신호도 샌다. 언어가 있는 쪽은 그 언어를 지킨다 — `/en/seasons/s33` 을 한국어로 보내면 읽던 언어를 빼앗는 것이 된다.
+- **`Season.label` 은 없다. `Season.number` 뿐이다.** 화면에 뜨는 말은 프로그램마다 다르다 — `33기` 와 `시즌 4` 다. 라벨을 데이터에 저장하면 언어 × 프로그램만큼 적어야 하므로, 번호만 두고 사전의 `site.programs.<id>.seasonLabel` 이 만든다(`localizeSeasonLabel`). 정렬도 이 번호를 본다.
+- **프로그램마다 다른 말은 사전의 `site.programs` 에 문장째로 있다.** 이름·기수 라벨·목록 제목(`전체 기수` / `전체 시즌`)·`지난 기수`·`최신 기수`·요약 두 줄·검색 안내 두 줄이다. **낱말만 표로 두고 문장에 끼워 넣지 말 것** — 어순이 다른 언어에서 반드시 어색해진다(가명·특집 표와 같은 이유). 꺼내는 곳은 `programStrings(programId, locale)` 하나고, **사전에 없는 프로그램이면 던진다** — 조용히 `solo-hell` 이 제목으로 나가는 것보다 빌드가 깨지는 쪽이 낫다.
+- **`alias` 는 "방송에서 불린 이름" 이다.** 나는 솔로는 가명(`영수`), 솔로지옥은 실명(`최시훈`) 이 들어간다. 필드를 나누지 않은 이유는 화면이 하는 일이 같기 때문이다 — 크게 부르는 이름 하나와, 그 아래 실명·나이·직업 줄이다. 로마자·가타카나 표기는 `i18n.ts` 의 `ALIASES` 한 표에 프로그램 구분 없이 쌓인다(한글 원문이 키다). 실명이 들어가는 프로그램은 `name`(실명) 을 비워 둔다 — 같은 값이 두 줄로 나온다.
+- **홈의 검색은 프로그램을 안 가리고, 프로그램 화면의 검색은 자기 것만 본다**(`buildSearchIndex(locale, program?)`). 착지하자마자 사람을 찾는 게 이 사이트의 존재 이유라 홈에서 프로그램을 먼저 고르게 만들지 않는다. 여러 프로그램을 담은 인덱스에만 `programName` 이 실려 결과 줄이 프로그램을 밝힌다 — 한 프로그램뿐인 인덱스에서 매 줄에 같은 이름을 반복할 이유가 없다.
+- **결과 그룹 제목은 홈만 중립어다**(`기수·시즌`). 프로그램 화면은 `programStrings` 의 낱말로 갈아 끼운다. 홈은 두 프로그램의 줄이 섞여 나오므로 한쪽 말을 쓰면 다른 쪽 줄에 틀린 제목이 붙는다.
+- **명단이 한 줄도 없는 프로그램은 색인에서 뺀다**(`isProgramIndexable`). 기수가 전부 "명단 정리 중" 이면 그 화면도 빈 줄의 목록이라 기수 상세와 같은 soft 404 판정을 받는다 — 새 프로그램을 골격만 먼저 넣는 동안이 정확히 그 상태다. `robots: noindex, follow` 와 sitemap 제외를 **같이** 한다.
+- **`0명 중 인스타 0개 확인` 을 만들지 말 것.** 프로그램 요약 한 줄은 `formatProgramSummary` 를 거친다 — 명단이 비면 개수 대신 그 사실을 적는다. `formatCoverage` 가 기수에서 하는 일과 같고, 화면과 공유 카드가 같은 함수를 봐서 어긋나지 않는다.
+- **뒤로가기 목적지는 쓰는 쪽이 준다**(`BackLink` 의 `href`·`label`). 세 단계가 되면서 "위" 가 어디인지 컴포넌트가 알 수 없게 됐다 — 기수 상세는 프로그램 목록으로, 프로그램과 정책 페이지는 홈으로 간다.
+
 ## 언어 — 한국어·영어·일본어
 
-해외에서 한국 예능 출연진을 찾는 사람을 받으려고 2026-08-21 에 언어를 붙였고, 일본어를 2026-08-25 에 더했다. **URL 이 언어를 정한다** — `/ko/seasons/s33`, `/en/seasons/s33`, `/ja/seasons/s33`. 언어가 없는 주소는 두 갈래로 처리한다: `/` 는 `src/proxy.ts` 가 `Accept-Language` 를 보고 307 로 보내고, 언어를 붙이기 전의 옛 주소(`/seasons/s33`·`/takedown`·`/privacy`)는 `next.config.ts` 가 한국어로 308 한다.
+해외에서 한국 예능 출연진을 찾는 사람을 받으려고 2026-08-21 에 언어를 붙였고, 일본어를 2026-08-25 에 더했다. **URL 이 언어를 정한다** — `/ko/na-neun-solo/seasons/s33`, `/en/...`, `/ja/...`. 언어가 없는 주소는 두 갈래로 처리한다: `/` 는 `src/proxy.ts` 가 `Accept-Language` 를 보고 307 로 보내고, 언어를 붙이기 전의 옛 주소(`/seasons/s33`·`/takedown`·`/privacy`)는 `next.config.ts` 가 한국어로 308 한다(프로그램까지 한 번에 끼워서 — 위 "프로그램" 절).
 
 - **언어를 감지하는 순간은 `/` 하나뿐이다.** proxy 의 matcher 가 `/` 라서 나머지 경로는 엣지를 안 거치고 정적으로 나간다. 공유받은 `/ko/...` 링크가 읽는 사람 브라우저 설정 때문에 다른 언어로 튀지도 않는다.
 - **언어 선택을 쿠키로 기억하지 않는다.** 처리방침에 "쿠키는 쓰지 않는다"고 적어 뒀다 — 편의 하나 때문에 그 문장을 거짓으로 만들지 말 것. 선택 목록이 주소를 바꾸므로 기억할 것도 없다.
@@ -81,7 +98,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 - **서버 컴포넌트는 `currentLocale()` / `currentDictionary()` 로 스스로 가져온다**(`next/root-params`). `[lang]` 이 루트 세그먼트라 페이지가 컴포넌트마다 언어를 내려보내지 않아도 된다.
 - **클라이언트 컴포넌트는 그걸 못 쓴다**(Next 의 제약). `SeasonSearch`·`ModeToggle`·`LocaleToggle` 은 쓰는 문구만 props 로 받는다 — `i18n.ts` 를 import 하면 사전 세 벌이 클라이언트 번들에 딸려 온다. `import type` 은 컴파일에서 지워지므로 예외다. (`LocaleToggle` 이 `locales.ts` 를 값으로 import 하는 건 괜찮다 — 그 파일이 사전을 안 읽는 이유가 이거다.)
-- **내부 링크는 `lib/links.ts` 의 함수로만 만든다.** 전부 첫 인자가 locale 이다. 손으로 `/seasons/...` 를 적으면 언어가 빠진 주소가 나오는데, 그건 눌러 보기 전까지 화면에 안 보인다.
+- **내부 링크는 `lib/links.ts` 의 함수로만 만든다.** 전부 첫 인자가 locale 이고, 기수로 가는 것은 그다음이 프로그램이다. 손으로 `/seasons/...` 를 적으면 언어도 프로그램도 빠진 주소가 나오는데, 그건 눌러 보기 전까지 화면에 안 보인다.
 - **언어 전환만 하드 내비게이션이다.** `LocaleToggle` 의 줄이 `next/link` 가 아니라 맨 링크인 이유이고, 되돌리면 버그가 돌아온다 — 언어가 바뀌면 루트 레이아웃이 다시 그려지는데, 클라이언트 내비게이션으로 그러면 React 가 `<html>` 의 class 를 서버가 준 값으로 덮어쓴다. 거기엔 테마 클래스가 없어서(next-themes 가 런타임에 붙인다) 다크 모드가 한 프레임 벗겨지고 화면이 하얗게 번쩍인다. 콘솔에도 "Encountered a script tag while rendering React component" 가 같이 뜬다.
 - **그 줄은 `DropdownMenuItem` + `render={<a>}` 가 아니라 `DropdownMenuLinkItem` 이다.** 전자는 클릭이 삼켜져 아무 데도 안 간다 — 메뉴만 닫히고 주소가 그대로라 눈으로는 "안 눌렸나" 로 보인다. Base UI 가 링크용으로 따로 둔 부품(`Menu.LinkItem`)이 있고, shadcn 이 그 껍데기를 안 만들어 줘서 `components/ui/dropdown-menu.tsx` 에 직접 넣어 뒀다.
 - 검색 인덱스는 서버가 그 언어로 **미리 만들어** 내려보낸다. 한국어가 아닌 인덱스에는 한글 원문이 `keywords` 로 함께 실린다 — 화면은 `Yeongsu`·`ヨンス` 지만 `영수` 로도 걸리게 하려는 것이다(화면에 안 나오는 검색 전용 필드).
@@ -104,11 +121,12 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 - **공유 카드는 `lib/og.tsx` 의 `ogImageResponse()` 한 판이다.** 라우트는 글자 넷(언어·활자 크기·작은 줄·큰 줄·현황)만 고르고 판·색·폰트 서브셋은 안 만진다. 두 라우트가 각자 그리던 시절엔 90줄 중 85줄이 같았는데, 어긋나도 링크를 실제로 공유해 보기 전까지 안 보인다. 활자 크기가 두 벌인 건 큰 줄에 뭐가 오느냐가 달라서다 — 홈은 문장, 기수는 `33기` 한 덩어리다.
 - **`openGraph` 를 정의하는 페이지는 `openGraphBase(locale)` 를 펼치는 것으로 시작한다.** Next 의 metadata 는 얕게 병합돼서, 페이지가 `openGraph` 를 정의하는 순간 레이아웃의 `openGraph` 가 **통째로** 덮인다 — `og:site_name`·`og:locale`·`og:locale:alternate` 가 조용히 빠진다. 화면에선 안 보이고 공유 카드에서만 드러나서 늦게 발견된다(기수·정책 세 페이지가 실제로 그 상태였다).
-- **색인 여부는 `isIndexable(season)` 하나로 정하고, 두 곳에 함께 건다.** 명단이 빈 기수는 화면에 "명단 정리 중" 한 문장뿐이라 크롤러가 soft 404 로 읽고, 그 판정은 그 페이지로 끝나지 않고 사이트 전체 평가로 번진다. 그래서 `robots: noindex, follow`(기수 상세의 `generateMetadata`)와 sitemap 제외를 **같이** 한다 — 하나만 하면 어느 쪽으로든 어긋난다. noindex 페이지를 sitemap 으로 제출하면 Search Console 이 오류로 잡고, sitemap 에서만 빼면 홈의 링크를 타고 그대로 색인된다. 명단이 들어오면 저절로 돌아온다.
-- **JSON-LD 는 화면에 이미 있는 것만 옮긴다.** 홈은 `WebSite`(검색 결과에 도메인 대신 사이트 이름을 쓸지 Google 이 여기를 본다), 기수 상세와 정책 두 페이지는 `BreadcrumbList`, 기수 상세는 거기에 `ItemList` 가 더 붙는다. **`ItemList` 에는 `found` 인 사람만 넣는다** — 못 찾은 사람은 이을 `sameAs` 가 없어서 "사람이 있다"는 주장만 남고, 그건 화면에 없는 말을 마크업으로 더하는 것이다. 삭제 요청으로 계정을 내리면 마크업도 함께 사라진다(데이터에서 나오므로 따로 손댈 게 없다).
-- **언어 없는 경로를 리터럴로 적지 말 것.** canonical·hreflang·sitemap 이 같은 문자열을 봐야 한다 — `links.ts` 의 `seasonPath()`·`TAKEDOWN_PATH`·`PRIVACY_PATH` 가 그 한 벌이고, 언어를 앞에 붙이는 것도 `localePath()` 하나다. 예전엔 `languageAlternates("/takedown")` 과 sitemap 의 `["/takedown", "/privacy"]` 가 각자 적혀 있었다 — 경로를 바꾸면 화면 링크만 따라오고 canonical 은 옛 주소를 가리키는데, 그건 화면에서 끝내 안 보인다.
+- **색인 여부는 `isIndexable(season)`·`isProgramIndexable(program)` 로 정하고, 두 곳에 함께 건다.** 명단이 빈 기수는 화면에 "명단 정리 중" 한 문장뿐이라 크롤러가 soft 404 로 읽고, 그 판정은 그 페이지로 끝나지 않고 사이트 전체 평가로 번진다. 그래서 `robots: noindex, follow`(기수 상세의 `generateMetadata`)와 sitemap 제외를 **같이** 한다 — 하나만 하면 어느 쪽으로든 어긋난다. noindex 페이지를 sitemap 으로 제출하면 Search Console 이 오류로 잡고, sitemap 에서만 빼면 홈의 링크를 타고 그대로 색인된다. 명단이 들어오면 저절로 돌아온다.
+- **JSON-LD 는 화면에 이미 있는 것만 옮긴다.** 홈은 `WebSite`(검색 결과에 도메인 대신 사이트 이름을 쓸지 Google 이 여기를 본다), 나머지는 `BreadcrumbList`, 기수 상세는 거기에 `ItemList` 가 더 붙는다. **탐색경로는 화면마다 길이가 다르다** — 정책 두 페이지는 `홈 › 이 페이지` 두 칸, 기수 상세는 `홈 › 나는 솔로 › 33기` 세 칸이다. `breadcrumbSchema(locale, ...trail)` 이 홈 칸을 알아서 앞에 놓으므로 쓰는 쪽은 그 뒤만 적는다. **`ItemList` 에는 `found` 인 사람만 넣는다** — 못 찾은 사람은 이을 `sameAs` 가 없어서 "사람이 있다"는 주장만 남고, 그건 화면에 없는 말을 마크업으로 더하는 것이다. 삭제 요청으로 계정을 내리면 마크업도 함께 사라진다(데이터에서 나오므로 따로 손댈 게 없다).
+- **언어 없는 경로를 리터럴로 적지 말 것.** canonical·hreflang·sitemap 이 같은 문자열을 봐야 한다 — `links.ts` 의 `programPath()`·`seasonPath()`·`TAKEDOWN_PATH`·`PRIVACY_PATH` 가 그 한 벌이고, 언어를 앞에 붙이는 것도 `localePath()` 하나다. 예전엔 `languageAlternates("/takedown")` 과 sitemap 의 `["/takedown", "/privacy"]` 가 각자 적혀 있었다 — 경로를 바꾸면 화면 링크만 따라오고 canonical 은 옛 주소를 가리키는데, 그건 화면에서 끝내 안 보인다.
 - **정책 두 페이지의 metadata 는 `policyMetadata(locale, page)` 다.** 둘은 제목·설명만 다르고 나머지가 같아서, 각자 적어 두면 한쪽만 고치게 된다. 새 정책 페이지를 붙이면 `seo.ts` 의 `POLICY_PATHS` 에 한 줄 더한다.
-- **기수 상세 머리글의 프로그램 이름을 빼지 말 것.** 제목은 `나는 솔로 33기 출연진 인스타` 인데 본문에는 `33기` 와 가명뿐이라 프로그램 이름이 한 글자도 없던 적이 있다 — 주 검색어를 본문이 뒷받침하지 못하는 상태였다. 홈 머리글과 같은 구조(프로그램 이름 한 줄 + 큰 제목)다.
+- **기수 상세 머리글의 프로그램 이름을 빼지 말 것.** 제목은 `나는 솔로 33기 출연진 인스타` 인데 본문에는 `33기` 와 가명뿐이라 프로그램 이름이 한 글자도 없던 적이 있다 — 주 검색어를 본문이 뒷받침하지 못하는 상태였다. 프로그램 화면과 같은 구조(프로그램 이름 한 줄 + 큰 제목)다.
+- **`site.name` 은 프로그램 이름이 아니다.** 프로그램이 하나였을 땐 `나는 솔로 출연진 인스타` 였는데, 그건 title.template·`og:site_name`·`WebSite` 이름·탐색경로 첫 칸에 다 쓰이는 값이라 프로그램이 둘이 되는 순간 사이트가 자기 이름으로 거짓말을 하게 됐다. 지금은 `누꼬 — 예능 출연진 인스타` 다. 프로그램 이름은 프로그램·기수 화면의 제목이 진다(둘 다 `title: { absolute }` 라 사이트 이름이 뒤에 또 붙지 않는다).
 
 **검색엔진 등록(Google Search Console·네이버 서치어드바이저·Bing Webmaster Tools)은 커스텀 도메인을 연결한 뒤에 한다.** 코드가 아니라 운영이고, 검증과 색인이 호스트네임 단위로 쌓여서 순서를 바꾸면 같은 일을 두 번 한다. 근거는 `PLANNING.md` §10. 이 프로젝트는 2026-08-24 에 실제로 밟았다 — 절차는 바로 아래에 있고, 다음에 도메인을 옮길 때도 같은 순서를 따른다.
 
@@ -239,15 +257,15 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ## 현재 상태
 
-네 화면(기수 목록·기수 상세·삭제 요청·처리방침)이 **한국어·영어·일본어 세 벌**로 동작하고 빌드가 통과한다(117 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지·JSON-LD)까지 붙어 있고 전부 정적이다 — 서버가 하는 일은 `/` 하나를 언어로 보내는 proxy 뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (2026-08-24 에 커스텀 도메인 연결, Cloudflare Registrar 등록·DNS. 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. 실제 사진 파일은 아직 한 장도 없다.
+다섯 화면(프로그램 목록·기수 목록·기수 상세·삭제 요청·처리방침)이 **한국어·영어·일본어 세 벌**로 동작하고 빌드가 통과한다(138 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지·JSON-LD)까지 붙어 있고 전부 정적이다 — 서버가 하는 일은 `/` 하나를 언어로 보내는 proxy 뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (2026-08-24 에 커스텀 도메인 연결, Cloudflare Registrar 등록·DNS. 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. 실제 사진 파일은 아직 한 장도 없다.
 
-브랜드 워드마크·파비콘·앱 아이콘([ㄲ 마크] `누꼬`(ko)/[ㄲ 마크] `nukko`(en·ja))이 붙었다 — 위 "브랜드" 절 참고. 네 화면 헤더가 전부 같은 `‹ 제목` 인라인 구조를 쓴다.
+브랜드 워드마크·파비콘·앱 아이콘([ㄲ 마크] `누꼬`(ko)/[ㄲ 마크] `nukko`(en·ja))이 붙었다 — 위 "브랜드" 절 참고. 홈을 뺀 네 화면 헤더가 전부 같은 `‹ 제목` 인라인 구조를 쓴다(홈은 더 올라갈 곳이 없어 화살표가 없다).
 
 도메인은 `lib/site.ts` 한 곳에서 정해진다. **`NEXT_PUBLIC_SITE_URL`(Production)에 `https://www.nukko.net` 을 박아 뒀다** — Vercel 자동값(`VERCEL_PROJECT_PRODUCTION_URL`)은 "가장 짧은 커스텀 도메인"을 고르는데, 그러면 리다이렉트 전용인 apex(`nukko.net`)가 뽑힌다. 이유는 위 "커스텀 도메인을 연결할 때" 1번에 있다.
 
 **검색엔진 등록도 끝났다**(2026-08-24). Google Search Console(도메인 속성, DNS TXT)·네이버 서치어드바이저(HTML 메타 태그)는 소유확인·sitemap 제출까지 직접 확인했다. **Bing Webmaster Tools** 는 GSC 에서 Import 로 가져왔다 — 코드 변경이 없어서 값을 남길 파일이 없고, sitemap 도 소유확인과 함께 자동으로 넘어왔다(콘솔에서 확인). 절차는 위 "커스텀 도메인을 연결할 때". 남은 건 색인을 기다리는 것뿐이다.
 
-기수 골격은 1~33기 전부 들어가 있고 명단도 전부 채워졌다(408명, 2026-08-21). 계정은 320명이 `found` 고 나머지는 `searching` 이다 — 아직 못 채운 건 방영 중이라 계정이 잠긴 33기와 각 기수에 한둘씩 남은 자리다. 빈 `cast` 는 이제 없다.
+**프로그램은 둘이다**(2026-08-31). 나는 솔로는 1~33기 골격과 명단이 다 들어가 있고(408명, 2026-08-21) 계정은 320명이 `found`, 나머지가 `searching` 이다 — 아직 못 채운 건 방영 중이라 계정이 잠긴 33기와 각 기수에 한둘씩 남은 자리다. **솔로지옥은 시즌 1~5 골격만 있고 명단이 비어 있다** — 그래서 지금은 프로그램 화면째로 색인에서 빠져 있다(`isProgramIndexable`). 다음 일이 그 명단을 채우는 것이다.
 
 **계정을 채울 때는 `src/data/README.md` 의 "계정 검증 방법"을 먼저 읽을 것.** 계정 하나를 잘못 올리면 무관한 사람이 피해를 본다. 집계 사이트·블로그를 그대로 옮기다 실제로 여러 번 걸렸다(가짜 목록, 오타 핸들, 사진작가 계정 등). 반드시 인스타 페이지를 직접 열어 확인한다. 다음 배치 순서는 `PLANNING.md` §10.
 
@@ -263,22 +281,24 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 **아직 안 건드린 것들**(알고 남긴 것이므로 "발견"으로 다시 올리지 말 것): 벤더링된 shadcn 파일의 안 쓰는 export(`dropdown-menu` 16개 중 4개만 쓴다 — `add` 로 덮어쓰면 되돌아온다), `Program.type`·`Program.platform`·`CastMember.gender`(읽는 곳이 없지만 데이터에는 들어 있는 모델 면), `SeasonFeature`·`SeasonRow` 의 `FACE_SHAPE` 두 벌(크기가 달라서 합치면 플래그가 생긴다 — "추상화는 늦게" 절 참고).
 
+**처리방침·삭제 창구는 프로그램이 늘면 같이 손본다.** 나는 솔로만 있던 시절의 문구가 `가명`·`기수와 가명(예: 28기 영숙)` 을 전제하고 있었다 — 솔로지옥은 실명으로 나오는 프로그램이라 그대로 두면 처리방침이 사실과 다른 말을 한다. 2026-08-31 에 `privacy.cast1` 과 `/takedown` 의 요청 예시·메일 제목을 "방송에서 불린 이름" 쪽으로 고치고 `effectiveDate` 를 함께 옮겼다.
+
 **광고를 떼거나 바꾸면 `/privacy` 부터 되돌린다.** 처리방침의 세 문단이 광고를 전제하고 쓰여 있다 — `visitor2`(무쿠키 주장을 Vercel Analytics 로 한정), `processor`(Google LLC 가 제3자로 들어가 있다), `ads`(게재 중이라고 말한다). 광고를 떼고 이 문구를 두면 처리방침이 반대 방향으로 거짓말을 한다. 문구가 바뀌면 `effectiveDate` 도 함께 옮긴다.
 
 연락처는 `lib/site.ts` 의 `CONTACT_EMAIL` 한 곳이다. 이 주소는 **실제로 열려 있어야 한다** — 반송되면 사이트가 지키지 못할 약속을 걸어 둔 셈이 된다. `whosthat.archive@gmail.com` 에서 `nukko.team@gmail.com` 으로 옮겼다(2026-08-24) — 브랜드 이름과 짝이 맞는 주소다. 새 주소로 다시 옮길 때도 **주소를 먼저 만들고** 코드를 고친다 — 순서를 바꾸면 그사이 들어온 삭제 요청이 통째로 사라진다.
 
 검색(`SeasonSearch`)은 **홈의 기수 목록 바로 위 검색창**이다. 헤더 돋보기 + `⌘K` 팔레트(shadcn `command`)로 먼저 만들었다가 반려됐다 — 목록 위 검색창이 맞다. 그래서 `command`·`dialog` 는 다시 걷어냈고 `cmdk` 의존도 지웠다.
 
-- **인덱스는 언어별로 만들어진다.** 영어 인덱스의 가명은 로마자고, 한글 원문은 `keywords` 로 함께 실려 `영수` 질의도 받는다(위 "언어" 절).
+- **인덱스는 언어별로, 그리고 담는 범위별로 만들어진다.** 영어 인덱스의 가명은 로마자고, 한글 원문은 `keywords` 로 함께 실려 `영수` 질의도 받는다(위 "언어" 절). 홈은 전 프로그램, 프로그램 화면은 자기 것만 담는다(위 "프로그램" 절).
 
-- **입력이 비어 있으면 원래의 지난 기수 목록, 뭔가 입력하면 그 자리가 결과로 바뀐다.** 목록을 두 벌 그리지 않으려고 서버가 그린 목록을 `children` 으로 받는다 — `SeasonRow` 를 클라이언트 컴포넌트에서 import 하면 그게 쓰는 `lib/data` 를 타고 원본 JSON 이 번들에 딸려 온다.
+- **입력이 비어 있으면 원래의 목록(홈은 프로그램, 프로그램 화면은 지난 기수), 뭔가 입력하면 그 자리가 결과로 바뀐다.** 목록을 두 벌 그리지 않으려고 서버가 그린 목록을 `children` 으로 받는다 — `SeasonRow` 를 클라이언트 컴포넌트에서 import 하면 그게 쓰는 `lib/data` 를 타고 원본 JSON 이 번들에 딸려 온다.
 
-- **가명은 식별자가 아니다.** 408명이 쓰는 가명이 21개뿐이라 "영수" 한 단어는 33건이 걸린다(기수마다 하나씩). 그래서 ① 계정을 찾아 둔 사람(`found`)을 맨 위로 올리고 ② 기수 이름을 사람 쪽 검색 대상에 함께 넣어 `22기 영수` 로 좁혀지게 했다. 기수 토큰을 따로 골라내는 특수 처리는 없다 — 그 한 줄이 복합 질의를 통째로 받아낸다.
+- **가명은 식별자가 아니다.** 408명이 쓰는 가명이 21개뿐이라 "영수" 한 단어는 33건이 걸린다(기수마다 하나씩). 그래서 ① 계정을 찾아 둔 사람(`found`)을 맨 위로 올리고 ② 프로그램·기수 이름을 사람 쪽 검색 대상에 함께 넣어 `22기 영수`·`솔로지옥 시즌 4` 로 좁혀지게 했다. 그 토큰을 따로 골라내는 특수 처리는 없다 — 그 한 줄이 복합 질의를 통째로 받아낸다.
 - 퍼지 매칭을 넣지 말 것. 가명이 한 글자씩만 달라서 오타를 관대하게 보면 "영수"에 "영식"·"영철"이 딸려 온다.
 - **인덱스는 `buildSearchIndex`(`data.ts`)가 서버에서 만들어 홈 페이지가 prop 으로 내린다.** 검색이 클라이언트 컴포넌트라 `lib/search.ts` 는 `lib/data.ts` 를 import 하지 않는다 — 한 파일에 섞으면 원본 JSON 112KB 가 클라이언트 번들에 딸려 들어간다. 페이지당 인덱스는 gzip 2KB 다(가명·상태가 반복돼 잘 압축된다).
-- 사람 결과는 `/seasons/{id}#{memberId}` 로 착지한다. 앵커는 `CastCard` 가 카드에 거는 DOM id 와 짝이다.
+- 사람 결과는 `/{lang}/{program}/seasons/{id}#{memberId}` 로 착지한다. 앵커는 `CastCard` 가 카드에 거는 DOM id 와 짝이다.
 
-다음: 계정 데이터 채우기 · 사진 채우기(파이프라인은 붙었고 파일이 0장이다 — `src/data/README.md` 의 "사진을 올릴 때") → 제보 폼(`PLANNING.md` 로드맵 2단계). 언어는 일본어까지 셋이고, 더 붙일 때 절차는 위 "언어를 하나 더할 때".
+다음: 솔로지옥 시즌별 출연진 명단 채우기 → 계정 데이터 채우기 · 사진 채우기(파이프라인은 붙었고 파일이 0장이다 — `src/data/README.md` 의 "사진을 올릴 때") → 제보 폼(`PLANNING.md` 로드맵 2단계). 언어는 일본어까지 셋이고, 더 붙일 때 절차는 위 "언어를 하나 더할 때". 프로그램을 더 붙일 때는 `src/data/README.md` 의 "프로그램을 추가할 때".
 
 **DB·백엔드는 아직 필요 없다.** 지금은 정적 JSON + SSG 로 충분하고, 데이터가 늘었다는 건 옮길 이유가 안 된다. 갈아탈 시점을 판단하는 기준은 `PLANNING.md` §7 "DB·백엔드는 언제 필요한가" 에 있다 — 조건이 실제로 걸리면 그때 먼저 말한다.
 

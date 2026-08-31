@@ -1,15 +1,20 @@
 # 데이터 채우는 법
 
-1~33기 골격이 들어가 있고, 계정은 확인한 것부터 하나씩 채워 나가는 중이다.
+**프로그램마다 JSON 한 벌이다.** 나는 솔로(`na-neun-solo.json`)는 1~33기 골격과 명단이
+다 들어가 있고 계정을 채워 나가는 중이고, 솔로지옥(`solo-hell.json`)은 시즌 1~5 골격만
+있고 명단이 비어 있다.
 
 지금 현황은 데이터 파일이 정답이다. 이렇게 뽑아 본다:
 
 ```bash
 python3 -c "
-import json;d=json.load(open('src/data/na-neun-solo.json',encoding='utf-8'))
-for s in d['seasons']:
-    f=sum(1 for m in s['cast'] if m['status']=='found')
-    print(f\"{s['label']:>5} {f:>2}/{len(s['cast']):<2} {s.get('special','')}\")
+import json,glob
+for path in sorted(glob.glob('src/data/*.json')):
+    d=json.load(open(path,encoding='utf-8'))
+    print(d['name'])
+    for s in d['seasons']:
+        f=sum(1 for m in s['cast'] if m['status']=='found')
+        print(f\"  {s['number']:>3} {f:>2}/{len(s['cast']):<2} {s.get('special','')}\")
 "
 ```
 
@@ -189,9 +194,13 @@ PLANNING.md §9 를 따른다.
 **기수마다 6:6 이 아니다.** 7기는 7:5, 26기는 13명, 1~5기는 가명 체계 자체가 달랐다(정수·종수·정식·영순·정순·정자). 그래서 인원 구성을 확인하지 못한 기수는 `cast` 를 빈 배열로 둔다.
 
 ```json
-{ "id": "sNN", "programId": "<program>", "label": "NN기",
+{ "id": "sNN", "programId": "<program>", "number": NN,
   "airDate": "2025-04", "onAir": false, "cast": [] }
 ```
+
+**`number` 는 숫자고 라벨이 아니다.** 화면에 뜨는 말(`33기`·`시즌 4`)은 저장하지 않고
+사전의 `site.programs.<id>.seasonLabel` 이 언어마다 만든다 — 프로그램마다 기수를 부르는
+말이 다르기 때문이다.
 
 화면에는 "명단 정리 중" 으로 뜬다. 기본 로스터를 찍어 넣으면 **없는 사람을 만들어 내는 것**이라 계정을 지어내지 않는 규칙과 같은 문제가 된다. 명단을 확인하면 그때 채운다.
 
@@ -201,4 +210,17 @@ PLANNING.md §9 를 따른다.
 
 ## 기수를 추가할 때
 
-`seasons` 배열 맨 앞에 넣는다(최신순으로 보여준다). `id` 는 `s25`, 출연진 `id` 는 `s25-yeongsu` 처럼 `기수-로마자가명` 규칙을 지킨다.
+`seasons` 배열 맨 앞에 넣는다(최신순으로 보여준다). `id` 는 `s25`, 출연진 `id` 는 `s25-yeongsu` 처럼 `기수-로마자가명` 규칙을 지킨다. **기수 `id` 는 프로그램 안에서만 고유하면 된다** — `s1` 이 두 프로그램에 다 있고, 주소가 `/ko/<프로그램>/seasons/s1` 이라 갈린다.
+
+## 프로그램을 추가할 때
+
+1. `src/data/<program>.json` 한 벌 — `id`·`name`(한국어 원문)·`type`·`platform`·`seasons`.
+2. `src/lib/data.ts` 의 `PROGRAMS` 배열에 넣는다. **배열 순서가 홈 목록 순서다.**
+3. 사전 세 벌의 `site.programs` 에 그 `id` 로 한 칸씩 — 이름·기수 라벨·목록 제목·검색 안내
+   아홉 줄이다. **빠뜨리면 빌드가 던진다**(`programStrings`) — 조용히 id 가 제목으로 나가는
+   것보다 낫다.
+4. 방송에서 가명을 쓰는 프로그램이면 `i18n.ts` 의 `ALIASES` 에 그 가명들을 더한다. 실명으로
+   나오는 프로그램이면 그 이름들이 `ALIASES` 의 새 줄이 된다 — 표는 한글 원문으로 한 벌이다.
+
+명단이 한 줄도 없는 프로그램은 화면·sitemap 에서 자동으로 색인에서 빠진다
+(`isProgramIndexable`). 명단이 들어오면 저절로 돌아온다.

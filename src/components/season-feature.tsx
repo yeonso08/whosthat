@@ -5,6 +5,7 @@ import {
   formatCoverage,
   getDictionary,
   localizeSeason,
+  programStrings,
 } from "@/lib/i18n";
 import { seasonHref } from "@/lib/links";
 import { getCoverage, type Season } from "@/lib/types";
@@ -26,6 +27,8 @@ type Props = { season: Season };
 export async function SeasonFeature({ season }: Props) {
   const locale = await currentLocale();
   const dict = getDictionary(locale);
+  // "최신 기수" 는 프로그램마다 부르는 말이 달라서 사전의 프로그램 표에 있다.
+  const strings = programStrings(season.programId, locale);
 
   const coverage = getCoverage(season.cast);
   const faces = season.cast.slice(0, FACE_COUNT);
@@ -34,13 +37,13 @@ export async function SeasonFeature({ season }: Props) {
 
   return (
     <Link
-      href={seasonHref(locale, season.id)}
+      href={seasonHref(locale, season.programId, season.id)}
       className="focus-ring block rounded-2xl bg-card p-4 transition-opacity hover:opacity-90"
     >
       {season.onAir ? (
         <span className="flex items-center gap-1.5 text-[11px] font-bold text-searching">
           <span className="size-1.5 rounded-full bg-searching" />
-          {dict.home.onAir}
+          {dict.season.onAir}
           {special && (
             <span className="font-lat font-semibold text-muted-foreground">
               · {special}
@@ -49,7 +52,7 @@ export async function SeasonFeature({ season }: Props) {
         </span>
       ) : (
         <span className="font-lat text-[11px] font-semibold text-muted-foreground">
-          {[airDate, special].filter(Boolean).join(" · ") || dict.home.latest}
+          {[airDate, special].filter(Boolean).join(" · ") || strings.latest}
         </span>
       )}
 
