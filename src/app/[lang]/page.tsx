@@ -39,9 +39,10 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
       >
         <>
           <GroupHeading>{dict.home.programsHeading}</GroupHeading>
-          {/* 기수 상세의 출연진 그리드와 같은 2열이다 — 프로그램이 늘어도
-              홈이 스크롤 지옥이 되지 않고, 홀수로 남는 타일도 구멍이 안 난다. */}
-          <section className="grid grid-cols-2 gap-3 px-5">
+          {/* 포스터 격자다 — 프로그램이 늘어도 홈이 스크롤 지옥이 되지 않고,
+              홀수로 남는 타일도 구멍이 안 난다. 세로 간격이 넓은 건 포스터
+              아래 두 줄이 다음 줄 포스터에 붙지 않게 하려는 것이다. */}
+          <section className="grid grid-cols-2 gap-x-3 gap-y-6 px-5">
             {programs.map((program) => (
               <ProgramCard key={program.id} program={program} />
             ))}
