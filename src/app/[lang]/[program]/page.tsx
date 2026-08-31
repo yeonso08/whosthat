@@ -6,7 +6,6 @@ import { GroupHeading, PageEyebrow, PageTitle } from "@/components/page-heading"
 import { SeasonFeature } from "@/components/season-feature";
 import { SeasonRow } from "@/components/season-row";
 import { SeasonSearch } from "@/components/season-search";
-import { SiteHeader } from "@/components/site-header";
 import { buildSearchIndex, getProgram, getPrograms, getSeasons } from "@/lib/data";
 import {
   formatProgramSummary,
@@ -53,8 +52,7 @@ export default async function Page({
     <main>
       <JsonLd data={breadcrumbSchema(lang, programCrumb(program, lang))} />
 
-      <header className="gutter pt-6 pb-1">
-        <SiteHeader />
+      <header className="gutter pt-7 pb-1 lg:pt-10">
         <PageEyebrow>{strings.name}</PageEyebrow>
 
         {/* 뒤로가기를 제목 줄에 붙인다 — 기수 상세와 같은 구조다. */}

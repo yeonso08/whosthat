@@ -3,7 +3,6 @@ import { JsonLd } from "@/components/json-ld";
 import { GroupHeading, PageTitle } from "@/components/page-heading";
 import { ProgramCard } from "@/components/program-card";
 import { SeasonSearch } from "@/components/season-search";
-import { SiteHeader } from "@/components/site-header";
 import { buildSearchIndex, getPrograms } from "@/lib/data";
 import { getDictionary, isLocale } from "@/lib/i18n";
 import { websiteSchema } from "@/lib/seo";
@@ -20,12 +19,11 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
       {/* 사이트 이름을 검색 결과에 도메인 대신 띄우려면 홈에 이 마크업이 있어야 한다. */}
       <JsonLd data={websiteSchema(lang)} />
 
-      <header className="gutter pt-6">
-        <SiteHeader />
+      <header className="gutter pt-7 lg:pt-10">
         {/* 워드마크 바로 아래라 "누꼬 / 출연진 인스타" 로 읽힌다 — 이름과 하는 일이
             한 덩어리다. 사이트 전체 집계를 여기 한 줄 더 적지 않는 건 아래 카드가
             프로그램마다 그 숫자를 이미 말하기 때문이다. */}
-        <PageTitle className="mt-6">{dict.home.heading}</PageTitle>
+        <PageTitle>{dict.home.heading}</PageTitle>
       </header>
 
       {/* 검색창이 목록 자리를 쥐고 있다 — 입력이 없을 때만 아래 카드가 보인다.

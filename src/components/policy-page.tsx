@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { BackLink } from "@/components/back-link";
 import { JsonLd } from "@/components/json-ld";
 import { PageTitle } from "@/components/page-heading";
-import { SiteHeader } from "@/components/site-header";
 import { currentDictionary, currentLocale } from "@/lib/i18n";
 import { homeHref } from "@/lib/links";
 import type { Schema } from "@/lib/seo";
@@ -45,7 +44,6 @@ export async function PolicyPage({ title, schema, children }: Props) {
       <JsonLd data={schema} />
 
       <header className="gutter pt-6">
-        <SiteHeader />
       </header>
 
       <article className="gutter max-w-[68ch] pt-5">

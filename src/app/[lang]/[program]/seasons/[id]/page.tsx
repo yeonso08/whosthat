@@ -5,7 +5,6 @@ import { CastCard } from "@/components/cast-card";
 import { EmptyCard } from "@/components/empty-card";
 import { JsonLd } from "@/components/json-ld";
 import { PageEyebrow, PageTitle } from "@/components/page-heading";
-import { SiteHeader } from "@/components/site-header";
 import { getProgram, getPrograms, getSeason, getSeasons } from "@/lib/data";
 import {
   fill,
@@ -105,8 +104,7 @@ export default async function Page({
     <main>
       <JsonLd data={seasonSchema(program, season, lang)} />
 
-      <header className="gutter pt-6">
-        <SiteHeader />
+      <header className="gutter pt-7 lg:pt-10">
 
         <PageEyebrow>{programName}</PageEyebrow>
 

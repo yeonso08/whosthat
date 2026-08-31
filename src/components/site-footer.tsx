@@ -25,24 +25,26 @@ export async function SiteFooter() {
   const dict = await currentDictionary();
 
   return (
-    <footer className="mt-10 flex flex-col gap-2.5 border-t border-border gutter pt-5 pb-8 text-xs leading-relaxed text-muted-foreground">
-      <p>{dict.footer.note}</p>
-      <p className="flex gap-4">
-        <Link href={takedownHref(locale)} className={POLICY_LINK}>
-          {dict.footer.takedown}
-        </Link>
-        <Link href={privacyHref(locale)} className={POLICY_LINK}>
-          {dict.footer.privacy}
-        </Link>
-      </p>
-      {/* 연도는 `font-lat`(Manrope), 이름만 언어에 따라 갈아 끼운다. */}
-      <p className="font-lat mt-1 flex items-center gap-1 text-[11px] text-muted-foreground/70">
-        <span>
-          © {COPYRIGHT_YEAR}
-        </span>
-        <BrandMark className="h-[0.85em] w-auto" />
-        <BrandName />
-      </p>
+    <footer className="mt-10 border-t border-border">
+      <div className="gutter mx-auto flex w-full max-w-[1280px] flex-col gap-2.5 pt-5 pb-8 text-xs leading-relaxed text-muted-foreground">
+        <p>{dict.footer.note}</p>
+        <p className="flex gap-4">
+          <Link href={takedownHref(locale)} className={POLICY_LINK}>
+            {dict.footer.takedown}
+          </Link>
+          <Link href={privacyHref(locale)} className={POLICY_LINK}>
+            {dict.footer.privacy}
+          </Link>
+        </p>
+        {/* 연도는 `font-lat`(Manrope), 이름만 언어에 따라 갈아 끼운다. */}
+        <p className="font-lat mt-1 flex items-center gap-1 text-[11px] text-muted-foreground/70">
+          <span>
+            © {COPYRIGHT_YEAR}
+          </span>
+          <BrandMark className="h-[0.85em] w-auto" />
+          <BrandName />
+        </p>
+      </div>
     </footer>
   );
 }

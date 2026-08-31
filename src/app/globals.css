@@ -57,26 +57,36 @@
   --radius: 0.875rem;
 }
 
+/*
+ * 다크 팔레트.
+ *
+ * **순흑에서 한 단 들어 올렸다**(2026-08-31). 배경이 `#0a0a0c` 라 사진이 한 장도
+ * 없는 동안 화면이 통째로 평평한 검정 판이었다 — 넷플릭스·라프텔의 다크가
+ * 살아 보이는 건 그림이 색을 다 대기 때문이고, 그림이 없으면 같은 값이 그냥
+ * 빈 화면이 된다. 배경·카드·떠 있는 면 사이 간격을 벌려 면이 면으로 읽히게 한다.
+ *
+ * 색상(hue)은 건드리지 않았다 — 흑백 규칙과 `--searching` 전용 규칙은 그대로다.
+ */
 .dark {
-  --background: #0a0a0c;
-  --foreground: #f4f4f6;
-  --card: #141418;
-  --elevated: #1d1d23;
-  --searching: #d9a44b;
-  --popover: #1d1d23;
-  --popover-foreground: #f4f4f6;
-  --primary: #f4f4f6;
-  --primary-foreground: #0a0a0c;
-  --secondary: #1d1d23;
-  --secondary-foreground: #f4f4f6;
-  --muted: #1d1d23;
-  --muted-foreground: #90909b;
-  --accent: #1d1d23;
-  --accent-foreground: #f4f4f6;
+  --background: #101116;
+  --foreground: #f5f5f7;
+  --card: #1a1b21;
+  --elevated: #24252d;
+  --searching: #e0aa52;
+  --popover: #24252d;
+  --popover-foreground: #f5f5f7;
+  --primary: #f5f5f7;
+  --primary-foreground: #101116;
+  --secondary: #24252d;
+  --secondary-foreground: #f5f5f7;
+  --muted: #24252d;
+  --muted-foreground: #9b9ba7;
+  --accent: #24252d;
+  --accent-foreground: #f5f5f7;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: #292930;
-  --input: #292930;
-  --ring: #57575f;
+  --border: #32333c;
+  --input: #32333c;
+  --ring: #63646f;
 }
 
 /* 키보드로 옮겨 다닐 때만 보이는 테두리. 누르는 자리마다 같은 굵기·같은 간격을

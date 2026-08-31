@@ -3,6 +3,7 @@ import { Gothic_A1, Manrope, Zen_Kaku_Gothic_New } from "next/font/google";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { SiteFooter } from "@/components/site-footer";
+import { SiteNav } from "@/components/site-nav";
 import { ThemeProvider } from "@/components/theme-provider";
 import {
   getDictionary,
@@ -105,15 +106,18 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${SANS_FONT[lang].variable} ${manrope.variable} h-full antialiased`}
     >
-            {/* 데스크톱까지 여는 폭. 예전엔 `max-w-screen-sm`(640px) 고정이라 큰 화면에서
-          가운데 좁은 기둥 하나로 보였다 — 휴대폰 화면을 늘려 놓은 꼴이다.
-          좁은 화면에서는 이 값이 안 걸리므로 모바일은 그대로다. */}
-      <body className="mx-auto flex min-h-full w-full max-w-[1280px] flex-col">
+            {/* 상단 바는 화면 폭을 다 쓰고 본문만 컨테이너에 맞춘다 — 그래야 경계선이
+          화면을 가로지르고 바가 화면의 일부로 읽힌다. */}
+      <body className="flex min-h-full w-full flex-col">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           {/* 본문이 남은 높이를 먹어 푸터를 화면 바닥까지 민다 — 홈처럼 짧은
               화면에서 푸터가 콘텐츠에 바로 붙으면 그 아래 빈 화면이 "덜 그려진
               페이지" 로 읽힌다. */}
-          <div className="flex-1">{children}</div>
+          <SiteNav />
+          {/* 본문이 남은 높이를 먹어 푸터를 화면 바닥까지 민다 — 짧은 화면에서
+              푸터가 콘텐츠에 바로 붙으면 그 아래 빈 화면이 "덜 그려진 페이지" 로
+              읽힌다. 폭은 여기서 묶는다(상단 바는 안 묶인다). */}
+          <div className="mx-auto w-full max-w-[1280px] flex-1">{children}</div>
           {/* 레이아웃에 두면 기수를 아무리 늘려도 삭제 창구가 빠지는 화면이 없다. */}
           <SiteFooter />
         </ThemeProvider>

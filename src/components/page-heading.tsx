@@ -25,7 +25,7 @@ export function PageTitle({ children, className = "" }: Props) {
  */
 export function PageEyebrow({ children }: Props) {
   return (
-    <p className="mt-5 text-sm font-bold tracking-tight text-muted-foreground">
+    <p className="text-sm font-bold tracking-tight text-muted-foreground">
       {children}
     </p>
   );
@@ -34,7 +34,7 @@ export function PageEyebrow({ children }: Props) {
 /** 목록 위의 그룹 제목. 홈의 "지난 기수" 와 검색 결과 그룹이 같은 자리·같은 무게다. */
 export function GroupHeading({ children }: Props) {
   return (
-    <h2 className="gutter pt-7 pb-2 text-[13px] font-bold text-muted-foreground lg:text-sm">
+    <h2 className="gutter pt-8 pb-3 text-base font-bold tracking-tight lg:text-lg">
       {children}
     </h2>
   );
