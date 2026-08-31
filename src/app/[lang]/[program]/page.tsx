@@ -5,8 +5,8 @@ import { JsonLd } from "@/components/json-ld";
 import { GroupHeading, PageEyebrow, PageTitle } from "@/components/page-heading";
 import { SeasonFeature } from "@/components/season-feature";
 import { SeasonRow } from "@/components/season-row";
+import { PageShell } from "@/components/page-shell";
 import { SeasonSearch } from "@/components/season-search";
-import { SiteHeader } from "@/components/site-header";
 import { buildSearchIndex, getProgram, getPrograms, getSeasons } from "@/lib/data";
 import {
   formatProgramSummary,
@@ -50,54 +50,61 @@ export default async function Page({
   const [featured, ...rest] = seasons;
 
   return (
-    <main>
+    <>
       <JsonLd data={breadcrumbSchema(lang, programCrumb(program, lang))} />
 
-      <header className="gutter pt-6 pb-1">
-        <SiteHeader />
-        <PageEyebrow>{strings.name}</PageEyebrow>
-
-        {/* 뒤로가기를 제목 줄에 붙인다 — 기수 상세와 같은 구조다. */}
-        <div className="mt-3 -ml-3 flex items-start gap-1">
-          <BackLink href={homeHref(lang)} label={dict.nav.backHome} />
-          <PageTitle>{strings.heading}</PageTitle>
-        </div>
-
-        <p className="mt-1.5 text-[13px] text-muted-foreground">
-          {formatProgramSummary(program.id, getTotals(seasons), lang)}
-        </p>
-      </header>
-
-      {featured && (
-        <div className="gutter mt-5">
-          <SeasonFeature season={featured} />
-        </div>
-      )}
-
-      {/* 검색창이 목록 자리를 쥐고 있다 — 입력이 없을 때만 아래 목록이 보인다.
-          인덱스는 이 프로그램만 담는다: 프로그램 화면에서 친 말이 다른 프로그램
-          으로 새면 지금 보고 있는 목록과 결과가 어긋난다. */}
-      <SeasonSearch
-        index={buildSearchIndex(lang, program)}
-        locale={lang}
-        text={{
-          ...dict.search,
-          placeholder: strings.searchPlaceholder,
-          seasonsHeading: strings.seasonsHeading,
-        }}
-        status={dict.status}
-      >
-        {rest.length > 0 && (
+      <PageShell
+        rail={
           <>
-            <GroupHeading>{strings.pastSeasons}</GroupHeading>
-            <section className="gutter-inset">
-              {rest.map((season) => (
-                <SeasonRow key={season.id} season={season} />
-              ))}
-            </section>
+            <PageEyebrow>{strings.name}</PageEyebrow>
+
+            {/* 뒤로가기를 제목 줄에 붙인다 — 기수 상세와 같은 구조다. */}
+            <div className="mt-3 -ml-3 flex items-start gap-1">
+              <BackLink href={homeHref(lang)} label={dict.nav.backHome} />
+              <PageTitle>{strings.heading}</PageTitle>
+            </div>
+
+            <p className="mt-1.5 text-[13px] break-keep text-muted-foreground">
+              {formatProgramSummary(program.id, getTotals(seasons), lang)}
+            </p>
+
+            {/* 최신 기수는 레일에 세운다 — 넓은 화면에서 목록 위에 눕히면 가로로
+                늘어난 띠가 되고, 그 자리는 목록이 써야 한다. */}
+            {featured && (
+              <div className="mt-5 lg:mt-8">
+                <SeasonFeature season={featured} />
+              </div>
+            )}
           </>
-        )}
-      </SeasonSearch>
-    </main>
+        }
+      >
+        {/* 검색창이 목록 자리를 쥐고 있다 — 입력이 없을 때만 아래 목록이 보인다.
+            인덱스는 이 프로그램만 담는다: 프로그램 화면에서 친 말이 다른 프로그램
+            으로 새면 지금 보고 있는 목록과 결과가 어긋난다. */}
+        <SeasonSearch
+          index={buildSearchIndex(lang, program)}
+          locale={lang}
+          text={{
+            ...dict.search,
+            placeholder: strings.searchPlaceholder,
+            seasonsHeading: strings.seasonsHeading,
+          }}
+          status={dict.status}
+        >
+          {rest.length > 0 && (
+            <>
+              <GroupHeading>{strings.pastSeasons}</GroupHeading>
+              {/* 넓은 화면에서는 두 줄씩 나란히 간다 — 33개를 한 줄로 세우면
+                  오른쪽 면의 절반이 비고 스크롤만 두 배로 길어진다. */}
+              <section className="gutter-inset xl:columns-2 xl:gap-4">
+                {rest.map((season) => (
+                  <SeasonRow key={season.id} season={season} />
+                ))}
+              </section>
+            </>
+          )}
+        </SeasonSearch>
+      </PageShell>
+    </>
   );
 }

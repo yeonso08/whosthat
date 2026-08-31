@@ -35,6 +35,7 @@
   },
   "home": {
     "heading": "出演者インスタ",
+    "summary": "{programs}番組・{people}人中 インスタ{found}件確認",
     "programsHeading": "番組"
   },
   "program": {
