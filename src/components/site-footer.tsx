@@ -25,7 +25,7 @@ export async function SiteFooter() {
   const dict = await currentDictionary();
 
   return (
-    <footer className="mt-10 flex flex-col gap-2.5 border-t border-border px-5 pt-5 pb-8 text-xs leading-relaxed text-muted-foreground">
+    <footer className="mt-10 flex flex-col gap-2.5 border-t border-border gutter pt-5 pb-8 text-xs leading-relaxed text-muted-foreground">
       <p>{dict.footer.note}</p>
       <p className="flex gap-4">
         <Link href={takedownHref(locale)} className={POLICY_LINK}>

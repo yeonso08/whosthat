@@ -105,7 +105,7 @@ export default async function Page({
     <main>
       <JsonLd data={seasonSchema(program, season, lang)} />
 
-      <header className="px-5 pt-6">
+      <header className="gutter pt-6">
         <SiteHeader />
 
         <PageEyebrow>{programName}</PageEyebrow>
@@ -138,7 +138,7 @@ export default async function Page({
       </header>
 
       {season.cast.length > 0 ? (
-        <section className="mt-5 grid grid-cols-2 gap-3 px-5">
+        <section className="gutter mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:gap-4">
           {season.cast.map((member) => (
             <CastCard key={member.id} member={member} />
           ))}

@@ -69,12 +69,20 @@ export async function SeasonRow({ season }: Props) {
           {label}
         </ItemTitle>
         <ItemDescription className="font-lat text-xs">
-          {detail ? `${detail} · ` : ""}
-          {formatCoverage(coverage, locale)}
+          {detail}
+          {/* 좁은 화면에서는 현황이 이 줄에 붙고, 넓어지면 오른쪽으로 간다 —
+              1280px 에서 제목 옆에 다 붙여 두면 오른쪽 절반이 통째로 빈다. */}
+          <span className="lg:hidden">
+            {detail ? " · " : ""}
+            {formatCoverage(coverage, locale)}
+          </span>
         </ItemDescription>
       </ItemContent>
 
-      <ItemActions>
+      <ItemActions className="gap-4">
+        <span className="font-lat hidden text-xs text-muted-foreground lg:block">
+          {formatCoverage(coverage, locale)}
+        </span>
         <ChevronRight className="size-4 shrink-0 text-ring" />
       </ItemActions>
     </Item>

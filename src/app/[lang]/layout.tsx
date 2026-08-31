@@ -105,7 +105,10 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${SANS_FONT[lang].variable} ${manrope.variable} h-full antialiased`}
     >
-      <body className="mx-auto flex min-h-full w-full max-w-screen-sm flex-col">
+            {/* 데스크톱까지 여는 폭. 예전엔 `max-w-screen-sm`(640px) 고정이라 큰 화면에서
+          가운데 좁은 기둥 하나로 보였다 — 휴대폰 화면을 늘려 놓은 꼴이다.
+          좁은 화면에서는 이 값이 안 걸리므로 모바일은 그대로다. */}
+      <body className="mx-auto flex min-h-full w-full max-w-[1280px] flex-col">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           {/* 본문이 남은 높이를 먹어 푸터를 화면 바닥까지 민다 — 홈처럼 짧은
               화면에서 푸터가 콘텐츠에 바로 붙으면 그 아래 빈 화면이 "덜 그려진

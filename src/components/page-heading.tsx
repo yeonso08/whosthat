@@ -10,7 +10,7 @@ type Props = { children: ReactNode; className?: string };
  */
 export function PageTitle({ children, className = "" }: Props) {
   return (
-    <h1 className={`text-3xl font-black tracking-tighter ${className}`}>
+    <h1 className={`text-3xl font-black tracking-tighter lg:text-4xl ${className}`}>
       {children}
     </h1>
   );
@@ -34,7 +34,7 @@ export function PageEyebrow({ children }: Props) {
 /** 목록 위의 그룹 제목. 홈의 "지난 기수" 와 검색 결과 그룹이 같은 자리·같은 무게다. */
 export function GroupHeading({ children }: Props) {
   return (
-    <h2 className="px-5 pt-7 pb-2 text-[13px] font-bold text-muted-foreground">
+    <h2 className="gutter pt-7 pb-2 text-[13px] font-bold text-muted-foreground lg:text-sm">
       {children}
     </h2>
   );

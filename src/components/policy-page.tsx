@@ -44,11 +44,11 @@ export async function PolicyPage({ title, schema, children }: Props) {
     <main>
       <JsonLd data={schema} />
 
-      <header className="px-5 pt-6">
+      <header className="gutter pt-6">
         <SiteHeader />
       </header>
 
-      <article className="px-5 pt-5">
+      <article className="gutter max-w-[68ch] pt-5">
         {/* 화살표의 44px 탭 영역이 제목을 밀지 않게 줄 전체를 왼쪽으로 당긴다. */}
         <div className="-ml-3 flex items-start gap-1">
           <BackLink href={homeHref(locale)} label={dict.nav.backHome} />

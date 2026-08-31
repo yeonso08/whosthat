@@ -20,7 +20,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
       {/* 사이트 이름을 검색 결과에 도메인 대신 띄우려면 홈에 이 마크업이 있어야 한다. */}
       <JsonLd data={websiteSchema(lang)} />
 
-      <header className="px-5 pt-6">
+      <header className="gutter pt-6">
         <SiteHeader />
         {/* 워드마크 바로 아래라 "누꼬 / 출연진 인스타" 로 읽힌다 — 이름과 하는 일이
             한 덩어리다. 사이트 전체 집계를 여기 한 줄 더 적지 않는 건 아래 카드가
@@ -42,7 +42,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
           {/* 포스터 격자다 — 프로그램이 늘어도 홈이 스크롤 지옥이 되지 않고,
               홀수로 남는 타일도 구멍이 안 난다. 세로 간격이 넓은 건 포스터
               아래 두 줄이 다음 줄 포스터에 붙지 않게 하려는 것이다. */}
-          <section className="grid grid-cols-2 gap-x-3 gap-y-6 px-5">
+          <section className="gutter grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:gap-x-4 lg:gap-y-8">
             {programs.map((program) => (
               <ProgramCard key={program.id} program={program} />
             ))}

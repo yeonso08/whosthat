@@ -19,8 +19,9 @@ type Props = { member: CastMember };
 /** 사전을 통째로 받지 않는다 — 이 줄이 읽는 건 `status` 묶음뿐이다. */
 type StatusProps = Props & { status: Dictionary["status"]; locale: Locale };
 
-/** 2열 그리드라 모바일에선 화면 절반, 넓어지면 카드가 300px 에서 멈춘다. */
-const CARD_SIZES = "(min-width: 640px) 300px, 50vw";
+/** 격자의 열 수와 짝이다 — 2→3→4→5열로 늘어나므로 같은 중단점을 밟는다. */
+const CARD_SIZES =
+  "(min-width: 1024px) 240px, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw";
 
 /** 사진 자리를 채우는 가명 배지의 글자 크기. 배지는 상속받아 쓴다. */
 const FALLBACK_TEXT = "text-[22px] tracking-tight";

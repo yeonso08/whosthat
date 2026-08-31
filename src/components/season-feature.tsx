@@ -38,7 +38,7 @@ export async function SeasonFeature({ season }: Props) {
   return (
     <Link
       href={seasonHref(locale, season.programId, season.id)}
-      className="focus-ring block rounded-2xl bg-card p-4 transition-opacity hover:opacity-90"
+      className="focus-ring block rounded-2xl bg-card p-4 transition-opacity hover:opacity-90 lg:p-6"
     >
       {season.onAir ? (
         <span className="flex items-center gap-1.5 text-[11px] font-bold text-searching">
@@ -56,7 +56,7 @@ export async function SeasonFeature({ season }: Props) {
         </span>
       )}
 
-      <p className="mt-2.5 text-2xl font-black tracking-tighter">{label}</p>
+      <p className="mt-2.5 text-2xl font-black tracking-tighter lg:text-4xl">{label}</p>
 
       <div className="mt-4 flex items-center justify-between gap-3">
         {/* 얼굴 겹침(-ml)을 상쇄해 첫 원을 제목 선에 맞춘다. */}

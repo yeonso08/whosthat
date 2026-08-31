@@ -6,8 +6,10 @@ import type { ReactNode } from "react";
  */
 export function EmptyCard({ children }: { children: ReactNode }) {
   return (
-    <p className="mx-5 mt-6 rounded-2xl bg-card px-5 py-8 text-center text-[13px] leading-relaxed text-muted-foreground">
-      {children}
-    </p>
+    <div className="gutter mt-6">
+      <p className="rounded-2xl bg-card px-5 py-8 text-center text-[13px] leading-relaxed text-muted-foreground">
+        {children}
+      </p>
+    </div>
   );
 }

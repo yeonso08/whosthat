@@ -53,7 +53,7 @@ export default async function Page({
     <main>
       <JsonLd data={breadcrumbSchema(lang, programCrumb(program, lang))} />
 
-      <header className="px-5 pt-6 pb-1">
+      <header className="gutter pt-6 pb-1">
         <SiteHeader />
         <PageEyebrow>{strings.name}</PageEyebrow>
 
@@ -69,7 +69,7 @@ export default async function Page({
       </header>
 
       {featured && (
-        <div className="mt-5 px-5">
+        <div className="gutter mt-5">
           <SeasonFeature season={featured} />
         </div>
       )}
@@ -90,7 +90,7 @@ export default async function Page({
         {rest.length > 0 && (
           <>
             <GroupHeading>{strings.pastSeasons}</GroupHeading>
-            <section className="px-2">
+            <section className="gutter-inset">
               {rest.map((season) => (
                 <SeasonRow key={season.id} season={season} />
               ))}

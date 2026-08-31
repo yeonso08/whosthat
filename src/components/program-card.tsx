@@ -22,8 +22,13 @@ const POSTER = "aspect-[2/3]";
  */
 const POSTER_RADIUS = "rounded-xl";
 
-/** 2열 격자에서 판 하나의 폭. 화면이 넓어져도 본문이 screen-sm 에서 멈춘다. */
-const POSTER_SIZES = "(min-width: 640px) 300px, 50vw";
+/**
+ * 판 하나의 폭. **격자의 열 수와 짝이다** — 홈이 2→3→4→5열로 늘어나므로 여기도
+ * 같은 중단점을 밟아야 `next/image` 가 맞는 크기를 고른다. 한쪽만 고치면 화면은
+ * 멀쩡한데 필요 이상으로 큰 파일이 내려간다.
+ */
+const POSTER_SIZES =
+  "(min-width: 1024px) 240px, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw";
 
 /**
  * 포스터가 아직 없을 때 판을 채우는 활자.

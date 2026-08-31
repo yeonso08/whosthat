@@ -52,8 +52,9 @@ export function SeasonSearch({ index, locale, text, status, children }: Props) {
 
   return (
     <>
-      <div className="px-5 pt-7">
-        <InputGroup className="h-11 rounded-2xl border-transparent bg-card">
+      <div className="gutter pt-7">
+        {/* 넓은 화면에서 폭을 묶는다 — 컨테이너를 다 쓰면 글자 하나 없는 띠가 된다. */}
+        <InputGroup className="h-11 rounded-2xl border-transparent bg-card lg:h-12 lg:max-w-2xl">
           <InputGroupAddon>
             <Search className="size-4 text-muted-foreground" />
           </InputGroupAddon>
@@ -89,7 +90,7 @@ export function SeasonSearch({ index, locale, text, status, children }: Props) {
       {searching && results.seasons.length > 0 && (
         <>
           <GroupHeading>{text.seasonsHeading}</GroupHeading>
-          <section className="px-2">
+          <section className="gutter-inset">
             {results.seasons.map((season) => (
               <Link
                 key={season.id}
@@ -120,7 +121,7 @@ export function SeasonSearch({ index, locale, text, status, children }: Props) {
       {searching && results.members.length > 0 && (
         <>
           <GroupHeading>{text.castHeading}</GroupHeading>
-          <section className="px-2">
+          <section className="gutter-inset">
             {results.members.map(({ member, programId, seasonId, seasonLabel }) => (
               <Link
                 key={`${programId}-${member.id}`}
@@ -137,7 +138,7 @@ export function SeasonSearch({ index, locale, text, status, children }: Props) {
           </section>
 
           {results.membersTruncated && (
-            <p className="px-5 pt-2 text-[12px] leading-relaxed text-muted-foreground">
+            <p className="gutter pt-2 text-[12px] leading-relaxed text-muted-foreground">
               {text.truncated}{" "}
               <span className="font-lat">{text.truncatedExample}</span>
             </p>
