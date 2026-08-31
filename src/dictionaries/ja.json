@@ -38,6 +38,7 @@
     "programsHeading": "番組"
   },
   "program": {
+    "posterAlt": "{program} のポスター",
     "metaTitle": "{program} 出演者インスタ",
     "metaDescription": "{program} の出演者{people}人のインスタグラムアカウント。確認できたものだけをまとめ、アカウントがない方はないと書いてあります。",
     "metaDescriptionPending": "{program} の出演者のインスタグラムアカウント。出演者リストを整理しています。"

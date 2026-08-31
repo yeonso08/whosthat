@@ -38,6 +38,7 @@
     "programsHeading": "Programs"
   },
   "program": {
+    "posterAlt": "{program} poster",
     "metaTitle": "{program} cast Instagram",
     "metaDescription": "Instagram accounts for the {people} cast members of {program}. Only verified accounts are listed, and people with no account are marked as such.",
     "metaDescriptionPending": "Instagram accounts for the cast of {program}. The cast list is still being compiled."

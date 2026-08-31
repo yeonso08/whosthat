@@ -55,6 +55,12 @@ export type Program = {
   name: string;
   type: string;
   platform: string;
+  /**
+   * 홈 격자에 거는 프로그램 포스터. `/public` 아래 경로다(핫링크 금지).
+   * 비워 두면 화면이 이름을 활자로 앉힌 판으로 알아서 넘어간다 —
+   * `CastMember.profileImageUrl` 과 같은 태도다.
+   */
+  posterUrl?: string;
   seasons: Season[];
 };
 
