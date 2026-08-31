@@ -22,8 +22,17 @@ export const HOME_PATH = "";
 export const TAKEDOWN_PATH = "/takedown";
 export const PRIVACY_PATH = "/privacy";
 
-export function seasonPath(seasonId: string): string {
-  return `/seasons/${seasonId}`;
+/** 한 프로그램의 기수 목록. `app/[lang]/[program]` 과 짝이다. */
+export function programPath(programId: string): string {
+  return `/${programId}`;
+}
+
+/**
+ * 기수 상세. **프로그램이 앞에 붙는다** — 기수 id 는 프로그램 안에서만 고유해서
+ * (`s1` 이 두 프로그램에 다 있다) 프로그램 없이는 어느 기수인지 정해지지 않는다.
+ */
+export function seasonPath(programId: string, seasonId: string): string {
+  return `${programPath(programId)}/seasons/${seasonId}`;
 }
 
 /** 언어 없는 경로에 언어를 앞에 붙인다. 내부 링크는 전부 여기를 거친다. */
@@ -31,14 +40,23 @@ export function localePath(locale: Locale, path: string): string {
   return `/${locale}${path}`;
 }
 
-/** 그 언어의 기수 목록. `app/[lang]` 과 짝이다. */
+/** 그 언어의 프로그램 목록. `app/[lang]` 과 짝이다. */
 export function homeHref(locale: Locale): string {
   return localePath(locale, HOME_PATH);
 }
 
-/** 기수 상세 경로. `app/[lang]/seasons/[id]` 와 짝이다. */
-export function seasonHref(locale: Locale, seasonId: string): string {
-  return localePath(locale, seasonPath(seasonId));
+/** 그 프로그램의 기수 목록. */
+export function programHref(locale: Locale, programId: string): string {
+  return localePath(locale, programPath(programId));
+}
+
+/** 기수 상세 경로. `app/[lang]/[program]/seasons/[id]` 와 짝이다. */
+export function seasonHref(
+  locale: Locale,
+  programId: string,
+  seasonId: string,
+): string {
+  return localePath(locale, seasonPath(programId, seasonId));
 }
 
 /**
@@ -49,10 +67,11 @@ export function seasonHref(locale: Locale, seasonId: string): string {
  */
 export function castMemberHref(
   locale: Locale,
+  programId: string,
   seasonId: string,
   memberId: string,
 ): string {
-  return `${seasonHref(locale, seasonId)}#${memberId}`;
+  return `${seasonHref(locale, programId, seasonId)}#${memberId}`;
 }
 
 /** 삭제·정정 요청. `app/[lang]/takedown` 과 짝이다. */

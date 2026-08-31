@@ -16,6 +16,7 @@ import {
   getDictionary,
   languageAlternates,
   localizeAlias,
+  localizeProgramName,
   localizeSeason,
   ogAlternateLocales,
   ogLocale,
@@ -25,12 +26,14 @@ import {
   homeHref,
   instagramUrl,
   localePath,
+  programHref,
+  programPath,
   seasonHref,
   PRIVACY_PATH,
   TAKEDOWN_PATH,
 } from "./links";
 import { absoluteUrl, SITE_URL } from "./site";
-import { getCoverage, type Season } from "./types";
+import { getCoverage, getTotals, type Program, type Season } from "./types";
 
 /** JSON-LD 한 덩어리. 스키마가 자유 형식이라 여기까지만 좁힌다. */
 export type Schema = Record<string, unknown>;
@@ -45,6 +48,17 @@ export type Schema = Record<string, unknown>;
  */
 export function isIndexable(season: Season): boolean {
   return season.cast.length > 0;
+}
+
+/**
+ * 이 프로그램 화면을 색인에 올릴지. 기수가 전부 "명단 정리 중" 이면 그 화면도
+ * 빈 줄의 목록이라 기수 상세와 같은 soft 404 판정을 받는다 — 새 프로그램을
+ * 골격만 먼저 넣는 동안이 정확히 그 상태다.
+ *
+ * 기수가 하나라도 차면 저절로 색인으로 돌아온다.
+ */
+export function isProgramIndexable(program: Program): boolean {
+  return program.seasons.some(isIndexable);
 }
 
 /**
@@ -99,6 +113,58 @@ export function policyMetadata(
 }
 
 /**
+ * 프로그램 화면(`/ko/i-am-solo`)의 metadata.
+ *
+ * 명단이 한 줄도 없는 프로그램은 인원수를 말하지 않는다 — "0명의 계정" 은
+ * 아무도 못 찾았다는 뜻으로 읽혀서 사실과 다르다(`formatCoverage` 와 같은 이유).
+ */
+export function programMetadata(program: Program, locale: Locale): Metadata {
+  const dict = getDictionary(locale);
+  const values = {
+    program: localizeProgramName(program.id, locale),
+    people: getTotals(program.seasons).people,
+  };
+
+  const title = fill(dict.program.metaTitle, values);
+  const description = fill(
+    values.people === 0
+      ? dict.program.metaDescriptionPending
+      : dict.program.metaDescription,
+    values,
+  );
+  const path = programHref(locale, program.id);
+
+  return {
+    // 제목에 이미 프로그램 이름이 들어 있어서 루트의 title.template 을 그대로
+    // 두면 사이트 이름이 뒤에 또 붙는다.
+    title: { absolute: title },
+    description,
+    alternates: {
+      canonical: path,
+      languages: languageAlternates(programPath(program.id)),
+    },
+    ...(isProgramIndexable(program)
+      ? {}
+      : { robots: { index: false, follow: true } }),
+    openGraph: {
+      ...openGraphBase(locale),
+      type: "website",
+      title,
+      description,
+      url: path,
+    },
+  };
+}
+
+/** 홈 › 프로그램. 프로그램 화면과 그 아래 기수 상세가 같은 칸을 쓴다. */
+export function programCrumb(program: Program, locale: Locale) {
+  return {
+    name: localizeProgramName(program.id, locale),
+    path: programHref(locale, program.id),
+  };
+}
+
+/**
  * 사이트 자체를 가리키는 엔티티. Google 이 검색 결과에 도메인 대신 사이트
  * 이름을 쓸지 정할 때 홈의 이 마크업을 본다.
  *
@@ -122,14 +188,14 @@ export function websiteSchema(locale: Locale): Schema {
 }
 
 /**
- * 홈 › 이 페이지. 검색 결과의 주소 줄이 경로로 바뀐다.
+ * 홈 › … › 이 페이지. 검색 결과의 주소 줄이 경로로 바뀐다.
  *
- * 이 사이트는 두 단계뿐이라 마지막 한 칸만 받는다. 세 단계가 생기면 그때
- * 배열로 바꾼다.
+ * 홈은 언제나 첫 칸이라 쓰는 쪽이 적지 않는다. 기수 상세는 그 사이에 프로그램이
+ * 한 칸 더 들어가고(홈 › 나는 솔로 › 33기), 정책 페이지는 여전히 두 단계다.
  */
 export function breadcrumbSchema(
   locale: Locale,
-  current: { name: string; path: string },
+  ...trail: { name: string; path: string }[]
 ): Schema {
   const dict = getDictionary(locale);
 
@@ -138,7 +204,7 @@ export function breadcrumbSchema(
     "@type": "BreadcrumbList",
     itemListElement: [
       { name: dict.site.name, path: homeHref(locale) },
-      current,
+      ...trail,
     ].map((crumb, index) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -155,13 +221,17 @@ export function breadcrumbSchema(
  * 넣어 봐야 "사람이 있다"는 주장만 남는다 — 화면에 없는 말을 마크업으로 더하지
  * 않는다는 게 이 사이트의 데이터 규칙이다.
  */
-export function seasonSchema(season: Season, locale: Locale): Schema[] {
+export function seasonSchema(
+  program: Program,
+  season: Season,
+  locale: Locale,
+): Schema[] {
   const { label, special } = localizeSeason(season, locale);
   const dict = getDictionary(locale);
 
-  const crumb = breadcrumbSchema(locale, {
+  const crumb = breadcrumbSchema(locale, programCrumb(program, locale), {
     name: label,
-    path: seasonHref(locale, season.id),
+    path: seasonHref(locale, program.id, season.id),
   });
 
   // status 만 보면 핸들이 있는지까지는 타입이 안 좁혀진다 — 둘을 함께 확인하며
@@ -181,6 +251,7 @@ export function seasonSchema(season: Season, locale: Locale): Schema[] {
       "@context": "https://schema.org",
       "@type": "ItemList",
       name: fill(dict.season.metaTitle, {
+        program: localizeProgramName(program.id, locale),
         season: label,
         special: special ? ` ${special}` : "",
       }),
@@ -196,7 +267,7 @@ export function seasonSchema(season: Season, locale: Locale): Schema[] {
         position: index + 1,
         item: {
           "@type": "Person",
-          // 가명 하나를 318명 중 26명이 같이 쓴다 — 기수를 붙여야 사람이 갈린다.
+          // 나는 솔로는 가명 21개가 408명에 반복된다 — 기수를 붙여야 사람이 갈린다.
           name: `${label} ${localizeAlias(member.alias, locale)}`,
           sameAs: instagramUrl(member.handle),
         },
