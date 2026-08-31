@@ -36,9 +36,10 @@ export function search(index: SearchIndex, query: string): SearchResults {
   const members: MemberHit[] = [];
 
   for (const season of index) {
-    // 기수 이름을 사람 쪽 건초더미에도 넣는 게 "22기 영수" 를 받는 유일한
-    // 장치다. 질의에서 기수 토큰을 따로 골라내는 특수 처리가 필요 없어진다.
-    const seasonText = `${season.label} ${season.special ?? ""} ${season.keywords ?? ""}`;
+    // 프로그램·기수 이름을 사람 쪽 건초더미에도 넣는 게 "22기 영수" 와
+    // "솔로지옥 시즌 4" 를 받는 유일한 장치다. 질의에서 그 토큰을 따로 골라내는
+    // 특수 처리가 필요 없어진다.
+    const seasonText = `${season.programName ?? ""} ${season.label} ${season.special ?? ""} ${season.keywords ?? ""}`;
     if (matches(seasonText, tokens)) seasons.push(season);
 
     for (const member of season.cast) {
@@ -46,6 +47,7 @@ export function search(index: SearchIndex, query: string): SearchResults {
       if (matches(text, tokens)) {
         members.push({
           member,
+          programId: season.programId,
           seasonId: season.id,
           seasonLabel: season.label,
         });

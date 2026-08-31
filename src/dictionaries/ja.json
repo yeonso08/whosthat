@@ -1,33 +1,60 @@
 {
   "site": {
-    "name": "私はSOLO 出演者インスタ",
-    "description": "私はSOLO（ナヌンソロ）の出演者のインスタグラムアカウントを、確認できたものだけ期別にまとめたアーカイブです。アカウントがない方はないと書いてありますので、二度検索する必要がありません。",
-    "programs": { "na-neun-solo": "私はSOLO" }
+    "name": "nukko — バラエティ出演者インスタ",
+    "description": "韓国バラエティ番組の出演者のインスタグラムアカウントを、番組別・期別にまとめたアーカイブです。確認できたものだけを載せ、アカウントがない方はないと書いてありますので、二度検索する必要がありません。",
+    "programs": {
+      "i-am-solo": {
+        "name": "私はSOLO",
+        "seasonLabel": "第{n}期",
+        "heading": "全ての期",
+        "pastSeasons": "これまでの期",
+        "latest": "最新の期",
+        "summary": "{seasons}期・{people}人中 インスタ{found}件確認",
+        "summaryPending": "{seasons}期・出演者リスト整理中",
+        "searchPlaceholder": "期・特集・仮名で検索",
+        "seasonsHeading": "期"
+      },
+      "singles-inferno": {
+        "name": "脱出おひとり島",
+        "seasonLabel": "シーズン{n}",
+        "heading": "全シーズン",
+        "pastSeasons": "これまでのシーズン",
+        "latest": "最新シーズン",
+        "summary": "{seasons}シーズン・{people}人中 インスタ{found}件確認",
+        "summaryPending": "{seasons}シーズン・出演者リスト整理中",
+        "searchPlaceholder": "シーズン・名前で検索",
+        "seasonsHeading": "シーズン"
+      }
+    }
   },
   "nav": {
-    "back": "期の一覧へ",
+    "back": "{program} の一覧へ",
+    "backHome": "番組一覧へ",
     "theme": "ライト・ダークモードの切り替え",
     "language": "言語を選ぶ"
   },
   "home": {
-    "heading": "全ての期",
-    "summary": "{seasons}期・{people}人中 インスタ{found}件確認",
-    "pastSeasons": "これまでの期",
-    "latest": "最新の期",
-    "onAir": "放送中"
+    "heading": "出演者インスタ",
+    "programsHeading": "番組"
+  },
+  "program": {
+    "posterAlt": "{program} のポスター",
+    "metaTitle": "{program} 出演者インスタ",
+    "metaDescription": "{program} の出演者{people}人のインスタグラムアカウント。確認できたものだけをまとめ、アカウントがない方はないと書いてあります。",
+    "metaDescriptionPending": "{program} の出演者のインスタグラムアカウント。出演者リストを整理しています。"
   },
   "season": {
-    "label": "第{n}期",
     "aired": "{date} 放送",
+    "onAir": "放送中",
     "coverage": "{found} / {total} 確認",
     "coveragePending": "出演者リスト整理中",
     "castCount": "{total}人中 {found}人のアカウントを確認",
     "castPending": "出演者リスト整理中",
     "castPendingBody": "この期の出演者リストはまだ確認できていません。期ごとに人数が違うため、推測で埋めることはしません。",
     "photoAlt": "{alias}の写真",
-    "metaTitle": "私はSOLO {season}{special} 出演者インスタ",
-    "metaDescription": "私はSOLO {season}{special} の出演者{total}人のインスタグラムアカウント。確認できたものだけをまとめ、アカウントがない方はないと書いてあります。",
-    "metaDescriptionPending": "私はSOLO {season}{special} の出演者のインスタグラムアカウント。出演者リストを整理しています。"
+    "metaTitle": "{program} {season}{special} 出演者インスタ",
+    "metaDescription": "{program} {season}{special} の出演者{total}人のインスタグラムアカウント。確認できたものだけをまとめ、アカウントがない方はないと書いてあります。",
+    "metaDescriptionPending": "{program} {season}{special} の出演者のインスタグラムアカウント。出演者リストを整理しています。"
   },
   "status": {
     "none": "アカウントなし",
@@ -35,14 +62,14 @@
     "checked": "{date} 確認"
   },
   "search": {
-    "placeholder": "期・特集・仮名で検索",
-    "label": "期と出演者を検索",
+    "placeholder": "番組・期・名前で検索",
+    "label": "番組・期と出演者を検索",
     "clear": "検索語を消す",
     "emptyTitle": "該当する項目がありません。",
-    "emptyHint": "期の番号や特集名でも探せます。",
-    "seasonsHeading": "期",
+    "emptyHint": "番組名や期の番号でも探せます。",
+    "seasonsHeading": "期・シーズン",
     "castHeading": "出演者",
-    "truncated": "同じ仮名が期ごとにあります。期を一緒に入力すると絞り込めます — 例:",
+    "truncated": "同じ名前が期ごとにあります。番組名や期を一緒に入力すると絞り込めます — 例:",
     "truncatedExample": "第22期 ヨンス"
   },
   "footer": {
@@ -52,7 +79,7 @@
   },
   "og": {
     "heading": "出演者インスタ",
-    "stat": "{seasons}期・{people}人中 {found}件確認",
+    "stat": "{programs}番組・{people}人中 {found}件確認",
     "seasonStat": "出演者{total}人中 インスタ{found}件確認"
   },
   "takedown": {
@@ -64,18 +91,18 @@
       "自分のアカウントを下げてください",
       "自分の写真を下げてください",
       "自分の本名・年齢・職業を消すか直してください",
-      "自分と関係のないアカウントが自分の仮名に載っています",
-      "期や仮名が間違って書かれています"
+      "自分と関係のないアカウントが自分の名前に載っています",
+      "番組・期や名前が間違って書かれています"
     ],
     "requestsNote": "下の二つは本人でなくてもお知らせいただけます。間違って載ったアカウント一つが、まったく関係のない方にDMを集中させてしまうため、お知らせいただけると助かります。",
     "howHeading": "依頼の方法",
     "howBefore": "下のアドレスにメールをお送りください。二行で十分です — ",
-    "howWhat": "期と仮名",
-    "howMiddle": "（例：第28期 ヨンスク）、そして",
+    "howWhat": "番組・期と名前",
+    "howMiddle": "（例：私はSOLO 第28期 ヨンスク）、そして",
     "howFix": "何を消すか直すか",
     "howAfter": "。",
     "button": "メールを送る",
-    "mailSubject": "[削除・訂正のご依頼] 期と仮名をご記入ください",
+    "mailSubject": "[削除・訂正のご依頼] 番組・期と名前をご記入ください",
     "verifyHeading": "本人確認",
     "verifyBody": "他人のアカウントを代わりに下げさせるいたずらを防ぐ必要があるため、ご本人からの依頼であれば、そのアカウントをお持ちだと分かる方法が一番早いです。該当のインスタグラムアカウントからDMをいただくか、そのアカウントに登録されたメールアドレスからお送りください。確認が難しい場合でも、まず画面から下げたうえでお話しします。",
     "timeHeading": "対応にかかる期間",
@@ -87,7 +114,7 @@
     "description": "このサイトが何を掲載し、訪問者について何を残すのかを書いています。",
     "intro": "{brand}（以下「このサイト」）が扱う情報について書いておきます。",
     "castHeading": "出演者の情報",
-    "cast1": "放送での仮名、すでに公開されている場合の本名、放送当時の年齢と職業、公開されているインスタグラムアカウント、そしてそのアカウントをいつどのように確認したかを掲載します。写真を一緒に掲載する場合もあります。",
+    "cast1": "放送で呼ばれていた名前（仮名で出演する番組もあります）、すでに公開されている場合の本名、放送当時の年齢と職業、公開されているインスタグラムアカウント、そしてそのアカウントをいつどのように確認したかを掲載します。写真を一緒に掲載する場合もあります。",
     "cast2": "すべて放送と公開された資料から集めたもので、ご本人から直接いただいたものではありません。非公開のアカウントや、確認できていない推測は掲載しません。写真を含め、下げてほしいとおっしゃれば理由をお尋ねせずに下げます。",
     "visitorHeading": "訪問者の情報",
     "visitor1": "会員登録もログインもありません。お名前や連絡先を入力していただく画面はありません。",
@@ -102,7 +129,7 @@
     "rights": "ご自身の情報の閲覧・訂正・削除をご依頼いただけます。理由はお尋ねせず、確認できましたらすぐに消します。",
     "contactHeading": "お問い合わせ",
     "effective": "施行日 {date}",
-    "effectiveDate": "2026年8月24日",
+    "effectiveDate": "2026年8月31日",
     "translationNote": "この日本語は翻訳です。内容が異なる場合は韓国語の原文が基準となります。"
   }
 }

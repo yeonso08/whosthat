@@ -46,7 +46,12 @@ export function LocaleToggle({ current, label }: Props) {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant="ghost" size="icon-sm" aria-label={label}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-9 rounded-full"
+            aria-label={label}
+          >
             <Globe />
           </Button>
         }

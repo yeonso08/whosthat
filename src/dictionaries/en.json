@@ -1,33 +1,60 @@
 {
   "site": {
-    "name": "I Am SOLO Cast on Instagram",
-    "description": "A season-by-season archive of the Instagram accounts of the cast of I Am SOLO, the Korean dating show. Only verified accounts are listed, and people with no account are marked as such — so you never search twice.",
-    "programs": { "na-neun-solo": "I Am SOLO" }
+    "name": "nukko — Korean reality cast on Instagram",
+    "description": "An archive of the Instagram accounts of Korean reality show cast members, organised by show and season. Only verified accounts are listed, and people with no account are marked as such — so you never search twice.",
+    "programs": {
+      "i-am-solo": {
+        "name": "I Am SOLO",
+        "seasonLabel": "Season {n}",
+        "heading": "All seasons",
+        "pastSeasons": "Past seasons",
+        "latest": "Latest season",
+        "summary": "{seasons} seasons · {found} of {people} Instagram accounts found",
+        "summaryPending": "{seasons} seasons · cast list pending",
+        "searchPlaceholder": "Search by season, special or alias",
+        "seasonsHeading": "Seasons"
+      },
+      "singles-inferno": {
+        "name": "Single's Inferno",
+        "seasonLabel": "Season {n}",
+        "heading": "All seasons",
+        "pastSeasons": "Past seasons",
+        "latest": "Latest season",
+        "summary": "{seasons} seasons · {found} of {people} Instagram accounts found",
+        "summaryPending": "{seasons} seasons · cast list pending",
+        "searchPlaceholder": "Search by season or name",
+        "seasonsHeading": "Seasons"
+      }
+    }
   },
   "nav": {
-    "back": "Back to seasons",
+    "back": "Back to {program}",
+    "backHome": "Back to programs",
     "theme": "Toggle light and dark mode",
     "language": "Choose a language"
   },
   "home": {
-    "heading": "All seasons",
-    "summary": "{seasons} seasons · {found} of {people} Instagram accounts found",
-    "pastSeasons": "Past seasons",
-    "latest": "Latest season",
-    "onAir": "On air"
+    "heading": "Cast Instagram",
+    "programsHeading": "Programs"
+  },
+  "program": {
+    "posterAlt": "{program} poster",
+    "metaTitle": "{program} cast Instagram",
+    "metaDescription": "Instagram accounts for the {people} cast members of {program}. Only verified accounts are listed, and people with no account are marked as such.",
+    "metaDescriptionPending": "Instagram accounts for the cast of {program}. The cast list is still being compiled."
   },
   "season": {
-    "label": "Season {n}",
     "aired": "Aired {date}",
+    "onAir": "On air",
     "coverage": "{found} / {total} found",
     "coveragePending": "Cast list pending",
     "castCount": "{found} of {total} accounts found",
     "castPending": "Cast list pending",
     "castPendingBody": "We have not confirmed this season's cast list yet. Season sizes differ, so we do not fill it in by guesswork.",
     "photoAlt": "Photo of {alias}",
-    "metaTitle": "I Am SOLO {season}{special} cast Instagram",
-    "metaDescription": "Instagram accounts for the {total} cast members of I Am SOLO {season}{special}. Only verified accounts are listed, and people with no account are marked as such.",
-    "metaDescriptionPending": "Instagram accounts for the cast of I Am SOLO {season}{special}. The cast list is still being compiled."
+    "metaTitle": "{program} {season}{special} cast Instagram",
+    "metaDescription": "Instagram accounts for the {total} cast members of {program} {season}{special}. Only verified accounts are listed, and people with no account are marked as such.",
+    "metaDescriptionPending": "Instagram accounts for the cast of {program} {season}{special}. The cast list is still being compiled."
   },
   "status": {
     "none": "No account",
@@ -35,14 +62,14 @@
     "checked": "Checked {date}"
   },
   "search": {
-    "placeholder": "Search season, special, or alias",
-    "label": "Search seasons and cast",
+    "placeholder": "Search programs, seasons and names",
+    "label": "Search programs, seasons and cast",
     "clear": "Clear search",
     "emptyTitle": "No matches.",
-    "emptyHint": "You can also search by season number or special name.",
+    "emptyHint": "You can also search by program name or season number.",
     "seasonsHeading": "Seasons",
     "castHeading": "Cast",
-    "truncated": "The same alias runs through every season. Add the season to narrow it down — e.g.",
+    "truncated": "The same name appears in many seasons. Add the program or season to narrow it down — for example:",
     "truncatedExample": "Season 22 Yeongsu"
   },
   "footer": {
@@ -52,7 +79,7 @@
   },
   "og": {
     "heading": "Cast Instagram",
-    "stat": "{seasons} seasons · {found} of {people} found",
+    "stat": "{programs} programs · {found} of {people} found",
     "seasonStat": "{found} of {total} cast accounts found"
   },
   "takedown": {
@@ -64,18 +91,18 @@
       "Take my account down",
       "Take my photo down",
       "Remove or fix my real name, age, or job",
-      "An account that has nothing to do with me is linked to my alias",
-      "The season or the alias is wrong"
+      "An account that has nothing to do with me is linked to my name",
+      "The program, the season or the name is wrong"
     ],
     "requestsNote": "You can report the last two even if you are not the person involved. One wrongly linked account sends a flood of DMs to someone with no connection to the show, so we are glad to hear about it.",
     "howHeading": "How to ask",
     "howBefore": "Email the address below. Two lines is enough — ",
-    "howWhat": "the season and the alias",
-    "howMiddle": " (e.g. Season 28 Yeongsuk), and ",
+    "howWhat": "the program, the season and the name",
+    "howMiddle": " (e.g. I Am SOLO Season 28 Yeongsuk), and ",
     "howFix": "what to remove or fix",
     "howAfter": ".",
     "button": "Send an email",
-    "mailSubject": "[Takedown/Correction] Please include the season and alias",
+    "mailSubject": "[Takedown/Correction] Please include the program, season and name",
     "verifyHeading": "Verifying it is you",
     "verifyBody": "We have to stop pranks that ask us to take down someone else's account, so the fastest route is anything showing the account is yours — DM us from that Instagram account, or email from the address attached to it. Even when that is hard to confirm, we take it off the site first and talk afterward.",
     "timeHeading": "How long it takes",
@@ -87,7 +114,7 @@
     "description": "What this site publishes, and what it keeps about visitors.",
     "intro": "{brand} (\"this site\") handles the following information.",
     "castHeading": "Cast information",
-    "cast1": "We publish the show alias, the real name where it is already public, the age and job at the time of airing, public Instagram accounts, and when and how each account was verified. Photos are sometimes included.",
+    "cast1": "We publish the name used on the show (some programs use aliases), the real name where it is already public, the age and job at the time of airing, public Instagram accounts, and when and how each account was verified. Photos are sometimes included.",
     "cast2": "All of it comes from the broadcast and from public sources — never collected from the person directly. Private accounts and unverified guesses are not published. If you ask us to take something down, photos included, we do it without asking why.",
     "visitorHeading": "Visitor information",
     "visitor1": "There are no accounts and no logins. No screen on this site asks for your name or contact details.",
@@ -102,7 +129,7 @@
     "rights": "You can ask to see, correct, or delete information about yourself. We do not ask why, and once it is confirmed we delete it right away.",
     "contactHeading": "Contact",
     "effective": "Effective {date}",
-    "effectiveDate": "August 24, 2026",
+    "effectiveDate": "August 31, 2026",
     "translationNote": "This English text is a translation. Where the two differ, the Korean original governs."
   }
 }

@@ -1,4 +1,4 @@
-import { getProgram, getSeason, getSeasons } from "@/lib/data";
+import { getPrograms, getSeason, getSeasons } from "@/lib/data";
 import {
   fill,
   getDictionary,
@@ -17,27 +17,34 @@ export const contentType = OG_CONTENT_TYPE;
 /**
  * 없으면 이 라우트만 요청마다 서버에서 렌더된다 — 공유될 때마다 Google Fonts
  * 를 다시 때리고, 나머지가 전부 정적인 사이트에 서버가 하나 붙는다.
- * 언어는 루트 레이아웃이 만들고 여기서 기수를 곱한다.
+ * 언어는 루트 레이아웃이 만들고 여기서 프로그램 × 기수를 곱한다.
  */
 export function generateStaticParams() {
-  return getSeasons().map((season) => ({ id: season.id }));
+  return getPrograms().flatMap((program) =>
+    getSeasons(program).map((season) => ({
+      program: program.id,
+      id: season.id,
+    })),
+  );
 }
 
 export default async function Image({
   params,
-}: PageProps<"/[lang]/seasons/[id]">) {
-  const { lang, id } = await params;
+}: PageProps<"/[lang]/[program]/seasons/[id]">) {
+  const { lang, program: programId, id } = await params;
   const locale = resolveLocale(lang);
   const dict = getDictionary(locale);
 
-  const season = getSeason(id);
+  const season = getSeason(programId, id);
   const coverage = getCoverage(season?.cast ?? []);
 
   return ogImageResponse({
     locale,
     scale: "label",
-    eyebrow: localizeProgramName(getProgram().id, locale),
-    headline: season ? localizeSeasonLabel(season.label, locale) : "",
+    eyebrow: localizeProgramName(programId, locale),
+    headline: season
+      ? localizeSeasonLabel(programId, season.number, locale)
+      : "",
     stat: fill(dict.og.seasonStat, {
       total: coverage.total,
       found: coverage.found,

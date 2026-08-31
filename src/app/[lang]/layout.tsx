@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
-import { Gothic_A1, Manrope, Zen_Kaku_Gothic_New } from "next/font/google";
+import {
+  Gothic_A1,
+  IBM_Plex_Mono,
+  Manrope,
+  Zen_Kaku_Gothic_New,
+} from "next/font/google";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { SiteFooter } from "@/components/site-footer";
+import { SiteNav } from "@/components/site-nav";
 import { ThemeProvider } from "@/components/theme-provider";
 import {
   getDictionary,
@@ -34,6 +40,20 @@ const zenKaku = Zen_Kaku_Gothic_New({
   variable: "--font-sans",
   subsets: ["latin"],
   weight: ["300", "500", "700", "900"],
+});
+
+/**
+ * 인스타 핸들 전용 서체.
+ *
+ * **핸들은 문장이 아니라 식별자다** — 방문자가 이 사이트에서 실제로 가져가는
+ * 유일한 값이고, 한 글자만 달라도 다른 사람이 된다. 본문과 같은 활자로 적어
+ * 두면 설명글에 섞여 흘러가는데, 고정폭이면 눈이 글자 단위로 짚는다.
+ * 언어를 안 탄다 — 핸들은 어느 화면에서나 라틴이다.
+ */
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  weight: ["500", "600"],
 });
 
 const manrope = Manrope({
@@ -103,11 +123,20 @@ export default async function RootLayout({
       // next-themes 가 마운트 시점에 <html> 클래스를 다크/라이트로 고쳐 쓴다 —
       // 서버가 모르는 값이라 하이드레이션 경고가 나므로 여기서만 억제한다.
       suppressHydrationWarning
-      className={`${SANS_FONT[lang].variable} ${manrope.variable} h-full antialiased`}
+      className={`${SANS_FONT[lang].variable} ${manrope.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="mx-auto flex min-h-full w-full max-w-screen-sm flex-col">
+            {/* 상단 바는 화면 폭을 다 쓰고 본문만 컨테이너에 맞춘다 — 그래야 경계선이
+          화면을 가로지르고 바가 화면의 일부로 읽힌다. */}
+      <body className="flex min-h-full w-full flex-col">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          {children}
+          {/* 본문이 남은 높이를 먹어 푸터를 화면 바닥까지 민다 — 홈처럼 짧은
+              화면에서 푸터가 콘텐츠에 바로 붙으면 그 아래 빈 화면이 "덜 그려진
+              페이지" 로 읽힌다. */}
+          <SiteNav />
+          {/* 본문이 남은 높이를 먹어 푸터를 화면 바닥까지 민다 — 짧은 화면에서
+              푸터가 콘텐츠에 바로 붙으면 그 아래 빈 화면이 "덜 그려진 페이지" 로
+              읽힌다. 폭은 여기서 묶는다(상단 바는 안 묶인다). */}
+          <div className="mx-auto w-full max-w-[1280px] flex-1">{children}</div>
           {/* 레이아웃에 두면 기수를 아무리 늘려도 삭제 창구가 빠지는 화면이 없다. */}
           <SiteFooter />
         </ThemeProvider>

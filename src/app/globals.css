@@ -9,8 +9,11 @@
   --color-foreground: var(--foreground);
   --color-elevated: var(--elevated);
   --color-searching: var(--searching);
+  --color-verified: var(--verified);
+  --color-live: var(--live);
   --font-sans: var(--font-sans);
   --font-lat: var(--font-lat);
+  --font-mono: var(--font-mono);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -29,61 +32,217 @@
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
-  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-xl: calc(var(--radius) * 1.25);
+  --radius-2xl: calc(var(--radius) * 1.5);
+  --shadow-soft: var(--soft-shadow);
+  --shadow-lifted: var(--lifted-shadow);
+  --ease-soft: var(--soft-ease);
 }
 
-/* 시안 D "어둠 속 사진" 팔레트를 라이트·다크 양쪽으로 짝지었다. 색은 흑백뿐이고,
-   유일한 유채색 --searching 은 "아직 못 찾음" 상태에만 쓴다 — 두 팔레트 모두. */
+/*
+ * 팔레트. 라이트·다크 두 벌이고 명도만 뒤집혔지 구조는 같다.
+ *
+ * **유채색은 둘이고, 둘 다 자리가 못박혀 있다.** `--verified`(앰버)는 확인을 마친
+ * 계정의 핸들, `--live`(빨강)는 방영 중 표시의 점. 그 밖의 자리(강조·CTA·배지)로
+ * 번지게 하지 말 것 — 셋째 자리가 생기는 순간 둘 다 신호이길 그만둔다.
+ *
+ * **빨강은 점에만 쓰고 글자에는 안 쓴다**(2026-08-31). 방송의 라이브 표시는
+ * 어디서나 빨간 점이라 설명이 필요 없는 기호고, 글자까지 물들이면 화면에서
+ * 붉은 면적이 앰버 핸들과 경쟁한다 — 핸들은 방문자가 가지러 온 값이라 그
+ * 싸움에서 지면 안 된다. "방영 중" 이라는 사실은 그 옆 글자가 그대로 말한다.
+ *
+ * `--verified` 는 확인을 마친 계정의 핸들에만 쓴다. 2026-08-31 에 뒤집었다: 그전에는 유일한 유채색이 `--searching`("아직 못
+ * 찾음")이라 **데이터가 채워질수록 화면에서 색이 사라졌다.** 22기처럼 다 채운
+ * 기수는 완전한 무채색이고 33기처럼 빈 기수만 색이 도는, 성취와 색이 반대로
+ * 붙은 구조였다. 지금은 반대다 — 아카이브가 채워질수록 화면이 산다.
+ *
+ * `--searching` 은 무채색으로 내렸다. 못 찾은 자리를 색으로 부각하면 눈이 구멍부터
+ * 훑게 되는데, 이 사이트가 파는 건 구멍이 아니라 확인이다. "찾는 중" 이라는 사실은
+ * 글자가 그대로 말한다.
+ *
+ * 바탕은 따뜻한 쪽으로 굴렸다. 순흑(#0a0a0c)은 사진이 한 장도 없는 동안 화면을
+ * 통째로 평평하게 만들었다 — 넷플릭스류의 다크가 살아 보이는 건 그림이 색을 다
+ * 대기 때문이고, 그림이 없으면 같은 값이 그냥 빈 화면이 된다.
+ */
 :root {
-  --background: #fafafa;
-  --foreground: #101013;
-  --card: #f1f1f3;
-  --elevated: #e6e6ea;
-  --searching: #92400e;
+  --background: #f4f3f0;
+  --foreground: #16150f;
+  --card: #ffffff;
+  --elevated: #eceae4;
+  --searching: #7d766a;
+  --verified: #9a6410;
+  --live: #d92c20;
   --popover: #ffffff;
   --popover-foreground: #101013;
   --primary: #101013;
   --primary-foreground: #fafafa;
   --secondary: #e6e6ea;
   --secondary-foreground: #101013;
-  --muted: #e6e6ea;
-  --muted-foreground: #6b6b76;
+  --muted: #eceae4;
+  --muted-foreground: #6b665c;
   --accent: #e6e6ea;
   --accent-foreground: #101013;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #e2e2e7;
-  --input: #e2e2e7;
-  --ring: #9a9aa4;
-  --radius: 0.875rem;
+  --border: #e6e3db;
+  --input: #e6e3db;
+  --ring: #98938a;
+  --radius: 1rem;
+  /*
+   * 면을 띄우는 그림자 두 벌. **테두리 실선 대신 이걸로 판을 세운다** — 1px 선은
+   * 판을 종이처럼 오려 붙인 것으로 보이게 하고, 그게 이 화면이 투박하게 읽히던
+   * 큰 원인이었다. 아래로 갈수록 흐려지는 그림자는 판이 배경 위에 떠 있다고
+   * 말해 주므로 선이 없어도 경계가 선다.
+   *
+   * 두 겹인 것도 일부러다 — 짧고 진한 것 하나(판의 두께)와 길고 옅은 것
+   * 하나(바닥에 지는 그늘)를 겹쳐야 흐릿한 얼룩이 아니라 떠 있는 면으로 보인다.
+   */
+  --soft-shadow: 0 1px 2px rgb(22 21 15 / 0.04), 0 8px 24px -10px rgb(22 21 15 / 0.10);
+  --lifted-shadow: 0 2px 4px rgb(22 21 15 / 0.05), 0 18px 36px -14px rgb(22 21 15 / 0.20);
+  /* 눌렀다 놓는 느낌을 내는 감속 곡선. 끝에서 살짝 멎어 기계적으로 안 읽힌다. */
+  --soft-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/*
+ * 다크 팔레트.
+ *
+ * **순흑에서 한 단 들어 올렸다**(2026-08-31). 배경이 `#0a0a0c` 라 사진이 한 장도
+ * 없는 동안 화면이 통째로 평평한 검정 판이었다 — 넷플릭스·라프텔의 다크가
+ * 살아 보이는 건 그림이 색을 다 대기 때문이고, 그림이 없으면 같은 값이 그냥
+ * 빈 화면이 된다. 배경·카드·떠 있는 면 사이 간격을 벌려 면이 면으로 읽히게 한다.
+ *
+ * 위 `:root` 주석에 팔레트 규칙 전체가 있다.
+ */
 .dark {
-  --background: #0a0a0c;
-  --foreground: #f4f4f6;
-  --card: #141418;
-  --elevated: #1d1d23;
-  --searching: #d9a44b;
-  --popover: #1d1d23;
-  --popover-foreground: #f4f4f6;
-  --primary: #f4f4f6;
-  --primary-foreground: #0a0a0c;
-  --secondary: #1d1d23;
-  --secondary-foreground: #f4f4f6;
-  --muted: #1d1d23;
-  --muted-foreground: #90909b;
-  --accent: #1d1d23;
-  --accent-foreground: #f4f4f6;
+  --background: #161511;
+  --foreground: #f4f1e9;
+  --card: #201e18;
+  --elevated: #2b2820;
+  --searching: #8f8878;
+  --verified: #e8b14c;
+  --live: #ff4f42;
+  --popover: #2b2820;
+  --popover-foreground: #f4f1e9;
+  --primary: #f4f1e9;
+  --primary-foreground: #161511;
+  --secondary: #2b2820;
+  --secondary-foreground: #f4f1e9;
+  --muted: #2b2820;
+  --muted-foreground: #a29a8b;
+  --accent: #2b2820;
+  --accent-foreground: #f4f1e9;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: #292930;
-  --input: #292930;
-  --ring: #57575f;
+  --border: #322e27;
+  --input: #322e27;
+  --ring: #6b6558;
+  /*
+   * 어두운 판 위에서는 검은 그림자가 거의 안 보인다 — 대신 훨씬 진하게 깔아
+   * 카드 아래를 배경보다 어둡게 만든다. 라이트에서 쓰는 값을 그대로 두면
+   * 다크에서만 판이 배경에 붙어 버린다.
+   */
+  --soft-shadow: 0 1px 2px rgb(0 0 0 / 0.36), 0 10px 28px -12px rgb(0 0 0 / 0.55);
+  --lifted-shadow: 0 2px 6px rgb(0 0 0 / 0.44), 0 22px 44px -18px rgb(0 0 0 / 0.72);
+}
+
+/**
+ * 화면 좌우 여백. **한 곳에서 정해야 헤더·격자·목록·푸터가 같은 세로선에 선다** —
+ * 열 곳에 `px-5` 로 흩어져 있던 것을 모았다. 데스크톱에서 넓어진다.
+ */
+@utility gutter {
+  padding-inline: 1.25rem;
+  @media (width >= 64rem) {
+    padding-inline: 2rem;
+  }
 }
 
 /* 키보드로 옮겨 다닐 때만 보이는 테두리. 누르는 자리마다 같은 굵기·같은 간격을
    써야 해서 유틸리티로 둔다 — 카드·워드마크·검색 결과 줄이 이걸 건다. */
+/**
+ * 방영 중 점이 퍼뜨리는 무리. **점 하나로 "지금" 을 말하려면 움직여야 한다** —
+ * 정지한 빨간 점은 상태 배지지만, 천천히 퍼지는 무리가 붙으면 라이브 표시가
+ * 된다. 느리게(2.4s) 도는 건 여러 개가 한 화면에 있어도 안 시끄럽게 하려는
+ * 것이다.
+ */
+@keyframes live-halo {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  70%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@utility live-halo {
+  animation: live-halo 2.4s var(--soft-ease) infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.35;
+  }
+}
+
 @utility focus-ring {
   &:focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;
+  }
+}
+
+/**
+ * 누를 수 있는 판이 손끝에 반응하는 방식. **포스터·기수 카드·출연진 카드가 다
+ * 이걸 건다** — 자리마다 따로 적으면 한 곳만 다른 속도로 움직이는데, 그건 나란히
+ * 놓고 봐야 보인다.
+ *
+ * 올라가고(hover) 눌리는(active) 두 동작이 짝이다. 예전에는 `hover:opacity-85`
+ * 하나였는데, 투명도만 깎이는 건 "판이 흐려졌다" 지 "판을 집었다" 가 아니다.
+ *
+ * 모션을 줄이겠다고 한 사람에게는 움직임만 뺀다 — 그림자 변화는 남겨서 어느
+ * 판을 가리키고 있는지는 그대로 보인다.
+ */
+@utility lift {
+  transition:
+    transform 200ms var(--soft-ease),
+    box-shadow 200ms var(--soft-ease),
+    background-color 200ms var(--soft-ease);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--lifted-shadow);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.985);
+    transition-duration: 90ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: box-shadow 200ms var(--soft-ease);
+
+    &:hover,
+    &:active {
+      transform: none;
+    }
+  }
+}
+
+/**
+ * 카드가 아닌 것(줄 목록의 한 줄, 버튼)이 눌릴 때. `lift` 와 달리 떠오르지
+ * 않는다 — 목록 줄이 하나씩 떠오르면 줄 사이가 계단처럼 어긋나 보인다.
+ */
+@utility press {
+  transition:
+    transform 160ms var(--soft-ease),
+    background-color 160ms var(--soft-ease);
+
+  &:active {
+    transform: scale(0.99);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:active {
+      transform: none;
+    }
   }
 }
 
