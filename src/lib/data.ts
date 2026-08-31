@@ -50,6 +50,17 @@ export function getAllSeasons(): Season[] {
 }
 
 /**
+ * 지금 방영 중인 기수들. 홈이 착지하자마자 이걸 한 줄로 세운다.
+ *
+ * 프로그램을 가로질러 모으는 집계라 페이지가 아니라 여기 있다 — 홈에서
+ * `getPrograms().flatMap(...).filter(...)` 를 다시 적으면 프로그램이 늘 때마다
+ * 그 줄이 같이 늘어난다.
+ */
+export function getAiringSeasons(): Season[] {
+  return getAllSeasons().filter((season) => season.onAir);
+}
+
+/**
  * 검색이 훑을 최소 데이터. 서버에서 한 번 만들어 클라이언트로 넘긴다.
  *
  * `program` 을 주면 그 프로그램만, 안 주면 전부 담는다 — 홈은 전부, 프로그램

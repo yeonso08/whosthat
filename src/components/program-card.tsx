@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { LiveDot } from "@/components/live-dot";
 import { getSeasons } from "@/lib/data";
 import {
   currentLocale,
@@ -123,7 +124,7 @@ export async function ProgramCard({ program }: Props) {
           </span>
           {seasons.some((season) => season.onAir) && (
             <span className="ml-auto flex shrink-0 items-center pt-px">
-              <span className="size-1.5 rounded-full bg-foreground" />
+              <LiveDot />
               <span className="sr-only">{dict.season.onAir}</span>
             </span>
           )}

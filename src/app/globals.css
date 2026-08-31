@@ -10,6 +10,7 @@
   --color-elevated: var(--elevated);
   --color-searching: var(--searching);
   --color-verified: var(--verified);
+  --color-live: var(--live);
   --font-sans: var(--font-sans);
   --font-lat: var(--font-lat);
   --font-mono: var(--font-mono);
@@ -41,8 +42,16 @@
 /*
  * 팔레트. 라이트·다크 두 벌이고 명도만 뒤집혔지 구조는 같다.
  *
- * **유채색은 하나이고, 그 하나는 `--verified` 다** — 확인을 마친 계정의 핸들에만
- * 쓴다. 2026-08-31 에 뒤집었다: 그전에는 유일한 유채색이 `--searching`("아직 못
+ * **유채색은 둘이고, 둘 다 자리가 못박혀 있다.** `--verified`(앰버)는 확인을 마친
+ * 계정의 핸들, `--live`(빨강)는 방영 중 표시의 점. 그 밖의 자리(강조·CTA·배지)로
+ * 번지게 하지 말 것 — 셋째 자리가 생기는 순간 둘 다 신호이길 그만둔다.
+ *
+ * **빨강은 점에만 쓰고 글자에는 안 쓴다**(2026-08-31). 방송의 라이브 표시는
+ * 어디서나 빨간 점이라 설명이 필요 없는 기호고, 글자까지 물들이면 화면에서
+ * 붉은 면적이 앰버 핸들과 경쟁한다 — 핸들은 방문자가 가지러 온 값이라 그
+ * 싸움에서 지면 안 된다. "방영 중" 이라는 사실은 그 옆 글자가 그대로 말한다.
+ *
+ * `--verified` 는 확인을 마친 계정의 핸들에만 쓴다. 2026-08-31 에 뒤집었다: 그전에는 유일한 유채색이 `--searching`("아직 못
  * 찾음")이라 **데이터가 채워질수록 화면에서 색이 사라졌다.** 22기처럼 다 채운
  * 기수는 완전한 무채색이고 33기처럼 빈 기수만 색이 도는, 성취와 색이 반대로
  * 붙은 구조였다. 지금은 반대다 — 아카이브가 채워질수록 화면이 산다.
@@ -62,6 +71,7 @@
   --elevated: #eceae4;
   --searching: #7d766a;
   --verified: #9a6410;
+  --live: #d92c20;
   --popover: #ffffff;
   --popover-foreground: #101013;
   --primary: #101013;
@@ -109,6 +119,7 @@
   --elevated: #2b2820;
   --searching: #8f8878;
   --verified: #e8b14c;
+  --live: #ff4f42;
   --popover: #2b2820;
   --popover-foreground: #f4f1e9;
   --primary: #f4f1e9;
@@ -145,6 +156,33 @@
 
 /* 키보드로 옮겨 다닐 때만 보이는 테두리. 누르는 자리마다 같은 굵기·같은 간격을
    써야 해서 유틸리티로 둔다 — 카드·워드마크·검색 결과 줄이 이걸 건다. */
+/**
+ * 방영 중 점이 퍼뜨리는 무리. **점 하나로 "지금" 을 말하려면 움직여야 한다** —
+ * 정지한 빨간 점은 상태 배지지만, 천천히 퍼지는 무리가 붙으면 라이브 표시가
+ * 된다. 느리게(2.4s) 도는 건 여러 개가 한 화면에 있어도 안 시끄럽게 하려는
+ * 것이다.
+ */
+@keyframes live-halo {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  70%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@utility live-halo {
+  animation: live-halo 2.4s var(--soft-ease) infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.35;
+  }
+}
+
 @utility focus-ring {
   &:focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;

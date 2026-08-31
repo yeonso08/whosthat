@@ -1,6 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { CastPhoto } from "@/components/cast-photo";
+import { LiveDot } from "@/components/live-dot";
 import {
   currentLocale,
   formatCoverage,
@@ -65,10 +66,9 @@ export async function SeasonFeature({ season }: Props) {
       <div className="flex items-start gap-4">
         <div className="min-w-0 flex-1">
           {season.onAir ? (
-            // 방영 중은 확인 여부와 다른 축이라 `--verified` 를 빌려 쓰지 않는다.
-            // 유채색을 하나로 유지하면서 신호를 세우는 수단은 명도뿐이다.
-            <span className="flex items-center gap-1.5 text-[12px] font-bold text-foreground">
-              <span className="size-1.5 rounded-full bg-foreground" />
+            // 점만 빨강이고 글자는 그대로다 — 이유는 `LiveDot` 에 적어 뒀다.
+            <span className="flex items-center gap-2 text-[12px] font-bold text-foreground">
+              <LiveDot />
               {dict.season.onAir}
               {special && (
                 <span className="font-lat truncate font-semibold text-muted-foreground">

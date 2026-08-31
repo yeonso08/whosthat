@@ -70,7 +70,9 @@ export function SeasonSearch({
 
   // 홈은 좁은 기둥으로 모으고, 프로그램 화면은 그 화면이 이미 폭을 묶고 있어
   // 여기서 또 줄이면 위아래 카드와 오른쪽 끝이 어긋난다.
-  const column = hero ? "mx-auto w-full max-w-[560px]" : "";
+  const column = hero
+    ? "mx-auto w-full max-w-[600px] lg:h-16"
+    : "";
   const resultsColumn = hero ? "mx-auto w-full max-w-[640px]" : "";
 
   return (
@@ -92,7 +94,7 @@ export function SeasonSearch({
             onChange={(event) => setQuery(event.target.value)}
             placeholder={text.placeholder}
             aria-label={text.label}
-            className="text-[15px] md:text-[15px]"
+            className={hero ? "text-base md:text-base" : "text-[15px] md:text-[15px]"}
           />
           {searching && (
             <InputGroupAddon align="inline-end">
