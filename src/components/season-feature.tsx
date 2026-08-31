@@ -41,8 +41,10 @@ export async function SeasonFeature({ season }: Props) {
       className="focus-ring block rounded-2xl bg-card p-4 transition-opacity hover:opacity-90 lg:p-6"
     >
       {season.onAir ? (
-        <span className="flex items-center gap-1.5 text-[11px] font-bold text-searching">
-          <span className="size-1.5 rounded-full bg-searching" />
+        // 방영 중은 확인 여부와 다른 축이라 `--verified` 를 빌려 쓰지 않는다.
+        // 유채색을 하나로 유지하면서 신호를 세우는 수단은 명도뿐이다.
+        <span className="flex items-center gap-1.5 text-[11px] font-bold text-foreground">
+          <span className="size-1.5 rounded-full bg-foreground" />
           {dict.season.onAir}
           {special && (
             <span className="font-lat font-semibold text-muted-foreground">

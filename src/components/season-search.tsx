@@ -157,7 +157,7 @@ function HitStatus({ member, status }: HitProps): ReactElement {
   switch (member.status) {
     case "found":
       return (
-        <span className="font-lat truncate text-[13px] font-semibold">
+        <span className="font-mono truncate text-[13px] font-medium text-verified">
           @{member.handle}
         </span>
       );

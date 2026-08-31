@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { Gothic_A1, Manrope, Zen_Kaku_Gothic_New } from "next/font/google";
+import {
+  Gothic_A1,
+  IBM_Plex_Mono,
+  Manrope,
+  Zen_Kaku_Gothic_New,
+} from "next/font/google";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { SiteFooter } from "@/components/site-footer";
@@ -35,6 +40,20 @@ const zenKaku = Zen_Kaku_Gothic_New({
   variable: "--font-sans",
   subsets: ["latin"],
   weight: ["300", "500", "700", "900"],
+});
+
+/**
+ * 인스타 핸들 전용 서체.
+ *
+ * **핸들은 문장이 아니라 식별자다** — 방문자가 이 사이트에서 실제로 가져가는
+ * 유일한 값이고, 한 글자만 달라도 다른 사람이 된다. 본문과 같은 활자로 적어
+ * 두면 설명글에 섞여 흘러가는데, 고정폭이면 눈이 글자 단위로 짚는다.
+ * 언어를 안 탄다 — 핸들은 어느 화면에서나 라틴이다.
+ */
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  weight: ["500", "600"],
 });
 
 const manrope = Manrope({
@@ -104,7 +123,7 @@ export default async function RootLayout({
       // next-themes 가 마운트 시점에 <html> 클래스를 다크/라이트로 고쳐 쓴다 —
       // 서버가 모르는 값이라 하이드레이션 경고가 나므로 여기서만 억제한다.
       suppressHydrationWarning
-      className={`${SANS_FONT[lang].variable} ${manrope.variable} h-full antialiased`}
+      className={`${SANS_FONT[lang].variable} ${manrope.variable} ${plexMono.variable} h-full antialiased`}
     >
             {/* 상단 바는 화면 폭을 다 쓰고 본문만 컨테이너에 맞춘다 — 그래야 경계선이
           화면을 가로지르고 바가 화면의 일부로 읽힌다. */}

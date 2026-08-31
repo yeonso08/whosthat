@@ -49,7 +49,7 @@ const POSTER_TITLE =
  * 방송사·플랫폼. 티빙이 판 모서리에 채널 배지를 얹는 자리와 같다.
  *
  * **포스터가 없는 동안은 이 줄이 프로그램을 가른다** — 팔레트가 흑백뿐이라
- * (유채색은 `searching` 전용) 색면으로 판을 구분하는 길이 막혀 있고, 그건
+ * (유채색은 확인된 핸들 전용) 색면으로 판을 구분하는 길이 막혀 있고, 그건
  * 반복해서 반려된 방향이기도 하다. 대신 라틴 대문자에 트래킹을 벌려 이 줄
  * 자체를 활자로 만든다.
  */
@@ -112,7 +112,7 @@ export async function ProgramCard({ program }: Props) {
           </span>
           {seasons.some((season) => season.onAir) && (
             <span className="ml-auto flex shrink-0 items-center pt-px">
-              <span className="size-1.5 rounded-full bg-searching" />
+              <span className="size-1.5 rounded-full bg-foreground" />
               <span className="sr-only">{dict.season.onAir}</span>
             </span>
           )}

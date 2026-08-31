@@ -12,7 +12,7 @@ type Props = { alias: string; status: AccountStatus };
 const STATUS_STYLE: Record<AccountStatus, string> = {
   found: "bg-elevated text-muted-foreground",
   none: "bg-card text-elevated",
-  searching: "bg-card text-searching/45",
+  searching: "bg-card text-muted-foreground/40",
 };
 
 /**
