@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { BackLink } from "@/components/back-link";
 import { JsonLd } from "@/components/json-ld";
 import { PageTitle } from "@/components/page-heading";
-import { PageShell } from "@/components/page-shell";
+import { SiteHeader } from "@/components/site-header";
 import { currentDictionary, currentLocale } from "@/lib/i18n";
 import { homeHref } from "@/lib/links";
 import type { Schema } from "@/lib/seo";
@@ -41,22 +41,22 @@ export async function PolicyPage({ title, schema, children }: Props) {
   const dict = await currentDictionary();
 
   return (
-    <>
+    <main>
       <JsonLd data={schema} />
 
-      <PageShell
-        rail={
-          /* 화살표의 44px 탭 영역이 제목을 밀지 않게 줄 전체를 왼쪽으로 당긴다. */
-          <div className="mt-5 -ml-3 flex items-start gap-1">
-            <BackLink href={homeHref(locale)} label={dict.nav.backHome} />
-            <PageTitle>{title}</PageTitle>
-          </div>
-        }
-      >
-        {/* 산문은 면을 다 쓰지 않는다 — 긴 줄은 눈이 다음 줄 첫 글자를 못 찾는다. */}
-        <article className="gutter max-w-[68ch]">{children}</article>
-      </PageShell>
-    </>
+      <header className="gutter pt-6">
+        <SiteHeader />
+      </header>
+
+      <article className="gutter max-w-[68ch] pt-5">
+        {/* 화살표의 44px 탭 영역이 제목을 밀지 않게 줄 전체를 왼쪽으로 당긴다. */}
+        <div className="-ml-3 flex items-start gap-1">
+          <BackLink href={homeHref(locale)} label={dict.nav.backHome} />
+          <PageTitle>{title}</PageTitle>
+        </div>
+        {children}
+      </article>
+    </main>
   );
 }
 

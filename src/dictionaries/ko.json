@@ -35,7 +35,6 @@
   },
   "home": {
     "heading": "출연진 인스타",
-    "summary": "{programs}개 프로그램 · {people}명 중 인스타 {found}개 확인",
     "programsHeading": "프로그램"
   },
   "program": {

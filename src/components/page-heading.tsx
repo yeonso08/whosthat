@@ -10,11 +10,7 @@ type Props = { children: ReactNode; className?: string };
  */
 export function PageTitle({ children, className = "" }: Props) {
   return (
-    // `break-keep` 은 좁은 레일에서 제목이 음절 단위로 꺾이는 걸 막는다
-    // (`삭제·정정 요/청`). 데스크톱에서 제목이 레일 폭에 갇히면서 걸렸다.
-    <h1
-      className={`text-3xl font-black tracking-tighter break-keep lg:text-4xl ${className}`}
-    >
+    <h1 className={`text-3xl font-black tracking-tighter lg:text-4xl ${className}`}>
       {children}
     </h1>
   );

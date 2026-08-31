@@ -55,7 +55,7 @@ src/lib/data.ts                      프로그램 JSON 로더(PROGRAMS 배열) +
 src/lib/search.ts                    검색 매칭 — 데이터를 모른다(클라이언트로 넘어간다)
 src/data/i-am-solo.json           실데이터(1~33기, 408명) — 채우는 법은 src/data/README.md
 src/data/singles-inferno.json              솔로지옥 시즌 1~5 골격 — 명단이 아직 비어 있다
-src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-row, season-feature, season-search, page-shell, site-footer, site-header, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
+src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
 ```
@@ -214,25 +214,13 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ## 화면 폭 — 모바일과 데스크톱
 
-2026-08-31 까지 `body` 가 `max-w-screen-sm`(640px) 고정이었다. 큰 화면에서는 가운데 좁은 기둥 하나였다 — 휴대폰 화면을 늘려 놓은 꼴이다. 폭을 `max-w-[1280px]` 로 열었고, 좁은 화면에서는 그 값이 안 걸리므로 **모바일 화면은 그대로다.**
+2026-08-31 까지 `body` 가 `max-w-screen-sm`(640px) 고정이었다. 큰 화면에서는 가운데 좁은 기둥 하나였고, 프로그램이 늘면서 그게 통째로 안 맞게 됐다 — 휴대폰 화면을 늘려 놓은 꼴이다. 지금은 `max-w-[1280px]` 이고, 좁은 화면에서는 그 값이 안 걸리므로 **모바일 화면은 그대로다.**
 
-### 구성이 달라진다 — 폭만 넓히는 건 답이 아니다
-
-**열만 늘리면 여전히 모바일이다.** 한 번 그렇게 했다가 되돌렸다 — 컨테이너를 1280px 로 키우고 격자를 5열로 늘렸는데, 세로로 쌓은 한 기둥(머리글 → 검색 → 목록)이라는 구성이 그대로여서 "휴대폰을 늘린 화면" 그대로였다. **큰 화면에서 달라져야 하는 건 열 수가 아니라 구성이다.**
-
-- **`PageShell` 이 뼈대다.** 좁을 때는 세로로 쌓이고, `lg` 부터 **왼쪽 레일(19rem) + 오른쪽 면**이 된다. 화면의 정체(워드마크·제목·현황·되돌아갈 곳)를 한 덩어리로 묶어 레일에 세우고, 오른쪽 면은 격자와 목록만 갖는다. 모바일에서 그 덩어리는 그냥 페이지 머리라 마크업이 한 벌이다.
-- **레일은 스크롤을 따라 붙어 있는다**(`sticky`). 출연진 격자가 길어져도 지금 보는 게 몇 기 누구인지가 안 사라진다 — 기수 상세가 이 사이트의 주력 화면이라 그 값이 제일 크다.
-- **열 사이 간격은 `gap` 이 아니라 양쪽의 `gutter` 두 벌이 만든다.** 여기서 `gap` 을 더하면 화면 좌우 여백과 열 간격이 서로 다른 값이 되어 세로선이 어긋난다.
-- **최신 기수 히어로는 레일에 있다**(프로그램 화면). 넓은 화면에서 목록 위에 눕히면 가로로 늘어난 띠가 되고, 그 자리는 목록이 써야 한다.
-- **기수 목록은 `xl` 부터 두 단이다**(`columns-2`). 33개를 한 줄로 세우면 오른쪽 면의 절반이 비고 스크롤만 두 배로 길어진다.
-
-### 여백과 격자
-
-- **여백은 `gutter` / `gutter-inset` 두 유틸리티가 정한다**(`globals.css`). 열 곳에 `px-5` 로 흩어져 있던 것을 모았다 — 한 곳에서 정해야 헤더·격자·목록·푸터가 같은 세로선에 선다. **둘은 늘 짝으로 움직인다**: `gutter-inset` 은 줄 목록(`Item`)용이고, 그 컴포넌트가 자체로 12px 을 갖고 있어 그만큼 뺀 값이다.
-- **격자는 2 → 3 → 4 → 5 열로 늘어난다**(홈 포스터·기수 상세 출연진 둘 다). **`next/image` 의 `sizes` 가 같은 중단점을 밟아야 한다** — 안 맞추면 화면은 멀쩡한데 필요 이상으로 큰 파일이 내려간다. 눈으로 안 보이는 종류라 열 수를 고칠 때 `POSTER_SIZES`·`CARD_SIZES` 를 같이 연다.
-- **산문은 면을 다 쓰지 않는다.** 정책 두 페이지 본문은 `max-w-[68ch]` 다 — 긴 줄은 눈이 다음 줄 첫 글자를 못 찾는다.
-- **한글은 레일에서 음절 단위로 꺾인다.** 레일이 좁아(240px) `삭제·정정 요/청`·`…320개 확/인` 이 실제로 났다. 제목(`PageTitle`)과 레일의 현황 줄에 `break-keep` 을 건다 — 데스크톱에서만 드러나는 종류라 좁은 화면만 보고는 못 찾는다.
-- **`max-w-screen-sm` 을 되살리지 말 것.** 화면을 좁히고 싶으면 그 자리에서(산문처럼) 묶는다. 컨테이너를 다시 640 으로 되돌리면 레일과 격자가 갈 곳이 없어진다.
+- **여백은 `gutter` / `gutter-inset` 두 유틸리티가 정한다**(`globals.css`). 열 곳에 `px-5` 로 흩어져 있던 것을 모았다 — 한 곳에서 정해야 헤더·격자·목록·푸터가 같은 세로선에 선다. **둘은 늘 짝으로 움직인다**: `gutter-inset` 은 줄 목록(`Item`)용이고, 그 컴포넌트가 자체로 12px 을 갖고 있어 그만큼 뺀 값이다. 한쪽만 키우면 목록만 어긋나는데 그건 나란히 놓고 봐야 보인다.
+- **격자는 2 → 3 → 4 → 5 열로 늘어난다**(홈 포스터·기수 상세 출연진 둘 다). **`next/image` 의 `sizes` 가 같은 중단점을 밟아야 한다** — 안 맞추면 화면은 멀쩡한데 필요 이상으로 큰 파일이 내려간다. 눈으로는 안 보이는 종류라 열 수를 고칠 때 `POSTER_SIZES`·`CARD_SIZES` 를 같이 연다.
+- **산문은 컨테이너를 다 쓰지 않는다.** 정책 두 페이지는 `max-w-[68ch]` 다 — 1280px 짜리 한 줄은 눈이 다음 줄 첫 글자를 못 찾는다. 검색창도 `lg:max-w-2xl` 로 묶는다(컨테이너를 다 쓰면 글자 하나 없는 띠가 된다).
+- **기수 줄은 넓어지면 현황이 오른쪽으로 간다**(`SeasonRow`, `lg` 부터). 제목 옆에 다 붙여 두면 1280px 에서 오른쪽 절반이 통째로 빈다. 좁은 화면에서는 지금처럼 설명 줄에 붙는다 — 같은 값을 두 자리에 두고 중단점으로 하나만 보인다.
+- **`max-w-screen-sm` 을 되살리지 말 것.** 화면을 좁히고 싶으면 그 자리에서(산문·검색창처럼) 묶는다. 컨테이너를 다시 640 으로 되돌리면 격자가 갈 곳이 없어진다.
 
 ## 디자인 — 시안 D "어둠 속 사진"
 

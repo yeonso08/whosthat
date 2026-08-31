@@ -5,7 +5,7 @@ import { CastCard } from "@/components/cast-card";
 import { EmptyCard } from "@/components/empty-card";
 import { JsonLd } from "@/components/json-ld";
 import { PageEyebrow, PageTitle } from "@/components/page-heading";
-import { PageShell } from "@/components/page-shell";
+import { SiteHeader } from "@/components/site-header";
 import { getProgram, getPrograms, getSeason, getSeasons } from "@/lib/data";
 import {
   fill,
@@ -102,52 +102,50 @@ export default async function Page({
   const programName = localizeProgramName(programId, lang);
 
   return (
-    <>
+    <main>
       <JsonLd data={seasonSchema(program, season, lang)} />
 
-      <PageShell
-        rail={
-          <>
-            <PageEyebrow>{programName}</PageEyebrow>
+      <header className="gutter pt-6">
+        <SiteHeader />
 
-            {/* 뒤로가기를 제목 줄에 붙인다. 화살표의 44px 탭 영역이 제목을 밀지
-                않게 줄 전체를 왼쪽으로 당겨 화살표를 본문 여백선에 맞춘다.
-                돌아가는 곳은 홈이 아니라 이 기수가 속한 프로그램 목록이다. */}
-            <div className="mt-3 -ml-3 flex items-start gap-1">
-              <BackLink
-                href={programHref(lang, programId)}
-                label={fill(dict.nav.back, { program: programName })}
-              />
-              <PageTitle>{label}</PageTitle>
-            </div>
+        <PageEyebrow>{programName}</PageEyebrow>
 
-            {special && (
-              <p className="mt-2 text-[13px] font-bold text-muted-foreground">
-                {special}
-              </p>
-            )}
-            <p className="mt-1.5 text-[13px] break-keep text-muted-foreground">
-              {airDate ? `${fill(dict.season.aired, { date: airDate })} · ` : ""}
-              {coverage.total === 0
-                ? dict.season.castPending
-                : fill(dict.season.castCount, {
-                    total: coverage.total,
-                    found: coverage.found,
-                  })}
-            </p>
-          </>
-        }
-      >
-        {season.cast.length > 0 ? (
-          <section className="gutter grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 lg:gap-4 xl:grid-cols-5">
-            {season.cast.map((member) => (
-              <CastCard key={member.id} member={member} />
-            ))}
-          </section>
-        ) : (
-          <EmptyCard>{dict.season.castPendingBody}</EmptyCard>
+        {/* 뒤로가기를 제목 줄에 붙인다. 화살표의 44px 탭 영역이 제목을 밀지
+            않게 줄 전체를 왼쪽으로 당겨 화살표를 본문 여백선에 맞춘다.
+            돌아가는 곳은 홈이 아니라 이 기수가 속한 프로그램 목록이다. */}
+        <div className="mt-3 -ml-3 flex items-start gap-1">
+          <BackLink
+            href={programHref(lang, programId)}
+            label={fill(dict.nav.back, { program: programName })}
+          />
+          <PageTitle>{label}</PageTitle>
+        </div>
+
+        {special && (
+          <p className="mt-2 text-[13px] font-bold text-muted-foreground">
+            {special}
+          </p>
         )}
-      </PageShell>
-    </>
+        <p className="mt-1.5 text-[13px] text-muted-foreground">
+          {airDate ? `${fill(dict.season.aired, { date: airDate })} · ` : ""}
+          {coverage.total === 0
+            ? dict.season.castPending
+            : fill(dict.season.castCount, {
+                total: coverage.total,
+                found: coverage.found,
+              })}
+        </p>
+      </header>
+
+      {season.cast.length > 0 ? (
+        <section className="gutter mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:gap-4">
+          {season.cast.map((member) => (
+            <CastCard key={member.id} member={member} />
+          ))}
+        </section>
+      ) : (
+        <EmptyCard>{dict.season.castPendingBody}</EmptyCard>
+      )}
+    </main>
   );
 }
