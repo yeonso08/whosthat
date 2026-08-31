@@ -3,7 +3,7 @@
     "name": "누꼬 — 예능 출연진 인스타",
     "description": "예능 프로그램 출연진의 인스타그램 계정을 프로그램·기수별로 모아 둔 아카이브입니다. 확인된 것만 싣고, 계정이 없는 사람은 없다고 적어 두니 두 번 검색하실 일이 없습니다.",
     "programs": {
-      "na-neun-solo": {
+      "i-am-solo": {
         "name": "나는 솔로",
         "seasonLabel": "{n}기",
         "heading": "전체 기수",
@@ -14,7 +14,7 @@
         "searchPlaceholder": "기수 · 특집 · 가명 검색",
         "seasonsHeading": "기수"
       },
-      "solo-hell": {
+      "singles-inferno": {
         "name": "솔로지옥",
         "seasonLabel": "시즌 {n}",
         "heading": "전체 시즌",
@@ -34,8 +34,7 @@
     "language": "언어 선택"
   },
   "home": {
-    "heading": "프로그램",
-    "summary": "{programs}개 프로그램 · {people}명 중 인스타 {found}개 확인"
+    "heading": "출연진 인스타"
   },
   "program": {
     "metaTitle": "{program} 출연진 인스타",

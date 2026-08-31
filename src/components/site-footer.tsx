@@ -14,7 +14,12 @@ import { privacyHref, takedownHref } from "@/lib/links";
  */
 const COPYRIGHT_YEAR = 2026;
 
-/** 모든 화면 바닥. 삭제 요청 창구는 어느 기수에서든 한 번에 닿아야 한다. */
+/**
+ * 모든 화면 바닥. 삭제 요청 창구는 어느 기수에서든 한 번에 닿아야 한다.
+ *
+ * 화면 바닥까지 미는 건 루트 레이아웃이 한다(본문이 `flex-1`) — 여기서
+ * `mt-auto` 로 하면 아래 `mt-10` 과 같은 속성이라 한쪽이 조용히 진다.
+ */
 export async function SiteFooter() {
   const locale = await currentLocale();
   const dict = await currentDictionary();

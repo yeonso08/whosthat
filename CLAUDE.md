@@ -31,7 +31,7 @@ git push origin --delete <branch> && git branch -d <branch>
 ## 구조
 
 ```
-src/app/[lang]/page.tsx              프로그램 목록(홈) — [lang] 이 루트 세그먼트다(전 화면이 그 아래)
+src/app/[lang]/page.tsx              프로그램 목록(홈) — 검색창 + 프로그램 카드. [lang] 이 루트 세그먼트다(전 화면이 그 아래)
 src/app/[lang]/[program]/page.tsx    한 프로그램의 기수 목록 (히어로 + 검색 + 목록)
 src/app/[lang]/[program]/seasons/[id]/page.tsx 기수 상세 (언어 × 프로그램 × 기수로 전부 프리렌더)
 src/app/[lang]/takedown/page.tsx     삭제·정정 요청 창구
@@ -53,9 +53,9 @@ src/lib/seo.ts                       색인 여부·OG 공통 필드·정책 페
 src/lib/types.ts                     Program → Season → CastMember 모델 + getCoverage·getTotals·getSiteTotals
 src/lib/data.ts                      프로그램 JSON 로더(PROGRAMS 배열) + 검색 인덱스 생성
 src/lib/search.ts                    검색 매칭 — 데이터를 모른다(클라이언트로 넘어간다)
-src/data/na-neun-solo.json           실데이터(1~33기, 408명) — 채우는 법은 src/data/README.md
-src/data/solo-hell.json              솔로지옥 시즌 1~5 골격 — 명단이 아직 비어 있다
-src/components/                      cast-card, cast-photo, cast-avatar, program-row, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
+src/data/i-am-solo.json           실데이터(1~33기, 408명) — 채우는 법은 src/data/README.md
+src/data/singles-inferno.json              솔로지옥 시즌 1~5 골격 — 명단이 아직 비어 있다
+src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-row, season-feature, season-search, site-footer, site-header, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
 ```
@@ -66,10 +66,10 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 프로그램이 둘이 되면서 화면이 세 단계가 됐다: **홈(프로그램 목록) → 프로그램(기수 목록) → 기수 상세**. 그전에는 홈이 곧 나는 솔로의 기수 목록이었다. 프로그램을 하나 더 붙이는 절차는 `src/data/README.md` 의 "프로그램을 추가할 때" 에 있다.
 
-- **주소가 프로그램을 정한다** — `/ko/na-neun-solo/seasons/s33`, `/ko/solo-hell/seasons/s4`. **기수 `id` 는 프로그램 안에서만 고유하다**(`s1` 이 두 프로그램에 다 있다). 그래서 `getSeason` 도 `seasonPath` 도 첫 인자가 프로그램이다 — 기수 id 만 들고 다니면 어느 프로그램인지 정해지지 않는다.
+- **주소가 프로그램을 정한다** — `/ko/i-am-solo/seasons/s33`, `/ko/singles-inferno/seasons/s4`. **슬러그는 그 프로그램의 공식 영어 제목이다**(`I Am SOLO` → `i-am-solo`, `Single's Inferno` → `singles-inferno`). 한국어 로마자(`na-neun-solo`)로 시작했다가 바꿨다 — 프로그램마다 규칙이 갈리면 다음 프로그램에서 또 고민하게 되고, 주소는 한 벌뿐이라 언어를 안 타는 표기라야 한다. **기수 `id` 는 프로그램 안에서만 고유하다**(`s1` 이 두 프로그램에 다 있다). 그래서 `getSeason` 도 `seasonPath` 도 첫 인자가 프로그램이다 — 기수 id 만 들고 다니면 어느 프로그램인지 정해지지 않는다.
 - **옛 주소는 `next.config.ts` 가 308 한다.** 두 세대가 겹쳐 있다 — 언어가 붙기 전(`/seasons/s33`)과 프로그램이 붙기 전(`/ko/seasons/s33`)이다. **둘 다 한 번에 최종 주소로 보낸다**: 리다이렉트를 두 번 태우면 크롤러가 체인을 싫어하고 링크 신호도 샌다. 언어가 있는 쪽은 그 언어를 지킨다 — `/en/seasons/s33` 을 한국어로 보내면 읽던 언어를 빼앗는 것이 된다.
 - **`Season.label` 은 없다. `Season.number` 뿐이다.** 화면에 뜨는 말은 프로그램마다 다르다 — `33기` 와 `시즌 4` 다. 라벨을 데이터에 저장하면 언어 × 프로그램만큼 적어야 하므로, 번호만 두고 사전의 `site.programs.<id>.seasonLabel` 이 만든다(`localizeSeasonLabel`). 정렬도 이 번호를 본다.
-- **프로그램마다 다른 말은 사전의 `site.programs` 에 문장째로 있다.** 이름·기수 라벨·목록 제목(`전체 기수` / `전체 시즌`)·`지난 기수`·`최신 기수`·요약 두 줄·검색 안내 두 줄이다. **낱말만 표로 두고 문장에 끼워 넣지 말 것** — 어순이 다른 언어에서 반드시 어색해진다(가명·특집 표와 같은 이유). 꺼내는 곳은 `programStrings(programId, locale)` 하나고, **사전에 없는 프로그램이면 던진다** — 조용히 `solo-hell` 이 제목으로 나가는 것보다 빌드가 깨지는 쪽이 낫다.
+- **프로그램마다 다른 말은 사전의 `site.programs` 에 문장째로 있다.** 이름·기수 라벨·목록 제목(`전체 기수` / `전체 시즌`)·`지난 기수`·`최신 기수`·요약 두 줄·검색 안내 두 줄이다. **낱말만 표로 두고 문장에 끼워 넣지 말 것** — 어순이 다른 언어에서 반드시 어색해진다(가명·특집 표와 같은 이유). 꺼내는 곳은 `programStrings(programId, locale)` 하나고, **사전에 없는 프로그램이면 던진다** — 조용히 `singles-inferno` 이 제목으로 나가는 것보다 빌드가 깨지는 쪽이 낫다.
 - **`alias` 는 "방송에서 불린 이름" 이다.** 나는 솔로는 가명(`영수`), 솔로지옥은 실명(`최시훈`) 이 들어간다. 필드를 나누지 않은 이유는 화면이 하는 일이 같기 때문이다 — 크게 부르는 이름 하나와, 그 아래 실명·나이·직업 줄이다. 로마자·가타카나 표기는 `i18n.ts` 의 `ALIASES` 한 표에 프로그램 구분 없이 쌓인다(한글 원문이 키다). 실명이 들어가는 프로그램은 `name`(실명) 을 비워 둔다 — 같은 값이 두 줄로 나온다.
 - **홈의 검색은 프로그램을 안 가리고, 프로그램 화면의 검색은 자기 것만 본다**(`buildSearchIndex(locale, program?)`). 착지하자마자 사람을 찾는 게 이 사이트의 존재 이유라 홈에서 프로그램을 먼저 고르게 만들지 않는다. 여러 프로그램을 담은 인덱스에만 `programName` 이 실려 결과 줄이 프로그램을 밝힌다 — 한 프로그램뿐인 인덱스에서 매 줄에 같은 이름을 반복할 이유가 없다.
 - **결과 그룹 제목은 홈만 중립어다**(`기수·시즌`). 프로그램 화면은 `programStrings` 의 낱말로 갈아 끼운다. 홈은 두 프로그램의 줄이 섞여 나오므로 한쪽 말을 쓰면 다른 쪽 줄에 틀린 제목이 붙는다.
@@ -79,7 +79,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ## 언어 — 한국어·영어·일본어
 
-해외에서 한국 예능 출연진을 찾는 사람을 받으려고 2026-08-21 에 언어를 붙였고, 일본어를 2026-08-25 에 더했다. **URL 이 언어를 정한다** — `/ko/na-neun-solo/seasons/s33`, `/en/...`, `/ja/...`. 언어가 없는 주소는 두 갈래로 처리한다: `/` 는 `src/proxy.ts` 가 `Accept-Language` 를 보고 307 로 보내고, 언어를 붙이기 전의 옛 주소(`/seasons/s33`·`/takedown`·`/privacy`)는 `next.config.ts` 가 한국어로 308 한다(프로그램까지 한 번에 끼워서 — 위 "프로그램" 절).
+해외에서 한국 예능 출연진을 찾는 사람을 받으려고 2026-08-21 에 언어를 붙였고, 일본어를 2026-08-25 에 더했다. **URL 이 언어를 정한다** — `/ko/i-am-solo/seasons/s33`, `/en/...`, `/ja/...`. 언어가 없는 주소는 두 갈래로 처리한다: `/` 는 `src/proxy.ts` 가 `Accept-Language` 를 보고 307 로 보내고, 언어를 붙이기 전의 옛 주소(`/seasons/s33`·`/takedown`·`/privacy`)는 `next.config.ts` 가 한국어로 308 한다(프로그램까지 한 번에 끼워서 — 위 "프로그램" 절).
 
 - **언어를 감지하는 순간은 `/` 하나뿐이다.** proxy 의 matcher 가 `/` 라서 나머지 경로는 엣지를 안 거치고 정적으로 나간다. 공유받은 `/ko/...` 링크가 읽는 사람 브라우저 설정 때문에 다른 언어로 튀지도 않는다.
 - **언어 선택을 쿠키로 기억하지 않는다.** 처리방침에 "쿠키는 쓰지 않는다"고 적어 뒀다 — 편의 하나 때문에 그 문장을 거짓으로 만들지 말 것. 선택 목록이 주소를 바꾸므로 기억할 것도 없다.
@@ -215,7 +215,12 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 시안 D 는 사진이 화면을 채우는 넷플릭스·티빙 브라우징 문법이다. 초상권·저작권 우려로 사진을 한 번 걷어냈다가(2026-08-19) **2026-08-20 에 되돌렸다** — 사진 자리는 세 곳 다 살아 있다(히어로만 2026-08-21 에 모양이 바뀌었다). 리스크 자체는 사라지지 않았으니 `PLANNING.md` §9 ① 을 먼저 읽고 무엇을 올릴지 정할 것.
 
+- **홈의 프로그램은 줄이 아니라 카드다**(`ProgramCard`). 기수 히어로(`SeasonFeature`)와 같은 문법이다 — 카드 배경과 제일 큰 이름이 위계를 진다. 목록 줄로 그렸다가 뒤집었는데(2026-08-31), 줄은 `SeasonRow` 와 같은 그림이라 **기수보다 위인 것이 기수 목록의 한 줄보다 가벼워 보였다**. 홈에 그 줄 둘만 놓으면 화면이 안 차는 것도 같은 원인이다.
+- **홈에서 두 프로그램을 가르는 것은 색이 아니라 플랫폼 캡션이다**(`SBS PLUS · ENA` / `NETFLIX`). 팔레트가 흑백뿐이라 색면으로 카드를 구분하는 길이 막혀 있고 그건 반복해서 반려된 방향이기도 하다 — 대신 라틴 대문자에 트래킹(`0.18em`)을 벌려 그 줄 자체를 활자로 만든다. 사이트에서 유일한 uppercase 처리라 여기서만 쓴다.
+- **홈 카드의 얼굴은 계정을 찾아 둔 사람(`found`)이 먼저다.** 최신 기수에서 앞부터 자르면 방영 중인 기수가 통째로 `searching` 이라 저대비 황토 배지 여섯 개가 한 줄로 깔린다 — 사진이 없던 시절 히어로를 뜯어고치게 만든 바로 그 그림이다. 홈 카드가 말하는 것도 "확인된 계정" 이라 내용상으로도 이쪽이 맞다.
+- **푸터는 루트 레이아웃이 화면 바닥까지 민다**(본문 `flex-1`). 홈처럼 짧은 화면에서 푸터가 콘텐츠에 바로 붙으면 그 아래 빈 화면이 "덜 그려진 페이지" 로 읽힌다. **`SiteFooter` 에 `mt-auto` 로 하지 말 것** — 거기 이미 있는 `mt-10` 과 같은 속성이라 한쪽이 조용히 진다.
 - **사진 자리는 세 곳이다.** 기수 상세의 2열 카드 그리드(`CastCard`), 기수 목록 히어로에 겹쳐 쌓는 원 6개(`SeasonFeature`), 기수 목록 줄에 겹쳐 쌓는 작은 원 4개(`SeasonRow`). 셋 다 `CastPhoto` 를 쓴다.
+- **홈에는 사이트 전체 집계를 적지 않는다.** 프로그램 카드가 저마다 `33개 기수 · 408명 중 인스타 320개 확인` 을 말하므로, 그 위에 사이트 합계를 한 줄 더 두면 같은 숫자를 한 화면에서 두 번 읽게 된다(프로그램이 둘인 지금은 거의 같은 값이다). 홈의 큰 제목은 숫자가 아니라 사이트가 하는 일(`출연진 인스타`)이다.
 - **히어로는 사진 스트립이 아니라 겹친 원 줄이다**(2026-08-21). 원래는 128px 짜리 3장 사진 스트립이었는데, 사진이 0장인 동안 그 자리가 가명 배지 상자 셋으로 떨어졌다 — 가명은 21개가 408명에 반복되는 글자라 정보량이 0인데 카드의 절반을 먹었고, 정작 `33기`·`방영 중`·`0 / 12 확인` 이 아래로 눌렸다. 그래서 목록 줄과 같은 겹침 문법으로 낮추고 기수 이름을 카드에서 제일 큰 요소로 올렸다. **값은 히어로와 목록 줄이 같은 그림이 된 것**이라, 카드 배경 · `방영 중` 점 · 큰 기수 이름 셋이 그 구분을 지고 있다 — 셋 중 하나를 빼면 히어로가 목록 줄에 묻힌다.
 - **겹친 원의 테두리는 두 곳 다 `border-background` 다.** 히어로는 카드 위에 얹히니 `border-card` 가 맞아 보이지만 틀렸다 — `CastAvatar` 의 `searching` 배지가 `bg-card` 라, 테두리까지 카드 색이면 원 윤곽이 통째로 사라지고 가명 글자만 떠 있는 화면이 된다. 배경색 테두리라야 원끼리도 갈리고 원 자체도 드러난다.
 - **사진이 없는 사람은 가명 두 글자 배지(`CastAvatar`)로 대신 채운다.** 사진이 있는 쪽이 한동안 소수라 일괄 실루엣으로 두면 화면 전체가 같은 그림이 된다. 배지는 **저대비 워터마크**다 — 카드 크기에서 또렷하면 색면이 화면을 먹는다. 상태는 카드 아래 상태 줄이 또렷하게 말한다.
@@ -279,7 +284,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 **정리 한 번 돌았다**(2026-08-25). 죽은 CSS 토큰(`--sidebar-*`·`--chart-*`·`create-next-app` 잔재)과 안 쓰는 shadcn 파일(`textarea`·`separator`)을 걷어내고, 중복을 다음 다섯 곳으로 모았다: 공유 카드(`lib/og.tsx`), 브랜드 타일(`BrandTile`), 정책 페이지 껍데기(`PolicyPage`)와 그 metadata(`policyMetadata`), 브랜드 이름(`BrandName`), 사이트 집계(`getTotals`). 경로 리터럴은 `links.ts` 로, 절대 URL 은 `absoluteUrl` 로 모았고, `contactMailto` 를 `links.ts` 에서 `site.ts` 로 옮겨 **클라이언트 번들에서 `site.ts` 를 뺐다**(언어 전환 버튼이 `links.ts` 를 타고 끌고 들어오던 것이다). 화면 동작은 그대로고 빌드도 117 페이지 그대로다.
 
-**아직 안 건드린 것들**(알고 남긴 것이므로 "발견"으로 다시 올리지 말 것): 벤더링된 shadcn 파일의 안 쓰는 export(`dropdown-menu` 16개 중 4개만 쓴다 — `add` 로 덮어쓰면 되돌아온다), `Program.type`·`Program.platform`·`CastMember.gender`(읽는 곳이 없지만 데이터에는 들어 있는 모델 면), `SeasonFeature`·`SeasonRow` 의 `FACE_SHAPE` 두 벌(크기가 달라서 합치면 플래그가 생긴다 — "추상화는 늦게" 절 참고).
+**아직 안 건드린 것들**(알고 남긴 것이므로 "발견"으로 다시 올리지 말 것): 벤더링된 shadcn 파일의 안 쓰는 export(`dropdown-menu` 16개 중 4개만 쓴다 — `add` 로 덮어쓰면 되돌아온다), `Program.type`·`CastMember.gender`(읽는 곳이 없지만 데이터에는 들어 있는 모델 면 — `Program.platform` 은 2026-08-31 에 홈 카드가 읽기 시작했다), `SeasonFeature`·`SeasonRow` 의 `FACE_SHAPE` 두 벌(크기가 달라서 합치면 플래그가 생긴다 — "추상화는 늦게" 절 참고).
 
 **처리방침·삭제 창구는 프로그램이 늘면 같이 손본다.** 나는 솔로만 있던 시절의 문구가 `가명`·`기수와 가명(예: 28기 영숙)` 을 전제하고 있었다 — 솔로지옥은 실명으로 나오는 프로그램이라 그대로 두면 처리방침이 사실과 다른 말을 한다. 2026-08-31 에 `privacy.cast1` 과 `/takedown` 의 요청 예시·메일 제목을 "방송에서 불린 이름" 쪽으로 고치고 `effectiveDate` 를 함께 옮겼다.
 

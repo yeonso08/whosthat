@@ -113,7 +113,7 @@ export function policyMetadata(
 }
 
 /**
- * 프로그램 화면(`/ko/na-neun-solo`)의 metadata.
+ * 프로그램 화면(`/ko/i-am-solo`)의 metadata.
  *
  * 명단이 한 줄도 없는 프로그램은 인원수를 말하지 않는다 — "0명의 계정" 은
  * 아무도 못 찾았다는 뜻으로 읽혀서 사실과 다르다(`formatCoverage` 와 같은 이유).

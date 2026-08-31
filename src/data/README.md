@@ -1,7 +1,7 @@
 # 데이터 채우는 법
 
-**프로그램마다 JSON 한 벌이다.** 나는 솔로(`na-neun-solo.json`)는 1~33기 골격과 명단이
-다 들어가 있고 계정을 채워 나가는 중이고, 솔로지옥(`solo-hell.json`)은 시즌 1~5 골격만
+**프로그램마다 JSON 한 벌이다.** 나는 솔로(`i-am-solo.json`)는 1~33기 골격과 명단이
+다 들어가 있고 계정을 채워 나가는 중이고, 솔로지옥(`singles-inferno.json`)은 시즌 1~5 골격만
 있고 명단이 비어 있다.
 
 지금 현황은 데이터 파일이 정답이다. 이렇게 뽑아 본다:
@@ -215,6 +215,8 @@ PLANNING.md §9 를 따른다.
 ## 프로그램을 추가할 때
 
 1. `src/data/<program>.json` 한 벌 — `id`·`name`(한국어 원문)·`type`·`platform`·`seasons`.
+   **`id` 는 그 프로그램의 공식 영어 제목을 케밥으로 적는다**(`Single's Inferno` → `singles-inferno`). 그게 곧 주소가 되는데, 주소는 언어별로 나뉘지 않으니 언어를 안 타는 표기라야 한다.
+   **`platform` 은 홈 카드에 대문자로 그대로 나간다** — `SBS Plus · ENA`, `Netflix` 처럼 읽는 대로 적는다.
 2. `src/lib/data.ts` 의 `PROGRAMS` 배열에 넣는다. **배열 순서가 홈 목록 순서다.**
 3. 사전 세 벌의 `site.programs` 에 그 `id` 로 한 칸씩 — 이름·기수 라벨·목록 제목·검색 안내
    아홉 줄이다. **빠뜨리면 빌드가 던진다**(`programStrings`) — 조용히 id 가 제목으로 나가는

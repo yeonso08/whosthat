@@ -41,7 +41,7 @@ export type Dictionary = typeof ko;
  * `시즌 4` 다. 낱말만 표로 두고 문장에 끼워 넣으면 어순이 다른 언어에서 반드시
  * 어색해지므로, 그 낱말이 들어가는 문장을 통째로 프로그램마다 적는다.
  */
-export type ProgramStrings = Dictionary["site"]["programs"]["na-neun-solo"];
+export type ProgramStrings = Dictionary["site"]["programs"]["i-am-solo"];
 
 const DICTIONARIES: Record<Locale, Dictionary> = { ko, en, ja };
 
@@ -219,7 +219,7 @@ export function localizeSpecial(special: string, locale: Locale): string {
  * 그 프로그램이 이 언어로 쓰는 말 한 벌.
  *
  * 사전에 없는 프로그램이면 던진다 — 데이터에는 있는데 화면에 부를 말이 없다는
- * 뜻이라, 조용히 id 를 그대로 그리면 `solo-hell` 이 제목으로 나가 버린다.
+ * 뜻이라, 조용히 id 를 그대로 그리면 `singles-inferno` 이 제목으로 나가 버린다.
  * 전 페이지가 SSG 라 이 에러는 빌드에서 잡힌다.
  */
 export function programStrings(

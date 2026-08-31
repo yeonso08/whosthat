@@ -1,5 +1,5 @@
-import naNeunSoloJson from "@/data/na-neun-solo.json";
-import soloHellJson from "@/data/solo-hell.json";
+import iAmSoloJson from "@/data/i-am-solo.json";
+import singlesInfernoJson from "@/data/singles-inferno.json";
 import {
   formatCoverage,
   localizeAlias,
@@ -22,7 +22,7 @@ import {
  * 출연진 JSON 을 직접 import 하는 파일은 계속 이 파일 하나여야 한다(제보 기능에서
  * DB 로 갈아탈 때 고칠 곳을 하나로 묶어 두는 장치다 — `CLAUDE.md` 의 의존 방향).
  */
-const PROGRAMS = [naNeunSoloJson, soloHellJson] as Program[];
+const PROGRAMS = [iAmSoloJson, singlesInfernoJson] as Program[];
 
 export function getPrograms(): Program[] {
   return PROGRAMS;

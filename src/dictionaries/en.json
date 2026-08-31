@@ -3,7 +3,7 @@
     "name": "nukko — Korean reality cast on Instagram",
     "description": "An archive of the Instagram accounts of Korean reality show cast members, organised by show and season. Only verified accounts are listed, and people with no account are marked as such — so you never search twice.",
     "programs": {
-      "na-neun-solo": {
+      "i-am-solo": {
         "name": "I Am SOLO",
         "seasonLabel": "Season {n}",
         "heading": "All seasons",
@@ -14,7 +14,7 @@
         "searchPlaceholder": "Search by season, special or alias",
         "seasonsHeading": "Seasons"
       },
-      "solo-hell": {
+      "singles-inferno": {
         "name": "Single's Inferno",
         "seasonLabel": "Season {n}",
         "heading": "All seasons",
@@ -34,8 +34,7 @@
     "language": "Choose a language"
   },
   "home": {
-    "heading": "Programs",
-    "summary": "{programs} programs · {found} of {people} Instagram accounts found"
+    "heading": "Cast Instagram"
   },
   "program": {
     "metaTitle": "{program} cast Instagram",

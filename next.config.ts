@@ -5,7 +5,7 @@ import { LOCALES, DEFAULT_LOCALE } from "./src/lib/locales";
  * 프로그램이 둘이 되기 전의 기수 주소. 그때는 나는 솔로 하나뿐이라 프로그램
  * 세그먼트가 없었다(`/ko/seasons/s33`). 이미 색인·공유된 링크라 끊지 않는다.
  */
-const FIRST_PROGRAM = "na-neun-solo";
+const FIRST_PROGRAM = "i-am-solo";
 
 const nextConfig: NextConfig = {
   /**

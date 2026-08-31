@@ -3,7 +3,7 @@
     "name": "nukko — バラエティ出演者インスタ",
     "description": "韓国バラエティ番組の出演者のインスタグラムアカウントを、番組別・期別にまとめたアーカイブです。確認できたものだけを載せ、アカウントがない方はないと書いてありますので、二度検索する必要がありません。",
     "programs": {
-      "na-neun-solo": {
+      "i-am-solo": {
         "name": "私はSOLO",
         "seasonLabel": "第{n}期",
         "heading": "全ての期",
@@ -14,7 +14,7 @@
         "searchPlaceholder": "期・特集・仮名で検索",
         "seasonsHeading": "期"
       },
-      "solo-hell": {
+      "singles-inferno": {
         "name": "脱出おひとり島",
         "seasonLabel": "シーズン{n}",
         "heading": "全シーズン",
@@ -34,8 +34,7 @@
     "language": "言語を選ぶ"
   },
   "home": {
-    "heading": "番組",
-    "summary": "{programs}番組・{people}人中 インスタ{found}件確認"
+    "heading": "出演者インスタ"
   },
   "program": {
     "metaTitle": "{program} 出演者インスタ",

@@ -107,7 +107,10 @@ export default async function RootLayout({
     >
       <body className="mx-auto flex min-h-full w-full max-w-screen-sm flex-col">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          {children}
+          {/* 본문이 남은 높이를 먹어 푸터를 화면 바닥까지 민다 — 홈처럼 짧은
+              화면에서 푸터가 콘텐츠에 바로 붙으면 그 아래 빈 화면이 "덜 그려진
+              페이지" 로 읽힌다. */}
+          <div className="flex-1">{children}</div>
           {/* 레이아웃에 두면 기수를 아무리 늘려도 삭제 창구가 빠지는 화면이 없다. */}
           <SiteFooter />
         </ThemeProvider>
