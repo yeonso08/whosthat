@@ -34,7 +34,8 @@
     "language": "言語を選ぶ"
   },
   "home": {
-    "heading": "出演者インスタ"
+    "heading": "出演者インスタ",
+    "programsHeading": "番組"
   },
   "program": {
     "metaTitle": "{program} 出演者インスタ",

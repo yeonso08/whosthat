@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/json-ld";
-import { PageTitle } from "@/components/page-heading";
+import { GroupHeading, PageTitle } from "@/components/page-heading";
 import { ProgramCard } from "@/components/program-card";
 import { SeasonSearch } from "@/components/season-search";
 import { SiteHeader } from "@/components/site-header";
@@ -37,11 +37,16 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
         text={dict.search}
         status={dict.status}
       >
-        <section className="flex flex-col gap-3 px-5 pt-4">
-          {programs.map((program) => (
-            <ProgramCard key={program.id} program={program} />
-          ))}
-        </section>
+        <>
+          <GroupHeading>{dict.home.programsHeading}</GroupHeading>
+          {/* 기수 상세의 출연진 그리드와 같은 2열이다 — 프로그램이 늘어도
+              홈이 스크롤 지옥이 되지 않고, 홀수로 남는 타일도 구멍이 안 난다. */}
+          <section className="grid grid-cols-2 gap-3 px-5">
+            {programs.map((program) => (
+              <ProgramCard key={program.id} program={program} />
+            ))}
+          </section>
+        </>
       </SeasonSearch>
     </main>
   );

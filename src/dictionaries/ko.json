@@ -34,7 +34,8 @@
     "language": "언어 선택"
   },
   "home": {
-    "heading": "출연진 인스타"
+    "heading": "출연진 인스타",
+    "programsHeading": "프로그램"
   },
   "program": {
     "metaTitle": "{program} 출연진 인스타",

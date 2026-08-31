@@ -3,41 +3,44 @@ import { CastPhoto } from "@/components/cast-photo";
 import { getSeasons } from "@/lib/data";
 import {
   currentLocale,
-  formatProgramSummary,
+  fill,
   getDictionary,
   programStrings,
 } from "@/lib/i18n";
 import { programHref } from "@/lib/links";
 import { getTotals, type CastMember, type Program } from "@/lib/types";
 
-/** 겹쳐 쌓는 얼굴 수. 기수 히어로와 같은 값이다 — 둘 다 카드 폭을 쓴다. */
-const FACE_COUNT = 6;
-
 /**
- * 겹쳐 쌓이는 원형 자리. 기수 히어로와 값이 같지만 따로 둔다 — 홈 카드와 기수
- * 카드가 늘 같은 얼굴 크기를 써야 할 이유는 없고, 지금 합치면 둘 중 하나를
- * 키울 때 플래그가 생긴다.
+ * 타일 안에 겹쳐 쌓는 얼굴 수. 기수 목록 줄과 같은 넷이다 — 더 넣으면 가명 21개가
+ * 반복되는 글자 벽이 되는데, 그건 사진이 없던 시절 기수 히어로를 뜯어고치게
+ * 만든 바로 그 그림이다.
  */
+const FACE_COUNT = 4;
+
+/** 겹쳐 쌓이는 원형 자리. 테두리가 배경색이라야 원끼리도 갈리고 원 자체도 드러난다. */
 const FACE_SHAPE =
-  "relative -ml-2.5 size-11 shrink-0 overflow-hidden rounded-full border-2 border-background text-[11px]";
+  "relative -ml-2 size-8 shrink-0 overflow-hidden rounded-full border-2 border-background text-[9px]";
 
 /**
- * 방송사·플랫폼 한 줄. **홈에서 두 프로그램을 가르는 것은 색이 아니라 이 글자다** —
- * 팔레트가 흑백뿐이라(유채색은 `searching` 전용) 색면으로 카드를 구분하는 길이
+ * 방송사·플랫폼 한 줄. **홈에서 프로그램을 가르는 것은 색이 아니라 이 글자다** —
+ * 팔레트가 흑백뿐이라(유채색은 `searching` 전용) 색면으로 타일을 구분하는 길이
  * 막혀 있고, 그건 반복해서 반려된 방향이기도 하다. 대신 라틴 대문자에 트래킹을
  * 벌려 이 줄 자체를 활자로 만든다.
  */
 const PLATFORM =
-  "font-lat text-[10px] font-bold tracking-[0.18em] text-muted-foreground uppercase";
+  "font-lat truncate text-[9.5px] font-bold tracking-[0.16em] text-muted-foreground uppercase";
 
 type Props = { program: Program };
 
 /**
- * 홈의 프로그램 한 장. 기수 히어로(`SeasonFeature`)와 같은 문법이다 — 카드
- * 배경과 제일 큰 이름이 위계를 지고, 그 아래를 얼굴과 현황 한 줄이 받친다.
+ * 홈의 프로그램 한 장.
  *
- * 목록 줄이 아니라 카드인 이유: 홈의 프로그램은 기수보다 위인데, 줄로 그리면
- * 기수 목록의 한 줄과 같은 그림이 되어 오히려 가벼워 보인다.
+ * **기수 상세의 출연진 카드(`CastCard`)와 같은 모양이다** — 같은 비율의 2열
+ * 격자에, 이름이 아래에 앉는다. 한 단 위인 프로그램도 같은 문법으로 훑게 되고,
+ * 나중에 사진이 들어오면 이 상자가 그대로 사진 자리가 된다.
+ *
+ * 전면 카드로 쌓지 않는 이유는 프로그램이 늘기 때문이다. 한 장이 화면 폭을 다
+ * 쓰면 스무 개가 됐을 때 홈이 스무 번 스크롤하는 화면이 된다.
  */
 export async function ProgramCard({ program }: Props) {
   const locale = await currentLocale();
@@ -45,30 +48,26 @@ export async function ProgramCard({ program }: Props) {
   const strings = programStrings(program.id, locale);
 
   const seasons = getSeasons(program);
-  const onAir = seasons.some((season) => season.onAir);
+  const { people, found } = getTotals(seasons);
   const faces = pickFaces(program);
 
   return (
     <Link
       href={programHref(locale, program.id)}
-      className="focus-ring block rounded-2xl bg-card p-4 transition-opacity hover:opacity-90"
+      className="focus-ring flex aspect-[6/7] flex-col justify-between rounded-2xl bg-card p-3.5 transition-colors hover:bg-elevated"
     >
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-start gap-1.5">
         <span className={PLATFORM}>{program.platform}</span>
-        {onAir && (
-          <span className="flex shrink-0 items-center gap-1.5 text-[11px] font-bold text-searching">
+        {seasons.some((season) => season.onAir) && (
+          <span className="ml-auto flex shrink-0 items-center pt-0.5">
             <span className="size-1.5 rounded-full bg-searching" />
-            {dict.season.onAir}
+            <span className="sr-only">{dict.season.onAir}</span>
           </span>
         )}
       </div>
 
-      <p className="mt-2.5 text-2xl font-black tracking-tighter">
-        {strings.name}
-      </p>
-
-      {/* 얼굴 겹침(-ml)을 상쇄해 첫 원을 제목 선에 맞춘다. */}
-      <div className="mt-4 flex items-center pl-2.5">
+      {/* 얼굴 겹침(-ml)을 상쇄해 첫 원을 글자 선에 맞춘다. */}
+      <div className="flex items-center pl-2">
         {faces.map((member) => (
           <div key={member.id} className={FACE_SHAPE}>
             <CastPhoto
@@ -78,7 +77,7 @@ export async function ProgramCard({ program }: Props) {
               alias={member.alias}
               status={member.status}
               alt=""
-              sizes="44px"
+              sizes="32px"
             />
           </div>
         ))}
@@ -89,20 +88,27 @@ export async function ProgramCard({ program }: Props) {
           ))}
       </div>
 
-      <p className="font-lat mt-3.5 text-xs font-semibold text-muted-foreground">
-        {formatProgramSummary(program.id, getTotals(seasons), locale)}
-      </p>
+      <div>
+        <p className="text-[17px] leading-snug font-black tracking-tight">
+          {strings.name}
+        </p>
+        <p className="font-lat mt-1 truncate text-[11px] font-semibold text-muted-foreground">
+          {people === 0
+            ? dict.season.coveragePending
+            : fill(dict.season.coverage, { found, total: people })}
+        </p>
+      </div>
     </Link>
   );
 }
 
 /**
- * 카드에 세울 얼굴. **계정을 찾아 둔 사람이 먼저다.**
+ * 타일에 세울 얼굴. **계정을 찾아 둔 사람이 먼저다.**
  *
  * 최신 기수에서 그냥 앞부터 자르면 방영 중인 기수가 통째로 `searching` 이라
- * 저대비 황토 배지 여섯 개가 한 줄로 깔린다 — 사진이 없던 시절 히어로를
- * 뜯어고치게 만든 바로 그 그림이다. 홈 카드가 말하는 것도 "확인된 계정" 이라
- * 내용상으로도 이쪽이 맞다.
+ * 저대비 황토 배지가 한 줄로 깔린다 — 사진이 없던 시절 기수 히어로를 뜯어고치게
+ * 만든 바로 그 그림이다. 타일이 말하는 것도 "확인된 계정" 이라 내용상으로도
+ * 이쪽이 맞다.
  */
 function pickFaces(program: Program): CastMember[] {
   const cast = program.seasons.flatMap((season) => season.cast);

@@ -34,7 +34,8 @@
     "language": "Choose a language"
   },
   "home": {
-    "heading": "Cast Instagram"
+    "heading": "Cast Instagram",
+    "programsHeading": "Programs"
   },
   "program": {
     "metaTitle": "{program} cast Instagram",
