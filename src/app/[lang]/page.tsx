@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/json-ld";
 import { GroupHeading, PageTitle } from "@/components/page-heading";
@@ -6,6 +7,8 @@ import { ProgramCard } from "@/components/program-card";
 import { SeasonSearch } from "@/components/season-search";
 import { buildSearchIndex, getAiringSeasons, getPrograms } from "@/lib/data";
 import { getDictionary, isLocale } from "@/lib/i18n";
+import { aboutHref } from "@/lib/links";
+import { POLICY_LINK } from "@/components/policy-page";
 import { websiteSchema } from "@/lib/seo";
 
 export default async function Page({ params }: PageProps<"/[lang]">) {
@@ -36,6 +39,15 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
             한 덩어리다. 사이트 전체 집계를 여기 한 줄 더 적지 않는 건 아래 카드가
             프로그램마다 그 숫자를 이미 말하기 때문이다. */}
         <PageTitle className="lg:text-[46px]">{dict.home.heading}</PageTitle>
+        {/* 제목이 하는 일을 말하면 이 한 줄은 그 일을 어떻게 하는지 말한다 —
+            "확인한 것만 싣는다" 가 이 사이트가 파는 값이라, 착지 화면에서
+            한 번은 글자로 나와야 한다. 자세한 기준은 소개가 진다. */}
+        <p className="mx-auto mt-3 max-w-[46ch] text-[13.5px] leading-[1.7] text-muted-foreground">
+          {dict.home.tagline}{" "}
+          <Link href={aboutHref(lang)} className={POLICY_LINK}>
+            {dict.about.title}
+          </Link>
+        </p>
       </header>
 
       {/* 검색창이 목록 자리를 쥐고 있다 — 입력이 없을 때만 아래 카드가 보인다.

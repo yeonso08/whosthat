@@ -29,6 +29,8 @@ import {
   programHref,
   programPath,
   seasonHref,
+  ABOUT_PATH,
+  FAQ_PATH,
   PRIVACY_PATH,
   TAKEDOWN_PATH,
 } from "./links";
@@ -62,6 +64,24 @@ export function isProgramIndexable(program: Program): boolean {
 }
 
 /**
+ * 이 기수에 광고를 걸지. **색인 기준보다 한 단계 좁다.**
+ *
+ * 명단만 있고 계정을 하나도 못 찾은 기수는 화면이 이름 카드와 "찾는 중" 뿐이라,
+ * 색인에는 올릴 만해도 광고를 얹을 만한 화면은 아니다 — 애드센스가 2026-09-02 에
+ * "게시자 콘텐츠가 없는 화면" 으로 잡은 것이 정확히 이 모양이었다. 방영 중인
+ * 기수와 새로 넣은 프로그램이 한동안 여기 걸리고, 계정이 하나 들어오면 저절로
+ * 돌아온다.
+ */
+export function hasAdContent(season: Season): boolean {
+  return getCoverage(season.cast).found > 0;
+}
+
+/** 그런 기수가 하나라도 있는 프로그램인지. 프로그램 화면이 같은 기준을 쓴다. */
+export function programHasAdContent(program: Program): boolean {
+  return program.seasons.some(hasAdContent);
+}
+
+/**
  * 모든 페이지가 공유하는 openGraph 필드.
  *
  * **페이지가 `openGraph` 를 정의하는 순간 레이아웃의 `openGraph` 는 통째로
@@ -78,10 +98,17 @@ export function openGraphBase(locale: Locale) {
   };
 }
 
-/** 정책 페이지의 경로. 화면 링크(`links.ts`)와 같은 문자열을 canonical 이 본다. */
+/**
+ * 산문 페이지의 경로. 화면 링크(`links.ts`)와 같은 문자열을 canonical 이 본다.
+ *
+ * 정책 두 페이지로 시작했지만 소개·FAQ 도 같은 모양이라 함께 둔다 — 네 페이지가
+ * 제목·설명만 다르고 canonical·hreflang·OG 는 똑같다.
+ */
 const POLICY_PATHS = {
   takedown: TAKEDOWN_PATH,
   privacy: PRIVACY_PATH,
+  about: ABOUT_PATH,
+  faq: FAQ_PATH,
 } as const;
 
 /**
@@ -210,6 +237,27 @@ export function breadcrumbSchema(
       position: index + 1,
       name: crumb.name,
       item: absoluteUrl(crumb.path),
+    })),
+  };
+}
+
+/**
+ * 자주 묻는 질문 페이지의 구조화 데이터.
+ *
+ * **화면에 이미 있는 문답을 그대로 옮긴 것이다** — 마크업에만 있는 질문을
+ * 더하지 않는다는 규칙은 `ItemList` 와 같다. 질문이 사전에 있으므로 언어마다
+ * 그 언어의 문답이 나간다.
+ */
+export function faqSchema(locale: Locale): Schema {
+  const { items } = getDictionary(locale).faq;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
     })),
   };
 }

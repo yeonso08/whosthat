@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { AutoAds } from "@/components/ads";
 import { BackLink } from "@/components/back-link";
 import { CastCard } from "@/components/cast-card";
 import { EmptyCard } from "@/components/empty-card";
@@ -15,7 +16,12 @@ import {
   localizeSeason,
 } from "@/lib/i18n";
 import { programHref, seasonHref, seasonPath } from "@/lib/links";
-import { isIndexable, openGraphBase, seasonSchema } from "@/lib/seo";
+import {
+  hasAdContent,
+  isIndexable,
+  openGraphBase,
+  seasonSchema,
+} from "@/lib/seo";
 import { getCoverage } from "@/lib/types";
 
 /**
@@ -103,6 +109,8 @@ export default async function Page({
   return (
     <main>
       <JsonLd data={seasonSchema(program, season, lang)} />
+      {/* 계정을 하나도 못 찾은 기수에는 광고를 걸지 않는다 — `hasAdContent` 참고. */}
+      {hasAdContent(season) && <AutoAds />}
 
       <header className="gutter pt-8 lg:pt-12">
         <PageEyebrow>{programName}</PageEyebrow>

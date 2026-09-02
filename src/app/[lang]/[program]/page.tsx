@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { AutoAds } from "@/components/ads";
 import { BackLink } from "@/components/back-link";
 import { JsonLd } from "@/components/json-ld";
 import { ListCard } from "@/components/list-card";
@@ -15,7 +16,12 @@ import {
   programStrings,
 } from "@/lib/i18n";
 import { homeHref } from "@/lib/links";
-import { breadcrumbSchema, programCrumb, programMetadata } from "@/lib/seo";
+import {
+  breadcrumbSchema,
+  programCrumb,
+  programHasAdContent,
+  programMetadata,
+} from "@/lib/seo";
 import { getTotals } from "@/lib/types";
 
 /** 언어는 루트 레이아웃이 만든다 — 여기서는 프로그램만 내고 둘이 곱해진다. */
@@ -55,6 +61,8 @@ export default async function Page({
     // 읽힌다. 격자 화면(홈·기수 상세)만 컨테이너를 다 쓴다.
     <main className="mx-auto w-full max-w-[860px]">
       <JsonLd data={breadcrumbSchema(lang, programCrumb(program, lang))} />
+      {/* 확인한 계정이 한 건도 없는 프로그램에는 광고를 걸지 않는다. */}
+      {programHasAdContent(program) && <AutoAds />}
 
       <header className="gutter pt-8 pb-1 lg:pt-12">
         <PageEyebrow>{strings.name}</PageEyebrow>
@@ -67,6 +75,13 @@ export default async function Page({
 
         <p className="mt-2 text-[13px] text-muted-foreground">
           {formatProgramSummary(program.id, getTotals(seasons), lang)}
+        </p>
+
+        {/* 어떤 프로그램인지 한 문단. 현황 줄이 숫자를 말하고 이 줄이 무엇을
+            세는 숫자인지 말한다 — 검색으로 이 화면에 바로 착지하는 사람은
+            프로그램 이름 말고는 아무 설명도 없이 목록을 마주하게 된다. */}
+        <p className="mt-3 max-w-[62ch] text-[13.5px] leading-[1.75] text-muted-foreground">
+          {strings.about}
         </p>
       </header>
 
