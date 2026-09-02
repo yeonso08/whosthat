@@ -589,7 +589,10 @@
           "alias": "문세훈",
           "gender": "male",
           "occupation": "요식업 대표",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "doorbirdhoon",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@doorbirdhoon, 팔로워 67만)이 요식업 대표 실명과 일치 — 소개란에 걸린 매장 계정(@onlygo.co 등)이 \"솔로지옥1 문세훈 레스토랑\"으로 언론에 소개된 '온리고'와 일치해 교차 확인."
         },
         {
           "id": "s1-cha-hyunseung",
@@ -620,7 +623,10 @@
           "alias": "신지연",
           "gender": "female",
           "occupation": "대학생",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "jiiiyeonie__",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@jiiiyeonie__, 팔로워 95만)이 실명과 일치. 방영 직후 시점(2022-01) 게시물 존재와 \"솔로지옥1 신지연\" 검색상 반복 결부를 프로필 규모와 대조해 확인 — 동명의 소규모 계정과 구분됨."
         },
         {
           "id": "s1-an-yewon",
