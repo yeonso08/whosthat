@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AutoAds } from "@/components/ads";
 import {
   POLICY_BODY,
   POLICY_HEADING,
@@ -42,8 +41,6 @@ export default async function Page({ params }: PageProps<"/[lang]/about">) {
         path: aboutHref(lang),
       })}
     >
-      <AutoAds />
-
       <p className={POLICY_BODY}>
         <BrandSentence text={about.intro} />
       </p>
