@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { getPrograms, getSeasons } from "@/lib/data";
 import { languageAlternates } from "@/lib/i18n";
 import {
+  ABOUT_PATH,
+  FAQ_PATH,
   HOME_PATH,
   localePath,
   PRIVACY_PATH,
@@ -47,6 +49,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
           priority: season.onAir ? 0.8 : 0.7,
         })),
     ]),
+    // 소개·FAQ 는 이 사이트가 무엇을 어떻게 하는지 적어 둔 산문이라 색인에
+    // 올린다 — 기수 목록보다 낮고 정책 문서보다는 높다.
+    ...[ABOUT_PATH, FAQ_PATH].map((path) => ({
+      path,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    })),
     // 삭제 창구는 당사자가 검색으로도 닿아야 해서 색인에 올린다.
     ...[TAKEDOWN_PATH, PRIVACY_PATH].map((path) => ({
       path,

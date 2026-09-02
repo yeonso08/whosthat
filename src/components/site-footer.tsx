@@ -3,7 +3,7 @@ import { BrandMark } from "@/components/icons";
 import { POLICY_LINK } from "@/components/policy-page";
 import { BrandName } from "@/components/wordmark";
 import { currentDictionary, currentLocale } from "@/lib/i18n";
-import { privacyHref, takedownHref } from "@/lib/links";
+import { aboutHref, faqHref, privacyHref, takedownHref } from "@/lib/links";
 
 /**
  * 카피라이트에 박는 연도. 사이트를 연 해다.
@@ -28,7 +28,15 @@ export async function SiteFooter() {
     <footer className="mt-20 border-t border-border/60">
       <div className="gutter mx-auto flex w-full max-w-[1280px] flex-col gap-3 pt-8 pb-12 text-xs leading-relaxed text-muted-foreground">
         <p>{dict.footer.note}</p>
-        <p className="flex gap-5">
+        {/* 소개·FAQ 가 앞이다 — 이 사이트가 무엇을 하는지 먼저 읽히고,
+            그다음이 창구다. 줄바꿈을 허용해 좁은 화면에서 넘치지 않게 한다. */}
+        <p className="flex flex-wrap gap-x-5 gap-y-2">
+          <Link href={aboutHref(locale)} className={POLICY_LINK}>
+            {dict.about.title}
+          </Link>
+          <Link href={faqHref(locale)} className={POLICY_LINK}>
+            {dict.faq.title}
+          </Link>
           <Link href={takedownHref(locale)} className={POLICY_LINK}>
             {dict.footer.takedown}
           </Link>
