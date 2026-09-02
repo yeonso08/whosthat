@@ -46,7 +46,10 @@
           "alias": "김재진",
           "gender": "male",
           "occupation": "무용가·안무가",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "jae________jin",
+          "lastVerified": "2026-09-02",
+          "source": "실명 일치(김재진). 나무위키(김재진(댄서))에 \"솔로지옥 5\", \"솔로지옥 리유니언\" 출연이 명시. 소개란 '@coreo.ent'가 직업(무용가·안무가)에 맞는 댄스 전문 에이전시 표기로 교차 확인."
         },
         {
           "id": "s5-woo-sungmin",
@@ -168,7 +171,10 @@
           "alias": "김태환",
           "gender": "male",
           "occupation": "DJ·클럽 운영",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "keemtehwan",
+          "lastVerified": "2026-09-02",
+          "source": "나무위키에 \"솔로지옥 4 참가자\"로 명시된 계정. 소개란의 '@teller.seoul'이 직업(DJ·클럽 운영)과 부합하는 나이트라이프 업장 태그로 교차 확인."
         },
         {
           "id": "s4-kook-dongho",
@@ -195,7 +201,10 @@
           "alias": "김정수",
           "gender": "male",
           "occupation": "배우·모델",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "justsoo_it",
+          "lastVerified": "2026-09-02",
+          "source": "실명 일치(김정수 KimJeongSu). 나무위키에 \"모델, 배우, 방송인이자 인스타그램 인플루언서\"로 \"2025 솔로지옥 4\" 출연이 명시되어 직업(배우·모델)과 일치."
         },
         {
           "id": "s4-yook-junseo",
@@ -212,7 +221,10 @@
           "alias": "안종훈",
           "gender": "male",
           "occupation": "요식업 대표",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "jh_128_",
+          "lastVerified": "2026-09-02",
+          "source": "실명 일치(안종훈). 나무위키에 \"솔로지옥 4의 참가자이자 인스타그램에서 주로 활동하는 인플루언서\"로 명시. 소개란의 '아더 셀렉션 대표'가 같은 시즌1 출연자 김현중의 소속사(주)아더셀렉션과 동일 회사로 교차 확인됨."
         },
         {
           "id": "s4-hong-seongbo",
@@ -315,7 +327,10 @@
           "alias": "박민규",
           "gender": "male",
           "occupation": "해양경찰 특수구조대원",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "ssrt_mk",
+          "lastVerified": "2026-09-02",
+          "source": "실명 일치(박민규 parkminkyu). 나무위키에 \"솔로지옥 3 참가자\"로 명시, 팔로워 수(당시 62.7만명, 현재 61.9만명)가 근접해 교차 확인. 직업(해양경찰 특수구조대원)도 다른 매체(틱톡 \"한국 해양경찰\" 태그)에서 일치."
         },
         {
           "id": "s3-lee-gwanhee",
@@ -491,7 +506,10 @@
           "alias": "김세준",
           "gender": "male",
           "occupation": "테일러",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "artistic__man",
+          "lastVerified": "2026-09-02",
+          "source": "실명 일치(김세준 sejun Kim). 나무위키에 \"솔로지옥 2 출연자\"로 명시, 팔로워 수(당시 68.5만명, 현재 65.5만명)까지 정확히 일치해 교차 확인."
         },
         {
           "id": "s2-shin-seulki",
@@ -508,7 +526,10 @@
           "alias": "박세정",
           "gender": "female",
           "occupation": "모델",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "jennonpark",
+          "lastVerified": "2026-09-02",
+          "source": "나무위키 문서(박세정(모델))가 개명 후 계정 \"박서빈\"으로 리다이렉트됨 — \"본래 박세정이었으나 2025년 즈음에 현재의 이름으로 개명하였다\", \"솔로지옥 2 출연자\", 소속사 KPLUS로 명시. 계정 표시 이름(박서빈 SEOBIN)과 일치해 동일인 확인."
         },
         {
           "id": "s2-lee-soe",
@@ -564,14 +585,20 @@
           "alias": "김현중",
           "gender": "male",
           "occupation": "피트니스 트레이너·모델",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "__1126.1",
+          "lastVerified": "2026-09-02",
+          "source": "실명 일치(김현중) + 프로필 소속사(주)아더셀렉션(@otherselection)이 실제 잡코리아 채용공고에서 \"(주)아더셀렉션 솔로지옥 김현중... 채용\"으로 직접 언급됨. 보디빌딩·피트니스 콘텐츠 위주 게시물이 직업(피트니스 트레이너·모델)과 일치해 교차 확인."
         },
         {
           "id": "s1-kim-junsik",
           "alias": "김준식",
           "gender": "male",
           "occupation": "건강식품 브랜드 대표",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "juncore_",
+          "lastVerified": "2026-09-02",
+          "source": "실명 일치(Jun Sik Kim 김준식). 그가 대표인 (주)컬러풀솔루션(건강식품 브랜드 '카미' 운영사)이 스타트업 정보 사이트(넥스트유니콘)에 \"대표자: 김준식\"으로 등록되어 있어 직업(건강식품 브랜드 대표)과 정확히 일치."
         },
         {
           "id": "s1-choi-sihun",
@@ -618,14 +645,20 @@
           "alias": "송지아",
           "gender": "female",
           "occupation": "뷰티 유튜버·모델",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "dear.zia",
+          "lastVerified": "2026-09-02",
+          "source": "본명 송지아, 활동명 '프리지아(Freezia)' — 한국 위키백과에 \"본명 송지아\"이며 \"넷플릭스 예능 《솔로지옥》을 통해 이름을 알렸다\"고 명시. 직업(뷰티 유튜버·모델)과 정확히 일치하는 유명 뷰티 인플루언서 계정."
         },
         {
           "id": "s1-kang-soyeon",
           "alias": "강소연",
           "gender": "female",
           "occupation": "복싱 선수·의류 브랜드 대표",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "kangsoyeon__",
+          "lastVerified": "2026-09-02",
+          "source": "실명 일치(강소연 Kang So Yeon). 나무위키에 \"넷플릭스 솔로지옥에서는 복싱짐을 운영하는 대표님으로 소개되었다\"고 명시되어 직업(복싱 선수·의류 브랜드 대표)과 일치. 계정 소개도 'Korean Global Wellness Creator'로 복싱/피트니스 배경과 부합."
         },
         {
           "id": "s1-shin-jiyeon",
@@ -642,14 +675,20 @@
           "alias": "안예원",
           "gender": "female",
           "occupation": "피트니스·필라테스 강사",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "yeah.w__",
+          "lastVerified": "2026-09-02",
+          "source": "실명 일치(안예원 AN YEA WON), 팔로워 75만명. 독립적인 블로그(youngssi.com)가 \"솔로지옥 안예원 @yeah.w__\"로 명시한 계정과 일치해 교차 확인."
         },
         {
           "id": "s1-seong-minji",
           "alias": "성민지",
           "gender": "female",
           "occupation": "모델",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "im_min.vely",
+          "lastVerified": "2026-09-02",
+          "source": "실명 일치(성민지 Seong min ji). 나무위키 프로필 링크란에 등록된 계정이며, 트위터 계정(@nahonjabonda, 솔로지옥 출연자 정보 아카이브)도 동일 인물의 인스타그램으로 독립적으로 언급해 교차 확인. 팔로워 32만명으로 직업(모델) 규모와 부합."
         },
         {
           "id": "s1-kim-sumin",
