@@ -276,7 +276,10 @@
           "alias": "김혜진",
           "gender": "female",
           "occupation": "모델",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "07_27___",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@07_27___, 김혜진 Hye Jin, 팔로워 40만)이 모델 실명과 일치. 검색 시도마다 경쟁 후보 없이 이 계정으로만 반복 결부돼 교차 확인."
         },
         {
           "id": "s4-kim-arin",
@@ -458,7 +461,10 @@
           "alias": "김한빈",
           "gender": "male",
           "occupation": "요리사",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "_home_keeper",
+          "lastVerified": "2026-09-02",
+          "source": "본인 계정(@_home_keeper, 표시 이름 자체가 \"김한빈입니다만,\") 게시물: \"지옥도 밥쟁이 김한빈입니다 베풀어 주시는 저에겐 과분한...\" — '지옥도'라는 표현으로 솔로지옥을 가리키는 자기소개형 자기 개시."
         },
         {
           "id": "s2-shin-dongwoo",
@@ -650,7 +656,10 @@
           "alias": "김수민",
           "gender": "female",
           "occupation": "광고 모델",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "sookim1001",
+          "lastVerified": "2026-09-02",
+          "source": "본인 계정(@sookim1001, Soo Min Kim) 게시물: \"안녕하세요. 미스코리아 김수민입니다...\". 소속사 계정(J&K)이 \"J&K 김수민 배우 넷플릭스 '솔로지옥'에 출연!\"이라고 직접 언급해 교차 확인."
         }
       ]
     }
