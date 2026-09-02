@@ -438,14 +438,20 @@
           "alias": "최종우",
           "gender": "male",
           "occupation": "바리스타",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "jvvcful",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@jvvcful, 팔로워 53만)이 실명과 일치, 소속사 연락처 확인. \"솔로지옥2 최종우\" 등 검색상 이 계정과 반복 결부돼 교차 확인."
         },
         {
           "id": "s2-jo-yoongjae",
           "alias": "조융재",
           "gender": "male",
           "occupation": "금융인",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "yoongkda",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@yoongkda, 팔로워 36만)이 실명과 일치. 동명이인 후보가 없고 검색상 이 계정으로만 반복 결부됨 — 근거가 상대적으로 약한 2단계 확인이라 추후 재검토 여지 있음."
         },
         {
           "id": "s2-kim-hanbin",
@@ -466,7 +472,10 @@
           "alias": "김진영",
           "gender": "male",
           "occupation": "유튜브 크리에이터",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "dex_xeb",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@dex_xeb, DEX/김진영, 팔로워 300만)이 유튜브 크리에이터 '덱스' 실명과 정확히 일치. 소속사 계정이 \"소속 크리에이터 김진영(덱스)\"로 직접 언급해 교차 확인."
         },
         {
           "id": "s2-kim-sejun",
@@ -480,7 +489,10 @@
           "alias": "신슬기",
           "gender": "female",
           "occupation": "대학생",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "shinseulkee",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@shinseulkee, Shin Seul Ki, 팔로워 100만)이 실명과 일치. \"신슬기(@shinseulkee) 미모 근황 <솔로지옥2...\" 등 다수의 독립된 언론 계정이 동일 핸들을 반복 지목해 교차 확인."
         },
         {
           "id": "s2-park-sejeong",
@@ -494,28 +506,40 @@
           "alias": "이소이",
           "gender": "female",
           "occupation": "배우",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "e._.soi",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@e._.soi, 팔로워 48만)이 실명과 일치. \"배우 이소이\" 등 다수의 독립된 언론 계정이 동일 핸들을 반복 지목해 교차 확인."
         },
         {
           "id": "s2-lee-nadine",
           "alias": "이나딘",
           "gender": "female",
           "occupation": "대학생",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "deeenerss",
+          "lastVerified": "2026-09-02",
+          "source": "본인 계정(@deeenerss) 게시물: \"안녕하세요 이나딘입니다. 솔로지옥 시즌2...\" — 자기소개형 자기 개시."
         },
         {
           "id": "s2-choi-seoeun",
           "alias": "최서은",
           "gender": "female",
           "occupation": "미술 작가",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "4x4ischoi",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@4x4ischoi, 최서은 Seoeun Choi, 팔로워 77만)이 미술 작가 실명과 일치. \"최서은 솔로지옥2\" 검색상 이 계정과 반복 결부돼 교차 확인. (나무위키 영문판이 오기했던 \"서서은\"이 아니라 \"최서은\"이 맞음 — CLAUDE.md 참고.)"
         },
         {
           "id": "s2-lim-minsu",
           "alias": "임민수",
           "gender": "female",
           "occupation": "의류 쇼핑몰 대표",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "limminsu000",
+          "lastVerified": "2026-09-02",
+          "source": "본인 계정(@limminsu000) 게시물: \"안녕하세요 솔로지옥2 임민수입니다 여름부터 주변에도...\" — 자기소개형 자기 개시."
         }
       ]
     },
