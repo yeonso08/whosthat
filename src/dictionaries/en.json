@@ -5,6 +5,7 @@
     "programs": {
       "i-am-solo": {
         "name": "I Am SOLO",
+        "about": "A Korean dating observation show on SBS Plus and ENA, featuring members of the public rather than celebrities. Cast members go by aliases that repeat every season — Yeongsu, Oksun and so on — and some seasons carry a theme, such as divorcees, never-dated, or people in their forties. This page collects the cast of every season from the first, along with the Instagram accounts that have been verified.",
         "seasonLabel": "Season {n}",
         "heading": "All seasons",
         "pastSeasons": "Past seasons",
@@ -16,6 +17,7 @@
       },
       "singles-inferno": {
         "name": "Single's Inferno",
+        "about": "A Netflix original dating reality series. Contestants live on a bare “Inferno” island and earn a night on “Paradise” island by pairing up. Unlike I Am SOLO, the cast go by their real names on air. This page collects each season's cast along with the Instagram accounts that have been verified.",
         "seasonLabel": "Season {n}",
         "heading": "All seasons",
         "pastSeasons": "Past seasons",
@@ -35,6 +37,7 @@
   },
   "home": {
     "heading": "Cast Instagram",
+    "tagline": "Only verified accounts are listed, and where nothing was found it says so.",
     "programsHeading": "Programs"
   },
   "program": {
@@ -130,6 +133,103 @@
     "contactHeading": "Contact",
     "effective": "Effective {date}",
     "effectiveDate": "August 31, 2026",
+    "translationNote": "This English text is a translation. Where the two differ, the Korean original governs."
+  },
+  "about": {
+    "title": "About",
+    "description": "What this site is, how each account is verified, and what it will not list.",
+    "intro": "{brand} is an archive of the Instagram accounts of Korean reality show cast members, organised by program and season. It exists for the moment right after an episode airs, when you want to know who that person was.",
+    "whyHeading": "Why this site exists",
+    "why1": "Search a cast member's name the day after an episode airs and you get forum threads, blog posts from years ago, and lists that each name a different handle. There is no way to tell which one is right without opening every account, and most people give up before they do.",
+    "why2": "A wrong handle does not only waste the searcher's time. One aggregator listed the account of Yeongsu from I Am SOLO season 30 with an extra underscore at the end of the handle. That account belonged to a Portuguese skincare brand with three followers. Had that list sent people there, the brand would have received direct messages without ever knowing why.",
+    "why3": "So this site checks one line at a time instead of growing the list. It publishes only what has been verified, and says so plainly where nothing was found.",
+    "whatHeading": "What is listed",
+    "what1": "Every cast member is in one of three states.",
+    "whatStates": [
+      "Account verified — there is evidence the account belongs to that person. The handle is stored along with the date it was checked and what was checked.",
+      "No account — the search was done, and no public account exists. That is a result, not a failure.",
+      "Searching — not yet verified. Weak candidates stay here rather than going up."
+    ],
+    "what2": "Keeping “No account” as its own state is the clearest thing about this site. Filling an empty slot with a plausible handle makes the list look complete, but the wrong line lands on someone who has nothing to do with the show. A line that says nothing was found saves the next visitor from repeating the same search.",
+    "howHeading": "How accounts are verified",
+    "how1": "A handle goes up only if one of these holds. The higher on the list, the stronger the evidence, and almost every account currently listed came from the first.",
+    "howEvidence": [
+      "The person says so on the account itself — the program and season appear in the display name, bio, or story highlights, or there is a post after the finale introducing themselves by their name on the show.",
+      "Two independent sources name the same handle, and opening the account confirms the profile and follower count line up.",
+      "Several specific identifying details reported in the press — a real name, the name of a shop or clinic they run, a former career, things unlikely to coincide — match the profile, and the account was opened to confirm it exists and is public. This is the weakest of the three, used rarely; a handful of currently listed accounts rest on it."
+    ],
+    "how2": "Either way the Instagram page is opened directly. Being written down in someone's list is never enough on its own — the account has to exist, be public, and have a profile that matches the person.",
+    "how3": "The date of the check and what was checked are recorded with the handle. Accounts change and disappear, so a fact with no date behind it is not evidence.",
+    "excludeHeading": "What is never listed",
+    "exclude": [
+      "Private accounts, including any account whose visibility could not be confirmed because of a login wall.",
+      "Accounts that clearly belong to the right season but cannot be tied to a specific cast member.",
+      "Accounts that other people pointed at in comments or tags. However plausible it looks, if the person did not say it themselves it is a guess.",
+      "Accounts that match a single identifying detail from a news article. There are plenty of people with the same job, the same city, and the same age. Several specific details have to line up before the third standard above is met.",
+      "Press coverage alone. Korean outlets do not print handles by convention, and smaller ones repeat forum guesses as fact."
+    ],
+    "excludeNote": "Working through a single season, more than half of the candidates reported as “found” are rejected for these reasons. Six handles printed in one news site's “complete season 28 Instagram roundup” matched no real account at all — the list had been invented. Another handle circulating as season 28's Yeongho turned out to belong to the wedding photographer who shot the couple.",
+    "photoHeading": "Photos",
+    "photo1": "Where a photo appears, its only source is the person's own Instagram profile picture. Screen captures from the broadcast are not used — the copyright there belongs to the production company, which makes it a different question from a request by the person themselves. Images are never hotlinked from another server.",
+    "programsHeading": "Programs covered",
+    "programs1": "The site started with I Am SOLO and added Single's Inferno. What the cast are called on air differs by program — I Am SOLO uses aliases such as Yeongsu and Oksun, while Single's Inferno uses real names. The name used on the show is the large one on screen, with the real name, age, and occupation on the line beneath it as far as they are known.",
+    "programs2": "A new program starts as a season skeleton; the cast list is confirmed first, then the accounts. A season whose cast list has not been confirmed is left as “cast list in progress” rather than guessed at. Season sizes differ, so stamping in a default roster would invent people who were never on the show.",
+    "updateHeading": "How often it changes",
+    "update1": "A season still on air can barely be filled in at all, because cast members lock their accounts before broadcast. A month or two after the finale the introduction posts start appearing, and that is when a season gets filled.",
+    "update2": "Seasons are revisited rather than swept once. One season sat at 1 of 12 right after its finale and reached 12 of 12 a few months later. A low verification rate is usually a matter of time.",
+    "fixHeading": "If something is wrong",
+    "fix1": "A single wrong handle sends direct messages to someone with no connection to the show. You do not have to be the person concerned to tell us. Requests to take something down are honoured without asking why.",
+    "fixLink": "Removal and correction requests",
+    "faqLink": "Frequently asked questions",
+    "translationNote": "This English text is a translation. Where the two differ, the Korean original governs."
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "description": "Why some seasons are empty, what “No account” means, and how to get a wrong account corrected.",
+    "intro": "Questions that come up often. How the site works is described in more detail on the about page.",
+    "items": [
+      {
+        "q": "Why does this season have no accounts at all?",
+        "a": "Cast members usually lock their accounts while the season is airing. A month or two after the finale many of them open up again and post an introduction, and that is when the season starts filling in."
+      },
+      {
+        "q": "What does “No account” mean?",
+        "a": "It means the search was done and the person has no public account. Someone who has not been searched yet is marked “Searching” instead. The two are kept apart so you never run the same search twice."
+      },
+      {
+        "q": "Why are some accounts still missing?",
+        "a": "Because weak candidates do not go up. Copying handles that circulate in forums would fill the numbers, but verified entries and guesses would be mixed together and no line could be trusted."
+      },
+      {
+        "q": "This handle is wrong.",
+        "a": "Send an email and it will be checked and corrected. You do not have to be the person concerned — a wrong handle hurts whoever owns that account most of all."
+      },
+      {
+        "q": "Please remove my account.",
+        "a": "It comes down, with no questions asked, and the photo comes down with it. Nothing that has been removed goes back up. The removal page explains how to ask."
+      },
+      {
+        "q": "Why are people listed as Yeongsu and Oksun instead of their real names?",
+        "a": "On I Am SOLO the cast are called by aliases on air. The large name on screen is the name used on the show; a real name appears on the line below only when it has been made public. On programs that use real names, such as Single's Inferno, that name takes the large slot instead."
+      },
+      {
+        "q": "The same name appears in several seasons. How do I find the right one?",
+        "a": "I Am SOLO reuses 21 aliases across more than 400 cast members, so searching “Yeongsu” alone matches one per season. Type the program or season alongside it to narrow down — “season 22 Yeongsu”, or “Single's Inferno season 4”."
+      },
+      {
+        "q": "Where do the photos come from?",
+        "a": "Only from the person's own Instagram profile picture. Screen captures from the broadcast are not used, and images are never hotlinked from another server."
+      },
+      {
+        "q": "Do you cover anything other than Instagram?",
+        "a": "Only Instagram for now. Instagram is where people actually look right after an episode, and doing one service properly beats rebuilding the verification standard for each new one."
+      },
+      {
+        "q": "Can I send in an account I know?",
+        "a": "Yes, by email, and it will be checked. Handles that arrive are not published as they come in — they have to clear the verification standard described on the about page first."
+      }
+    ],
+    "aboutLink": "About",
     "translationNote": "This English text is a translation. Where the two differ, the Korean original governs."
   }
 }

@@ -19,7 +19,7 @@ import {
 } from "@/lib/i18n";
 import { homeHref } from "@/lib/links";
 import { openGraphBase } from "@/lib/seo";
-import { ADSENSE_CLIENT_ID, NAVER_SITE_VERIFICATION, SITE_URL } from "@/lib/site";
+import { NAVER_SITE_VERIFICATION, SITE_URL } from "@/lib/site";
 import "../globals.css";
 
 const gothic = Gothic_A1({
@@ -141,18 +141,8 @@ export default async function RootLayout({
           <SiteFooter />
         </ThemeProvider>
         <Analytics />
-        {/* 자동 광고. 게시자 ID 가 비어 있으면 안 건다 — 틀린 ID 로 요청이
-            나가면 애드센스가 정책 위반으로 잡는다.
-            next/script 가 아니라 맨 태그다 — <Script> 가 붙이는 data-nscript 를
-            adsbygoogle.js 가 모르는 속성이라며 콘솔에 경고로 남긴다. async src
-            짜리는 React 가 알아서 <head> 로 올리고 중복도 지운다. */}
-        {ADSENSE_CLIENT_ID && (
-          <script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
-            crossOrigin="anonymous"
-          />
-        )}
+        {/* 광고는 여기 없다. 콘텐츠가 있는 화면만 `<AutoAds />` 를 직접 건다 —
+            이유는 `components/ads.tsx` 에 적어 뒀다. */}
       </body>
     </html>
   );

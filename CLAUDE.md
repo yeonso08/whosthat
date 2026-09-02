@@ -34,6 +34,8 @@ git push origin --delete <branch> && git branch -d <branch>
 src/app/[lang]/page.tsx              프로그램 목록(홈) — 검색창 + 프로그램 카드. [lang] 이 루트 세그먼트다(전 화면이 그 아래)
 src/app/[lang]/[program]/page.tsx    한 프로그램의 기수 목록 (히어로 + 검색 + 목록)
 src/app/[lang]/[program]/seasons/[id]/page.tsx 기수 상세 (언어 × 프로그램 × 기수로 전부 프리렌더)
+src/app/[lang]/about/page.tsx        사이트 소개 — 무엇을 싣고 계정을 어떻게 확인하는지 (애드센스가 요구한 고유 콘텐츠)
+src/app/[lang]/faq/page.tsx          자주 묻는 질문 — 문답 10개 + FAQPage JSON-LD
 src/app/[lang]/takedown/page.tsx     삭제·정정 요청 창구
 src/app/[lang]/privacy/page.tsx      개인정보 처리방침
 src/app/[lang]/layout.tsx            루트 레이아웃 — <html lang>, 언어별 metadata, generateStaticParams
@@ -55,6 +57,7 @@ src/lib/data.ts                      프로그램 JSON 로더(PROGRAMS 배열) +
 src/lib/search.ts                    검색 매칭 — 데이터를 모른다(클라이언트로 넘어간다)
 src/data/i-am-solo.json           실데이터(1~33기, 408명) — 채우는 법은 src/data/README.md
 src/data/singles-inferno.json              솔로지옥 시즌 1~5 골격 — 명단이 아직 비어 있다
+src/components/ads.tsx               AutoAds — 애드센스 스니펫. 레이아웃이 아니라 페이지가 건다(위 "광고" 절)
 src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-row, season-feature, season-search, list-card, live-row, live-dot, site-footer, site-nav, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
@@ -304,7 +307,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ## 현재 상태
 
-다섯 화면(프로그램 목록·기수 목록·기수 상세·삭제 요청·처리방침)이 **한국어·영어·일본어 세 벌**로 동작하고 빌드가 통과한다(138 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지·JSON-LD)까지 붙어 있고 전부 정적이다 — 서버가 하는 일은 `/` 하나를 언어로 보내는 proxy 뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (2026-08-24 에 커스텀 도메인 연결, Cloudflare Registrar 등록·DNS. 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. 실제 사진 파일은 아직 한 장도 없다.
+일곱 화면(프로그램 목록·기수 목록·기수 상세·소개·자주 묻는 질문·삭제 요청·처리방침)이 **한국어·영어·일본어 세 벌**로 동작하고 빌드가 통과한다(144 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지·JSON-LD)까지 붙어 있고 전부 정적이다 — 서버가 하는 일은 `/` 하나를 언어로 보내는 proxy 뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (2026-08-24 에 커스텀 도메인 연결, Cloudflare Registrar 등록·DNS. 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. 실제 사진 파일은 아직 한 장도 없다.
 
 브랜드 워드마크·파비콘·앱 아이콘([ㄲ 마크] `누꼬`(ko)/[ㄲ 마크] `nukko`(en·ja))이 붙었다 — 위 "브랜드" 절 참고. 워드마크는 이제 페이지가 아니라 **상단 바**(`SiteNav`, 레이아웃)에 한 벌만 있고, 홈을 뺀 네 화면은 제목 줄에 `‹` 되돌아가기를 붙인다(홈은 더 올라갈 곳이 없어 화살표가 없다).
 
@@ -312,13 +315,15 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 **검색엔진 등록도 끝났다**(2026-08-24). Google Search Console(도메인 속성, DNS TXT)·네이버 서치어드바이저(HTML 메타 태그)는 소유확인·sitemap 제출까지 직접 확인했다. **Bing Webmaster Tools** 는 GSC 에서 Import 로 가져왔다 — 코드 변경이 없어서 값을 남길 파일이 없고, sitemap 도 소유확인과 함께 자동으로 넘어왔다(콘솔에서 확인). 절차는 위 "커스텀 도메인을 연결할 때". 남은 건 색인을 기다리는 것뿐이다.
 
-**프로그램은 둘이다**(2026-08-31). 나는 솔로는 1~33기 골격과 명단이 다 들어가 있고(408명, 2026-08-21) 계정은 320명이 `found`, 나머지가 `searching` 이다 — 아직 못 채운 건 방영 중이라 계정이 잠긴 33기와 각 기수에 한둘씩 남은 자리다. **솔로지옥은 시즌 1~5 골격만 있고 명단이 비어 있다** — 그래서 지금은 프로그램 화면째로 색인에서 빠져 있다(`isProgramIndexable`). 다음 일이 그 명단을 채우는 것이다.
+**프로그램은 둘이다**(2026-08-31). 나는 솔로는 1~33기 골격과 명단이 다 들어가 있고(408명, 2026-08-21) 계정은 320명이 `found`, 나머지가 `searching` 이다 — 아직 못 채운 건 방영 중이라 계정이 잠긴 33기와 각 기수에 한둘씩 남은 자리다. **솔로지옥은 2026-09-02 에 시즌 1~5 명단 66명을 채웠다**(직업까지, 계정은 전부 `searching`) — 색인에서 빠져 있던 상태가 그때 풀렸다. 명단은 나무위키와 한국 기사로 교차 확인했다. **영어 위키백과의 시즌 2·3 여성 명단은 틀렸다**(`서서은`→실제 `최서은`, `이민수`→`임민수`, `이시은`→`유시은`, `김민지`→`조민지`) — 영어 자료만 보고 채우지 말 것. 다음 일은 그 66명의 계정을 찾는 것이다.
 
 **계정을 채울 때는 `src/data/README.md` 의 "계정 검증 방법"을 먼저 읽을 것.** 계정 하나를 잘못 올리면 무관한 사람이 피해를 본다. 집계 사이트·블로그를 그대로 옮기다 실제로 여러 번 걸렸다(가짜 목록, 오타 핸들, 사진작가 계정 등). 반드시 인스타 페이지를 직접 열어 확인한다. 다음 배치 순서는 `PLANNING.md` §10.
 
 삭제·정정 요청 창구(`/takedown`)와 개인정보 처리방침(`/privacy`)이 붙어 있고, 푸터가 레이아웃에 있어 전 화면에서 닿는다. 푸터 맨 아래 카피라이트 연도는 `new Date()` 가 아니라 상수다 — 전 페이지가 SSG 라 그 값은 빌드 시각에 얼어붙는다. **삭제 요청 처리 방법은 `src/data/README.md` 의 "내려 달라는 요청이 오면" 을 따른다** — `searching` 으로 되돌리면 다음 배치에서 다시 올라온다. 계정과 사진을 **함께** 내린다(계정만 내리면 요청을 반만 처리한 것이다). 두 화면(`/takedown`·`/privacy`)도 사진을 명시하고 있으니, 사진 방침을 바꾸면 그 문구부터 같이 고친다.
 
 **광고(구글 애드센스)를 붙였다**(2026-08-24). 값은 두 곳이 짝이다 — `lib/site.ts` 의 `ADSENSE_CLIENT_ID`(`ca-pub-…`)와 `public/ads.txt`(`pub-…`). 번호가 어긋나면 애드센스가 "승인되지 않은 판매자"로 잡아 수익이 막힌다. 스크립트는 루트 레이아웃이 걸고, ID 가 비면 아예 안 건다 — 틀린 ID 로 요청이 나가는 게 안 나가는 것보다 나쁘다.
+
+**광고는 콘텐츠가 있는 화면만 건다**(`components/ads.tsx` 의 `AutoAds`). 2026-09-02 에 애드센스가 "게시자 콘텐츠가 없는 화면에 Google 게재 광고" + "가치가 별로 없는 콘텐츠" 로 정책 위반을 걸었다 — 스니펫이 루트 레이아웃에 있어서 명단이 빈 기수·골격만 있는 프로그램·정책 두 페이지에도 광고가 나가고 있었다. 색인은 `isIndexable` 로 빼 두고 광고만 그대로 나간 것이다. 지금은 **페이지가 직접 `<AutoAds />` 를 건다**: 기수 상세는 `hasAdContent(season)`(확인한 계정 1건 이상), 프로그램 화면은 `programHasAdContent(program)`, 소개·FAQ 는 무조건, **홈·정책 두 페이지는 안 건다.** 광고 기준은 색인 기준보다 한 단계 좁다 — 명단만 있고 계정이 0인 기수는 색인에 올릴 만해도 광고를 얹을 화면은 아니다. **새 화면을 붙일 때 이 컴포넌트를 빠뜨리면 광고가 안 나갈 뿐 위반은 안 생긴다** — 빠뜨렸을 때 안전한 쪽이 기본값이다. 홈을 다시 넣고 싶으면 홈 페이지에 `<AutoAds />` 한 줄이지만, 심사를 통과하고 나서 할 일이다.
 
 **광고 자리를 코드로 만들지 않는다 — 자동 광고다.** 스니펫 한 줄이 전부고 구글이 위치를 정한다. 종류별 토글은 애드센스 콘솔에 있는데, **전면 광고(vignette)는 꺼야 한다** — 기수 목록과 상세를 계속 오가는 사이트라 페이지를 넘길 때마다 화면을 덮으면 "검색 없이 바로 찾는다"가 무너진다. 위치가 디자인과 안 맞으면 그때 수동 광고 단위로 바꾼다(코드 작업).
 
@@ -347,7 +352,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **인덱스는 `buildSearchIndex`(`data.ts`)가 서버에서 만들어 홈 페이지가 prop 으로 내린다.** 검색이 클라이언트 컴포넌트라 `lib/search.ts` 는 `lib/data.ts` 를 import 하지 않는다 — 한 파일에 섞으면 원본 JSON 112KB 가 클라이언트 번들에 딸려 들어간다. 페이지당 인덱스는 gzip 2KB 다(가명·상태가 반복돼 잘 압축된다).
 - 사람 결과는 `/{lang}/{program}/seasons/{id}#{memberId}` 로 착지한다. 앵커는 `CastCard` 가 카드에 거는 DOM id 와 짝이다.
 
-다음: 솔로지옥 시즌별 출연진 명단 채우기 → 계정 데이터 채우기 · 사진 채우기(파이프라인은 붙었고 파일이 0장이다 — `src/data/README.md` 의 "사진을 올릴 때") → 제보 폼(`PLANNING.md` 로드맵 2단계). 언어는 일본어까지 셋이고, 더 붙일 때 절차는 위 "언어를 하나 더할 때". 프로그램을 더 붙일 때는 `src/data/README.md` 의 "프로그램을 추가할 때".
+다음: 솔로지옥 66명 계정 찾기 → 나는 솔로 33기 계정(종영 후) → 계정 데이터 채우기 · 사진 채우기(파이프라인은 붙었고 파일이 0장이다 — `src/data/README.md` 의 "사진을 올릴 때") → 제보 폼(`PLANNING.md` 로드맵 2단계). 언어는 일본어까지 셋이고, 더 붙일 때 절차는 위 "언어를 하나 더할 때". 프로그램을 더 붙일 때는 `src/data/README.md` 의 "프로그램을 추가할 때".
 
 **DB·백엔드는 아직 필요 없다.** 지금은 정적 JSON + SSG 로 충분하고, 데이터가 늘었다는 건 옮길 이유가 안 된다. 갈아탈 시점을 판단하는 기준은 `PLANNING.md` §7 "DB·백엔드는 언제 필요한가" 에 있다 — 조건이 실제로 걸리면 그때 먼저 말한다.
 

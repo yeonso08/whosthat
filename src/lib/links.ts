@@ -19,6 +19,8 @@ import type { Locale } from "./locales";
  * 두면 경로를 바꿀 때 나머지가 조용히 옛 주소를 가리킨다.
  */
 export const HOME_PATH = "";
+export const ABOUT_PATH = "/about";
+export const FAQ_PATH = "/faq";
 export const TAKEDOWN_PATH = "/takedown";
 export const PRIVACY_PATH = "/privacy";
 
@@ -72,6 +74,16 @@ export function castMemberHref(
   memberId: string,
 ): string {
   return `${seasonHref(locale, programId, seasonId)}#${memberId}`;
+}
+
+/** 사이트 소개. `app/[lang]/about` 과 짝이다. */
+export function aboutHref(locale: Locale): string {
+  return localePath(locale, ABOUT_PATH);
+}
+
+/** 자주 묻는 질문. `app/[lang]/faq` 와 짝이다. */
+export function faqHref(locale: Locale): string {
+  return localePath(locale, FAQ_PATH);
 }
 
 /** 삭제·정정 요청. `app/[lang]/takedown` 과 짝이다. */
