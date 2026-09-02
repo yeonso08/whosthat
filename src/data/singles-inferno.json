@@ -175,14 +175,20 @@
           "alias": "국동호",
           "gender": "male",
           "occupation": "공인회계사",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "donghokook",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@donghokook, 팔로워 42만)이 공인회계사(KICPA) 이력과 일치. 넷플릭스 제작지원 공식 태그 게시물(\"#제작지원 #얼루어체크인 <솔로지옥 4> 국동호 & 김아린\")과 다수의 독립된 팬·언론 계정이 동일 핸들을 반복 지목해 교차 확인."
         },
         {
           "id": "s4-jang-taeoh",
           "alias": "장태오",
           "gender": "male",
           "occupation": "배우",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "tachyonproject",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@tachyonproject, Theo Jang, 팔로워 200만)이 배우 이력과 일치. 열애설 보도(디스패치류 계정 다수)가 반복적으로 \"장태오(@tachyonproject)\"로 동일 핸들을 지목해 교차 확인."
         },
         {
           "id": "s4-kim-jeongsu",
@@ -196,7 +202,10 @@
           "alias": "육준서",
           "gender": "male",
           "occupation": "미술 작가·배우",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "6dory",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@6dory, 팔로워 53만)이 배우·미술 작가 이력과 일치. 다수의 독립된 셀럽·언론 계정이 \"육준서(@6dory)\"로 동일 핸들을 반복 지목해 교차 확인."
         },
         {
           "id": "s4-an-jonghun",
@@ -210,7 +219,10 @@
           "alias": "홍성보",
           "gender": "male",
           "occupation": "모델",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "redseongbo",
+          "lastVerified": "2026-09-02",
+          "source": "본인 계정(@redseongbo) 고별 게시물: \"안녕하세요. 솔로지옥 시즌4에 스쳐 지나간 홍성보입니다... @netflixkr @singleinfernos4 #솔로지옥4\" — 자기소개형 자기 개시."
         },
         {
           "id": "s4-kwon-kiha",
@@ -224,28 +236,40 @@
           "alias": "이시안",
           "gender": "female",
           "occupation": "모델",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "youseeany",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@youseeany, 이시안 ʟᴇᴇ sɪᴀɴ, 팔로워 100만)이 실명과 정확히 일치. 다수의 독립된 언론·브랜드 계정(공식 협찬 게시물 포함)이 동일 핸들을 반복 지목해 교차 확인."
         },
         {
           "id": "s4-jung-yujin",
           "alias": "정유진",
           "gender": "female",
           "occupation": "모델·무용가",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "youjini1225",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@youjini1225, 팔로워 45만)이 실명과 일치. 열애설 보도 등 다수의 독립된 언론 계정이 동일 핸들을 반복 지목해 교차 확인."
         },
         {
           "id": "s4-kim-minseol",
           "alias": "김민설",
           "gender": "female",
           "occupation": "스포츠 아나운서",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "kimminseoll",
+          "lastVerified": "2026-09-02",
+          "source": "본인 계정(@kimminseoll, Kim Minseol) 고별 게시물: \"안녕하세요. 솔로지옥4 김민설입니다!... 지금까지 솔로지옥4 공식 막냉이 김민설이었습니다.\" — 자기소개형 자기 개시."
         },
         {
           "id": "s4-bae-jiyeon",
           "alias": "배지연",
           "gender": "female",
           "occupation": "모델·공간 디자이너",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "bxxyon",
+          "lastVerified": "2026-09-02",
+          "source": "본인 계정(@bxxyon) 고별 게시물: \"@netflixkr 안녕하세요! 배지연 입니다... Hello, this is Bae Ji-yeon\" — 자기소개형 자기 개시."
         },
         {
           "id": "s4-kim-hyejin",
@@ -259,14 +283,20 @@
           "alias": "김아린",
           "gender": "female",
           "occupation": "모델·유튜버",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "arinin_dd",
+          "lastVerified": "2026-09-02",
+          "source": "본인 계정(@arinin_dd, 김아린 ᴋɪᴍ ᴀʀɪɴ) 고별 게시물: \"안녕하세요 솔로지옥4 김아린입니다... #netflix #single'sinferno\" — 자기소개형 자기 개시."
         },
         {
           "id": "s4-park-haerin",
           "alias": "박해린",
           "gender": "female",
           "occupation": "대학생",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "qkrgofls",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@qkrgofls, 팔로워 40만)이 실명과 일치, 소속사(@wnykorea) 확인. \"'솔로지옥 4' 메기녀 박해린!\" 등 다수의 독립된 언론·인터뷰 계정이 동일 핸들을 반복 지목해 교차 확인."
         }
       ]
     },
