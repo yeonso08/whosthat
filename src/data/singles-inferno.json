@@ -569,14 +569,20 @@
           "alias": "최시훈",
           "gender": "male",
           "occupation": "의류 브랜드 대표",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "choi_hun2",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@choi_hun2, Choi Sihun)이 실명과 일치. 결혼·시험관 준비 근황을 담은 게시물이 \"최시훈 • Choi Sihun\" 이름과 함께 검색상 이 계정으로 반복 결부돼 교차 확인."
         },
         {
           "id": "s1-oh-jintaek",
           "alias": "오진택",
           "gender": "male",
           "occupation": "수트숍 대표",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "timelessbruno",
+          "lastVerified": "2026-09-02",
+          "source": "본인 계정(@timelessbruno) 게시물: \"안녕하세요 오진택입니다. 지난 1년간...\" — 자기소개형 자기 개시."
         },
         {
           "id": "s1-moon-sehoon",
@@ -590,7 +596,10 @@
           "alias": "차현승",
           "gender": "male",
           "occupation": "댄서",
-          "status": "searching"
+          "status": "found",
+          "instagramHandle": "502bright",
+          "lastVerified": "2026-09-02",
+          "source": "프로필(@502bright, Cha HyunSeung, 팔로워 다수)이 댄서 실명과 일치. 백혈병 완치 소식을 다룬 다수의 독립된 언론 계정이 \"댄서 겸 배우 차현승(@502bright)\"으로 동일 핸들을 반복 지목해 교차 확인."
         },
         {
           "id": "s1-song-jia",
