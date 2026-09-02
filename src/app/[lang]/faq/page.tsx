@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AutoAds } from "@/components/ads";
 import { JsonLd } from "@/components/json-ld";
 import {
   POLICY_BODY,
@@ -39,7 +38,6 @@ export default async function Page({ params }: PageProps<"/[lang]/faq">) {
       {/* 문답은 화면에 그대로 있는 것을 옮긴다 — 껍데기의 탐색경로와 별개라
           여기서 한 벌 더 낸다. */}
       <JsonLd data={faqSchema(lang)} />
-      <AutoAds />
 
       <p className={POLICY_BODY}>
         <BrandSentence text={faq.intro} />{" "}
