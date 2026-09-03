@@ -117,7 +117,7 @@
     "description": "What this site publishes, and what it keeps about visitors.",
     "intro": "{brand} (\"this site\") handles the following information.",
     "castHeading": "Cast information",
-    "cast1": "We publish the name used on the show (some programs use aliases), the real name where it is already public, the age and job at the time of airing, public Instagram accounts, and when and how each account was verified. Photos are sometimes included.",
+    "cast1": "We publish the name used on the show (some programs use aliases), the real name where it is already public, the age and job at the time of airing, and public Instagram accounts. Photos are sometimes included. We keep a separate record of when and how each account was verified, and we use that record when handling a correction request.",
     "cast2": "All of it comes from the broadcast and from public sources — never collected from the person directly. Private accounts and unverified guesses are not published. If you ask us to take something down, photos included, we do it without asking why.",
     "visitorHeading": "Visitor information",
     "visitor1": "There are no accounts and no logins. No screen on this site asks for your name or contact details.",
@@ -132,7 +132,7 @@
     "rights": "You can ask to see, correct, or delete information about yourself. We do not ask why, and once it is confirmed we delete it right away.",
     "contactHeading": "Contact",
     "effective": "Effective {date}",
-    "effectiveDate": "August 31, 2026",
+    "effectiveDate": "September 3, 2026",
     "translationNote": "This English text is a translation. Where the two differ, the Korean original governs."
   },
   "about": {

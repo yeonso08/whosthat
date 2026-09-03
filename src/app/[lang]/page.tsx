@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AutoAds } from "@/components/ads";
 import { JsonLd } from "@/components/json-ld";
 import { GroupHeading, PageTitle } from "@/components/page-heading";
 import { LiveRow } from "@/components/live-row";
@@ -23,6 +24,17 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
     <main>
       {/* 사이트 이름을 검색 결과에 도메인 대신 띄우려면 홈에 이 마크업이 있어야 한다. */}
       <JsonLd data={websiteSchema(lang)} />
+
+      {/*
+       * 홈은 조건 없이 건다. 2026-09-02 의 위반 뒤 한동안 빼 뒀는데, 그때 걸린 건
+       * "명단이 비어 화면에 한 문장뿐인" 화면들이었지 홈이 아니다 — 여기엔 사이트가
+       * 무엇을 하는지 적은 줄, 지금 방영 중인 기수, 프로그램 판이 있다.
+       *
+       * 그리고 **애드센스에 등록된 사이트가 apex(`nukko.net`)라 심사 봇이 착지하는
+       * 첫 화면이 여기다.** 홈에만 코드가 없으면 "사이트에서 광고 코드를 찾지 못했다"
+       * 쪽으로 잘못 읽힐 자리가 생긴다.
+       */}
+      <AutoAds />
 
       {/*
        * **홈만 가운데로 세운다**(2026-08-31). 1280px 컨테이너에 프로그램이 둘뿐이라
