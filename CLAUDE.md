@@ -369,7 +369,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ```
 방문자 → 누꼬(Vercel, 정적)              이 경로에 백엔드가 없다
-관리자 → nukko-admin(Vercel) → api.nukko.net(OCI) → Supabase
+관리자 → admin.nukko.net(Vercel) → api.nukko.net(OCI) → Supabase
                                         └→ 저장되면 누꼬에 재검증 신호
 ```
 
@@ -377,7 +377,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 |---|---|
 | 데이터·이미지·로그인 | Supabase |
 | 읽기/쓰기 API | FastAPI on OCI 프리티어 (`nukko-admin-api` 레포) |
-| 관리자 화면 | `nukko-admin` 레포 → https://nukko-admin.vercel.app |
+| 관리자 화면 | `nukko-admin` 레포 → https://admin.nukko.net |
 
 - **누꼬는 여전히 전 페이지 정적이다.** `lib/data.ts` 의 fetch 가 `force-cache` 라 빌드할 때 한 번 굽고, 그 뒤로는 `/api/revalidate` 가 태그를 만료시킬 때만 다시 부른다. **그래서 OCI 프리티어가 방문자 트래픽을 안 받고**, OCI 나 Supabase 가 멈춰도 이미 구워진 페이지는 서빙된다.
 - **`revalidateTag` 는 두 번째 인자가 필요하다**(Next 16). 권장값 `"max"` 는 stale-while-revalidate 라 **저장 직후 첫 방문자가 옛 화면을 본다** — "즉시 반영" 과 어긋나서 `{ expire: 0 }` 을 쓴다. `updateTag` 이 이 용도에 더 맞지만 Server Action 에서만 부를 수 있어 라우트 핸들러에선 못 쓴다.
