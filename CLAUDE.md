@@ -383,6 +383,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **`revalidateTag` 는 두 번째 인자가 필요하다**(Next 16). 권장값 `"max"` 는 stale-while-revalidate 라 **저장 직후 첫 방문자가 옛 화면을 본다** — "즉시 반영" 과 어긋나서 `{ expire: 0 }` 을 쓴다. `updateTag` 이 이 용도에 더 맞지만 Server Action 에서만 부를 수 있어 라우트 핸들러에선 못 쓴다.
 - **빌드가 OCI 에 의존하게 됐다.** API 를 못 읽으면 `lib/data.ts` 가 던져서 빌드가 깨진다 — 명단을 통째로 잃은 화면을 조용히 배포하는 것보다 낫다고 보고 그렇게 뒀다.
 - **`src/data/*.json` 은 남겨 뒀다.** 아무도 안 읽지만 되돌릴 근거다. 지우려면 DB 가 충분히 검증된 뒤에.
+- **백업이 없다 — 알고 남긴 구멍이다.** 데이터 원본이 Supabase 하나뿐이고, `found` 384건은 계정을 직접 열어 확인해 쌓은 거라 잃으면 다시 못 만든다. 위 JSON 이 유일한 사본인데 **2026-09-07 이관 시점에 멈춰 있다** — 그 뒤 관리자 화면에서 고친 건 사본이 없다. 붙이는 방법은 `nukko-admin-api` 레포 README 의 "아직 안 한 것 — 백업" 에 적어 뒀다(GitHub Actions 로 매일 `GET /programs` 를 떠서 여기 커밋하면 된다. 복구 스크립트는 이미 있다).
 - **검증 규칙(`found` 면 핸들·근거·날짜 필수)이 세 겹이다** — 관리자 폼, FastAPI(`app/validation.py`), DB CHECK 제약. 계정 하나를 잘못 올리면 무관한 사람이 피해를 보기 때문에 어느 층도 빼지 않는다.
 
 **`src/data/README.md` 의 데이터 규칙은 그대로 유효하다** — 무엇을 `found` 로 올릴 수 있는지, 사진 출처, 삭제 요청 처리는 저장 위치가 바뀌어도 안 바뀐다. 다만 "JSON 을 고친다" 는 절차 부분은 이제 관리자 화면에서 한다.
