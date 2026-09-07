@@ -26,6 +26,6 @@ export default async function Image({ params }: PageProps<"/[lang]">) {
     // 홈은 프로그램 하나를 가리키지 않는다 — 작은 줄이 브랜드를 맡는다.
     eyebrow: BRAND_WORDMARK[locale],
     headline: dict.og.heading,
-    stat: fill(dict.og.stat, getSiteTotals(getPrograms())),
+    stat: fill(dict.og.stat, getSiteTotals(await getPrograms())),
   });
 }

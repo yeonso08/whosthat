@@ -9,6 +9,23 @@ const FIRST_PROGRAM = "i-am-solo";
 
 const nextConfig: NextConfig = {
   /**
+   * 출연자 사진·프로그램 포스터가 Supabase Storage 로 옮겨 갔다. `next/image` 는
+   * 여기 적힌 호스트만 최적화해 주고, 없으면 화면에서 이미지가 통째로 안 뜬다.
+   *
+   * `/public` 아래 경로(`/cast/...`)는 이 목록과 무관하게 그대로 동작한다 —
+   * 옛 경로가 남아 있어도 깨지지 않는다.
+   */
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "fagjfpcsavwqgclbrkjc.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
+  },
+
+  /**
    * 옛 주소를 지금 주소로 넘긴다. 두 세대가 겹쳐 있다 — 언어가 붙기 전(`/seasons/s33`)과
    * 프로그램이 붙기 전(`/ko/seasons/s33`)이다. 둘 다 한 번에 최종 주소로 보낸다:
    * 리다이렉트를 두 번 태우면 크롤러가 체인을 싫어하고 링크 신호도 샌다.
