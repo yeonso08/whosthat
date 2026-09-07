@@ -350,11 +350,26 @@ export function localizeSpecial(special: string, locale: Locale): string {
 }
 
 /**
+ * 이 프로그램의 문구가 사전에 있나. `lib/data.ts` 가 이걸로 걸러서, 문구가
+ * 없는 프로그램은 화면까지 오지 않는다.
+ *
+ * **세 언어 중 하나만 봐도 된다** — `Dictionary = typeof ko` 라서 사전 세 벌이
+ * 같은 프로그램 키를 갖도록 타입이 강제한다(하나를 빼면 컴파일 에러). 그래서
+ * "ko 에는 있는데 en 에는 없는" 상태가 존재할 수 없다.
+ */
+export function hasProgramStrings(programId: string): boolean {
+  const table: Record<string, ProgramStrings | undefined> =
+    getDictionary(DEFAULT_LOCALE).site.programs;
+  return table[programId] !== undefined;
+}
+
+/**
  * 그 프로그램이 이 언어로 쓰는 말 한 벌.
  *
- * 사전에 없는 프로그램이면 던진다 — 데이터에는 있는데 화면에 부를 말이 없다는
- * 뜻이라, 조용히 id 를 그대로 그리면 `singles-inferno` 이 제목으로 나가 버린다.
- * 전 페이지가 SSG 라 이 에러는 빌드에서 잡힌다.
+ * 사전에 없으면 던진다 — 조용히 id 를 그리면 `singles-inferno` 이 제목으로
+ * 나가 버린다. **다만 이제 여기까지 오지 않는다**: `getPrograms()` 가 문구
+ * 없는 프로그램을 먼저 걸러내기 때문이다. 그래도 남겨 두는 건 그 장치가
+ * 깨졌을 때 조용히 지나가지 않게 하려는 것이다.
  */
 export function programStrings(
   programId: string,
