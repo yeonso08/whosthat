@@ -20,6 +20,7 @@ import ko from "@/dictionaries/ko.json";
 import { localePath } from "./links";
 import { DEFAULT_LOCALE, LOCALES, isLocale, type Locale } from "./locales";
 import { hasRegisteredStrings, lookupProgramStrings } from "./program-strings";
+import { lookupAlias, lookupSpecial } from "./translations";
 import type { Coverage, Season, Totals } from "./types";
 
 // 언어 목록은 `locales.ts` 가 갖고 있지만, 화면 쪽 파일이 두 군데서 가져오지
@@ -343,11 +344,14 @@ const SPECIALS: Record<Locale, Record<string, string>> = {
 
 /** 표에 없는 값은 원문 그대로 나간다. */
 export function localizeAlias(alias: string, locale: Locale): string {
-  return ALIASES[locale][alias] ?? alias;
+  // DB 에서 온 번역이 먼저다. 아래 표는 아직 옮기지 않은 것들을 위한 자리로,
+  // 이관이 끝나면 통째로 없앤다. 어느 쪽에도 없으면 한국어 원문 그대로 —
+  // 화면이 깨지는 것보다 번역이 안 된 채 뜨는 게 낫다.
+  return lookupAlias(alias, locale) ?? ALIASES[locale][alias] ?? alias;
 }
 
 export function localizeSpecial(special: string, locale: Locale): string {
-  return SPECIALS[locale][special] ?? special;
+  return lookupSpecial(special, locale) ?? SPECIALS[locale][special] ?? special;
 }
 
 /**
