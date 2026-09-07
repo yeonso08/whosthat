@@ -14,8 +14,10 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
   if (!isLocale(lang)) notFound();
 
   const dict = getDictionary(lang);
-  const programs = getPrograms();
-  const airing = getAiringSeasons();
+  const [programs, airing] = await Promise.all([
+    getPrograms(),
+    getAiringSeasons(),
+  ]);
 
   return (
     <main>
@@ -55,7 +57,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
           사이트의 존재 이유라, 프로그램을 먼저 고르게 만들지 않는다. */}
       <SeasonSearch
         hero
-        index={buildSearchIndex(lang)}
+        index={await buildSearchIndex(lang)}
         locale={lang}
         text={dict.search}
         status={dict.status}

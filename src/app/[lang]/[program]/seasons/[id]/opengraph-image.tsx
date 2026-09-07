@@ -19,8 +19,8 @@ export const contentType = OG_CONTENT_TYPE;
  * 를 다시 때리고, 나머지가 전부 정적인 사이트에 서버가 하나 붙는다.
  * 언어는 루트 레이아웃이 만들고 여기서 프로그램 × 기수를 곱한다.
  */
-export function generateStaticParams() {
-  return getPrograms().flatMap((program) =>
+export async function generateStaticParams() {
+  return (await getPrograms()).flatMap((program) =>
     getSeasons(program).map((season) => ({
       program: program.id,
       id: season.id,
@@ -35,7 +35,7 @@ export default async function Image({
   const locale = resolveLocale(lang);
   const dict = getDictionary(locale);
 
-  const season = getSeason(programId, id);
+  const season = await getSeason(programId, id);
   const coverage = getCoverage(season?.cast ?? []);
 
   return ogImageResponse({
