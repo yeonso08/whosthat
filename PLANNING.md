@@ -113,7 +113,7 @@ Submission (제보 — Phase 2)
 
 ```
 방문자 → 누꼬(Vercel, 정적)                  이 경로에 백엔드가 없다
-관리자 → nukko-admin(Vercel) → api.nukko.net(OCI) → Supabase
+관리자 → admin.nukko.net(Vercel) → api.nukko.net(OCI) → Supabase
                                 └→ 저장되면 누꼬에 재검증 신호
 ```
 
