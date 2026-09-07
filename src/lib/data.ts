@@ -9,6 +9,7 @@ import {
   type Locale,
 } from "./i18n";
 import { registerProgramStrings } from "./program-strings";
+import { registerTranslations } from "./translations";
 import {
   getCoverage,
   type Program,
@@ -51,6 +52,9 @@ export const getPrograms = cache(async (): Promise<Program[]> => {
 
   const programs: Program[] = await response.json();
 
+  // 번역표도 여기서 함께 받는다 — 화면이 두 번 부르는 걸 기억하지 않아도 되게.
+  await getTranslations();
+
   // 화면 곳곳이 programId 만 들고 문구를 찾는다 — 데이터를 읽는 이 자리에서
   // 넣어 두면 그 함수들의 시그니처를 안 바꿔도 된다(`program-strings.ts`).
   registerProgramStrings(programs);
@@ -79,6 +83,27 @@ export const getPrograms = cache(async (): Promise<Program[]> => {
     );
     return false;
   });
+});
+
+/**
+ * 이름·특집 번역표. 프로그램에 딸린 게 아니라 사이트 전체가 공유하므로 따로
+ * 받는다 — "영수" 는 33명이 함께 쓰고 프로그램도 가로지른다.
+ *
+ * **못 읽어도 던지지 않는다.** 번역이 없으면 한국어 원문으로 뜨는데, 그건
+ * 화면이 깨진 게 아니라 "아직 번역 안 됨" 이다. 명단을 못 읽는 것과 성격이
+ * 다르므로 빌드를 세우지 않는다.
+ */
+export const getTranslations = cache(async (): Promise<void> => {
+  try {
+    const response = await fetch(`${API_URL}/translations`, {
+      cache: "force-cache",
+      next: { tags: [DATA_TAG] },
+    });
+    if (!response.ok) throw new Error(String(response.status));
+    registerTranslations(await response.json());
+  } catch (error) {
+    console.warn("[nukko] 번역표를 못 읽었습니다 — 한국어 원문으로 뜹니다.", error);
+  }
 });
 
 export async function getProgram(id: string): Promise<Program | undefined> {
