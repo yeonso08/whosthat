@@ -1,33 +1,7 @@
 {
   "site": {
     "name": "nukko — Korean reality cast on Instagram",
-    "description": "An archive of the Instagram accounts of Korean reality show cast members, organised by show and season. Only verified accounts are listed, and people with no account are marked as such — so you never search twice.",
-    "programs": {
-      "i-am-solo": {
-        "name": "I Am SOLO",
-        "about": "A Korean dating observation show on SBS Plus and ENA, featuring members of the public rather than celebrities. Cast members go by aliases that repeat every season — Yeongsu, Oksun and so on — and some seasons carry a theme, such as divorcees, never-dated, or people in their forties. This page collects the cast of every season from the first, along with the Instagram accounts that have been verified.",
-        "seasonLabel": "Season {n}",
-        "heading": "All seasons",
-        "pastSeasons": "Past seasons",
-        "latest": "Latest season",
-        "summary": "{seasons} seasons · {found} of {people} Instagram accounts found",
-        "summaryPending": "{seasons} seasons · cast list pending",
-        "searchPlaceholder": "Search by season, special or alias",
-        "seasonsHeading": "Seasons"
-      },
-      "singles-inferno": {
-        "name": "Single's Inferno",
-        "about": "A Netflix original dating reality series. Contestants live on a bare “Inferno” island and earn a night on “Paradise” island by pairing up. Unlike I Am SOLO, the cast go by their real names on air. This page collects each season's cast along with the Instagram accounts that have been verified.",
-        "seasonLabel": "Season {n}",
-        "heading": "All seasons",
-        "pastSeasons": "Past seasons",
-        "latest": "Latest season",
-        "summary": "{seasons} seasons · {found} of {people} Instagram accounts found",
-        "summaryPending": "{seasons} seasons · cast list pending",
-        "searchPlaceholder": "Search by season or name",
-        "seasonsHeading": "Seasons"
-      }
-    }
+    "description": "An archive of the Instagram accounts of Korean reality show cast members, organised by show and season. Only verified accounts are listed, and people with no account are marked as such — so you never search twice."
   },
   "nav": {
     "back": "Back to {program}",
