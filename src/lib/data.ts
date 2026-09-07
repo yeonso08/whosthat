@@ -8,6 +8,7 @@ import {
   localizeSpecial,
   type Locale,
 } from "./i18n";
+import { registerProgramStrings } from "./program-strings";
 import {
   getCoverage,
   type Program,
@@ -49,6 +50,10 @@ export const getPrograms = cache(async (): Promise<Program[]> => {
   }
 
   const programs: Program[] = await response.json();
+
+  // 화면 곳곳이 programId 만 들고 문구를 찾는다 — 데이터를 읽는 이 자리에서
+  // 넣어 두면 그 함수들의 시그니처를 안 바꿔도 된다(`program-strings.ts`).
+  registerProgramStrings(programs);
 
   /**
    * **사전에 문구가 없는 프로그램은 화면까지 보내지 않는다.**
