@@ -1,11 +1,19 @@
 /**
  * 그 언어로 화면에 뭐라고 적는지. 언어 목록 자체는 `locales.ts` 에 있다.
  *
- * 언어를 하나 더하려면 세 곳이다: `locales.ts` 의 목록, 사전 JSON 한 벌,
- * 그리고 이 파일의 어휘 표(가명 로마자·특집 이름). 프로그램마다 다른 말(이름·기수
- * 라벨·목록 제목)은 사전의 `site.programs` 에 있다. 화면 문구는 사전에, **데이터
- * 어휘**는 이 파일에 두는데, 고치는 사람이 다르기 때문이다 — 문구는 화면을 보며
- * 고치고, 어휘는 데이터를 채우며 는다.
+ * **여기에 있는 것과 DB 에 있는 것이 갈린다**(2026-09-07 에 나눴다).
+ *
+ * - 사전(`src/dictionaries/*.json`) — 버튼·안내·상태 라벨·정책 본문처럼
+ *   **프로그램이 늘어도 개수가 안 늘어나는** UI 문구. 화면 구조에 묶여 있어서
+ *   보통 화면을 고칠 때 같이 고친다.
+ * - DB(관리자에서 편집) — 프로그램 이름·기수 라벨·소개, 그리고 출연자 이름과
+ *   특집 이름의 영어·일본어 표기. **프로그램이나 출연자가 늘면 같이 늘어나는**
+ *   것들이라 콘텐츠에 가깝다. 코드를 고쳐 배포해야 화면에 나오면 안 된다.
+ *
+ * 가르는 기준은 "프로그램을 하나 더 추가할 때 이 문구도 새로 써야 하나" 다.
+ *
+ * 언어를 하나 더하려면 두 곳이다: `locales.ts` 의 목록과 사전 JSON 한 벌.
+ * (DB 쪽은 관리자 화면에서 그 언어 탭을 채우면 된다.)
  *
  * 서버 전용이다. 클라이언트 컴포넌트는 이 파일을 import 하지 말 것(사전 두 벌이
  * 통째로 번들에 딸려 온다) — 필요한 문구만 props 로 받는다. `import type` 은
@@ -21,6 +29,7 @@ import { localePath } from "./links";
 import { DEFAULT_LOCALE, LOCALES, isLocale, type Locale } from "./locales";
 import { hasRegisteredStrings, lookupProgramStrings } from "./program-strings";
 import { lookupAlias, lookupSpecial } from "./translations";
+import type { ProgramStrings } from "./types";
 import type { Coverage, Season, Totals } from "./types";
 
 // 언어 목록은 `locales.ts` 가 갖고 있지만, 화면 쪽 파일이 두 군데서 가져오지
@@ -43,7 +52,9 @@ export type Dictionary = typeof ko;
  * `시즌 4` 다. 낱말만 표로 두고 문장에 끼워 넣으면 어순이 다른 언어에서 반드시
  * 어색해지므로, 그 낱말이 들어가는 문장을 통째로 프로그램마다 적는다.
  */
-export type ProgramStrings = Dictionary["site"]["programs"]["i-am-solo"];
+// ProgramStrings 는 이제 사전이 아니라 DB 에서 온다 — 타입도 데이터 쪽에 있다.
+// 여기서 다시 내보내는 건 예전부터 이 파일에서 가져다 쓰던 곳들 때문이다.
+export type { ProgramStrings };
 
 const DICTIONARIES: Record<Locale, Dictionary> = { ko, en, ja };
 
@@ -109,249 +120,17 @@ export function fill(
   );
 }
 
-/**
- * 방송에서 불린 이름의 언어별 표기. 프로그램을 안 가리는 표 한 벌이다 — 나는
- * 솔로는 가명(`영수`)이 21개로 408명에 반복되고, 솔로지옥은 실명(`최시훈`)이라
- * 사람 수만큼 는다. 둘을 갈라 두지 않는 이유는 화면이 하는 일이 같기 때문이다.
- *
- * 로마자는 국립국어원 표기법을 따르되 `희` 만 예외로 `hee` 다 — 규정대로면
- * `Jeonghui` 인데, 영어권에서 그렇게 검색하는 사람이 없다.
- *
- * 가타카나는 한국 예능·연예인을 다루는 일본 매체의 표기 관행을 따른다. **다만
- * `정수` 와 `종수` 는 관행대로면 둘 다 `ジョンス` 로 겹친다** — 1·2·3기는 그
- * 둘이 같은 기수에 함께 있어서, 그대로 두면 한 화면에 이름이 같은 사람이 둘
- * 생긴다. 사람을 갈라 주는 게 이 사이트의 존재 이유라, 실제로 둘 다 쓰이는
- * 표기 중에서 `정`→`チョン`·`종`→`ジョン` 으로 갈라 못박았다.
- *
- * 한국어는 데이터가 원문이라 표가 비어 있다 — 늘 아래 `?? alias` 로 떨어진다.
- */
-const ALIASES: Record<Locale, Record<string, string>> = {
-  ko: {},
-  en: {
-    강소연: "Kang So-yeon",
-    경수: "Gyeongsu",
-    광수: "Gwangsu",
-    국동호: "Kook Dong-ho",
-    권기하: "Kwon Ki-ha",
-    김고은: "Kim Go-eun",
-    김규리: "Kim Gyu-ri",
-    김민설: "Kim Min-seol",
-    김민지: "Kim Min-ji",
-    김세준: "Kim Se-jun",
-    김수민: "Kim Su-min",
-    김아린: "Kim A-rin",
-    김재진: "Kim Jae-jin",
-    김정수: "Kim Jeong-su",
-    김준식: "Kim Jun-sik",
-    김진영: "Kim Jin-young",
-    김태환: "Kim Tae-hwan",
-    김한빈: "Kim Han-bin",
-    김현중: "Kim Hyeon-joong",
-    김혜진: "Kim Hye-jin",
-    문세훈: "Moon Se-hoon",
-    미경: "Migyeong",
-    박민규: "Park Min-kyu",
-    박세정: "Park Se-jeong",
-    박해린: "Park Hae-rin",
-    박희선: "Park Hee-sun",
-    배지연: "Bae Ji-yeon",
-    상철: "Sangcheol",
-    성민지: "Seong Min-ji",
-    손원익: "Son Won-ik",
-    송승일: "Song Seung-il",
-    송지아: "Song Ji-a",
-    순자: "Sunja",
-    신동우: "Shin Dong-woo",
-    신슬기: "Shin Seul-ki",
-    신지연: "Shin Ji-yeon",
-    신현우: "Shin Hyeon-woo",
-    안민영: "An Min-young",
-    안예원: "An Ye-won",
-    안종훈: "An Jong-hun",
-    영수: "Yeongsu",
-    영숙: "Yeongsuk",
-    영순: "Yeongsun",
-    영식: "Yeongsik",
-    영자: "Yeongja",
-    영철: "Yeongcheol",
-    영호: "Yeongho",
-    오진택: "Oh Jin-taek",
-    옥순: "Oksun",
-    우성민: "Woo Sung-min",
-    유시은: "Yoo Si-eun",
-    육준서: "Yook Jun-seo",
-    윤하빈: "Yoon Ha-bin",
-    윤하정: "Yoon Ha-jeong",
-    윤현제: "Yoon Hyeon-je",
-    이관희: "Lee Gwan-hee",
-    이나딘: "Lee Nadine",
-    이성훈: "Lee Sung-hoon",
-    이소이: "Lee So-e",
-    이시안: "Lee Si-an",
-    이주영: "Lee Ju-young",
-    이진석: "Lee Jin-seok",
-    이하은: "Lee Ha-eun",
-    임민수: "Lim Min-su",
-    임수빈: "Lim Su-bin",
-    장태오: "Jang Tae-oh",
-    정수: "Jeongsu",
-    정숙: "Jeongsuk",
-    정순: "Jeongsun",
-    정식: "Jeongsik",
-    정유진: "Jung Yu-jin",
-    정자: "Jeongja",
-    정희: "Jeonghee",
-    조민지: "Jo Min-ji",
-    조융재: "Jo Yoong-jae",
-    조이건: "Jo I-geon",
-    종수: "Jongsu",
-    차현승: "Cha Hyun-seung",
-    최미나수: "Choi Mina-su",
-    최민우: "Choi Min-woo",
-    최서은: "Choi Seo-eun",
-    최시훈: "Choi Si-hun",
-    최종우: "Choi Jong-woo",
-    최혜선: "Choi Hye-seon",
-    함예진: "Ham Ye-jin",
-    현숙: "Hyeonsuk",
-    홍성보: "Hong Seong-bo",
-  },
-  ja: {
-    강소연: "カン・ソヨン",
-    경수: "キョンス",
-    광수: "クァンス",
-    국동호: "クク・ドンホ",
-    권기하: "クォン・ギハ",
-    김고은: "キム・ゴウン",
-    김규리: "キム・ギュリ",
-    김민설: "キム・ミンソル",
-    김민지: "キム・ミンジ",
-    김세준: "キム・セジュン",
-    김수민: "キム・スミン",
-    김아린: "キム・アリン",
-    김재진: "キム・ジェジン",
-    김정수: "キム・ジョンス",
-    김준식: "キム・ジュンシク",
-    김진영: "キム・ジニョン",
-    김태환: "キム・テファン",
-    김한빈: "キム・ハンビン",
-    김현중: "キム・ヒョンジュン",
-    김혜진: "キム・ヘジン",
-    문세훈: "ムン・セフン",
-    미경: "ミギョン",
-    박민규: "パク・ミンギュ",
-    박세정: "パク・セジョン",
-    박해린: "パク・ヘリン",
-    박희선: "パク・ヒソン",
-    배지연: "ペ・ジヨン",
-    상철: "サンチョル",
-    성민지: "ソン・ミンジ",
-    손원익: "ソン・ウォニク",
-    송승일: "ソン・スンイル",
-    송지아: "ソン・ジア",
-    순자: "スンジャ",
-    신동우: "シン・ドンウ",
-    신슬기: "シン・スルギ",
-    신지연: "シン・ジヨン",
-    신현우: "シン・ヒョンウ",
-    안민영: "アン・ミニョン",
-    안예원: "アン・イェウォン",
-    안종훈: "アン・ジョンフン",
-    영수: "ヨンス",
-    영숙: "ヨンスク",
-    영순: "ヨンスン",
-    영식: "ヨンシク",
-    영자: "ヨンジャ",
-    영철: "ヨンチョル",
-    영호: "ヨンホ",
-    오진택: "オ・ジンテク",
-    옥순: "オクスン",
-    우성민: "ウ・ソンミン",
-    유시은: "ユ・シウン",
-    육준서: "ユク・ジュンソ",
-    윤하빈: "ユン・ハビン",
-    윤하정: "ユン・ハジョン",
-    윤현제: "ユン・ヒョンジェ",
-    이관희: "イ・グァンヒ",
-    이나딘: "イ・ナディン",
-    이성훈: "イ・ソンフン",
-    이소이: "イ・ソイ",
-    이시안: "イ・シアン",
-    이주영: "イ・ジュヨン",
-    이진석: "イ・ジンソク",
-    이하은: "イ・ハウン",
-    임민수: "イム・ミンス",
-    임수빈: "イム・スビン",
-    장태오: "チャン・テオ",
-    정수: "チョンス",
-    정숙: "チョンスク",
-    정순: "チョンスン",
-    정식: "チョンシク",
-    정유진: "チョン・ユジン",
-    정자: "チョンジャ",
-    정희: "チョンヒ",
-    조민지: "チョ・ミンジ",
-    조융재: "チョ・ユンジェ",
-    조이건: "チョ・イゴン",
-    종수: "ジョンス",
-    차현승: "チャ・ヒョンスン",
-    최미나수: "チェ・ミナス",
-    최민우: "チェ・ミヌ",
-    최서은: "チェ・ソウン",
-    최시훈: "チェ・シフン",
-    최종우: "チェ・ジョンウ",
-    최혜선: "チェ・ヘソン",
-    함예진: "ハム・イェジン",
-    현숙: "ヒョンスク",
-    홍성보: "ホン・ソンボ",
-  },
-};
 
-/** 특집 이름. 13종뿐이라 통째로 적는다 — "N차"를 따로 조립하면 서수 규칙까지 떠안는다. */
-const SPECIALS: Record<Locale, Record<string, string>> = {
-  ko: {},
-  en: {
-    "1차 모태솔로 특집": "1st Never-Dated Special",
-    "2차 모태솔로 특집": "2nd Never-Dated Special",
-    "3차 모태솔로 특집": "3rd Never-Dated Special",
-    "돌싱 특집": "Divorcee Special",
-    "2차 돌싱 특집": "2nd Divorcee Special",
-    "3차 돌싱 특집": "3rd Divorcee Special",
-    "4차 돌싱 특집": "4th Divorcee Special",
-    "5차 돌싱 특집": "5th Divorcee Special",
-    "40대 특집": "40s Special",
-    "2차 40대 특집": "2nd 40s Special",
-    "40대 골드 특집": "40s Gold Special",
-    "질투 특집": "Jealousy Special",
-    "연상연하 특집": "Age-Gap Special",
-  },
-  ja: {
-    "1차 모태솔로 특집": "第1回 恋愛未経験特集",
-    "2차 모태솔로 특집": "第2回 恋愛未経験特集",
-    "3차 모태솔로 특집": "第3回 恋愛未経験特集",
-    "돌싱 특집": "バツイチ特集",
-    "2차 돌싱 특집": "第2回 バツイチ特集",
-    "3차 돌싱 특집": "第3回 バツイチ特集",
-    "4차 돌싱 특집": "第4回 バツイチ特集",
-    "5차 돌싱 특집": "第5回 バツイチ特集",
-    "40대 특집": "40代特集",
-    "2차 40대 특집": "第2回 40代特集",
-    "40대 골드 특집": "40代ゴールド特集",
-    "질투 특집": "嫉妬特集",
-    "연상연하 특집": "年の差特集",
-  },
-};
 
 /** 표에 없는 값은 원문 그대로 나간다. */
 export function localizeAlias(alias: string, locale: Locale): string {
-  // DB 에서 온 번역이 먼저다. 아래 표는 아직 옮기지 않은 것들을 위한 자리로,
-  // 이관이 끝나면 통째로 없앤다. 어느 쪽에도 없으면 한국어 원문 그대로 —
-  // 화면이 깨지는 것보다 번역이 안 된 채 뜨는 게 낫다.
-  return lookupAlias(alias, locale) ?? ALIASES[locale][alias] ?? alias;
+  // 번역이 없으면 한국어 원문 그대로 — 화면이 깨지는 것보다 번역이 안 된 채
+  // 뜨는 게 낫다. 관리자에서 채우면 그때 바뀐다.
+  return lookupAlias(alias, locale) ?? alias;
 }
 
 export function localizeSpecial(special: string, locale: Locale): string {
-  return lookupSpecial(special, locale) ?? SPECIALS[locale][special] ?? special;
+  return lookupSpecial(special, locale) ?? special;
 }
 
 /**
@@ -363,10 +142,7 @@ export function localizeSpecial(special: string, locale: Locale): string {
  * "ko 에는 있는데 en 에는 없는" 상태가 존재할 수 없다.
  */
 export function hasProgramStrings(programId: string): boolean {
-  if (hasRegisteredStrings(programId)) return true;
-  const table: Record<string, ProgramStrings | undefined> =
-    getDictionary(DEFAULT_LOCALE).site.programs;
-  return table[programId] !== undefined;
+  return hasRegisteredStrings(programId);
 }
 
 /**
@@ -381,14 +157,10 @@ export function programStrings(
   programId: string,
   locale: Locale,
 ): ProgramStrings {
-  // DB 에서 온 문구가 먼저다. 사전은 아직 옮기지 않은 프로그램을 위한 자리로,
-  // 이관이 끝나면(4단계) 통째로 없앤다.
-  const fromApi = lookupProgramStrings(programId, locale);
-  if (fromApi) return fromApi;
+  const strings = lookupProgramStrings(programId, locale);
 
-  const table: Record<string, ProgramStrings | undefined> =
-    getDictionary(locale).site.programs;
-  const strings = table[programId];
+  // 여기까지 오면 `getPrograms()` 의 거르는 장치가 깨진 것이다 — 문구 없는
+  // 프로그램은 화면까지 오지 않아야 한다. 조용히 지나가지 않게 던진다.
   if (!strings) throw new Error(`문구를 찾을 수 없는 프로그램: ${programId}`);
   return strings;
 }

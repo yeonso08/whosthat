@@ -60,17 +60,16 @@ export const getPrograms = cache(async (): Promise<Program[]> => {
   registerProgramStrings(programs);
 
   /**
-   * **사전에 문구가 없는 프로그램은 화면까지 보내지 않는다.**
+   * **화면 문구가 없는 프로그램은 화면까지 보내지 않는다.**
    *
-   * 관리자 화면에서 프로그램을 만들면 DB 에는 바로 생기지만, 화면에 쓸
-   * 이름·기수 라벨은 사전(코드)에 있어서 배포 전까지 없다. 예전에는 그 상태로
-   * 화면까지 흘러가 `programStrings` 가 던졌는데, **그러면 이미 떠 있는 홈이
-   * 500 이 됐다**(실제로 재현해서 확인했다). 번역 하나가 없다고 사이트를
-   * 내리는 건 어느 CMS 도 하지 않는 동작이다.
+   * 관리자에서 프로그램을 만들고 문구를 아직 안 채운 상태다. 예전에는 그대로
+   * 흘러가 `programStrings` 가 던졌는데, **그러면 이미 떠 있는 홈이 500 이
+   * 됐다**(재현해서 확인했다). 번역 하나가 없다고 사이트를 내리는 건 어느
+   * CMS 도 하지 않는 동작이다.
    *
-   * 그래서 여기서 조용히 빼고 경고만 남긴다 — 사이트는 살아 있고, 잘못된
-   * 제목(`singles-inferno`)이 나가지도 않는다. 사전에 문구를 넣고 배포하면
-   * 저절로 나타난다.
+   * 그래서 조용히 빼고 경고만 남긴다 — 사이트는 살아 있고, 잘못된 제목
+   * (`singles-inferno`)이 나가지도 않는다. 관리자에서 문구를 채우면 저절로
+   * 나타난다.
    *
    * 경고를 남기는 건 **오타로 진짜 프로그램이 사라지는 경우**를 잡기 위해서다
    * — 빌드 로그에 뜬다.
@@ -78,8 +77,8 @@ export const getPrograms = cache(async (): Promise<Program[]> => {
   return programs.filter((program) => {
     if (hasProgramStrings(program.id)) return true;
     console.warn(
-      `[nukko] 사전에 문구가 없어 화면에서 제외합니다: ${program.id}` +
-        ` — src/dictionaries/{ko,en,ja}.json 의 site.programs 에 추가하세요.`,
+      `[nukko] 화면 문구가 없어 제외합니다: ${program.id}` +
+        ` — 관리자(admin.nukko.net)의 프로그램 화면에서 "문구" 를 채우세요.`,
     );
     return false;
   });

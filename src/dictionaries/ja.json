@@ -1,33 +1,7 @@
 {
   "site": {
     "name": "nukko — バラエティ出演者インスタ",
-    "description": "韓国バラエティ番組の出演者のインスタグラムアカウントを、番組別・期別にまとめたアーカイブです。確認できたものだけを載せ、アカウントがない方はないと書いてありますので、二度検索する必要がありません。",
-    "programs": {
-      "i-am-solo": {
-        "name": "私はSOLO",
-        "about": "SBS Plus・ENAで放送されている一般人の恋愛観察バラエティです。出演者はヨンス・オクスンのように期ごとに繰り返される仮名で呼ばれ、期によってバツイチ・恋愛未経験・40代といった特集が組まれます。1期から現在までの出演者名簿と、直接確認したInstagramアカウントを期ごとにまとめています。",
-        "seasonLabel": "第{n}期",
-        "heading": "全ての期",
-        "pastSeasons": "これまでの期",
-        "latest": "最新の期",
-        "summary": "{seasons}期・{people}人中 インスタ{found}件確認",
-        "summaryPending": "{seasons}期・出演者リスト整理中",
-        "searchPlaceholder": "期・特集・仮名で検索",
-        "seasonsHeading": "期"
-      },
-      "singles-inferno": {
-        "name": "脱出おひとり島",
-        "about": "Netflixオリジナルの恋愛リアリティ番組です。何もない「地獄島」で過ごし、カップルになれば一日を「天国島」で過ごすという形式で、『ナは SOLO』とは違い放送で実名で呼ばれます。シーズンごとの出演者名簿と、直接確認したInstagramアカウントをまとめています。",
-        "seasonLabel": "シーズン{n}",
-        "heading": "全シーズン",
-        "pastSeasons": "これまでのシーズン",
-        "latest": "最新シーズン",
-        "summary": "{seasons}シーズン・{people}人中 インスタ{found}件確認",
-        "summaryPending": "{seasons}シーズン・出演者リスト整理中",
-        "searchPlaceholder": "シーズン・名前で検索",
-        "seasonsHeading": "シーズン"
-      }
-    }
+    "description": "韓国バラエティ番組の出演者のインスタグラムアカウントを、番組別・期別にまとめたアーカイブです。確認できたものだけを載せ、アカウントがない方はないと書いてありますので、二度検索する必要がありません。"
   },
   "nav": {
     "back": "{program} の一覧へ",
