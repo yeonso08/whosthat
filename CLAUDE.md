@@ -53,9 +53,10 @@ src/lib/site.ts                      도메인·연락처·광고 ID — absolut
 src/lib/og.tsx                       공유 카드 한 장 + OG 서체 로더. `.tsx` 인 건 카드 판을 여기서 그리기 때문이다
 src/lib/seo.ts                       색인 여부·OG 공통 필드·정책 페이지 metadata·JSON-LD — 검색엔진에 보이는 것을 한 곳에
 src/lib/types.ts                     Program → Season → CastMember 모델 + getCoverage·getTotals·getSiteTotals
-src/lib/data.ts                      프로그램 JSON 로더(PROGRAMS 배열) + 검색 인덱스 생성
+src/lib/data.ts                      관리자 백엔드(GET /programs) 호출 + 검색 인덱스 생성. 데이터를 읽는 유일한 파일
+src/app/api/revalidate/route.ts      관리자가 저장하면 백엔드가 부르는 재검증 창구 (유일한 동적 라우트)
 src/lib/search.ts                    검색 매칭 — 데이터를 모른다(클라이언트로 넘어간다)
-src/data/i-am-solo.json           실데이터(1~33기, 408명) — 채우는 법은 src/data/README.md
+src/data/i-am-solo.json           **더는 읽지 않는다.** DB 로 옮기기 전 원본 — 되돌릴 근거로 남겨 뒀다
 src/data/singles-inferno.json              솔로지옥 시즌 1~5 골격 — 명단이 아직 비어 있다
 src/components/ads.tsx               AutoAds — 애드센스 스니펫. 레이아웃이 아니라 페이지가 건다(위 "광고" 절)
 src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-row, season-feature, season-search, list-card, live-row, live-dot, site-footer, site-nav, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
@@ -160,7 +161,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 ### 의존 방향은 한 쪽으로만 (결합도)
 
 - `page → components → lib → data(JSON)`. 역방향 import 는 없다. `lib` 은 컴포넌트를 모르고, 컴포넌트는 JSON 을 모른다.
-- **출연진 JSON 을 직접 import 하는 파일은 `lib/data.ts` 하나뿐이다.** 제보 기능에서 DB 로 갈아탈 때(로드맵 2단계) 고칠 파일을 하나로 묶어 두는 게 목적이다. 페이지에서 `@/data/*.json` 을 부르고 싶어지면 `data.ts` 에 함수를 하나 더 만든다. (사전 JSON 은 별개다 — `i18n.ts` 가 읽는다. 옮길 대상이 아니라 코드에 가까운 자원이다.)
+- **데이터를 읽는 파일은 `lib/data.ts` 하나뿐이다.** 예전에는 `@/data/*.json` 을 직접 import 했고 지금은 백엔드를 부른다 — **그 규칙을 지켜 둔 덕분에 DB 로 옮기는 비용이 이 파일 하나와 호출부 8곳의 `await` 로 끝났다**(2026-09-07). 새 데이터가 필요하면 여기 함수를 하나 더 만든다. (사전 JSON 은 별개다 — `i18n.ts` 가 읽는다. 옮길 대상이 아니라 코드에 가까운 자원이다.)
 - 컴포넌트는 **그리는 데 필요한 최소 타입만** props 로 받는다. `SeasonRow` 는 `Season`, `CastCard` 는 `CastMember` 다. 편하다고 `Program` 을 통째로 내려보내면 그 컴포넌트는 프로그램 구조가 바뀔 때마다 같이 깨진다.
 
 ### 한 파일에 한 역할 (단일 책임)
@@ -307,7 +308,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ## 현재 상태
 
-일곱 화면(프로그램 목록·기수 목록·기수 상세·소개·자주 묻는 질문·삭제 요청·처리방침)이 **한국어·영어·일본어 세 벌**로 동작하고 빌드가 통과한다(144 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지·JSON-LD)까지 붙어 있고 전부 정적이다 — 서버가 하는 일은 `/` 하나를 언어로 보내는 proxy 뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (2026-08-24 에 커스텀 도메인 연결, Cloudflare Registrar 등록·DNS. 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. **실제 이미지 파일은 아직 한 장도 없다** — 출연자 사진(`public/cast/`)도, 프로그램 포스터(`public/programs/`, 디렉터리 자체가 없다)도 0장이라 홈의 판은 전부 이름 활자로 떨어진다.
+일곱 화면(프로그램 목록·기수 목록·기수 상세·소개·자주 묻는 질문·삭제 요청·처리방침)이 **한국어·영어·일본어 세 벌**로 동작하고 빌드가 통과한다(144 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지·JSON-LD)까지 붙어 있고 화면은 전부 정적이다 — 방문자 요청에 도는 건 `/` 를 언어로 보내는 proxy 와 재검증 창구(`/api/revalidate`, 백엔드만 부른다) 둘뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (2026-08-24 에 커스텀 도메인 연결, Cloudflare Registrar 등록·DNS. 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. **실제 이미지 파일은 아직 한 장도 없다** — 출연자 사진(`public/cast/`)도, 프로그램 포스터(`public/programs/`, 디렉터리 자체가 없다)도 0장이라 홈의 판은 전부 이름 활자로 떨어진다.
 
 브랜드 워드마크·파비콘·앱 아이콘([ㄲ 마크] `누꼬`(ko)/[ㄲ 마크] `nukko`(en·ja))이 붙었다 — 위 "브랜드" 절 참고. 워드마크는 이제 페이지가 아니라 **상단 바**(`SiteNav`, 레이아웃)에 한 벌만 있고, 홈을 뺀 네 화면은 제목 줄에 `‹` 되돌아가기를 붙인다(홈은 더 올라갈 곳이 없어 화살표가 없다).
 
@@ -357,12 +358,34 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 - **가명은 식별자가 아니다.** 408명이 쓰는 가명이 21개뿐이라 "영수" 한 단어는 33건이 걸린다(기수마다 하나씩). 그래서 ① 계정을 찾아 둔 사람(`found`)을 맨 위로 올리고 ② 프로그램·기수 이름을 사람 쪽 검색 대상에 함께 넣어 `22기 영수`·`솔로지옥 시즌 4` 로 좁혀지게 했다. 그 토큰을 따로 골라내는 특수 처리는 없다 — 그 한 줄이 복합 질의를 통째로 받아낸다.
 - 퍼지 매칭을 넣지 말 것. 가명이 한 글자씩만 달라서 오타를 관대하게 보면 "영수"에 "영식"·"영철"이 딸려 온다.
-- **인덱스는 `buildSearchIndex`(`data.ts`)가 서버에서 만들어 홈 페이지가 prop 으로 내린다.** 검색이 클라이언트 컴포넌트라 `lib/search.ts` 는 `lib/data.ts` 를 import 하지 않는다 — 한 파일에 섞으면 원본 JSON 112KB 가 클라이언트 번들에 딸려 들어간다. 페이지당 인덱스는 gzip 2KB 다(가명·상태가 반복돼 잘 압축된다).
+- **인덱스는 `buildSearchIndex`(`data.ts`)가 서버에서 만들어 홈 페이지가 prop 으로 내린다.** 검색이 클라이언트 컴포넌트라 `lib/search.ts` 는 `lib/data.ts` 를 import 하지 않는다 — 한 파일에 섞으면 원본 데이터가 통째로 클라이언트 번들에 딸려 들어간다. 페이지당 인덱스는 gzip 2KB 다(가명·상태가 반복돼 잘 압축된다).
 - 사람 결과는 `/{lang}/{program}/seasons/{id}#{memberId}` 로 착지한다. 앵커는 `CastCard` 가 카드에 거는 DOM id 와 짝이다.
 
-다음: 솔로지옥 66명 계정 찾기 → 나는 솔로 33기 계정(종영 후) → 계정 데이터 채우기 · 사진 채우기(파이프라인은 붙었고 파일이 0장이다 — `src/data/README.md` 의 "사진을 올릴 때") → 제보 폼(`PLANNING.md` 로드맵 2단계). 언어는 일본어까지 셋이고, 더 붙일 때 절차는 위 "언어를 하나 더할 때". 프로그램을 더 붙일 때는 `src/data/README.md` 의 "프로그램을 추가할 때".
+다음: 솔로지옥 남은 2명 계정 찾기 → 나는 솔로 33기 계정(종영 후) → **사진 채우기**(이제 관리자 화면에서 업로드하면 된다. 아직 0장) → 제보 폼(`PLANNING.md` 로드맵 2단계). 언어는 일본어까지 셋이고, 더 붙일 때 절차는 위 "언어를 하나 더할 때". 프로그램을 더 붙일 때는 `src/data/README.md` 의 "프로그램을 추가할 때".
 
-**DB·백엔드는 아직 필요 없다.** 지금은 정적 JSON + SSG 로 충분하고, 데이터가 늘었다는 건 옮길 이유가 안 된다. 갈아탈 시점을 판단하는 기준은 `PLANNING.md` §7 "DB·백엔드는 언제 필요한가" 에 있다 — 조건이 실제로 걸리면 그때 먼저 말한다.
+## 데이터는 어디에 있나 (2026-09-07)
+
+**JSON 파일에서 DB 로 옮겼다.** 트리거는 `PLANNING.md` §7 의 ③ — 손편집이 병목이 됐다.
+
+```
+방문자 → 누꼬(Vercel, 정적)              이 경로에 백엔드가 없다
+관리자 → nukko-admin(Vercel) → api.nukko.net(OCI) → Supabase
+                                        └→ 저장되면 누꼬에 재검증 신호
+```
+
+| 무엇 | 어디 |
+|---|---|
+| 데이터·이미지·로그인 | Supabase |
+| 읽기/쓰기 API | FastAPI on OCI 프리티어 (`nukko-admin-api` 레포) |
+| 관리자 화면 | `nukko-admin` 레포 → https://nukko-admin.vercel.app |
+
+- **누꼬는 여전히 전 페이지 정적이다.** `lib/data.ts` 의 fetch 가 `force-cache` 라 빌드할 때 한 번 굽고, 그 뒤로는 `/api/revalidate` 가 태그를 만료시킬 때만 다시 부른다. **그래서 OCI 프리티어가 방문자 트래픽을 안 받고**, OCI 나 Supabase 가 멈춰도 이미 구워진 페이지는 서빙된다.
+- **`revalidateTag` 는 두 번째 인자가 필요하다**(Next 16). 권장값 `"max"` 는 stale-while-revalidate 라 **저장 직후 첫 방문자가 옛 화면을 본다** — "즉시 반영" 과 어긋나서 `{ expire: 0 }` 을 쓴다. `updateTag` 이 이 용도에 더 맞지만 Server Action 에서만 부를 수 있어 라우트 핸들러에선 못 쓴다.
+- **빌드가 OCI 에 의존하게 됐다.** API 를 못 읽으면 `lib/data.ts` 가 던져서 빌드가 깨진다 — 명단을 통째로 잃은 화면을 조용히 배포하는 것보다 낫다고 보고 그렇게 뒀다.
+- **`src/data/*.json` 은 남겨 뒀다.** 아무도 안 읽지만 되돌릴 근거다. 지우려면 DB 가 충분히 검증된 뒤에.
+- **검증 규칙(`found` 면 핸들·근거·날짜 필수)이 세 겹이다** — 관리자 폼, FastAPI(`app/validation.py`), DB CHECK 제약. 계정 하나를 잘못 올리면 무관한 사람이 피해를 보기 때문에 어느 층도 빼지 않는다.
+
+**`src/data/README.md` 의 데이터 규칙은 그대로 유효하다** — 무엇을 `found` 로 올릴 수 있는지, 사진 출처, 삭제 요청 처리는 저장 위치가 바뀌어도 안 바뀐다. 다만 "JSON 을 고친다" 는 절차 부분은 이제 관리자 화면에서 한다.
 
 ## Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
 

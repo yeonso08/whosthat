@@ -25,8 +25,8 @@ import {
 import { getTotals } from "@/lib/types";
 
 /** 언어는 루트 레이아웃이 만든다 — 여기서는 프로그램만 내고 둘이 곱해진다. */
-export function generateStaticParams() {
-  return getPrograms().map((program) => ({ program: program.id }));
+export async function generateStaticParams() {
+  return (await getPrograms()).map((program) => ({ program: program.id }));
 }
 
 export async function generateMetadata({
@@ -35,7 +35,7 @@ export async function generateMetadata({
   const { lang, program: programId } = await params;
   if (!isLocale(lang)) return {};
 
-  const program = getProgram(programId);
+  const program = await getProgram(programId);
   if (!program) return {};
 
   return programMetadata(program, lang);
@@ -47,7 +47,7 @@ export default async function Page({
   const { lang, program: programId } = await params;
   if (!isLocale(lang)) notFound();
 
-  const program = getProgram(programId);
+  const program = await getProgram(programId);
   if (!program) notFound();
 
   const dict = getDictionary(lang);
@@ -95,7 +95,7 @@ export default async function Page({
           인덱스는 이 프로그램만 담는다: 프로그램 화면에서 친 말이 다른 프로그램
           으로 새면 지금 보고 있는 목록과 결과가 어긋난다. */}
       <SeasonSearch
-        index={buildSearchIndex(lang, program)}
+        index={await buildSearchIndex(lang, program)}
         locale={lang}
         text={{
           ...dict.search,

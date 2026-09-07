@@ -14,8 +14,8 @@ export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 
 /** 없으면 이 라우트만 요청마다 서버에서 렌더된다 — 기수 카드와 같은 이유다. */
-export function generateStaticParams() {
-  return getPrograms().map((program) => ({ program: program.id }));
+export async function generateStaticParams() {
+  return (await getPrograms()).map((program) => ({ program: program.id }));
 }
 
 export default async function Image({
@@ -25,7 +25,7 @@ export default async function Image({
   const locale = resolveLocale(lang);
   const dict = getDictionary(locale);
 
-  const program = getProgram(programId);
+  const program = await getProgram(programId);
   const totals = getTotals(program ? getSeasons(program) : []);
 
   return ogImageResponse({

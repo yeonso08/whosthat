@@ -23,11 +23,11 @@ import type { CastMember } from "@/lib/types";
  * lastModified 는 그 기수에서 마지막으로 계정을 확인한 날짜다. 빌드 시각을
  * 넣으면 내용이 안 바뀌어도 매 배포마다 "수정됨"이 되어 크롤러가 신뢰를 잃는다.
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 명단이 빈 기수와, 그런 기수뿐인 프로그램은 noindex 라 여기서도 뺀다 —
   // 색인하지 말라고 적어 둔 페이지를 sitemap 으로 제출하면 Search Console 이
   // 그걸 오류로 잡는다. 둘의 기준이 갈라지지 않게 판단은 `seo.ts` 에서만 한다.
-  const programs = getPrograms().filter(isProgramIndexable);
+  const programs = (await getPrograms()).filter(isProgramIndexable);
 
   const pages = [
     { path: HOME_PATH, changeFrequency: "daily" as const, priority: 1 },

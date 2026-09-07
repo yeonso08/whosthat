@@ -30,8 +30,8 @@ import { getCoverage } from "@/lib/types";
  * 프로그램과 기수를 한 번에 내는 이유: 기수 id 는 프로그램 안에서만 고유해서
  * (`s1` 이 두 프로그램에 다 있다) 두 값이 짝으로 나와야 한다.
  */
-export function generateStaticParams() {
-  return getPrograms().flatMap((program) =>
+export async function generateStaticParams() {
+  return (await getPrograms()).flatMap((program) =>
     getSeasons(program).map((season) => ({
       program: program.id,
       id: season.id,
@@ -45,7 +45,7 @@ export async function generateMetadata({
   const { lang, program: programId, id } = await params;
   if (!isLocale(lang)) return {};
 
-  const season = getSeason(programId, id);
+  const season = await getSeason(programId, id);
   if (!season) return {};
 
   const dict = getDictionary(lang);
@@ -97,8 +97,8 @@ export default async function Page({
   const { lang, program: programId, id } = await params;
   if (!isLocale(lang)) notFound();
 
-  const program = getProgram(programId);
-  const season = getSeason(programId, id);
+  const program = await getProgram(programId);
+  const season = await getSeason(programId, id);
   if (!program || !season) notFound();
 
   const dict = getDictionary(lang);
