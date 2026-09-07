@@ -49,10 +49,38 @@ export type Season = {
   cast: CastMember[];
 };
 
+/**
+ * 프로그램마다 언어별로 화면에 쓰는 말 한 벌.
+ *
+ * **여기 있는 건 사전(코드)이 아니라 DB 에서 온 값이다.** 사전에 두면 관리자
+ * 화면에서 프로그램을 만들어도 배포 전까지 화면에 안 나온다 — 프로그램은
+ * 콘텐츠고, 그에 딸린 이름·라벨도 콘텐츠라서 함께 움직여야 한다.
+ *
+ * **문장을 통째로 담는다.** 낱말만 두고 조립하면 어순이 다른 언어에서 깨진다.
+ */
+export type ProgramStrings = {
+  name: string;
+  about: string;
+  /** "{n}기" / "Season {n}" — 숫자 위치가 언어·프로그램마다 다르다. */
+  seasonLabel: string;
+  heading: string;
+  pastSeasons: string;
+  latest: string;
+  summary: string;
+  summaryPending: string;
+  searchPlaceholder: string;
+  seasonsHeading: string;
+};
+
 export type Program = {
   id: string;
-  /** 한국어 원문. 다른 언어 이름은 사전의 `site.programs` 가 갖는다. */
+  /** 한국어 원문. 화면에 나가는 이름은 아래 `strings` 가 언어별로 갖는다. */
   name: string;
+  /**
+   * 언어 코드 → 그 언어 문구. **없는 언어가 있을 수 있다** — 관리자에서 만들고
+   * 아직 번역을 안 넣은 상태다. 그때는 한국어로 떨어진다(`programStrings`).
+   */
+  strings?: Partial<Record<string, ProgramStrings>>;
   type: string;
   platform: string;
   /**

@@ -19,6 +19,7 @@ import ja from "@/dictionaries/ja.json";
 import ko from "@/dictionaries/ko.json";
 import { localePath } from "./links";
 import { DEFAULT_LOCALE, LOCALES, isLocale, type Locale } from "./locales";
+import { hasRegisteredStrings, lookupProgramStrings } from "./program-strings";
 import type { Coverage, Season, Totals } from "./types";
 
 // 언어 목록은 `locales.ts` 가 갖고 있지만, 화면 쪽 파일이 두 군데서 가져오지
@@ -358,6 +359,7 @@ export function localizeSpecial(special: string, locale: Locale): string {
  * "ko 에는 있는데 en 에는 없는" 상태가 존재할 수 없다.
  */
 export function hasProgramStrings(programId: string): boolean {
+  if (hasRegisteredStrings(programId)) return true;
   const table: Record<string, ProgramStrings | undefined> =
     getDictionary(DEFAULT_LOCALE).site.programs;
   return table[programId] !== undefined;
@@ -375,10 +377,15 @@ export function programStrings(
   programId: string,
   locale: Locale,
 ): ProgramStrings {
+  // DB 에서 온 문구가 먼저다. 사전은 아직 옮기지 않은 프로그램을 위한 자리로,
+  // 이관이 끝나면(4단계) 통째로 없앤다.
+  const fromApi = lookupProgramStrings(programId, locale);
+  if (fromApi) return fromApi;
+
   const table: Record<string, ProgramStrings | undefined> =
     getDictionary(locale).site.programs;
   const strings = table[programId];
-  if (!strings) throw new Error(`사전에 없는 프로그램: ${programId}`);
+  if (!strings) throw new Error(`문구를 찾을 수 없는 프로그램: ${programId}`);
   return strings;
 }
 
