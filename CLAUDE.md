@@ -389,7 +389,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 ```
 방문자 → 누꼬(Vercel, 정적)              이 경로에 백엔드가 없다
 관리자 → admin.nukko.net(Vercel) → api.nukko.net(OCI) → Supabase
-                                        └→ 저장되면 Vercel Deploy Hook → 누꼬 전체 재빌드(약 1분)
+                                        └→ "사이트에 반영" 을 누르면 Vercel Deploy Hook → 누꼬 전체 재빌드(약 1분)
 ```
 
 | 무엇 | 어디 |
@@ -413,7 +413,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **레지스트리를 모듈 지역 변수로 두지 말 것**(`program-strings.ts`·`translations.ts`). Next 가 서버 코드를 라우트별로 쪼개면 모듈이 복제돼 **채우는 Map 과 읽는 Map 이 다른 객체가 된다.** 빌드는 통과하는데 값이 안 나와서 원인을 찾기 어렵다. `globalThis` 에 붙인다.
 - **로컬 `next build` 가 옛 데이터를 굽으면 `.next/cache` 를 지운다.** 응답 캐시 키에 배포 ID(`VERCEL_DEPLOYMENT_ID`)를 붙이는데 로컬에는 그 값이 없어 키가 고정이다. Vercel 에서는 배포마다 키가 바뀌어 이 문제가 없다.
 
-- **저장하면 사이트를 통째로 다시 빌드한다 — Vercel Deploy Hook**(2026-09-22). 백엔드가 저장 뒤 훅 주소(`NUKKO_DEPLOY_HOOK_URL`, OCI `.env`)를 부르고, 누꼬가 약 1분 걸려 144페이지를 새로 굽는다. 정적 사이트 + CMS 의 흔한 구성이다. 그전 방식(`/api/revalidate` + `revalidateTag`)을 버린 이유는 둘이다:
+- **"사이트에 반영" 을 누르면 사이트를 통째로 다시 빌드한다 — Vercel Deploy Hook**(2026-09-22). 관리자 화면 위쪽 버튼이 백엔드 `POST /admin/publish` 를 부르고, 백엔드가 훅 주소(`NUKKO_DEPLOY_HOOK_URL`, OCI `.env`)를 불러 누꼬가 약 1분 걸려 144페이지를 새로 굽는다. **저장만으로는 빌드하지 않는다** — 처음엔 저장마다 빌드했는데, 새 기수를 채우느라 저장을 열 번 넘게 누르면 빌드도 열 번 넘게 줄을 섰다. 저장은 백엔드 DB 의 반영 대기 수(`site_publish`)만 올리고, 관리자 화면이 그 수를 늘 보여 준다(반영을 잊는 게 이 방식의 약점이라). 자동 반영(몇 분 조용하면 빌드)도 검토했지만 사용자가 버튼만 두기로 했다. 정적 사이트 + CMS 의 흔한 구성이다. 그전 방식(`/api/revalidate` + `revalidateTag`)을 버린 이유는 둘이다:
   - **`expire: 0` 은 API 가 죽었을 때 방문자가 에러를 본다.** 저장 뒤 첫 방문이 페이지를 막고 새로 만드는데, 그 사이 API 가 죽으면 만들 데이터가 없다. 문서가 "실패하면 옛 페이지" 를 보장하는 건 `"max"` 뿐이다.
   - **`"max"` 는 방문자가 적으면 옛 화면이 오래 남는다.** 페이지마다 첫 방문자가 옛 화면을 받으며 새로 만들기를 거는데, 누꼬는 그 첫 방문이 며칠 뒤일 수 있다(사용자가 이 이유로 반려했다).
   - Deploy Hook 은 둘 다 없다 — 빌드가 끝나면 전 페이지가 새것이고, 빌드 중 API 가 죽으면 **빌드가 실패해 이전 사이트가 남는다.** 대가는 반영이 즉시가 아니라 약 1분이라는 것, 연달아 저장하면 빌드가 쌓인다는 것이다.
