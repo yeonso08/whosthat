@@ -27,6 +27,7 @@
     "castCount": "{found} of {total} accounts found",
     "castPending": "Cast list pending",
     "castPendingBody": "We have not confirmed this season's cast list yet. Season sizes differ, so we do not fill it in by guesswork.",
+    "aboutHeading": "About {season}",
     "photoAlt": "Photo of {alias}",
     "metaTitle": "{program} {season}{special} cast Instagram",
     "metaDescription": "Instagram accounts for the {total} cast members of {program} {season}{special}. Only verified accounts are listed, and people with no account are marked as such.",

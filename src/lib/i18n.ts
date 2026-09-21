@@ -260,3 +260,17 @@ export function localizeSeason(season: Season, locale: Locale) {
     airDate: formatAirDate(season.airDate, locale),
   };
 }
+
+/**
+ * 기수 소개를 문단 단위로. 관리자에서 빈 줄로 문단을 나눈다.
+ *
+ * **없는 언어는 빈 배열이다 — 한국어로 떨어뜨리지 않는다.** 이름·특집은 한
+ * 낱말이라 원문이 섞여도 읽히지만, 영어 화면 한가운데 한국어 문단은 그 화면을
+ * 못 읽게 만든다.
+ */
+export function seasonDescription(season: Season, locale: Locale): string[] {
+  return (season.descriptions?.[locale] ?? "")
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+}

@@ -5,7 +5,11 @@ import { BackLink } from "@/components/back-link";
 import { CastCard } from "@/components/cast-card";
 import { EmptyCard } from "@/components/empty-card";
 import { JsonLd } from "@/components/json-ld";
-import { PageEyebrow, PageTitle } from "@/components/page-heading";
+import {
+  GroupHeading,
+  PageEyebrow,
+  PageTitle,
+} from "@/components/page-heading";
 import { getProgram, getPrograms, getSeason, getSeasons } from "@/lib/data";
 import {
   fill,
@@ -14,6 +18,7 @@ import {
   languageAlternates,
   localizeProgramName,
   localizeSeason,
+  seasonDescription,
 } from "@/lib/i18n";
 import { programHref, seasonHref, seasonPath } from "@/lib/links";
 import {
@@ -105,6 +110,7 @@ export default async function Page({
   const coverage = getCoverage(season.cast);
   const { label, special, airDate } = localizeSeason(season, lang);
   const programName = localizeProgramName(programId, lang);
+  const description = seasonDescription(season, lang);
 
   return (
     <main>
@@ -150,6 +156,19 @@ export default async function Page({
         </section>
       ) : (
         <EmptyCard>{dict.season.castPendingBody}</EmptyCard>
+      )}
+
+      {/* 소개는 격자 아래다 — 방문자는 핸들을 찾으러 오므로 문단이 격자를 밀어
+          내리면 안 된다. 읽는 글이라 격자 폭이 아니라 좁은 기둥에 선다. */}
+      {description.length > 0 && (
+        <section className="mt-6 lg:mt-10">
+          <GroupHeading>{fill(dict.season.aboutHeading, { season: label })}</GroupHeading>
+          <div className="gutter max-w-[68ch] space-y-3 text-[14px] leading-[1.75] break-keep text-muted-foreground [overflow-wrap:anywhere]">
+            {description.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+        </section>
       )}
     </main>
   );
