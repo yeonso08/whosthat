@@ -27,6 +27,7 @@
     "castCount": "{total}人中 {found}人のアカウントを確認",
     "castPending": "出演者リスト整理中",
     "castPendingBody": "この期の出演者リストはまだ確認できていません。期ごとに人数が違うため、推測で埋めることはしません。",
+    "aboutHeading": "{season}について",
     "photoAlt": "{alias}の写真",
     "metaTitle": "{program} {season}{special} 出演者インスタ",
     "metaDescription": "{program} {season}{special} の出演者{total}人のインスタグラムアカウント。確認できたものだけをまとめ、アカウントがない方はないと書いてあります。",

@@ -43,6 +43,12 @@ export type Season = {
   special?: string;
   onAir: boolean;
   /**
+   * 언어 코드 → 기수 소개 문단(방송에 나온 사실만). DB 에서 온 값이고 관리자에서
+   * 편집한다. **없는 언어가 있을 수 있고, 그 화면에서는 자리가 통째로 빠진다**
+   * (`seasonDescription`).
+   */
+  descriptions?: Partial<Record<string, string>>;
+  /**
    * 출연진 명단. 인원 구성을 확인하지 못한 기수는 빈 배열로 둔다 —
    * 6:6 이 아닌 기수가 있어서 기본 로스터를 찍어 넣으면 없는 사람을 만들게 된다.
    */
