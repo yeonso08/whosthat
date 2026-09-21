@@ -22,15 +22,27 @@ import {
  * 지금은 관리자 백엔드(FastAPI)를 부른다 — 고칠 곳을 이 파일 하나로 묶어 둔
  * 덕분에 옮기는 비용이 여기서 끝났다(`CLAUDE.md` 의 의존 방향 규칙).
  *
- * **이 fetch 는 방문자 요청마다 돌지 않는다.** `force-cache` 라서 빌드할 때 한 번
- * 굽고, 그 뒤로는 관리자가 저장해서 `revalidateTag` 가 걸릴 때만 다시 부른다
- * (`app/api/revalidate/route.ts`). 그래서 OCI 프리티어 서버가 방문자 트래픽을
- * 받지 않고, 그 서버가 멈춰도 이미 구워진 페이지는 멀쩡히 서빙된다.
+ * **이 fetch 는 빌드할 때만 돈다.** 관리자가 저장하면 백엔드가 Vercel Deploy
+ * Hook 을 불러 사이트를 통째로 다시 빌드한다(2026-09-22). 방문자 요청은 구워 둔
+ * 페이지만 받으므로 OCI 프리티어 서버가 방문자 트래픽을 안 받고, 빌드 중에 API 가
+ * 죽으면 빌드가 실패해 **이전 사이트가 그대로 남는다** — 방문자가 에러 화면을 볼
+ * 경로가 없다.
  */
 const API_URL = process.env.NUKKO_API_URL ?? "http://127.0.0.1:8000";
 
-/** 이 태그 하나가 전 페이지의 데이터 캐시를 가리킨다 — 저장되면 이걸 무효화한다. */
-export const DATA_TAG = "nukko-data";
+/**
+ * 응답 캐시의 키를 배포마다 바꾼다. **Vercel 의 데이터 캐시는 배포를 넘어 살아남아서**
+ * (문서: "Persistent across deployments") 같은 URL 이면 새 빌드가 옛 응답을 그대로
+ * 굽는다 — 저장해서 다시 빌드했는데 화면이 안 바뀌는 상태다. 배포 ID 를 붙이면 배포당
+ * API 를 한 번 새로 부르고, 그 배포 안의 페이지 144개는 그 한 번을 나눠 쓴다.
+ * 로컬에는 배포 ID 가 없어서 고정값이다 — 로컬 `next build` 가 옛 데이터를 보이면
+ * `.next/cache` 를 지운다.
+ */
+const DATA_VERSION = process.env.VERCEL_DEPLOYMENT_ID ?? "local";
+
+function apiUrl(path: string): string {
+  return `${API_URL}${path}?v=${encodeURIComponent(DATA_VERSION)}`;
+}
 
 /**
  * `cache()` 는 한 번의 렌더 안에서만 메모한다. 여러 렌더에 걸친 재사용은 위
@@ -39,10 +51,7 @@ export const DATA_TAG = "nukko-data";
  * **배열 순서가 홈 목록 순서다.** 백엔드가 `sort_order` 로 정렬해서 준다.
  */
 export const getPrograms = cache(async (): Promise<Program[]> => {
-  const response = await fetch(`${API_URL}/programs`, {
-    cache: "force-cache",
-    next: { tags: [DATA_TAG] },
-  });
+  const response = await fetch(apiUrl("/programs"), { cache: "force-cache" });
 
   // 여기서 던지면 빌드가 깨진다 — 그게 맞다. 명단을 통째로 잃은 화면을
   // 조용히 배포하는 것보다, 데이터를 못 읽었다는 사실이 드러나는 편이 낫다.
@@ -94,9 +103,8 @@ export const getPrograms = cache(async (): Promise<Program[]> => {
  */
 export const getTranslations = cache(async (): Promise<void> => {
   try {
-    const response = await fetch(`${API_URL}/translations`, {
+    const response = await fetch(apiUrl("/translations"), {
       cache: "force-cache",
-      next: { tags: [DATA_TAG] },
     });
     if (!response.ok) throw new Error(String(response.status));
     registerTranslations(await response.json());
