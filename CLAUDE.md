@@ -54,7 +54,6 @@ src/lib/og.tsx                       공유 카드 한 장 + OG 서체 로더. `
 src/lib/seo.ts                       색인 여부·OG 공통 필드·정책 페이지 metadata·JSON-LD — 검색엔진에 보이는 것을 한 곳에
 src/lib/types.ts                     Program → Season → CastMember 모델 + getCoverage·getTotals·getSiteTotals
 src/lib/data.ts                      관리자 백엔드(GET /programs) 호출 + 검색 인덱스 생성. 데이터를 읽는 유일한 파일
-src/app/api/revalidate/route.ts      관리자가 저장하면 백엔드가 부르는 재검증 창구 (유일한 동적 라우트)
 src/lib/search.ts                    검색 매칭 — 데이터를 모른다(클라이언트로 넘어간다)
 src/data/i-am-solo.json           **더는 읽지 않는다.** DB 로 옮기기 전 원본 — 되돌릴 근거로 남겨 뒀다
 src/data/singles-inferno.json              솔로지옥 시즌 1~5 골격 — 명단이 아직 비어 있다
@@ -312,7 +311,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ## 현재 상태
 
-일곱 화면(프로그램 목록·기수 목록·기수 상세·소개·자주 묻는 질문·삭제 요청·처리방침)이 **한국어·영어·일본어 세 벌**로 동작하고 빌드가 통과한다(144 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지·JSON-LD)까지 붙어 있고 화면은 전부 정적이다 — 방문자 요청에 도는 건 `/` 를 언어로 보내는 proxy 와 재검증 창구(`/api/revalidate`, 백엔드만 부른다) 둘뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (2026-08-24 에 커스텀 도메인 연결, Cloudflare Registrar 등록·DNS. 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. **실제 이미지 파일은 아직 한 장도 없다** — 출연자 사진(`public/cast/`)도, 프로그램 포스터(`public/programs/`, 디렉터리 자체가 없다)도 0장이라 홈의 판은 전부 이름 활자로 떨어진다.
+일곱 화면(프로그램 목록·기수 목록·기수 상세·소개·자주 묻는 질문·삭제 요청·처리방침)이 **한국어·영어·일본어 세 벌**로 동작하고 빌드가 통과한다(144 페이지 프리렌더). SEO 배관(sitemap·robots·canonical·hreflang·OG 이미지·JSON-LD)까지 붙어 있고 화면은 전부 정적이다 — 방문자 요청에 도는 건 `/` 를 언어로 보내는 proxy 하나뿐이다(재검증 창구 `/api/revalidate` 는 2026-09-22 에 Deploy Hook 으로 바꾸며 없앴다 — 아래 "데이터는 어디에 있나"). Vercel 에 배포돼 있다 — https://www.nukko.net (2026-08-24 에 커스텀 도메인 연결, Cloudflare Registrar 등록·DNS. 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다). 사진을 한 번 걷어냈다가 2026-08-20 에 시안 D 의 이미지 카드로 되돌렸고, 사진이 없는 자리는 `CastAvatar` 가 채운다 — 위 "디자인" 절 참고. **실제 이미지 파일은 아직 한 장도 없다** — 출연자 사진(`public/cast/`)도, 프로그램 포스터(`public/programs/`, 디렉터리 자체가 없다)도 0장이라 홈의 판은 전부 이름 활자로 떨어진다.
 
 브랜드 워드마크·파비콘·앱 아이콘([ㄲ 마크] `누꼬`(ko)/[ㄲ 마크] `nukko`(en·ja))이 붙었다 — 위 "브랜드" 절 참고. 워드마크는 이제 페이지가 아니라 **상단 바**(`SiteNav`, 레이아웃)에 한 벌만 있고, 홈을 뺀 네 화면은 제목 줄에 `‹` 되돌아가기를 붙인다(홈은 더 올라갈 곳이 없어 화살표가 없다).
 
@@ -348,7 +347,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 1. Supabase 에 `season_descriptions` 를 먼저 만든다(로컬 `nukko-admin-api/.env` 의 DB 주소로 실행했다).
 2. OCI 에서 `git pull --ff-only` → `sudo systemctl restart nukko-admin-api`. **API 는 자동 배포가 없다.** 재시작 직후 몇 초는 nginx 가 502 를 준다 — 뜨는 중이지 깨진 게 아니다.
 3. `python -m scripts.import_season_descriptions --apply` — 이 스크립트는 관리자에서 고친 문단도 덮어쓰므로 **다시 돌리지 않는다.** 이제부터는 관리자 화면에서 고친다.
-4. 누꼬 반영은 재배포가 아니라 **재검증 신호 한 번**이면 된다(`app.revalidate.notify_nukko`). 캐시 태그가 하나(`DATA_TAG`)라 전 페이지가 한 번에 다시 구워진다.
+4. 누꼬 반영은 재검증 신호로 했다. 지금은 그 창구가 없어졌고, 같은 일을 하려면 **Deploy Hook 을 한 번 부른다**(`app.revalidate.notify_nukko`) — 아래 "데이터는 어디에 있나".
 
 **아직 남은 것**: 솔로지옥 시즌 1 은 네 커플 중 세 쌍만 이름이 적혀 있다(네 번째를 확인하면 관리자에서 고친다). 다음은 직업·나이 408명, 마지막이 애드센스 재신청(색인 후).
 
@@ -390,7 +389,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 ```
 방문자 → 누꼬(Vercel, 정적)              이 경로에 백엔드가 없다
 관리자 → admin.nukko.net(Vercel) → api.nukko.net(OCI) → Supabase
-                                        └→ 저장되면 누꼬에 재검증 신호
+                                        └→ 저장되면 Vercel Deploy Hook → 누꼬 전체 재빌드(약 1분)
 ```
 
 | 무엇 | 어디 |
@@ -412,10 +411,14 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 - **번역이 없으면 한국어로 떨어진다. 던지지 않는다.** 상용 CMS 가 다 그렇고(Payload 는 `fallback` 이 기본값), 누꼬도 원래 가명·특집은 그랬다. `programStrings` 만 던지고 있었는데 그것 때문에 **관리자에서 프로그램을 만드는 순간 홈이 500 이 됐다**(재현해서 확인). 지금은 `getPrograms()` 가 문구 없는 프로그램을 걸러낸다 — **그 장치를 없애지 말 것.**
 - **레지스트리를 모듈 지역 변수로 두지 말 것**(`program-strings.ts`·`translations.ts`). Next 가 서버 코드를 라우트별로 쪼개면 모듈이 복제돼 **채우는 Map 과 읽는 Map 이 다른 객체가 된다.** 빌드는 통과하는데 값이 안 나와서 원인을 찾기 어렵다. `globalThis` 에 붙인다.
-- **API 응답 모양을 바꾸면 `.next/cache` 를 지운다.** `force-cache` 라 새 필드가 생겨도 예전 응답을 계속 준다. 배포 후 안 바뀌면 재검증을 한 번 보내면 된다.
+- **로컬 `next build` 가 옛 데이터를 굽으면 `.next/cache` 를 지운다.** 응답 캐시 키에 배포 ID(`VERCEL_DEPLOYMENT_ID`)를 붙이는데 로컬에는 그 값이 없어 키가 고정이다. Vercel 에서는 배포마다 키가 바뀌어 이 문제가 없다.
 
-- **누꼬는 여전히 전 페이지 정적이다.** `lib/data.ts` 의 fetch 가 `force-cache` 라 빌드할 때 한 번 굽고, 그 뒤로는 `/api/revalidate` 가 태그를 만료시킬 때만 다시 부른다. **그래서 OCI 프리티어가 방문자 트래픽을 안 받고**, OCI 나 Supabase 가 멈춰도 이미 구워진 페이지는 서빙된다.
-- **`revalidateTag` 는 두 번째 인자가 필요하다**(Next 16). 권장값 `"max"` 는 stale-while-revalidate 라 **저장 직후 첫 방문자가 옛 화면을 본다** — "즉시 반영" 과 어긋나서 `{ expire: 0 }` 을 쓴다. `updateTag` 이 이 용도에 더 맞지만 Server Action 에서만 부를 수 있어 라우트 핸들러에선 못 쓴다.
+- **저장하면 사이트를 통째로 다시 빌드한다 — Vercel Deploy Hook**(2026-09-22). 백엔드가 저장 뒤 훅 주소(`NUKKO_DEPLOY_HOOK_URL`, OCI `.env`)를 부르고, 누꼬가 약 1분 걸려 144페이지를 새로 굽는다. 정적 사이트 + CMS 의 흔한 구성이다. 그전 방식(`/api/revalidate` + `revalidateTag`)을 버린 이유는 둘이다:
+  - **`expire: 0` 은 API 가 죽었을 때 방문자가 에러를 본다.** 저장 뒤 첫 방문이 페이지를 막고 새로 만드는데, 그 사이 API 가 죽으면 만들 데이터가 없다. 문서가 "실패하면 옛 페이지" 를 보장하는 건 `"max"` 뿐이다.
+  - **`"max"` 는 방문자가 적으면 옛 화면이 오래 남는다.** 페이지마다 첫 방문자가 옛 화면을 받으며 새로 만들기를 거는데, 누꼬는 그 첫 방문이 며칠 뒤일 수 있다(사용자가 이 이유로 반려했다).
+  - Deploy Hook 은 둘 다 없다 — 빌드가 끝나면 전 페이지가 새것이고, 빌드 중 API 가 죽으면 **빌드가 실패해 이전 사이트가 남는다.** 대가는 반영이 즉시가 아니라 약 1분이라는 것, 연달아 저장하면 빌드가 쌓인다는 것이다.
+- **응답 캐시 키에 배포 ID 를 붙인다**(`lib/data.ts` 의 `DATA_VERSION`). Vercel 의 데이터 캐시는 **배포를 넘어 살아남아서** 같은 URL 이면 새 빌드가 옛 응답을 굽는다 — 저장해서 다시 빌드했는데 화면이 안 바뀐다. 배포 ID 를 쿼리로 붙여 배포마다 한 번 새로 받는다(빌드 한 번에 `/programs` 4번 — 작업자 9개가 동시에 시작해 몇 번 겹친다).
+- **누꼬는 전 페이지 정적이다.** 방문자 요청은 구워 둔 페이지만 받으므로 OCI 프리티어가 방문자 트래픽을 안 받고, OCI 나 Supabase 가 멈춰도 사이트는 그대로다.
 - **빌드가 OCI 에 의존하게 됐다.** API 를 못 읽으면 `lib/data.ts` 가 던져서 빌드가 깨진다 — 명단을 통째로 잃은 화면을 조용히 배포하는 것보다 낫다고 보고 그렇게 뒀다.
 - **`src/data/*.json` 은 남겨 뒀다.** 아무도 안 읽지만 되돌릴 근거다. 지우려면 DB 가 충분히 검증된 뒤에.
 - **백업이 없다.** 원본이 Supabase 하나뿐인데, 거기 든 게 데이터만이 아니라 **화면 문구 60줄과 번역 200개까지**다. `found` 384건은 계정을 직접 열어 확인해 쌓은 거라 잃으면 다시 못 만든다. `src/data/*.json` 은 **2026-09-07 이관 시점에 멈춘 사본**이고 **문구·번역은 거기에도 없다**(코드에서 지웠으니 git 이력에만 남아 있다). 붙이는 방법은 `nukko-admin-api` 레포 README 의 "아직 안 한 것 — 백업" 에 있다.
