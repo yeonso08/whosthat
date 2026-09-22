@@ -29,6 +29,7 @@
     "castPendingBody": "We have not confirmed this season's cast list yet. Season sizes differ, so we do not fill it in by guesswork.",
     "aboutHeading": "About {season}",
     "photoAlt": "Photo of {alias}",
+    "age": "age {age}",
     "metaTitle": "{program} {season}{special} cast Instagram",
     "metaDescription": "Instagram accounts for the {total} cast members of {program} {season}{special}. Only verified accounts are listed, and people with no account are marked as such.",
     "metaDescriptionPending": "Instagram accounts for the cast of {program} {season}{special}. The cast list is still being compiled."

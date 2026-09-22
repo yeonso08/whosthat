@@ -35,10 +35,12 @@ const API_URL = process.env.NUKKO_API_URL ?? "http://127.0.0.1:8000";
  * (문서: "Persistent across deployments") 같은 URL 이면 새 빌드가 옛 응답을 그대로
  * 굽는다 — 저장해서 다시 빌드했는데 화면이 안 바뀌는 상태다. 배포 ID 를 붙이면 배포당
  * API 를 한 번 새로 부르고, 그 배포 안의 페이지 144개는 그 한 번을 나눠 쓴다.
- * 로컬에는 배포 ID 가 없어서 고정값이다 — 로컬 `next build` 가 옛 데이터를 보이면
- * `.next/cache` 를 지운다.
+ * 로컬에는 배포 ID 가 없어서 **이 모듈이 올라온 시각**을 쓴다. 고정값("local")이던
+ * 때는 DB 를 고쳐도 로컬 화면이 옛 응답을 계속 보였다(dev 서버가 메모리에도 들고
+ * 있어서 `.next/cache` 를 지워도 안 풀렸다). 서버를 켤 때마다·이 파일이 다시 올라올
+ * 때마다 새로 받는다.
  */
-const DATA_VERSION = process.env.VERCEL_DEPLOYMENT_ID ?? "local";
+const DATA_VERSION = process.env.VERCEL_DEPLOYMENT_ID ?? `local-${Date.now()}`;
 
 function apiUrl(path: string): string {
   return `${API_URL}${path}?v=${encodeURIComponent(DATA_VERSION)}`;

@@ -29,6 +29,7 @@
     "castPendingBody": "この期の出演者リストはまだ確認できていません。期ごとに人数が違うため、推測で埋めることはしません。",
     "aboutHeading": "{season}について",
     "photoAlt": "{alias}の写真",
+    "age": "{age}歳",
     "metaTitle": "{program} {season}{special} 出演者インスタ",
     "metaDescription": "{program} {season}{special} の出演者{total}人のインスタグラムアカウント。確認できたものだけをまとめ、アカウントがない方はないと書いてあります。",
     "metaDescriptionPending": "{program} {season}{special} の出演者のインスタグラムアカウント。出演者リストを整理しています。"

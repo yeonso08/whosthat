@@ -29,6 +29,7 @@
     "castPendingBody": "아직 이 기수의 출연진 명단을 확인하지 못했습니다. 기수마다 인원이 달라서 짐작으로 채우지 않습니다.",
     "aboutHeading": "{season} 소개",
     "photoAlt": "{alias} 사진",
+    "age": "{age}세",
     "metaTitle": "{program} {season}{special} 출연진 인스타",
     "metaDescription": "{program} {season}{special} 출연진 {total}명의 인스타그램 계정. 확인된 것만 모아 뒀고, 계정이 없는 사람은 없다고 적어 뒀습니다.",
     "metaDescriptionPending": "{program} {season}{special} 출연진의 인스타그램 계정. 명단을 정리하는 중입니다."
