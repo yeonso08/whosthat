@@ -46,6 +46,10 @@ export async function CastCard({ member }: Props) {
   const handle = member.instagramHandle;
   const alias = localizeAlias(member.alias, locale);
   const description = describe(member);
+  // 숫자만 두면 나이인지 번호인지 안 읽힌다 — 단위를 붙여 이름 옆에 둔다.
+  const age = member.ageAtAiring
+    ? fill(dict.season.age, { age: member.ageAtAiring })
+    : "";
 
   const body = (
     <>
@@ -78,15 +82,28 @@ export async function CastCard({ member }: Props) {
             : ""
         }`}
       >
+        {/* 나이는 이름 옆이다 — 방송 자막이 "영수(34)" 처럼 이름에 붙여 부르는
+            자리라 설명 없이 읽힌다. 이름보다 작고 흐리게 둬서 이름이 주인공인
+            건 그대로다. */}
         <span
           className={`text-[19px] leading-[1.25] font-bold tracking-[-0.02em] break-keep ${
             found ? "" : "text-muted-foreground"
           }`}
         >
           {alias}
+          {age && (
+            <span className="ml-1.5 text-[13px] font-medium tracking-normal text-muted-foreground">
+              {age}
+            </span>
+          )}
         </span>
+        {/* 직업은 방송 자막 그대로라 길다("P회사 기술연구원 수석연구원"). 한 줄로
+            자르면 끝이 사라져서 두 줄까지 보이고, 그래도 넘치면 전체를 title 로 준다. */}
         {description && (
-          <span className="mt-1 truncate text-[12px] text-muted-foreground">
+          <span
+            title={description}
+            className="mt-1 line-clamp-2 text-[12px] leading-[1.45] break-keep text-muted-foreground [overflow-wrap:anywhere]"
+          >
             {description}
           </span>
         )}
@@ -171,9 +188,12 @@ function CardStatus({ member, status, locale }: StatusProps): ReactElement {
   }
 }
 
-/** "김○○ · 31 · 간호사" — 모르는 항목은 통째로 뺀다. */
+/**
+ * "김○○ · 간호사" — 모르는 항목은 통째로 뺀다. 나이는 여기 없다: 이름 옆에 단위를
+ * 붙여 따로 둔다(숫자만 이 줄에 섞이면 나이인지 안 읽혔다).
+ */
 function describe(member: CastMember): string {
-  return [member.name, member.ageAtAiring, member.occupation]
+  return [member.name, member.occupation]
     .filter(Boolean)
     .join(" · ");
 }
