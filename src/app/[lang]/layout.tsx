@@ -22,10 +22,19 @@ import { openGraphBase } from "@/lib/seo";
 import { NAVER_SITE_VERIFICATION, SITE_URL } from "@/lib/site";
 import "../globals.css";
 
+/**
+ * **한글·일본어 서체는 미리 받지 않는다**(`preload: false`). 구글이 CJK 서체를
+ * 글자 범위별로 100여 조각씩 쪼개 주는데 `subsets` 로는 그 조각을 못 고르므로,
+ * 켜 두면 굵기 4개 × 조각 전부가 `<link rel="preload">` 로 붙는다 — 페이지마다
+ * 641개, 6.5MB 였다(2026-10-14 실측). 화면에 쓰인 글자의 조각만 `unicode-range`
+ * 로 알아서 받으므로 끄는 게 맞다. 라틴 서체(Manrope·Plex Mono)는 조각이 적어
+ * 그대로 둔다.
+ */
 const gothic = Gothic_A1({
   variable: "--font-sans",
   subsets: ["latin"],
   weight: ["300", "500", "700", "900"],
+  preload: false,
 });
 
 /**
@@ -40,6 +49,8 @@ const zenKaku = Zen_Kaku_Gothic_New({
   variable: "--font-sans",
   subsets: ["latin"],
   weight: ["300", "500", "700", "900"],
+  // 한국어 화면에서도 preload 로 딸려 왔다 — 위 `gothic` 주석과 같은 이유다.
+  preload: false,
 });
 
 /**
