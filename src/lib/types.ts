@@ -43,6 +43,11 @@ export type Season = {
   special?: string;
   onAir: boolean;
   /**
+   * 이 기수 화면의 내용(기수·출연자·소개 문단)이 마지막으로 바뀐 때(ISO 8601).
+   * DB 트리거가 올리는 값이라 계정이 아닌 변경도 잡힌다 — sitemap 의 lastmod 다.
+   */
+  updatedAt: string;
+  /**
    * 언어 코드 → 기수 소개 문단(방송에 나온 사실만). DB 에서 온 값이고 관리자에서
    * 편집한다. **없는 언어가 있을 수 있고, 그 화면에서는 자리가 통째로 빠진다**
    * (`seasonDescription`).
