@@ -14,14 +14,17 @@ import {
 import { LOCALES } from "@/lib/locales";
 import { isIndexable, isProgramIndexable } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
-import type { CastMember } from "@/lib/types";
+import type { Season } from "@/lib/types";
 
 /**
  * 프로그램·기수가 늘면 자동으로 따라온다 — generateStaticParams 와 같은 목록을 쓴다.
  * 언어가 늘면 줄 수가 언어 배수로 는다.
  *
- * lastModified 는 그 기수에서 마지막으로 계정을 확인한 날짜다. 빌드 시각을
- * 넣으면 내용이 안 바뀌어도 매 배포마다 "수정됨"이 되어 크롤러가 신뢰를 잃는다.
+ * lastModified 는 그 화면의 내용이 마지막으로 바뀐 때다(`Season.updatedAt`, DB
+ * 트리거가 올린다). 빌드 시각을 넣으면 내용이 안 바뀌어도 매 배포마다 "수정됨"이
+ * 되어 크롤러가 신뢰를 잃는다. 예전에는 출연자의 `lastVerified` 중 최신을 썼는데,
+ * 계정이 아닌 변경(소개 문단·직업)을 못 봤고, 못 찾은 사람(`null`)이 섞인 기수는
+ * 날짜가 통째로 빠졌다(2026-10-14 기준 138줄 중 108줄).
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 명단이 빈 기수와, 그런 기수뿐인 프로그램은 noindex 라 여기서도 뺀다 —
@@ -30,10 +33,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const programs = (await getPrograms()).filter(isProgramIndexable);
 
   const pages = [
-    { path: HOME_PATH, changeFrequency: "daily" as const, priority: 1 },
+    {
+      path: HOME_PATH,
+      // 홈과 프로그램 화면은 기수들의 현황을 모아 보여 주므로, 그 기수 중
+      // 가장 최근에 바뀐 때가 곧 그 화면이 바뀐 때다.
+      lastModified: latestUpdate(programs.flatMap((p) => p.seasons)),
+      changeFrequency: "daily" as const,
+      priority: 1,
+    },
     ...programs.flatMap((program) => [
       {
         path: programPath(program.id),
+        lastModified: latestUpdate(program.seasons),
         changeFrequency: "daily" as const,
         priority: 0.9,
       },
@@ -41,7 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .filter(isIndexable)
         .map((season) => ({
           path: seasonPath(program.id, season.id),
-          lastModified: lastVerifiedIn(season.cast),
+          lastModified: new Date(season.updatedAt),
           // 방영 중인 기수는 계정이 계속 붙는다. 지난 기수는 거의 안 바뀐다.
           changeFrequency: season.onAir
             ? ("daily" as const)
@@ -82,12 +93,7 @@ function absolute(languages: Record<string, string>): Record<string, string> {
   );
 }
 
-function lastVerifiedIn(cast: CastMember[]): Date | undefined {
-  const latest = cast
-    .map((m) => m.lastVerified)
-    .filter((d) => d !== undefined)
-    .sort()
-    .at(-1);
-
-  return latest ? new Date(latest) : undefined;
+function latestUpdate(seasons: Season[]): Date | undefined {
+  const times = seasons.map((s) => Date.parse(s.updatedAt));
+  return times.length > 0 ? new Date(Math.max(...times)) : undefined;
 }
