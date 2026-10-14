@@ -27,6 +27,8 @@ Next.js 16 App Router · Tailwind v4 · shadcn/ui · pnpm. 데이터는 `src/dat
 
 | 파일 | 내용 |
 |---|---|
-| `PLANNING.md` | 기획·데이터 모델·로드맵·법적 유의사항, 진행 상황 |
-| `CLAUDE.md` | 코드 규칙과 디자인 규칙 |
+| `docs/PROGRESS.md` | **지금 상태와 진행 중이거나 해야 할 일** — 작업 전에 먼저 볼 것 |
+| `docs/HISTORY.md` | 끝난 작업의 경위 |
+| `PLANNING.md` | 기획·데이터 모델·로드맵·법적 유의사항 |
+| `CLAUDE.md` | 코드·디자인·운영 규칙 |
 | `src/data/README.md` | **계정 검증 방법** — 데이터를 채우기 전에 반드시 읽을 것 |
