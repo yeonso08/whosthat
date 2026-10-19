@@ -32,6 +32,10 @@
     "age": "age {age}",
     "metaTitle": "{program} {season}{special} cast Instagram",
     "metaDescription": "Instagram accounts for the {total} cast members of {program} {season}{special}. Only verified accounts are listed, and people with no account are marked as such.",
+    "metaDescriptionCast": "{program} {season}{special}: {total} cast members, Instagram found for {found} — {cast} and others.",
+    "metaCastMember": "{alias} ({age}, {occupation})",
+    "metaCastMemberNoAge": "{alias} ({occupation})",
+    "metaCastSeparator": "; ",
     "metaDescriptionPending": "Instagram accounts for the cast of {program} {season}{special}. The cast list is still being compiled."
   },
   "status": {
