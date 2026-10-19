@@ -15,6 +15,12 @@ export type CastMember = {
   alias: string;
   gender: "male" | "female";
   occupation?: string;
+  /**
+   * 직업의 영어·일본어. 사람마다 한 줄이라 이름처럼 번역 표가 아니라 출연자에
+   * 붙어 있다. 비어 있을 수 있다 — 화면은 `localizeOccupation` 으로 꺼낸다.
+   */
+  occupationEn?: string;
+  occupationJa?: string;
   /** 방영 당시 나이. */
   ageAtAiring?: number;
   /** /public 아래 경로. 없으면 화면에서 가명 배지가 대신 나온다. */
