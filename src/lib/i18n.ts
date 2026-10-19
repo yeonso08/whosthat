@@ -30,7 +30,7 @@ import { DEFAULT_LOCALE, LOCALES, isLocale, type Locale } from "./locales";
 import { hasRegisteredStrings, lookupProgramStrings } from "./program-strings";
 import { lookupAlias, lookupSpecial } from "./translations";
 import type { ProgramStrings } from "./types";
-import type { Coverage, Season, Totals } from "./types";
+import type { CastMember, Coverage, Season, Totals } from "./types";
 
 // 언어 목록은 `locales.ts` 가 갖고 있지만, 화면 쪽 파일이 두 군데서 가져오지
 // 않게 여기서 그대로 내보낸다.
@@ -57,6 +57,12 @@ export type Dictionary = typeof ko;
 export type { ProgramStrings };
 
 const DICTIONARIES: Record<Locale, Dictionary> = { ko, en, ja };
+
+/** 검색 결과 설명에 이름을 올리는 사람 수. 더 넣으면 검색 결과 화면에서 잘린다. */
+const META_CAST_COUNT = 4;
+
+/** 직업 끝의 괄호(지역·약어). 검색 결과 한 줄에서는 이름 옆 괄호와 겹쳐 읽기 어렵다. */
+const OCCUPATION_ASIDE = /\s*\([^)]*\)/g;
 
 /** OG 프로토콜의 locale 표기. `og:locale` 은 언어 코드만으로는 부족하다. */
 const OG_LOCALES: Record<Locale, string> = {
@@ -250,6 +256,59 @@ export function formatProgramSummary(
     totals.people === 0 ? strings.summaryPending : strings.summary,
     totals,
   );
+}
+
+/**
+ * 그 언어로 된 직업. **지금은 한국어뿐이다** — 직업은 사람마다 한 줄이라
+ * 가명처럼 짝 표로 번역할 수 없고, 출연자 행에 언어별 칸이 아직 없다.
+ * 칸이 생기면 여기만 고치면 검색 결과 설명이 그 언어에서도 살아난다.
+ */
+function localizeOccupation(
+  member: CastMember,
+  locale: Locale,
+): string | undefined {
+  return locale === DEFAULT_LOCALE ? member.occupation : undefined;
+}
+
+/**
+ * 기수 상세의 검색 결과 설명에 들어가는 출연자 몇 명. "광수(39·이비인후과 의사), …"
+ *
+ * `25기` 로 검색한 사람이 먼저 궁금한 건 누가 나왔는지라, 사이트 소개 대신
+ * 그걸 보여 준다. 그 언어로 된 직업이 한 명도 없으면 `undefined` — 영어 설명에
+ * 한국어 직업이 섞이느니 예전 문구를 쓴다. 데이터가 남자·여자 순으로 쌓여
+ * 있어서 앞에서 자르면 한쪽만 나오므로 번갈아 고른다.
+ */
+export function formatMetaCast(
+  cast: CastMember[],
+  locale: Locale,
+): string | undefined {
+  const dict = getDictionary(locale).season;
+  const listed = cast.filter((member) => localizeOccupation(member, locale));
+  const men = listed.filter((member) => member.gender === "male");
+  const women = listed.filter((member) => member.gender === "female");
+  const picked = Array.from(
+    { length: Math.max(men.length, women.length) },
+    (_, i) => [men[i], women[i]],
+  )
+    .flat()
+    .filter((member): member is CastMember => member !== undefined)
+    .slice(0, META_CAST_COUNT);
+  if (picked.length === 0) return undefined;
+
+  return picked
+    .map((member) =>
+      fill(
+        member.ageAtAiring ? dict.metaCastMember : dict.metaCastMemberNoAge,
+        {
+          alias: localizeAlias(member.alias, locale),
+          age: member.ageAtAiring ?? "",
+          occupation: (localizeOccupation(member, locale) ?? "")
+            .replaceAll(OCCUPATION_ASIDE, "")
+            .trim(),
+        },
+      ),
+    )
+    .join(dict.metaCastSeparator);
 }
 
 /** 기수 카드가 쓰는 문구 묶음. 라벨과 특집이 늘 같이 필요해서 함께 만든다. */

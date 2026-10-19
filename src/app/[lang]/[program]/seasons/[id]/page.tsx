@@ -13,6 +13,7 @@ import {
 import { getProgram, getPrograms, getSeason, getSeasons } from "@/lib/data";
 import {
   fill,
+  formatMetaCast,
   getDictionary,
   isLocale,
   languageAlternates,
@@ -65,11 +66,15 @@ export async function generateMetadata({
   };
 
   const title = fill(dict.season.metaTitle, values);
+  // 직업이 있는 기수는 사이트 소개 대신 누가 나왔는지를 보여 준다 — `formatMetaCast`.
+  const cast = formatMetaCast(season.cast, lang);
   const description = fill(
     coverage.total === 0
       ? dict.season.metaDescriptionPending
-      : dict.season.metaDescription,
-    values,
+      : cast
+        ? dict.season.metaDescriptionCast
+        : dict.season.metaDescription,
+    { ...values, cast: cast ?? "" },
   );
   const path = seasonHref(lang, programId, season.id);
 

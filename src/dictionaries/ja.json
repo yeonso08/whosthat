@@ -32,6 +32,10 @@
     "age": "{age}歳",
     "metaTitle": "{program} {season}{special} 出演者インスタ",
     "metaDescription": "{program} {season}{special} の出演者{total}人のインスタグラムアカウント。確認できたものだけをまとめ、アカウントがない方はないと書いてあります。",
+    "metaDescriptionCast": "{program} {season}{special} の出演者{total}人、インスタ{found}人確認 — {cast}など。",
+    "metaCastMember": "{alias}({age}歳・{occupation})",
+    "metaCastMemberNoAge": "{alias}({occupation})",
+    "metaCastSeparator": "、",
     "metaDescriptionPending": "{program} {season}{special} の出演者のインスタグラムアカウント。出演者リストを整理しています。"
   },
   "status": {
