@@ -259,23 +259,37 @@ export function formatProgramSummary(
 }
 
 /**
- * 그 언어로 된 직업. **지금은 한국어뿐이다** — 직업은 사람마다 한 줄이라
- * 가명처럼 짝 표로 번역할 수 없고, 출연자 행에 언어별 칸이 아직 없다.
- * 칸이 생기면 여기만 고치면 검색 결과 설명이 그 언어에서도 살아난다.
+ * 언어마다 직업이 들어 있는 칸. 직업은 사람마다 한 줄이라 가명처럼 짝 표로
+ * 번역하지 않고 출연자에 붙어 있다. `Record<Locale, …>` 라서 언어를 더하면
+ * 여기서 컴파일 에러가 난다 — DB 에 칸을 먼저 만들라는 뜻이다.
  */
-function localizeOccupation(
+const OCCUPATION_BY_LOCALE: Record<
+  Locale,
+  (member: CastMember) => string | undefined
+> = {
+  ko: (member) => member.occupation,
+  en: (member) => member.occupationEn,
+  ja: (member) => member.occupationJa,
+};
+
+/**
+ * 출연자 카드의 직업. 번역이 없으면 한국어 원문 — 가명과 같은 태도다(한 줄짜리
+ * 낱말이라 원문이 섞여도 카드는 읽힌다).
+ */
+export function localizeOccupation(
   member: CastMember,
   locale: Locale,
 ): string | undefined {
-  return locale === DEFAULT_LOCALE ? member.occupation : undefined;
+  return OCCUPATION_BY_LOCALE[locale](member) || member.occupation;
 }
 
 /**
  * 기수 상세의 검색 결과 설명에 들어가는 출연자 몇 명. "광수(39·이비인후과 의사), …"
  *
  * `25기` 로 검색한 사람이 먼저 궁금한 건 누가 나왔는지라, 사이트 소개 대신
- * 그걸 보여 준다. 그 언어로 된 직업이 한 명도 없으면 `undefined` — 영어 설명에
- * 한국어 직업이 섞이느니 예전 문구를 쓴다. 데이터가 남자·여자 순으로 쌓여
+ * 그걸 보여 준다. **카드와 달리 한국어로 떨어뜨리지 않는다** — 그 언어로 된
+ * 직업이 있는 사람만 고르고, 한 명도 없으면 `undefined` 라 예전 문구를 쓴다.
+ * 영어 문장 한가운데 한국어 직업이 끼면 검색 결과 한 줄이 통째로 안 읽힌다. 데이터가 남자·여자 순으로 쌓여
  * 있어서 앞에서 자르면 한쪽만 나오므로 번갈아 고른다.
  */
 export function formatMetaCast(
@@ -283,7 +297,8 @@ export function formatMetaCast(
   locale: Locale,
 ): string | undefined {
   const dict = getDictionary(locale).season;
-  const listed = cast.filter((member) => localizeOccupation(member, locale));
+  const occupationOf = OCCUPATION_BY_LOCALE[locale];
+  const listed = cast.filter((member) => occupationOf(member));
   const men = listed.filter((member) => member.gender === "male");
   const women = listed.filter((member) => member.gender === "female");
   const picked = Array.from(
@@ -302,7 +317,7 @@ export function formatMetaCast(
         {
           alias: localizeAlias(member.alias, locale),
           age: member.ageAtAiring ?? "",
-          occupation: (localizeOccupation(member, locale) ?? "")
+          occupation: (occupationOf(member) ?? "")
             .replaceAll(OCCUPATION_ASIDE, "")
             .trim(),
         },
