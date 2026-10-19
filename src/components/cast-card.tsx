@@ -7,6 +7,7 @@ import {
   formatChecked,
   getDictionary,
   localizeAlias,
+  localizeOccupation,
   type Dictionary,
   type Locale,
 } from "@/lib/i18n";
@@ -45,7 +46,7 @@ export async function CastCard({ member }: Props) {
   const found = member.status === "found";
   const handle = member.instagramHandle;
   const alias = localizeAlias(member.alias, locale);
-  const description = describe(member);
+  const description = describe(member, locale);
   // 숫자만 두면 나이인지 번호인지 안 읽힌다 — 단위를 붙여 이름 옆에 둔다.
   const age = member.ageAtAiring
     ? fill(dict.season.age, { age: member.ageAtAiring })
@@ -192,8 +193,8 @@ function CardStatus({ member, status, locale }: StatusProps): ReactElement {
  * "김○○ · 간호사" — 모르는 항목은 통째로 뺀다. 나이는 여기 없다: 이름 옆에 단위를
  * 붙여 따로 둔다(숫자만 이 줄에 섞이면 나이인지 안 읽혔다).
  */
-function describe(member: CastMember): string {
-  return [member.name, member.occupation]
+function describe(member: CastMember, locale: Locale): string {
+  return [member.name, localizeOccupation(member, locale)]
     .filter(Boolean)
     .join(" · ");
 }
