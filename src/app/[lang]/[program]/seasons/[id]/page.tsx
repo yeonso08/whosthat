@@ -26,6 +26,7 @@ import {
   languageAlternates,
   localizeProgramName,
   localizeSeason,
+  programStrings,
   seasonDescription,
 } from "@/lib/i18n";
 import { programHref, seasonHref, seasonPath } from "@/lib/links";
@@ -169,14 +170,12 @@ export default async function Page({
         {/* 방영 중이라 계정이 하나도 없는 이유를 사실로 말한다. "끝나면 채운다"
             같은 약속은 적지 않는다 — 지키는지 화면이 확인해 주지 못한다. */}
         {airingEmpty && (
-          <p className="mt-3 max-w-[68ch] text-[13px] leading-[1.7] break-keep text-muted-foreground">
+          // 두 문장을 사전의 `\n` 에서 끊는다 — 한 단락으로 흘리면 폭에 따라
+          // "이 / 기수에는" 처럼 문장 중간에서 꺾여 실수로 읽힌다. 문장 안에서
+          // 다시 접힐 때는 `text-pretty` 가 마지막 줄에 한 어절만 남기지 않게 한다.
+          <p className="mt-3 max-w-[52ch] text-[13px] leading-[1.7] whitespace-pre-line text-pretty break-keep text-muted-foreground">
             {dict.season.airingEmpty}
           </p>
-        )}
-        {previous && (
-          <div className="mt-4">
-            <PreviousSeasonLink season={previous} />
-          </div>
         )}
       </header>
 
@@ -188,6 +187,18 @@ export default async function Page({
         </section>
       ) : (
         <EmptyCard>{dict.season.castPendingBody}</EmptyCard>
+      )}
+
+      {/* 격자 아래다 — 위에 두면 이 기수의 명단을 밀어 내린다. 명단을 훑고 계정이
+          없다는 걸 확인한 다음 자리가 "그럼 어디로" 다. 제목은 프로그램 화면의
+          목록과 같은 말(`지난 기수`·`지난 시즌`)이다. */}
+      {previous && (
+        <section className="mt-2 lg:mt-6">
+          <GroupHeading>{programStrings(programId, lang).pastSeasons}</GroupHeading>
+          <div className="gutter max-w-[560px]">
+            <PreviousSeasonLink season={previous} />
+          </div>
+        </section>
       )}
 
       {/* 소개는 격자 아래다 — 방문자는 핸들을 찾으러 오므로 문단이 격자를 밀어
