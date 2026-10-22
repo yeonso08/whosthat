@@ -10,7 +10,14 @@ import {
   PageEyebrow,
   PageTitle,
 } from "@/components/page-heading";
-import { getProgram, getPrograms, getSeason, getSeasons } from "@/lib/data";
+import { PreviousSeasonLink } from "@/components/previous-season-link";
+import {
+  getPreviousSeason,
+  getProgram,
+  getPrograms,
+  getSeason,
+  getSeasons,
+} from "@/lib/data";
 import {
   fill,
   formatMetaCast,
@@ -117,6 +124,13 @@ export default async function Page({
   const programName = localizeProgramName(programId, lang);
   const description = seasonDescription(season, lang);
 
+  // 방영 중인 기수만 앞 기수로 잇는다 — 사람들이 몰려오는데 계정이 잠겨 있는
+  // 자리다. 앞 기수도 확인한 계정이 없으면 이어 줘 봐야 같은 빈 화면이다.
+  const airingEmpty = season.onAir && coverage.found === 0;
+  const candidate = season.onAir ? getPreviousSeason(program, season) : undefined;
+  const previous =
+    candidate && getCoverage(candidate.cast).found > 0 ? candidate : undefined;
+
   return (
     <main>
       <JsonLd data={seasonSchema(program, season, lang)} />
@@ -151,6 +165,19 @@ export default async function Page({
                 found: coverage.found,
               })}
         </p>
+
+        {/* 방영 중이라 계정이 하나도 없는 이유를 사실로 말한다. "끝나면 채운다"
+            같은 약속은 적지 않는다 — 지키는지 화면이 확인해 주지 못한다. */}
+        {airingEmpty && (
+          <p className="mt-3 max-w-[68ch] text-[13px] leading-[1.7] break-keep text-muted-foreground">
+            {dict.season.airingEmpty}
+          </p>
+        )}
+        {previous && (
+          <div className="mt-4">
+            <PreviousSeasonLink season={previous} />
+          </div>
+        )}
       </header>
 
       {season.cast.length > 0 ? (
