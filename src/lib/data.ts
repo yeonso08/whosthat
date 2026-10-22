@@ -136,6 +136,17 @@ export async function getSeason(
   return (await getProgram(programId))?.seasons.find((s) => s.id === seasonId);
 }
 
+/**
+ * 같은 프로그램에서 바로 앞 기수. 방영 중인 기수 화면이 이리로 이어 준다 —
+ * 그 기수를 찾아 온 사람은 대개 앞 기수도 본 사람이다.
+ */
+export function getPreviousSeason(
+  program: Program,
+  season: Season,
+): Season | undefined {
+  return getSeasons(program).find((s) => s.number < season.number);
+}
+
 /** 모든 프로그램의 기수를 한 줄로. sitemap 과 정적 생성이 같은 목록을 본다. */
 export async function getAllSeasons(): Promise<Season[]> {
   return (await getPrograms()).flatMap(getSeasons);
