@@ -44,6 +44,7 @@
   "status": {
     "none": "アカウントなし",
     "searching": "調査中",
+    "private": "非公開に変更",
     "checked": "{date} 確認"
   },
   "search": {

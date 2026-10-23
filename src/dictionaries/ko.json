@@ -44,6 +44,7 @@
   "status": {
     "none": "계정 없음",
     "searching": "찾는 중",
+    "private": "비공개 전환",
     "checked": "{date} 확인"
   },
   "search": {
