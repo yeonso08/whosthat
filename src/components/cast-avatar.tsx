@@ -17,6 +17,7 @@ const STATUS_STYLE: Record<AccountStatus, string> = {
   found: "bg-elevated text-muted-foreground",
   none: "bg-elevated text-foreground/15",
   searching: "bg-elevated text-muted-foreground/45",
+  private: "bg-elevated text-foreground/15",
 };
 
 /**

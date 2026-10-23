@@ -216,7 +216,10 @@ export async function buildSearchIndex(
           ...(member.name ? { name: member.name } : {}),
           ...(locale === "ko" ? {} : { keywords: member.alias }),
           status: member.status,
-          ...(member.instagramHandle ? { handle: member.instagramHandle } : {}),
+          // 비공개로 돌린 계정의 핸들은 검색에도 싣지 않는다(`AccountStatus`).
+          ...(member.status === "found" && member.instagramHandle
+            ? { handle: member.instagramHandle }
+            : {}),
         })),
       };
     });

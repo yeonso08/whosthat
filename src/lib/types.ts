@@ -5,7 +5,13 @@ export type AccountStatus =
   /** 찾아봤고, 계정이 없다는 것까지 확인했다. */
   | "none"
   /** 아직 못 찾았다. 제보를 받는 상태. */
-  | "searching";
+  | "searching"
+  /**
+   * 계정을 확인했는데 본인이 비공개로 돌렸다. 핸들은 DB 에 남겨 두지만(다시
+   * 공개되면 되살리려고) 화면에는 내지 않는다 — 잠근 건 노출을 원하지 않는다는
+   * 뜻이고, 눌러도 아무것도 볼 수 없다.
+   */
+  | "private";
 
 export type CastMember = {
   id: string;
@@ -26,7 +32,7 @@ export type CastMember = {
   /** /public 아래 경로. 없으면 화면에서 가명 배지가 대신 나온다. */
   profileImageUrl?: string;
   status: AccountStatus;
-  /** status 가 "found" 일 때만 채운다. @ 없이 핸들만. */
+  /** "found" 면 반드시, "private" 면 다시 확인하려고 남겨 둔다. 화면에 내는 건 "found" 뿐이다. @ 없이 핸들만. */
   instagramHandle?: string;
   /** 마지막으로 확인한 날짜 (YYYY-MM-DD). "searching" 이면 없다. */
   lastVerified?: string;
@@ -119,6 +125,7 @@ export function getCoverage(cast: CastMember[]): Coverage {
     found: 0,
     none: 0,
     searching: 0,
+    private: 0,
   };
 
   for (const member of cast) {

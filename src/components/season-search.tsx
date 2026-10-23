@@ -208,5 +208,12 @@ function HitStatus({ member, status }: HitProps): ReactElement {
           {status.searching}
         </span>
       );
+
+    case "private":
+      return (
+        <span className="truncate text-[13px] text-muted-foreground">
+          {status.private}
+        </span>
+      );
   }
 }
