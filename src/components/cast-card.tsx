@@ -186,6 +186,21 @@ function CardStatus({ member, status, locale }: StatusProps): ReactElement {
           {status.searching}
         </span>
       );
+
+    // 핸들은 내지 않는다 — 본인이 잠근 계정이다(`AccountStatus` 주석).
+    case "private": {
+      const checked = member.lastVerified
+        ? fill(status.checked, {
+            date: formatChecked(member.lastVerified, locale),
+          })
+        : "";
+      return (
+        <span className="mt-2 text-[12px] font-semibold text-muted-foreground">
+          {status.private}
+          {checked && ` · ${checked}`}
+        </span>
+      );
+    }
   }
 }
 
