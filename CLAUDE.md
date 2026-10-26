@@ -62,6 +62,7 @@ src/components/                      cast-card, cast-photo, cast-avatar, program
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
 docs/PROGRESS.md · HISTORY.md        지금 상태·할 일 / 끝난 작업의 경위 — 아래 "진행 상황과 작업 기록"
+docs/DAILY_LOG.md                    노션 운영 일지(하루 한 줄 — 방문자·유입·한 일·원인) 쓰는 법. scripts/daily-metrics.sh 가 숫자를 뽑는다
 ```
 
 Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 반드시 await 한다.
@@ -320,6 +321,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 |---|---|
 | [`docs/PROGRESS.md`](docs/PROGRESS.md) | 지금 상태 + 진행 중이거나 해야 할 일 |
 | [`docs/HISTORY.md`](docs/HISTORY.md) | 끝난 작업의 경위 |
+| [`docs/DAILY_LOG.md`](docs/DAILY_LOG.md) | 노션 운영 일지 — 날마다의 방문자와 그날 한 일 |
 | 이 파일 | 앞으로도 지켜야 할 규칙 |
 
 - 일을 끝내면 PROGRESS 에서 빼고 HISTORY 로 옮긴다. PROGRESS 에 줄 친(`~~완료~~`) 항목을 쌓아 두지 않는다.
@@ -365,6 +367,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **날짜를 박고 과거형으로 쓴다** — `2026년 10월 결혼 소식을 알렸습니다`. 시점을 적은 문장은 사정이 바뀌어도 틀린 말이 되지 않는다. `현재 교제 중` 같은 현재형은 쓰지 않는다.
 - **논란·의혹·범죄 혐의는 싣지 않는다.** 본인이 밝힌 소식이 아니고, 틀리면 사람을 해친다.
 - **삭제 요청이 오면 그 문장도 함께 내린다**(계정·사진과 같은 절차).
+- **사용자가 실으라고 하면 위 조건과 상관없이 싣는다**(2026-10-26 사용자 결정). 조건은 Claude 가 스스로 판단할 때의 기준이지 사용자의 지시를 막는 문턱이 아니다 — 31기 상철 결혼은 본인이 아니라 같은 기수 정숙의 비공개 SNS 에서 퍼진 소식이라 조건에 안 맞았지만 사용자 지시로 실었다. 그런 경우 문장은 `알렸습니다`(본인 발표)가 아니라 `알려졌습니다` 로 쓴다.
 
 회차·촬영지는 위키백과 하나가 출처라 날짜는 월 단위로만 쓴다.
 
