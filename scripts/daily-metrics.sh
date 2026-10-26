@@ -24,11 +24,12 @@ until="$(node -e 'const d=new Date(process.argv[1]+"T00:00:00+09:00");d.setUTCDa
 auth=()
 [[ -n "${VERCEL_TOKEN:-}" ]] && auth=(--token "$VERCEL_TOKEN")
 
-# JSON 이 진행 메시지와 함께 stderr 로 섞여 나와서 2>&1 후 첫 `{` 부터 자른다.
+# JSON 이 진행 메시지와 함께 stderr 로 섞여 나와서 2>&1 후 첫 `{` 부터 닫는 `}` 까지만 자른다.
+# 클라우드에서는 그 뒤에 `npm notice`(새 버전 안내)가 붙어 파싱이 깨졌다 — 안내도 끈다.
 # Hobby 요금제는 최근 31일만 준다 — 그보다 옛날 날짜는 에러가 난다.
 query() {
-  npx --yes vercel@59.11.7 metrics "$METRIC" "$@" --prod -s "$since" -u "$until" \
-    --project "$PROJECT" --scope "$SCOPE" --json ${auth[@]+"${auth[@]}"} 2>&1 | sed -n '/^{/,$p'
+  npm_config_update_notifier=false npx --yes vercel@59.11.7 metrics "$METRIC" "$@" --prod -s "$since" -u "$until" \
+    --project "$PROJECT" --scope "$SCOPE" --json ${auth[@]+"${auth[@]}"} 2>&1 | sed -n '/^{/,/^}/p'
 }
 
 pv="$(query)"
