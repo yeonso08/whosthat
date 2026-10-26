@@ -62,6 +62,7 @@ src/components/                      cast-card, cast-photo, cast-avatar, program
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
 docs/PROGRESS.md · HISTORY.md        지금 상태·할 일 / 끝난 작업의 경위 — 아래 "진행 상황과 작업 기록"
+docs/DAILY_LOG.md                    노션 운영 일지(하루 한 줄 — 방문자·유입·한 일·원인) 쓰는 법. scripts/daily-metrics.sh 가 숫자를 뽑는다
 ```
 
 Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 반드시 await 한다.
@@ -320,6 +321,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 |---|---|
 | [`docs/PROGRESS.md`](docs/PROGRESS.md) | 지금 상태 + 진행 중이거나 해야 할 일 |
 | [`docs/HISTORY.md`](docs/HISTORY.md) | 끝난 작업의 경위 |
+| [`docs/DAILY_LOG.md`](docs/DAILY_LOG.md) | 노션 운영 일지 — 날마다의 방문자와 그날 한 일 |
 | 이 파일 | 앞으로도 지켜야 할 규칙 |
 
 - 일을 끝내면 PROGRESS 에서 빼고 HISTORY 로 옮긴다. PROGRESS 에 줄 친(`~~완료~~`) 항목을 쌓아 두지 않는다.
