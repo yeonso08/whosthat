@@ -1,0 +1,142 @@
+<!doctype html>
+<!--
+  블로그 글(posts/2026-10-29_34기_277회_블로그.md) 이미지 원본. 1080×1080.
+  2026-10-26 결혼 글 cards.html 과 같은 판형 — 흑백, 왼쪽 정렬. 출연자 사진·방송 캡처·핸들은 넣지 않는다.
+  cards.html?c=c1 처럼 고른다.
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800;900&family=Manrope:wght@600;800&display=block" rel="stylesheet">
+<style>
+  :root { --ink: #0a0a0c; --paper: #f4f4f6; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1080px; overflow: hidden; }
+  body { font-family: "Gothic A1", sans-serif; word-break: keep-all; }
+  .card { display: none; width: 1080px; height: 1080px; padding: 80px 88px; flex-direction: column; }
+  .card.on { display: flex; }
+  .dark { background: var(--ink); color: var(--paper); }
+  .light { background: var(--paper); color: var(--ink); }
+  .top { display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-family: "Manrope", sans-serif; font-weight: 800; font-size: 40px; letter-spacing: -0.02em; }
+  .page { font-family: "Manrope", sans-serif; font-weight: 600; font-size: 28px; }
+  .label { margin-top: 56px; font-size: 34px; font-weight: 500; opacity: .82; }
+  .h1 { margin-top: 20px; font-size: 104px; font-weight: 900; line-height: 1.14; letter-spacing: -0.035em; }
+  .h2 { margin-top: 40px; font-size: 68px; font-weight: 900; line-height: 1.16; letter-spacing: -0.03em; }
+  .lat { font-family: "Manrope", sans-serif; }
+  .date { margin-top: 40px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 56px; letter-spacing: -0.02em; }
+  .foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 30px; font-weight: 700; }
+  /* 줄 목록 */
+  .tl { margin-top: 40px; }
+  .tl div { display: grid; grid-template-columns: 220px 1fr; padding: 22px 0; border-top: 2px solid currentColor; align-items: baseline; }
+  .tl div:last-child { border-bottom: 2px solid currentColor; }
+  .tl b { font-family: "Manrope", "Gothic A1", sans-serif; font-weight: 800; font-size: 34px; }
+  .tl span { font-size: 34px; font-weight: 700; }
+  .tl small { display: block; margin-top: 6px; font-size: 25px; font-weight: 500; opacity: .7; }
+  .tl .hl { background: var(--ink); color: var(--paper); padding: 22px 20px; margin: 0 -20px; border-radius: 12px; border: 0; }
+  .dark .tl .hl { background: var(--paper); color: var(--ink); }
+  /* 화살표 관계 */
+  .rel { margin-top: 40px; display: flex; flex-direction: column; gap: 18px; }
+  .rel div { display: grid; grid-template-columns: 130px 60px 1fr; align-items: baseline; font-size: 40px; font-weight: 800; }
+  .rel i { font-style: normal; font-family: "Manrope", sans-serif; opacity: .6; }
+  .rel em { font-style: normal; font-size: 26px; font-weight: 500; opacity: .7; margin-left: 10px; }
+  /* 인용 */
+  .q { margin-top: 30px; padding: 24px 28px; border-left: 8px solid currentColor; font-size: 38px; font-weight: 800; line-height: 1.35; }
+  .q small { display: block; margin-top: 8px; font-size: 25px; font-weight: 500; opacity: .7; }
+  /* 직업 표 */
+  .jobs { margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 44px; }
+  .jobs div { display: grid; grid-template-columns: 82px 64px 1fr; padding: 15px 0; border-top: 2px solid currentColor; align-items: baseline; font-size: 27px; }
+  .jobs b { font-weight: 800; font-size: 30px; }
+  .jobs .n { font-family: "Manrope", sans-serif; font-weight: 800; }
+  .jobs span { font-weight: 500; line-height: 1.3; }
+  .grid { margin-top: 40px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .cell { border: 2px solid currentColor; border-radius: 14px; padding: 20px 0; text-align: center; font-size: 34px; font-weight: 800; }
+  .sub { margin-top: 24px; font-size: 28px; font-weight: 500; opacity: .75; }
+  .url { margin-top: 40px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 44px; letter-spacing: -0.02em; }
+</style>
+</head>
+<body>
+
+<!-- 1. 표지 -->
+<section class="card dark" id="c1">
+  <div class="top"><span class="logo">nukko</span><span class="page">01 / 06</span></div>
+  <p class="label">나는 솔로 34기 다둥이 특집 · 277회</p>
+  <h1 class="h1">현숙을 둘러싼<br>영호와 영철</h1>
+  <p class="date">2026. 10. 28 <span style="font-family:'Gothic A1';font-weight:700;font-size:44px">방송</span></p>
+  <div class="foot"><span>방송에 나온 내용만 정리했어요</span><span class="lat" style="font-weight:800;font-size:34px">nukko.net</span></div>
+</section>
+
+<!-- 2. 지금까지 흐름 -->
+<section class="card light" id="c2">
+  <div class="top"><span class="logo">nukko</span><span class="page">02 / 06</span></div>
+  <h2 class="h2">34기, 지금까지</h2>
+  <div class="tl">
+    <div><b>10.07</b><span>첫인상 선택<small>순자 3표(영수·영식·광수) · 현숙 3표(영호·영철·상철)</small></span></div>
+    <div><b>10.14</b><span>솔로남 자기소개<small>직업·나이 공개</small></span></div>
+    <div><b>10.21</b><span>솔로녀 자기소개 · 첫 데이트<small>영호 3:1 · 상철·옥순 1:1 · 영수·영식·광수 고독정식</small></span></div>
+    <div class="hl"><b>10.28</b><span>1대1 대화로 순위 공개<small style="opacity:.8">277회 · 영호 1순위 현숙 · 영철 영자 정리</small></span></div>
+  </div>
+</section>
+
+<!-- 3. 마음의 방향 -->
+<section class="card dark" id="c3">
+  <div class="top"><span class="logo">nukko</span><span class="page">03 / 06</span></div>
+  <h2 class="h2">277회가 끝난 뒤<br>마음의 방향</h2>
+  <div class="rel">
+    <div><span>영호</span><i>→</i><span>현숙<em>1순위</em> · 순자<em>2순위</em></span></div>
+    <div><span>영철</span><i>→</i><span>현숙<em>영자는 정리</em></span></div>
+    <div><span>현숙</span><i>→</i><span>영철 · 영호<em>"이틀째라 조심스럽다"</em></span></div>
+    <div><span>정숙</span><i>→</i><span>광수<em>영호를 접었다</em></span></div>
+    <div><span>순자</span><i>→</i><span>영호<em>상철을 기다리는 마음도</em></span></div>
+  </div>
+  <div class="foot" style="font-size:26px;opacity:.7"><span>방송 인터뷰·대화 기준</span></div>
+</section>
+
+<!-- 4. 영철의 말 -->
+<section class="card light" id="c4">
+  <div class="top"><span class="logo">nukko</span><span class="page">04 / 06</span></div>
+  <h2 class="h2">영철의 한 마디</h2>
+  <p class="q">"다른 분들을 알아가고 싶은 마음은<br>어느 정도 지워졌다"<small>현숙과의 1대1 대화에서</small></p>
+  <p class="q">"마음의 비율이 8대2"<small>영자에게 거절 의사를 밝히며</small></p>
+  <p class="q">"내가 갑이었는데 을이 된 느낌"<small>영자를 정리한 뒤</small></p>
+  <div class="foot" style="font-size:26px;opacity:.7"><span>MC 데프콘 "올인 선언이다" · 이이경 "폭주 기관차다"</span></div>
+</section>
+
+<!-- 5. 직업·나이 -->
+<section class="card dark" id="c5">
+  <div class="top"><span class="logo">nukko</span><span class="page">05 / 06</span></div>
+  <h2 class="h2" style="margin-top:28px">34기 직업·나이</h2>
+  <div class="jobs">
+    <div><b>영수</b><span class="n">37</span><span>건축사 사무소</span></div>
+    <div><b>영숙</b><span class="n">38</span><span>인테리어 자재 회사</span></div>
+    <div><b>영호</b><span class="n">35</span><span>외국계 증권사 일본 지사</span></div>
+    <div><b>정숙</b><span class="n">33</span><span>대형 회계법인 회계사</span></div>
+    <div><b>영식</b><span class="n">38</span><span>글로벌 스포츠 브랜드</span></div>
+    <div><b>순자</b><span class="n">35</span><span>13년 차 간호사</span></div>
+    <div><b>영철</b><span class="n">36</span><span>행정직 7급 공무원</span></div>
+    <div><b>영자</b><span class="n">32</span><span>한의사</span></div>
+    <div><b>광수</b><span class="n">35</span><span>부동산 신탁회사</span></div>
+    <div><b>옥순</b><span class="n">33</span><span>11년 차 임상병리사</span></div>
+    <div><b>상철</b><span class="n">39</span><span>SK하이닉스 HBM 라인</span></div>
+    <div><b>현숙</b><span class="n">35</span><span>외국계 제약회사</span></div>
+  </div>
+  <div class="foot" style="font-size:26px;opacity:.7"><span>나이·직업은 방송 기준</span></div>
+</section>
+
+<!-- 6. 누꼬 안내 (핸들은 싣지 않는다) -->
+<section class="card light" id="c6">
+  <div class="top"><span class="logo">nukko</span><span class="page">06 / 06</span></div>
+  <h2 class="h2" style="margin-top:56px">34기 출연진<br>한 페이지에서</h2>
+  <div class="grid">
+    <div class="cell">영수</div><div class="cell">영호</div><div class="cell">영식</div><div class="cell">영철</div><div class="cell">광수</div><div class="cell">상철</div><div class="cell">영숙</div><div class="cell">정숙</div><div class="cell">순자</div><div class="cell">영자</div><div class="cell">옥순</div><div class="cell">현숙</div>
+  </div>
+  <p class="sub">출연진 12명의 직업·나이 · 34기 소개 · 확인된 인스타 계정</p>
+  <p class="url">nukko.net → 나는 솔로 → 34기</p>
+  <div class="foot" style="font-size:28px"><span>직접 열어서 확인한 계정만 올려요</span></div>
+</section>
+
+<script>
+  document.getElementById(new URLSearchParams(location.search).get("c") || "c1").classList.add("on");
+</script>
+</body>
+</html>
