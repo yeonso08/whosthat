@@ -61,6 +61,7 @@ src/components/ads.tsx               AutoAds — 애드센스 스니펫. 레이�
 src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-row, season-feature, season-search, list-card, live-row, live-dot, previous-season-link, site-footer, site-nav, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
+public/<키>.txt · scripts/indexnow.mjs  IndexNow 키 파일과 알림 스크립트 — 매시간 .github/workflows/indexnow.yml 이 돌린다(아래 "검색 노출" 절)
 docs/PROGRESS.md · HISTORY.md        지금 상태·할 일 / 끝난 작업의 경위 — 아래 "진행 상황과 작업 기록"
 docs/DAILY_LOG.md                    노션 운영 일지(하루 한 줄 — 방문자·유입·한 일·원인) 쓰는 법. scripts/daily-metrics.sh 가 숫자를 뽑는다
 ```
@@ -136,6 +137,10 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **정책 두 페이지의 metadata 는 `policyMetadata(locale, page)` 다.** 둘은 제목·설명만 다르고 나머지가 같아서, 각자 적어 두면 한쪽만 고치게 된다. 새 정책 페이지를 붙이면 `seo.ts` 의 `POLICY_PATHS` 에 한 줄 더한다.
 - **기수 상세 머리글의 프로그램 이름을 빼지 말 것.** 제목은 `나는 솔로 33기 출연진 인스타` 인데 본문에는 `33기` 와 가명뿐이라 프로그램 이름이 한 글자도 없던 적이 있다 — 주 검색어를 본문이 뒷받침하지 못하는 상태였다. 프로그램 화면과 같은 구조(프로그램 이름 한 줄 + 큰 제목)다.
 - **`site.name` 은 프로그램 이름이 아니다.** 프로그램이 하나였을 땐 `나는 솔로 출연진 인스타` 였는데, 그건 title.template·`og:site_name`·`WebSite` 이름·탐색경로 첫 칸에 다 쓰이는 값이라 프로그램이 둘이 되는 순간 사이트가 자기 이름으로 거짓말을 하게 됐다. 지금은 `누꼬 — 예능 출연진 인스타` 다. 프로그램 이름은 프로그램·기수 화면의 제목이 진다(둘 다 `title: { absolute }` 라 사이트 이름이 뒤에 또 붙지 않는다).
+
+**IndexNow 가 바뀐 페이지를 Bing·네이버에 알린다**(2026-11-03, `scripts/indexnow.mjs` + `.github/workflows/indexnow.yml`). 구글은 IndexNow 를 안 받아서 sitemap 그대로다. DuckDuckGo 는 제출 창구가 없고 Bing 색인을 쓴다 — DuckDuckGo 노출을 늘리려면 Bing 을 본다.
+- **보내는 건 빌드가 아니라 한 시간마다 도는 Actions 다.** 빌드 중에 보내면 크롤러가 아직 옛 화면을 받아 간다. "사이트에 반영" 이 Deploy Hook 이라 GitHub 가 배포의 끝을 모르므로, 라이브 sitemap 을 지난번 스냅숏과 비교해 `lastmod` 가 바뀐 주소만 보낸다. **그래서 sitemap 의 `lastmod` 를 빌드 시각으로 바꾸지 말 것** — 매시간 전 주소를 다시 보내게 되고, 바뀌지 않은 주소를 계속 보내면 엔진이 그 신호를 믿지 않는다.
+- **키는 두 곳이 짝이다** — `public/<키>.txt`(내용이 키 그대로)와 스크립트의 `KEY`. 한쪽만 바꾸면 엔진이 403 을 준다. 도메인을 옮기면 스크립트의 `HOST` 도 같이 고친다(`lib/site.ts` 를 못 읽는 Node 스크립트라 따로 적혀 있다).
 
 **검색엔진 등록(Google Search Console·네이버 서치어드바이저·Bing Webmaster Tools)은 커스텀 도메인을 연결한 뒤에 한다.** 코드가 아니라 운영이고, 검증과 색인이 호스트네임 단위로 쌓여서 순서를 바꾸면 같은 일을 두 번 한다. 경위는 `docs/HISTORY.md` §3. 이 프로젝트는 2026-08-24 에 실제로 밟았다 — 절차는 바로 아래에 있고, 다음에 도메인을 옮길 때도 같은 순서를 따른다.
 
