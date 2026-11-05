@@ -224,11 +224,17 @@ function Picks({ round, members, dict }: RoundProps) {
   );
 }
 
-/** 최종 선택은 커플만 그린다. 서로 고른 짝을 세고(`finalCouples`), 남자 이름을 앞에 둔다. */
+/**
+ * 최종 선택은 커플만 그린다. 서로 고른 짝을 세고(`finalCouples`), 남자 이름을 앞에,
+ * 카드는 위 격자의 출연진 순서로 둔다 — 짝을 id 순으로 두면 격자와 순서가 어긋난다.
+ */
 function Couples({ round, members, dict }: RoundProps) {
-  const pairs = finalCouples(round).map((pair) =>
-    members.get(pair[0])?.gender === "male" ? pair : ([pair[1], pair[0]] as const),
-  );
+  const order = [...members.keys()];
+  const pairs = finalCouples(round)
+    .map((pair) =>
+      members.get(pair[0])?.gender === "male" ? pair : ([pair[1], pair[0]] as const),
+    )
+    .sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]));
   if (pairs.length === 0) {
     return (
       <div className="rounded-2xl bg-card px-5 py-4 shadow-soft">
