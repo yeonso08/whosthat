@@ -30,7 +30,7 @@ import { DEFAULT_LOCALE, LOCALES, isLocale, type Locale } from "./locales";
 import { hasRegisteredStrings, lookupProgramStrings } from "./program-strings";
 import { lookupAlias, lookupSpecial } from "./translations";
 import type { ProgramStrings } from "./types";
-import type { CastMember, Coverage, Season, Totals } from "./types";
+import type { CastMember, Coverage, Episode, Season, Totals } from "./types";
 
 // 언어 목록은 `locales.ts` 가 갖고 있지만, 화면 쪽 파일이 두 군데서 가져오지
 // 않게 여기서 그대로 내보낸다.
@@ -226,6 +226,16 @@ export function formatChecked(date: string, locale: Locale): string {
   });
 }
 
+/** 회차 방송일. "2026-08-05" → "8월 5일" / "August 5" — 기수 안이라 연도는 뺀다. */
+export function formatEpisodeDate(date: string, locale: Locale): string {
+  const parts = date.split("-");
+  const [year, month, day] = parts;
+  if (!year || !month || !day) return "";
+  if (locale === "ko") return `${Number(month)}월 ${Number(day)}일`;
+
+  return formatUtcDate(parts, locale, { month: "long", day: "numeric" });
+}
+
 /**
  * "4 / 14 확인". 명단을 아직 못 채운 기수는 개수 대신 그 사실을 적는다 —
  * "0 / 0 확인"은 아무도 못 찾았다는 뜻으로 읽혀서 사실과 다르다.
@@ -342,6 +352,15 @@ export function localizeSeason(season: Season, locale: Locale) {
  * 낱말이라 원문이 섞여도 읽히지만, 영어 화면 한가운데 한국어 문단은 그 화면을
  * 못 읽게 만든다.
  */
+/**
+ * 회차별 정리. **지금은 한국어로만 쓰므로 다른 언어는 빈 배열이다** — 기수 소개와
+ * 같은 이유다(영어 화면 한가운데 한국어 글 한 편은 그 화면을 못 읽게 만든다).
+ * 번역을 붙이면 블록에 언어 칸을 더하고 여기서 고른다.
+ */
+export function seasonEpisodes(season: Season, locale: Locale): Episode[] {
+  return locale === "ko" ? (season.episodes ?? []) : [];
+}
+
 export function seasonDescription(season: Season, locale: Locale): string[] {
   return (season.descriptions?.[locale] ?? "")
     .split(/\n\s*\n/)
