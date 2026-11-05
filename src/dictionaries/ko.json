@@ -39,7 +39,14 @@
     "metaCastMember": "{alias}({age}·{occupation})",
     "metaCastMemberNoAge": "{alias}({occupation})",
     "metaCastSeparator": ", ",
-    "metaDescriptionPending": "{program} {season}{special} 출연진의 인스타그램 계정. 명단을 정리하는 중입니다."
+    "metaDescriptionPending": "{program} {season}{special} 출연진의 인스타그램 계정. 명단을 정리하는 중입니다.",
+    "episodesHeading": "{season} 회차별 정리",
+    "episodesRange": "{first} 첫 방송부터 {last} 방송까지",
+    "episodeAired": "{date} 방송",
+    "finalCouple": "최종 커플",
+    "noFinalCouple": "최종 커플은 나오지 않았습니다.",
+    "pickedNobody": "선택 안 함",
+    "episodesSource": "방송과 방송을 다룬 기사를 바탕으로 정리했습니다."
   },
   "status": {
     "none": "계정 없음",

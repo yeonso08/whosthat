@@ -70,6 +70,45 @@ export type Season = {
    * 6:6 이 아닌 기수가 있어서 기본 로스터를 찍어 넣으면 없는 사람을 만들게 된다.
    */
   cast: CastMember[];
+  /**
+   * 회차별 정리 — 방송 날짜순(API 가 정렬한다). 지금은 한국어로만 쓴다
+   * (`seasonEpisodes` 가 다른 언어에서 빈 배열을 준다).
+   */
+  episodes: Episode[];
+};
+
+/** 회차별 정리의 한 회차. 방송 날짜마다 하나다. */
+export type Episode = {
+  id: number;
+  /** YYYY-MM-DD */
+  airDate: string;
+  title: string;
+  /** 위에서부터 화면에 나가는 순서다. */
+  blocks: EpisodeBlock[];
+};
+
+/**
+ * 블록 한 칸. `text` 의 `[영수]` 는 그 사람 카드로 가는 링크가 된다.
+ * `quote`·`profile` 은 `memberId` 가, `picks` 는 `round` 가 반드시 있다(DB 제약).
+ */
+export type EpisodeBlock = {
+  kind: "text" | "quote" | "profile" | "picks";
+  body: string | null;
+  memberId: string | null;
+  round: PickRound | null;
+};
+
+/**
+ * 한 번의 선택. **고른 사람마다 한 줄이고, 줄이 없으면 기록을 못 찾은 것이다.**
+ * `chosenId` 가 null 이면 "선택하지 않았다" 는 방송 사실이다 — 둘을 섞지 않는다.
+ * 커플은 저장하지 않는다 — 최종 선택에서 서로 고른 짝을 `finalCouples` 가 센다.
+ */
+export type PickRound = {
+  label: string;
+  chooser: "female" | "male" | "both";
+  isFinal: boolean;
+  note: string | null;
+  picks: { chooserId: string; chosenId: string | null }[];
 };
 
 /**
@@ -229,3 +268,13 @@ export type SearchResults = {
   /** 사람 결과가 상한에 걸려 잘렸다. 화면에서 좁히는 법을 안내한다. */
   membersTruncated: boolean;
 };
+
+/** 최종 선택에서 서로를 고른 짝. 저장하지 않고 선택 줄에서 센다 — 두 곳에 적으면 어긋난다. */
+export function finalCouples(round: PickRound): [string, string][] {
+  const chose = new Map(round.picks.map((p) => [p.chooserId, p.chosenId]));
+  return round.picks.flatMap(({ chooserId, chosenId }) =>
+    chosenId && chose.get(chosenId) === chooserId && chooserId < chosenId
+      ? [[chooserId, chosenId] as [string, string]]
+      : [],
+  );
+}
