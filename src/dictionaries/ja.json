@@ -39,7 +39,14 @@
     "metaCastMember": "{alias}({age}歳・{occupation})",
     "metaCastMemberNoAge": "{alias}({occupation})",
     "metaCastSeparator": "、",
-    "metaDescriptionPending": "{program} {season}{special} の出演者のインスタグラムアカウント。出演者リストを整理しています。"
+    "metaDescriptionPending": "{program} {season}{special} の出演者のインスタグラムアカウント。出演者リストを整理しています。",
+    "episodesHeading": "{season} 放送回ごとのまとめ",
+    "episodesRange": "{first}の初回から{last}の放送まで",
+    "episodeAired": "{date}放送",
+    "finalCouple": "最終カップル",
+    "noFinalCouple": "最終カップルは誕生しませんでした。",
+    "pickedNobody": "選ばず",
+    "episodesSource": "放送と放送を報じた記事をもとにまとめました。"
   },
   "status": {
     "none": "アカウントなし",

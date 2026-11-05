@@ -11,6 +11,7 @@ import {
   PageTitle,
 } from "@/components/page-heading";
 import { PreviousSeasonLink } from "@/components/previous-season-link";
+import { SeasonEpisodes } from "@/components/season-episodes";
 import {
   getPreviousSeason,
   getProgram,
@@ -28,6 +29,7 @@ import {
   localizeSeason,
   programStrings,
   seasonDescription,
+  seasonEpisodes,
 } from "@/lib/i18n";
 import { programHref, seasonHref, seasonPath } from "@/lib/links";
 import {
@@ -124,6 +126,7 @@ export default async function Page({
   const { label, special, airDate } = localizeSeason(season, lang);
   const programName = localizeProgramName(programId, lang);
   const description = seasonDescription(season, lang);
+  const episodes = seasonEpisodes(season, lang);
 
   // 방영 중인 기수만 앞 기수로 잇는다 — 사람들이 몰려오는데 계정이 잠겨 있는
   // 자리다. 앞 기수도 확인한 계정이 없으면 이어 줘 봐야 같은 빈 화면이다.
@@ -212,6 +215,16 @@ export default async function Page({
             ))}
           </div>
         </section>
+      )}
+
+      {/* 회차별 정리는 맨 아래다 — 소개 문단이 기수를 한 번에 요약하고, 이 글이
+          방송 날짜순으로 풀어 쓴다. 글 속 이름은 위 격자의 카드로 돌아간다. */}
+      {episodes.length > 0 && (
+        <SeasonEpisodes
+          episodes={episodes}
+          cast={season.cast}
+          heading={fill(dict.season.episodesHeading, { season: label })}
+        />
       )}
     </main>
   );
