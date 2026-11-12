@@ -188,6 +188,12 @@ export function localizeProgramName(programId: string, locale: Locale): string {
   return programStrings(programId, locale).name;
 }
 
+/** 좁은 자리용 이름. 짧은 이름을 안 적은 프로그램은 정식 이름이 곧 짧은 이름이다. */
+export function localizeProgramShortName(programId: string, locale: Locale): string {
+  const strings = programStrings(programId, locale);
+  return strings.shortName || strings.name;
+}
+
 /** 33 → "33기" / "Season 33" / "シーズン33". 라벨은 저장하지 않고 번호에서 만든다. */
 export function localizeSeasonLabel(
   programId: string,

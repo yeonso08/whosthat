@@ -132,6 +132,13 @@ export type ProgramStrings = {
   summaryPending: string;
   searchPlaceholder: string;
   seasonsHeading: string;
+  /**
+   * 좁은 자리(홈 포스터 판·방영 중 줄·홈 검색 결과)에 쓰는 짧은 이름 — `나솔사계`.
+   * 정식 이름이 포스터 판에서 세 줄로 접히고 방영 중 줄에서 기수 라벨을 밀어내서
+   * 더했다(2026-11-12). 비면 `name` 이다(`localizeProgramShortName`). 제목·탐색경로·
+   * JSON-LD 는 정식 이름 그대로다 — 검색엔진에는 정식 이름이 보여야 한다.
+   */
+  shortName?: string;
 };
 
 export type Program = {

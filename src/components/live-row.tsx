@@ -4,7 +4,7 @@ import {
   currentLocale,
   formatCoverage,
   getDictionary,
-  localizeProgramName,
+  localizeProgramShortName,
   localizeSeason,
 } from "@/lib/i18n";
 import { seasonHref } from "@/lib/links";
@@ -33,7 +33,7 @@ export async function LiveRow({ season }: Props) {
 
   const coverage = getCoverage(season.cast);
   const { label } = localizeSeason(season, locale);
-  const programName = localizeProgramName(season.programId, locale);
+  const programName = localizeProgramShortName(season.programId, locale);
 
   return (
     <Link
@@ -47,8 +47,15 @@ export async function LiveRow({ season }: Props) {
       <span className="shrink-0 text-[11.5px] font-bold text-muted-foreground">
         {dict.season.onAir}
       </span>
-      <span className="truncate text-[14px] font-bold tracking-[-0.02em]">
-        {programName} {label}
+      {/* 자리가 모자라면 프로그램 이름이 줄고 기수 라벨은 끝까지 남는다 — 이
+          줄을 누르는 이유는 "몇 기" 다. 한 덩어리로 두면 `truncate` 가 문장 끝을
+          잘라 정작 라벨이 먼저 사라진다. */}
+      <span className="flex min-w-0 items-baseline gap-1.5 text-[14px] font-bold tracking-[-0.02em]">
+        <span className="truncate">{programName}</span>
+        <span aria-hidden className="text-muted-foreground">
+          ·
+        </span>
+        <span className="shrink-0">{label}</span>
       </span>
       <span className="font-lat shrink-0 text-[12px] font-semibold text-muted-foreground">
         {formatCoverage(coverage, locale)}
