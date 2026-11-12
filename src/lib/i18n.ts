@@ -135,6 +135,19 @@ export function localizeAlias(alias: string, locale: Locale): string {
   return lookupAlias(alias, locale) ?? alias;
 }
 
+/**
+ * 겹친 원의 가명 배지에 들어갈 글자 — 이름의 마지막 낱말이다.
+ *
+ * 나솔사계는 `1기 영호`·`미스터 공`·`여자 1호` 처럼 이름이 두 낱말이라 통째로
+ * 넣으면 40px 원에서 두 줄로 꺾여 잘린다. 사람을 가르는 건 뒤 낱말이고
+ * (앞은 `n기`·`미스터` 처럼 여럿이 같다), 배지는 사람을 알아보게 하는 게 아니라
+ * 빈 자리에 변화를 주는 저대비 워터마크라 그걸로 충분하다. 한 낱말 이름
+ * (`영수`·`장미`)은 그대로 나간다. 언어를 안 타는 건 배지 규칙 그대로다.
+ */
+export function avatarLabel(alias: string): string {
+  return alias.trim().split(/\s+/).at(-1) ?? alias;
+}
+
 export function localizeSpecial(special: string, locale: Locale): string {
   return lookupSpecial(special, locale) ?? special;
 }
