@@ -257,5 +257,5 @@
 - `program_strings.short_name`(선택, 비면 정식 이름) — `나솔사계` / `Love Goes On` / `その後、愛は続く`. 영어·일본어는 정식 이름에서 부제만 뗐다. 포스터 판·방영 중 줄·홈 검색 결과만 짧은 이름이고 제목·JSON-LD 는 정식 이름이다.
 - 방영 중 줄은 프로그램 이름만 줄고 기수 라벨은 남는다. 한국어 목록 제목은 `역대 솔로민박` 으로 바꿨다.
 - 로컬 `.env.local` 이 `NUKKO_API_URL=https://api.nukko.net` 이라, 배포 전 API 를 로컬로 띄워 볼 때는 `NUKKO_API_URL=http://127.0.0.1:8000 pnpm dev` 로 덮어써야 한다.
-- 색인: IndexNow 가 11:50 실행에서 나솔사계 12개 주소를 Bing·네이버에 보냈다. 구글은 Search Console 에서 따로 요청한다.
+- 색인: IndexNow 가 11:50 실행에서 나솔사계 12개 주소를 Bing·네이버에 보냈다. 구글은 같은 날 Search Console 에서 한국어 4개(프로그램 화면·솔로민박 15~17)를 색인 요청했다 — 넷 다 "Google에 등록되어 있지 않음" 상태였다. 영어·일본어는 sitemap 에 맡겼다.
 
