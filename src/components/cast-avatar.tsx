@@ -1,3 +1,4 @@
+import { avatarLabel } from "@/lib/i18n";
 import type { AccountStatus } from "@/lib/types";
 
 type Props = { alias: string; status: AccountStatus };
@@ -30,7 +31,7 @@ export function CastAvatar({ alias, status }: Props) {
     <div
       className={`flex h-full w-full items-center justify-center font-bold ${STATUS_STYLE[status]}`}
     >
-      {alias}
+      {avatarLabel(alias)}
     </div>
   );
 }
