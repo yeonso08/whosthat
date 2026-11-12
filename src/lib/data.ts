@@ -4,8 +4,10 @@ import {
   hasProgramStrings,
   localizeAlias,
   localizeProgramName,
+  localizeProgramShortName,
   localizeSeasonLabel,
   localizeSpecial,
+  programStrings,
   type Locale,
 } from "./i18n";
 import { registerProgramStrings } from "./program-strings";
@@ -182,7 +184,10 @@ export async function buildSearchIndex(
   const spansPrograms = programs.length > 1;
 
   return programs.flatMap((current) => {
-    const programName = localizeProgramName(current.id, locale);
+    // 결과 줄에는 짧은 이름을 띄운다 — 정식 이름(`나는 솔로, 그 후 사랑은
+    // 계속된다`)은 줄 하나를 통째로 먹는다. 정식 이름은 아래 `source` 에 실어
+    // 그 이름으로 쳐도 걸리게 한다.
+    const programName = localizeProgramShortName(current.id, locale);
 
     return getSeasons(current).map((season) => {
       const special = season.special
@@ -196,6 +201,8 @@ export async function buildSearchIndex(
       // "솔로지옥 시즌 4" 로 좁히는 게 기수를 함께 치는 것과 같은 장치다.
       const source = [
         current.name,
+        programStrings(current.id, "ko").shortName ?? "",
+        locale === "ko" ? "" : localizeProgramName(current.id, locale),
         locale === "ko" ? "" : localizeSeasonLabel(current.id, season.number, "ko"),
         locale === "ko" ? "" : (season.special ?? ""),
       ]

@@ -6,6 +6,7 @@ import {
   currentLocale,
   fill,
   getDictionary,
+  localizeProgramShortName,
   programStrings,
 } from "@/lib/i18n";
 import { programHref } from "@/lib/links";
@@ -135,7 +136,13 @@ export async function ProgramCard({ program }: Props) {
           // 가는지는 스크린리더에 남긴다.
           <span className="sr-only">{strings.name}</span>
         ) : (
-          <p className={POSTER_TITLE}>{strings.name}</p>
+          // 판에는 짧은 이름을 앉힌다 — 정식 이름(`나는 솔로, 그 후 사랑은
+          // 계속된다`)은 이 크기에서 세 줄로 접혀 옆 판들보다 무거워진다.
+          // 스크린리더에는 정식 이름을 준다.
+          <p className={POSTER_TITLE}>
+            <span aria-hidden>{localizeProgramShortName(program.id, locale)}</span>
+            <span className="sr-only">{strings.name}</span>
+          </p>
         )}
       </div>
 
