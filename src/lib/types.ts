@@ -29,6 +29,12 @@ export type CastMember = {
   occupationJa?: string;
   /** 방영 당시 나이. */
   ageAtAiring?: number;
+  /**
+   * 같은 사람의 다른 출연과 묶는 열쇠. 관리자 백엔드가 사람(people)과 출연을 나눠
+   * 준다(2026-11-13) — 이름·계정·근거·사진은 사람에 붙은 값이라 같은 personId 의
+   * 출연은 늘 같은 값이다. 출신 줄·검색 연결이 이걸로 사람을 잇는다.
+   */
+  personId: number;
   /** /public 아래 경로. 없으면 화면에서 가명 배지가 대신 나온다. */
   profileImageUrl?: string;
   status: AccountStatus;

@@ -184,7 +184,7 @@ export async function buildSearchIndex(
   const spansPrograms = programs.length > 1;
   // 프로그램 화면의 인덱스라도 다른 프로그램의 이름은 다 본다 — 계약결혼 화면에서
   // `16기 상철` 로 찾는 사람이 있다.
-  const otherNames = otherNamesByHandle(await getPrograms());
+  const otherNames = otherNamesByPerson(await getPrograms());
 
   return programs.flatMap((current) => {
     // 결과 줄에는 짧은 이름을 띄운다 — 정식 이름(`나는 솔로, 그 후 사랑은
@@ -221,17 +221,15 @@ export async function buildSearchIndex(
         ...(source ? { keywords: source } : {}),
         coverage: formatCoverage(getCoverage(season.cast), locale),
         cast: season.cast.map((member) => {
-          // 번역 화면의 한글 원문 + 같은 계정의 다른 프로그램 이름(`16기 상철`).
+          // 번역 화면의 한글 원문 + 같은 사람의 다른 출연 이름(`16기 상철`).
           const keywords = [
             locale === "ko" ? "" : member.alias,
-            ...(member.instagramHandle
-              ? (otherNames.get(member.instagramHandle) ?? [])
-                  .filter(
-                    (other) =>
-                      other.key !== `${current.id}/${season.id}/${member.id}`,
-                  )
-                  .map((other) => other.text)
-              : []),
+            ...(otherNames.get(member.personId) ?? [])
+              .filter(
+                (other) =>
+                  other.key !== `${current.id}/${season.id}/${member.id}`,
+              )
+              .map((other) => other.text),
           ]
             .filter(Boolean)
             .join(" ");
@@ -254,11 +252,12 @@ export async function buildSearchIndex(
 }
 
 /**
- * 기수 카드의 "출신" 줄 — 같은 인스타 계정으로 **먼저 방송된** 다른 출연을
+ * 기수 카드의 "출신" 줄 — 같은 사람(`personId`)이 **먼저 방송된** 다른 출연을
  * `나는 솔로 16기 상철` 처럼 그 화면 언어로 돌려준다. 키는 출연자 id 다.
  *
  * 계약결혼은 실명으로 나와서, 카드만 봐서는 강정환이 16기 상철인지 알 수 없다.
- * 출연 기록을 따로 적지 않고 아래 검색과 같은 근거(계정이 같다)에서 계산한다.
+ * 같은 사람인지는 관리자 백엔드가 묶어 준다(2026-11-13, 사람·출연 분리) — 계정을
+ * 못 찾은 사람도 이어진다.
  *
  * - **이름이 이미 출신을 말하면 뺀다** — 나솔사계는 지난 출연자를 `16기 상철` 로
  *   부르므로, 그 카드에 `나는 솔로 16기 상철` 을 또 적으면 같은 말이 두 번이다.
@@ -271,12 +270,12 @@ export async function getEarlierAppearances(
   season: Season,
   locale: Locale,
 ): Promise<Record<string, string[]>> {
-  const appearances = appearancesByHandle(await getPrograms());
+  const appearances = appearancesByPerson(await getPrograms());
   const result: Record<string, string[]> = {};
 
   for (const member of season.cast) {
-    if (!member.instagramHandle || !season.airDate) continue;
-    const earlier = (appearances.get(member.instagramHandle) ?? []).filter(
+    if (!season.airDate) continue;
+    const earlier = (appearances.get(member.personId) ?? []).filter(
       (other) =>
         other.airDate !== "" &&
         other.airDate < season.airDate &&
@@ -305,14 +304,13 @@ type Appearance = {
   alias: string;
 };
 
-/** 인스타 핸들 → 그 계정으로 나온 모든 출연. 방송 순서대로다. */
-function appearancesByHandle(programs: Program[]): Map<string, Appearance[]> {
-  const byHandle = new Map<string, Appearance[]>();
+/** 사람 → 그 사람의 모든 출연. 방송 순서대로다. */
+function appearancesByPerson(programs: Program[]): Map<number, Appearance[]> {
+  const byPerson = new Map<number, Appearance[]>();
   for (const program of programs) {
     for (const season of program.seasons) {
       for (const member of season.cast) {
-        if (!member.instagramHandle) continue;
-        const entries = byHandle.get(member.instagramHandle) ?? [];
+        const entries = byPerson.get(member.personId) ?? [];
         entries.push({
           programId: program.id,
           seasonId: season.id,
@@ -321,50 +319,42 @@ function appearancesByHandle(programs: Program[]): Map<string, Appearance[]> {
           airDate: season.airDate,
           alias: member.alias,
         });
-        byHandle.set(member.instagramHandle, entries);
+        byPerson.set(member.personId, entries);
       }
     }
   }
-  for (const entries of byHandle.values()) {
+  for (const entries of byPerson.values()) {
     entries.sort((a, b) => a.airDate.localeCompare(b.airDate));
   }
-  return byHandle;
+  return byPerson;
 }
 
 /**
- * 같은 인스타 계정을 가진 카드끼리 서로의 이름을 검색어로 나눠 갖는다.
- *
- * 한 사람이 여러 프로그램에 나온다 — 계약결혼의 `강정환` 은 나는 솔로의 `16기
- * 상철` 이다. 방문자는 먼저 본 프로그램의 이름으로 찾으므로 `16기 상철` 로 쳐도
- * 계약결혼 카드가 나와야 한다. 출연 기록을 따로 적지 않고 **계정이 같다는 사실에서
- * 계산한다**(파생값은 저장하지 않는다) — 계정을 내리면 연결도 저절로 끊긴다.
- *
- * 비공개(`private`) 계정도 잇는다. 핸들은 여기서 열쇠로만 쓰고 인덱스에는 한국어
- * 이름(`나는 솔로 32기 영수`)만 실리므로 핸들이 화면·번들로 새지 않는다.
+ * 같은 사람의 다른 출연 이름을 검색어로 나눠 갖는다 — `16기 상철` 로 쳐도 계약결혼
+ * 강정환 카드가 나오게. 방문자는 먼저 본 프로그램의 이름으로 찾는다. 인덱스에는
+ * 한국어 이름(`나는 솔로 32기 영수`)만 실리고 핸들은 안 실린다(비공개 계정 보호).
  */
-function otherNamesByHandle(
+function otherNamesByPerson(
   programs: Program[],
-): Map<string, { key: string; text: string }[]> {
-  const byHandle = new Map<string, { key: string; text: string }[]>();
-  for (const program of programs) {
-    const programName = [
-      program.name,
-      programStrings(program.id, "ko").shortName ?? "",
-    ]
-      .filter(Boolean)
-      .join(" ");
-    for (const season of program.seasons) {
-      const label = localizeSeasonLabel(program.id, season.number, "ko");
-      for (const member of season.cast) {
-        if (!member.instagramHandle) continue;
-        const entries = byHandle.get(member.instagramHandle) ?? [];
-        entries.push({
-          key: `${program.id}/${season.id}/${member.id}`,
-          text: `${programName} ${label} ${member.alias}`,
-        });
-        byHandle.set(member.instagramHandle, entries);
-      }
-    }
+): Map<number, { key: string; text: string }[]> {
+  const result = new Map<number, { key: string; text: string }[]>();
+  for (const [personId, appearances] of appearancesByPerson(programs)) {
+    if (appearances.length < 2) continue;
+    result.set(
+      personId,
+      appearances.map((a) => {
+        const programName = [
+          programs.find((p) => p.id === a.programId)?.name ?? "",
+          programStrings(a.programId, "ko").shortName ?? "",
+        ]
+          .filter(Boolean)
+          .join(" ");
+        return {
+          key: `${a.programId}/${a.seasonId}/${a.memberId}`,
+          text: `${programName} ${localizeSeasonLabel(a.programId, a.number, "ko")} ${a.alias}`,
+        };
+      }),
+    );
   }
-  return byHandle;
+  return result;
 }
