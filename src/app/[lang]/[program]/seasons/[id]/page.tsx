@@ -13,6 +13,7 @@ import {
 import { PreviousSeasonLink } from "@/components/previous-season-link";
 import { SeasonEpisodes } from "@/components/season-episodes";
 import {
+  getEarlierAppearances,
   getPreviousSeason,
   getProgram,
   getPrograms,
@@ -127,6 +128,7 @@ export default async function Page({
   const programName = localizeProgramName(programId, lang);
   const description = seasonDescription(season, lang);
   const episodes = seasonEpisodes(season, lang);
+  const earlier = await getEarlierAppearances(program, season, lang);
 
   // 방영 중인 기수만 앞 기수로 잇는다 — 사람들이 몰려오는데 계정이 잠겨 있는
   // 자리다. 앞 기수도 확인한 계정이 없으면 이어 줘 봐야 같은 빈 화면이다.
@@ -185,7 +187,11 @@ export default async function Page({
       {season.cast.length > 0 ? (
         <section className="gutter mt-7 grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:gap-5">
           {season.cast.map((member) => (
-            <CastCard key={member.id} member={member} />
+            <CastCard
+              key={member.id}
+              member={member}
+              earlier={earlier[member.id]}
+            />
           ))}
         </section>
       ) : (

@@ -254,6 +254,84 @@ export async function buildSearchIndex(
 }
 
 /**
+ * 기수 카드의 "출신" 줄 — 같은 인스타 계정으로 **먼저 방송된** 다른 출연을
+ * `나는 솔로 16기 상철` 처럼 그 화면 언어로 돌려준다. 키는 출연자 id 다.
+ *
+ * 계약결혼은 실명으로 나와서, 카드만 봐서는 강정환이 16기 상철인지 알 수 없다.
+ * 출연 기록을 따로 적지 않고 아래 검색과 같은 근거(계정이 같다)에서 계산한다.
+ *
+ * - **이름이 이미 출신을 말하면 뺀다** — 나솔사계는 지난 출연자를 `16기 상철` 로
+ *   부르므로, 그 카드에 `나는 솔로 16기 상철` 을 또 적으면 같은 말이 두 번이다.
+ * - 나중 출연은 싣지 않는다. 16기 상철 카드에 계약결혼을 적는 건 "출신" 이 아니라
+ *   근황이고, 그건 기수 소개 문단이 날짜와 함께 맡는다.
+ * - 방송 연월이 같거나 비어 있으면 앞뒤를 가릴 수 없어서 뺀다.
+ */
+export async function getEarlierAppearances(
+  program: Program,
+  season: Season,
+  locale: Locale,
+): Promise<Record<string, string[]>> {
+  const appearances = appearancesByHandle(await getPrograms());
+  const result: Record<string, string[]> = {};
+
+  for (const member of season.cast) {
+    if (!member.instagramHandle || !season.airDate) continue;
+    const earlier = (appearances.get(member.instagramHandle) ?? []).filter(
+      (other) =>
+        other.airDate !== "" &&
+        other.airDate < season.airDate &&
+        member.alias !==
+          `${localizeSeasonLabel(other.programId, other.number, "ko")} ${other.alias}`,
+    );
+    if (earlier.length === 0) continue;
+
+    result[member.id] = earlier.map((other) =>
+      [
+        localizeProgramShortName(other.programId, locale),
+        localizeSeasonLabel(other.programId, other.number, locale),
+        localizeAlias(other.alias, locale),
+      ].join(" "),
+    );
+  }
+  return result;
+}
+
+type Appearance = {
+  programId: string;
+  seasonId: string;
+  memberId: string;
+  number: number;
+  airDate: string;
+  alias: string;
+};
+
+/** 인스타 핸들 → 그 계정으로 나온 모든 출연. 방송 순서대로다. */
+function appearancesByHandle(programs: Program[]): Map<string, Appearance[]> {
+  const byHandle = new Map<string, Appearance[]>();
+  for (const program of programs) {
+    for (const season of program.seasons) {
+      for (const member of season.cast) {
+        if (!member.instagramHandle) continue;
+        const entries = byHandle.get(member.instagramHandle) ?? [];
+        entries.push({
+          programId: program.id,
+          seasonId: season.id,
+          memberId: member.id,
+          number: season.number,
+          airDate: season.airDate,
+          alias: member.alias,
+        });
+        byHandle.set(member.instagramHandle, entries);
+      }
+    }
+  }
+  for (const entries of byHandle.values()) {
+    entries.sort((a, b) => a.airDate.localeCompare(b.airDate));
+  }
+  return byHandle;
+}
+
+/**
  * 같은 인스타 계정을 가진 카드끼리 서로의 이름을 검색어로 나눠 갖는다.
  *
  * 한 사람이 여러 프로그램에 나온다 — 계약결혼의 `강정환` 은 나는 솔로의 `16기
