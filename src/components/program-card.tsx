@@ -23,8 +23,12 @@ const POSTER = "aspect-[2/3]";
  * 둘뿐인 지금 컨테이너를 5열로 나누면 판이 손톱만 해지고, 스무 개가 되면 줄이
  * 알아서 접힌다. 좁은 화면에서만 두 장이 한 줄에 들어가게 절반을 쓴다
  * (`gap-x-4` 16px 의 절반을 뺀 값이라 격자 두 열과 같은 자리에 선다).
+ *
+ * lg 가 188px 인 건 홈 오른쪽에 300×600 배너 칸이 서면서(2026-11-13) 본문이 852px 로
+ * 줄었기 때문이다 — 212px 이던 판은 넷이 한 줄에 못 들어가 3 + 1 로 접혔다
+ * (4 × 188 + 간격 72 = 824).
  */
-const POSTER_WIDTH = "w-[calc(50%-0.5rem)] sm:w-[184px] lg:w-[212px]";
+const POSTER_WIDTH = "w-[calc(50%-0.5rem)] sm:w-[184px] lg:w-[188px]";
 
 /**
  * 포스터 모서리. 사이트에서 제일 큰 반경이다 — 판이 커서 같은 각도라도 덜
@@ -36,7 +40,7 @@ const POSTER_RADIUS = "rounded-2xl";
  * `next/image` 에 알려 주는 판의 폭. **`POSTER_WIDTH` 와 짝이다** — 한쪽만
  * 고치면 화면은 멀쩡한데 필요 이상으로 큰 파일이 내려간다.
  */
-const POSTER_SIZES = "(min-width: 1024px) 212px, (min-width: 640px) 184px, 50vw";
+const POSTER_SIZES = "(min-width: 1024px) 188px, (min-width: 640px) 184px, 50vw";
 
 /**
  * 포스터가 아직 없을 때 판을 채우는 활자.

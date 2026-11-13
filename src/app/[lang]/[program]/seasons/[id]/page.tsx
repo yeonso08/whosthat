@@ -188,9 +188,10 @@ export default async function Page({
         // 모비온 배너는 명단이 있는 기수 전부에 건다 — 애드센스(`hasAdContent`)보다
         // 넓다. 계정이 0개인 방영 중 기수가 방송 직후 사람이 제일 몰리는 화면이고,
         // 모비온은 애드센스의 "게시자 콘텐츠 없는 화면" 위반과 무관하다.
-        // 옆 칸이 160px 를 가져가므로 격자는 `xl` 에서야 5열이 된다.
+        // 옆 칸이 300px 를 가져가므로 데스크톱 격자는 3 → 4열이다(카드 약 200px —
+        // 옆 칸 없이 5열일 때와 거의 같다).
         <WithBanner show className="mt-7">
-          <section className="gutter grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5">
+          <section className="gutter grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4">
             {season.cast.map((member) => (
               <CastCard
                 key={member.id}
