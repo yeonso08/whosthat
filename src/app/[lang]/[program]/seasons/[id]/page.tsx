@@ -10,6 +10,7 @@ import {
   PageEyebrow,
   PageTitle,
 } from "@/components/page-heading";
+import { MobonBanner } from "@/components/mobon-banner";
 import { PreviousSeasonLink } from "@/components/previous-season-link";
 import { SeasonEpisodes } from "@/components/season-episodes";
 import {
@@ -197,6 +198,10 @@ export default async function Page({
       ) : (
         <EmptyCard>{dict.season.castPendingBody}</EmptyCard>
       )}
+
+      {/* 모비온 배너는 격자 아래다 — 방문자가 핸들을 찾은 다음 자리라야 명단을
+          밀지 않는다. 거는 기준은 애드센스와 같다. */}
+      {hasAdContent(season) && <MobonBanner />}
 
       {/* 격자 아래다 — 위에 두면 이 기수의 명단을 밀어 내린다. 명단을 훑고 계정이
           없다는 걸 확인한 다음 자리가 "그럼 어디로" 다. 제목은 프로그램 화면의
