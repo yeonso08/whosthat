@@ -58,6 +58,8 @@ src/lib/search.ts                    검색 매칭 — 데이터를 모른다(�
 src/data/i-am-solo.json           **더는 읽지 않는다.** DB 로 옮기기 전 원본 — 되돌릴 근거로 남겨 뒀다
 src/data/singles-inferno.json              솔로지옥 시즌 1~5 골격 — 명단이 아직 비어 있다
 src/components/ads.tsx               AutoAds — 애드센스 스니펫. 레이아웃이 아니라 페이지가 건다(위 "광고" 절)
+src/components/with-banner.tsx       모비온 배너 자리 — 데스크톱 본문 옆 세로 칸 + 휴대폰 본문 아래. 홈·프로그램·기수 상세가 감싼다
+src/components/mobon-banner.tsx      모비온 지면 코드와 스니펫 실행 — 기기를 보고 웹·모바일 지면 중 하나만 건다
 src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-row, season-feature, season-search, list-card, live-row, live-dot, previous-season-link, site-footer, site-nav, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
