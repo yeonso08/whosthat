@@ -48,7 +48,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
        */}
       {/* 모비온 배너는 홈에 조건 없이 건다 — 애드센스와 같은 이유다(위). */}
       {/* 배너를 제목 줄 높이에서 시작한다 — 제목 위 여백(`lg:pt-24`)과 짝이다. */}
-      <WithBanner show railClassName="lg:mt-24">
+      <WithBanner show railClassName="top-[165px]">
         <header className="gutter pt-16 text-center lg:pt-24">
           {/* 워드마크 바로 아래라 "누꼬 / 출연진 인스타" 로 읽힌다 — 이름과 하는 일이
               한 덩어리다. 사이트 전체 집계를 여기 한 줄 더 적지 않는 건 아래 카드가
