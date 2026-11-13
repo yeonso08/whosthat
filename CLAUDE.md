@@ -343,6 +343,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 - 화면은 전부 정적이다 — 방문자 요청에 도는 건 `/` 를 언어로 보내는 proxy 하나뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (Cloudflare Registrar 등록·DNS). 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다.
 - 도메인은 `lib/site.ts` 한 곳에서 정해진다. **`NEXT_PUBLIC_SITE_URL`(Production)에 `https://www.nukko.net` 을 박아 뒀다** — Vercel 자동값(`VERCEL_PROJECT_PRODUCTION_URL`)은 "가장 짧은 커스텀 도메인"을 고르는데, 그러면 리다이렉트 전용인 apex(`nukko.net`)가 뽑힌다. 이유는 위 "커스텀 도메인을 연결할 때" 1번에 있다.
+- **Vercel 은 Hobby 플랜이고 배포 보관은 1주다**(Settings → Security → Deployment Retention Policy, Canceled 만 1일). 기본값 30일로 두면 push 마다 Preview, "사이트에 반영" 마다 Production 이 쌓여 Deployment Storage 10GB 를 넘는다 — 2026-11-13 에 실제로 넘었다([HISTORY §16](docs/HISTORY.md)). 저장 용량이 다시 차면 `vercel rm --safe` 로 지우기 전에 이 기간부터 줄인다 — `--safe` 는 롤백 대상까지 지운다.
 
 ### 계정·삭제 요청
 

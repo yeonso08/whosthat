@@ -320,3 +320,12 @@
 - **운영 DB 이관과 OCI 배포는 사용자가 터미널에서 직접 돌렸다** — Claude Code 의 자동 권한 판정이 운영 DB 구조 변경·ssh 배포를 막았다. 일반 터미널에서는 `!` 를 붙이지 않는다(zsh 에서 다른 뜻이다).
 - 관리자 출연자 추가 창에 "이미 나온 사람인가요?"(`16기 상철`·실명·핸들로 검색), 출연자 줄 위에 같은 사람의 다른 출연을 적는다.
 
+
+## 16. Vercel 배포 저장 용량 초과 (2026-11-13)
+
+Hobby 한도(Deployment Storage 10GB)를 넘었다 — 10.44GB. 11-11 부터 사흘 사이에 5GB 에서 10GB 로 뛰었다.
+
+- **원인은 파일 크기가 아니라 배포 개수다.** `public/` 은 8KB 다. Vercel 은 배포를 하나하나 통째로 보관하는데 보관 기간이 네 종류 모두 기본값 30일이었다. 누꼬는 브랜치·`dev` push 마다 Preview, `main` 머지와 관리자 "사이트에 반영"(Deploy Hook)마다 Production 이 한 벌씩 생긴다 — 이날 두 시간에만 14개(Production 5·Preview 9). 나솔사계·계약결혼·모비온 작업이 몰린 11-11~13 에 급증했다.
+- **고친 것**: 프로젝트 Settings → Security 맨 아래 **Deployment Retention Policy**(메뉴에 바로 안 보이면 같은 화면의 "Recently Deleted Deployments" 설명에 있는 "defined retention policy" 링크로 간다). Canceled 1일, Errored·Pre-Production·Production 1주. 현재 Production(도메인이 걸린 배포)은 기간과 상관없이 안 지워진다.
+- **이미 쌓인 것을 `vercel rm whosthat --safe` 로 지우지는 않았다.** 정책이 기존 배포에도 적용되고, `--safe` 는 도메인이 걸린 하나만 남겨 롤백 대상까지 지운다. 지운 배포는 30일 동안 휴지통(Recently Deleted)에 남는데 그게 용량에 잡히는지는 확인하지 못했다.
+- 같은 화면에서 CDN Requests 가 865K / 1M 이었다 — 방문자 트래픽이라 배포를 지워도 안 준다.
