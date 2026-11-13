@@ -182,6 +182,9 @@ export async function buildSearchIndex(
 ): Promise<SearchIndex> {
   const programs = program ? [program] : await getPrograms();
   const spansPrograms = programs.length > 1;
+  // 프로그램 화면의 인덱스라도 다른 프로그램의 이름은 다 본다 — 계약결혼 화면에서
+  // `16기 상철` 로 찾는 사람이 있다.
+  const otherNames = otherNamesByHandle(await getPrograms());
 
   return programs.flatMap((current) => {
     // 결과 줄에는 짧은 이름을 띄운다 — 정식 이름(`나는 솔로, 그 후 사랑은
@@ -217,18 +220,73 @@ export async function buildSearchIndex(
         ...(special ? { special } : {}),
         ...(source ? { keywords: source } : {}),
         coverage: formatCoverage(getCoverage(season.cast), locale),
-        cast: season.cast.map((member) => ({
-          id: member.id,
-          alias: localizeAlias(member.alias, locale),
-          ...(member.name ? { name: member.name } : {}),
-          ...(locale === "ko" ? {} : { keywords: member.alias }),
-          status: member.status,
-          // 비공개로 돌린 계정의 핸들은 검색에도 싣지 않는다(`AccountStatus`).
-          ...(member.status === "found" && member.instagramHandle
-            ? { handle: member.instagramHandle }
-            : {}),
-        })),
+        cast: season.cast.map((member) => {
+          // 번역 화면의 한글 원문 + 같은 계정의 다른 프로그램 이름(`16기 상철`).
+          const keywords = [
+            locale === "ko" ? "" : member.alias,
+            ...(member.instagramHandle
+              ? (otherNames.get(member.instagramHandle) ?? [])
+                  .filter(
+                    (other) =>
+                      other.key !== `${current.id}/${season.id}/${member.id}`,
+                  )
+                  .map((other) => other.text)
+              : []),
+          ]
+            .filter(Boolean)
+            .join(" ");
+
+          return {
+            id: member.id,
+            alias: localizeAlias(member.alias, locale),
+            ...(member.name ? { name: member.name } : {}),
+            ...(keywords ? { keywords } : {}),
+            status: member.status,
+            // 비공개로 돌린 계정의 핸들은 검색에도 싣지 않는다(`AccountStatus`).
+            ...(member.status === "found" && member.instagramHandle
+              ? { handle: member.instagramHandle }
+              : {}),
+          };
+        }),
       };
     });
   });
+}
+
+/**
+ * 같은 인스타 계정을 가진 카드끼리 서로의 이름을 검색어로 나눠 갖는다.
+ *
+ * 한 사람이 여러 프로그램에 나온다 — 계약결혼의 `강정환` 은 나는 솔로의 `16기
+ * 상철` 이다. 방문자는 먼저 본 프로그램의 이름으로 찾으므로 `16기 상철` 로 쳐도
+ * 계약결혼 카드가 나와야 한다. 출연 기록을 따로 적지 않고 **계정이 같다는 사실에서
+ * 계산한다**(파생값은 저장하지 않는다) — 계정을 내리면 연결도 저절로 끊긴다.
+ *
+ * 비공개(`private`) 계정도 잇는다. 핸들은 여기서 열쇠로만 쓰고 인덱스에는 한국어
+ * 이름(`나는 솔로 32기 영수`)만 실리므로 핸들이 화면·번들로 새지 않는다.
+ */
+function otherNamesByHandle(
+  programs: Program[],
+): Map<string, { key: string; text: string }[]> {
+  const byHandle = new Map<string, { key: string; text: string }[]>();
+  for (const program of programs) {
+    const programName = [
+      program.name,
+      programStrings(program.id, "ko").shortName ?? "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+    for (const season of program.seasons) {
+      const label = localizeSeasonLabel(program.id, season.number, "ko");
+      for (const member of season.cast) {
+        if (!member.instagramHandle) continue;
+        const entries = byHandle.get(member.instagramHandle) ?? [];
+        entries.push({
+          key: `${program.id}/${season.id}/${member.id}`,
+          text: `${programName} ${label} ${member.alias}`,
+        });
+        byHandle.set(member.instagramHandle, entries);
+      }
+    }
+  }
+  return byHandle;
 }
