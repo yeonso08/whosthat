@@ -17,6 +17,12 @@ import type { CastMember } from "@/lib/types";
 /** 카드와 그 안의 상태 줄이 같은 사람을 그리므로 타입을 함께 쓴다. */
 type Props = { member: CastMember };
 
+/**
+ * `earlier` 는 같은 사람이 먼저 나온 프로그램 — 이미 그 화면 언어로 만든
+ * `나는 솔로 16기 상철` 이다(`getEarlierAppearances`). 없으면 줄이 빠진다.
+ */
+type CardProps = Props & { earlier?: string[] };
+
 /** 사전을 통째로 받지 않는다 — 이 줄이 읽는 건 `status` 묶음뿐이다. */
 type StatusProps = Props & { status: Dictionary["status"]; locale: Locale };
 
@@ -39,7 +45,7 @@ const ANCHOR_OFFSET = "scroll-mt-4";
  * "회색 상자에 글자 두 번" 으로 읽혔다. 지금은 사진 유무가 **뒤에 그림이 깔리느냐**
  * 하나만 가른다.
  */
-export async function CastCard({ member }: Props) {
+export async function CastCard({ member, earlier }: CardProps) {
   const locale = await currentLocale();
   const dict = getDictionary(locale);
 
@@ -98,6 +104,14 @@ export async function CastCard({ member }: Props) {
             </span>
           )}
         </span>
+        {/* 출신은 이름 바로 아래다 — 실명으로 나오는 프로그램에서 "이 사람이
+            그 16기 상철" 이라는 게 이름 다음으로 궁금한 값이다. 직업보다 진하게
+            둬서 두 줄이 한 덩어리로 안 뭉친다. */}
+        {earlier && earlier.length > 0 && (
+          <span className="mt-1 text-[12px] leading-[1.45] font-semibold break-keep text-foreground/75">
+            {earlier.join(" · ")}
+          </span>
+        )}
         {/* 직업은 방송 자막 그대로라 길다("P회사 기술연구원 수석연구원"). 한 줄로
             자르면 끝이 사라져서 두 줄까지 보이고, 그래도 넘치면 전체를 title 로 준다. */}
         {description && (
