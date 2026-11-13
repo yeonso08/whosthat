@@ -8,6 +8,7 @@ import { GroupHeading, PageEyebrow, PageTitle } from "@/components/page-heading"
 import { SeasonFeature } from "@/components/season-feature";
 import { SeasonRow } from "@/components/season-row";
 import { SeasonSearch } from "@/components/season-search";
+import { WithBanner } from "@/components/with-banner";
 import { buildSearchIndex, getProgram, getPrograms, getSeasons } from "@/lib/data";
 import {
   formatProgramSummary,
@@ -18,6 +19,7 @@ import {
 import { homeHref } from "@/lib/links";
 import {
   breadcrumbSchema,
+  isProgramIndexable,
   programCrumb,
   programHasAdContent,
   programMetadata,
@@ -54,67 +56,76 @@ export default async function Page({
   const strings = programStrings(program.id, lang);
   const seasons = getSeasons(program);
   const [featured, ...rest] = seasons;
+  const showBanner = isProgramIndexable(program);
 
   return (
     // **읽는 화면은 좁은 기둥으로 묶는다.** 1280px 을 다 쓰면 기수 한 줄이
     // 왼쪽 끝의 제목과 오른쪽 끝의 숫자로 찢어져서, 한 줄인데 두 덩어리로
     // 읽힌다. 격자 화면(홈·기수 상세)만 컨테이너를 다 쓴다.
-    <main className="mx-auto w-full max-w-[860px]">
+    //
+    // 모비온 배너가 걸리면 데스크톱에서 오른쪽 세로 칸(간격 32 + 배너 160 + 끝 여백 32)만큼
+    // 판을 넓힌다 — 기둥 폭은 860px 그대로다.
+    <main
+      className={`mx-auto w-full max-w-[860px] ${showBanner ? "lg:max-w-[1084px]" : ""}`}
+    >
       <JsonLd data={breadcrumbSchema(lang, programCrumb(program, lang))} />
       {/* 확인한 계정이 한 건도 없는 프로그램에는 광고를 걸지 않는다. */}
       {programHasAdContent(program) && <AutoAds />}
 
-      <header className="gutter pt-8 pb-1 lg:pt-12">
-        <PageEyebrow>{strings.name}</PageEyebrow>
+      {/* 명단이 한 줄도 없는 프로그램에는 배너를 안 건다 — 화면이 빈 줄의 목록이다. */}
+      <WithBanner show={showBanner}>
+        <header className="gutter pt-8 pb-1 lg:pt-12">
+          <PageEyebrow>{strings.name}</PageEyebrow>
 
-        {/* 뒤로가기를 제목 줄에 붙인다 — 기수 상세와 같은 구조다. */}
-        <div className="mt-3 -ml-3 flex items-start gap-1">
-          <BackLink href={homeHref(lang)} label={dict.nav.backHome} />
-          <PageTitle>{strings.heading}</PageTitle>
-        </div>
+          {/* 뒤로가기를 제목 줄에 붙인다 — 기수 상세와 같은 구조다. */}
+          <div className="mt-3 -ml-3 flex items-start gap-1">
+            <BackLink href={homeHref(lang)} label={dict.nav.backHome} />
+            <PageTitle>{strings.heading}</PageTitle>
+          </div>
 
-        <p className="mt-2 text-[13px] text-muted-foreground">
-          {formatProgramSummary(program.id, getTotals(seasons), lang)}
-        </p>
+          <p className="mt-2 text-[13px] text-muted-foreground">
+            {formatProgramSummary(program.id, getTotals(seasons), lang)}
+          </p>
 
-        {/* 어떤 프로그램인지 한 문단. 현황 줄이 숫자를 말하고 이 줄이 무엇을
-            세는 숫자인지 말한다 — 검색으로 이 화면에 바로 착지하는 사람은
-            프로그램 이름 말고는 아무 설명도 없이 목록을 마주하게 된다. */}
-        <p className="mt-3 max-w-[62ch] text-[13.5px] leading-[1.75] text-muted-foreground">
-          {strings.about}
-        </p>
-      </header>
+          {/* 어떤 프로그램인지 한 문단. 현황 줄이 숫자를 말하고 이 줄이 무엇을
+              세는 숫자인지 말한다 — 검색으로 이 화면에 바로 착지하는 사람은
+              프로그램 이름 말고는 아무 설명도 없이 목록을 마주하게 된다. */}
+          <p className="mt-3 max-w-[62ch] text-[13.5px] leading-[1.75] text-muted-foreground">
+            {strings.about}
+          </p>
+        </header>
 
-      {featured && (
-        <div className="gutter mt-6">
-          <SeasonFeature season={featured} />
-        </div>
-      )}
-
-      {/* 검색창이 목록 자리를 쥐고 있다 — 입력이 없을 때만 아래 목록이 보인다.
-          인덱스는 이 프로그램만 담는다: 프로그램 화면에서 친 말이 다른 프로그램
-          으로 새면 지금 보고 있는 목록과 결과가 어긋난다. */}
-      <SeasonSearch
-        index={await buildSearchIndex(lang, program)}
-        locale={lang}
-        text={{
-          ...dict.search,
-          placeholder: strings.searchPlaceholder,
-          seasonsHeading: strings.seasonsHeading,
-        }}
-        status={dict.status}
-      >
-        {rest.length > 0 && (
-          <>
-            <GroupHeading>{strings.pastSeasons}</GroupHeading>
-            <ListCard>
-              {rest.map((season) => (
-                <SeasonRow key={season.id} season={season} />
-              ))}
-            </ListCard>
-          </>
+        {featured && (
+          <div className="gutter mt-6">
+            <SeasonFeature season={featured} />
+          </div>
         )}
-      </SeasonSearch>
+
+        {/* 검색창이 목록 자리를 쥐고 있다 — 입력이 없을 때만 아래 목록이 보인다.
+            인덱스는 이 프로그램만 담는다: 프로그램 화면에서 친 말이 다른 프로그램
+            으로 새면 지금 보고 있는 목록과 결과가 어긋난다. */}
+        <SeasonSearch
+          index={await buildSearchIndex(lang, program)}
+          locale={lang}
+          text={{
+            ...dict.search,
+            placeholder: strings.searchPlaceholder,
+            seasonsHeading: strings.seasonsHeading,
+          }}
+          status={dict.status}
+        >
+          {rest.length > 0 && (
+            <>
+              <GroupHeading>{strings.pastSeasons}</GroupHeading>
+              <ListCard>
+                {rest.map((season) => (
+                  <SeasonRow key={season.id} season={season} />
+                ))}
+              </ListCard>
+            </>
+          )}
+        </SeasonSearch>
+      </WithBanner>
     </main>
   );
 }

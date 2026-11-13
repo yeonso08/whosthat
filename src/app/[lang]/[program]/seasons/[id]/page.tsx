@@ -10,9 +10,9 @@ import {
   PageEyebrow,
   PageTitle,
 } from "@/components/page-heading";
-import { MobonBanner } from "@/components/mobon-banner";
 import { PreviousSeasonLink } from "@/components/previous-season-link";
 import { SeasonEpisodes } from "@/components/season-episodes";
+import { WithBanner } from "@/components/with-banner";
 import {
   getEarlierAppearances,
   getPreviousSeason,
@@ -133,17 +133,54 @@ export default async function Page({
 
   // 방영 중인 기수만 앞 기수로 잇는다 — 사람들이 몰려오는데 계정이 잠겨 있는
   // 자리다. 앞 기수도 확인한 계정이 없으면 이어 줘 봐야 같은 빈 화면이다.
-  const airingEmpty = season.onAir && coverage.found === 0;
-  const showAds = hasAdContent(season);
-  const candidate = season.onAir ? getPreviousSeason(program, season) : undefined;
+  const airingEmpty = season.onAir && coverage.found === 0;  const candidate = season.onAir ? getPreviousSeason(program, season) : undefined;
   const previous =
     candidate && getCoverage(candidate.cast).found > 0 ? candidate : undefined;
+
+  const below = (
+    <>
+      {/* 격자 아래다 — 위에 두면 이 기수의 명단을 밀어 내린다. 명단을 훑고 계정이
+          없다는 걸 확인한 다음 자리가 "그럼 어디로" 다. 제목은 프로그램 화면의
+          목록과 같은 말(`지난 기수`·`지난 시즌`)이다. */}
+      {previous && (
+        <section className="mt-2 lg:mt-6">
+          <GroupHeading>{programStrings(programId, lang).pastSeasons}</GroupHeading>
+          <div className="gutter max-w-[560px]">
+            <PreviousSeasonLink season={previous} />
+          </div>
+        </section>
+      )}
+
+      {/* 소개는 격자 아래다 — 방문자는 핸들을 찾으러 오므로 문단이 격자를 밀어
+          내리면 안 된다. 읽는 글이라 격자 폭이 아니라 좁은 기둥에 선다. */}
+      {description.length > 0 && (
+        <section className="mt-6 lg:mt-10">
+          <GroupHeading>{fill(dict.season.aboutHeading, { season: label })}</GroupHeading>
+          <div className="gutter max-w-[68ch] space-y-3 text-[14px] leading-[1.75] break-keep text-muted-foreground [overflow-wrap:anywhere]">
+            {description.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 회차별 정리는 맨 아래다 — 소개 문단이 기수를 한 번에 요약하고, 이 글이
+          방송 날짜순으로 풀어 쓴다. 글 속 이름은 위 격자의 카드로 돌아간다. */}
+      {episodes.length > 0 && (
+        <SeasonEpisodes
+          episodes={episodes}
+          cast={season.cast}
+          heading={fill(dict.season.episodesHeading, { season: label })}
+        />
+      )}
+    </>
+  );
 
   return (
     <main>
       <JsonLd data={seasonSchema(program, season, lang)} />
       {/* 계정을 하나도 못 찾은 기수에는 광고를 걸지 않는다 — `hasAdContent` 참고. */}
-      {showAds && <AutoAds />}
+      {hasAdContent(season) && <AutoAds />}
 
       <header className="gutter pt-8 lg:pt-12">
         <PageEyebrow>{programName}</PageEyebrow>
@@ -186,15 +223,14 @@ export default async function Page({
         )}
       </header>
 
+      {/* 아래 글(지난 기수·소개·회차별 정리)도 배너 틀 안에 넣는다 — 데스크톱 세로 배너가
+          격자 옆에서 멈추지 않고 글을 따라 내려가게. 휴대폰 배너는 격자 바로 아래다. */}
       {season.cast.length > 0 ? (
-        // 광고가 걸리는 기수는 데스크톱에서 두 칸이다 — 격자 오른쪽에 세로 배너가
-        // 따라 붙는다. 옆 칸이 160px 를 가져가므로 격자는 `xl` 에서야 5열이 된다.
-        <div className="gutter mt-7 lg:flex lg:items-start lg:gap-8">
-          <section
-            className={`grid min-w-0 flex-1 grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 ${
-              showAds ? "xl:grid-cols-5" : "lg:grid-cols-5"
-            }`}
-          >
+        // 모비온 배너는 명단이 있는 기수 전부에 건다 — 애드센스(`hasAdContent`)보다
+        // 넓다. 계정이 0개인 방영 중 기수가 방송 직후 사람이 제일 몰리는 화면이고,
+        // 모비온은 애드센스의 "게시자 콘텐츠 없는 화면" 위반과 무관하다.
+        <WithBanner show className="mt-7" after={below}>
+          <section className="gutter grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:gap-5">
             {season.cast.map((member) => (
               <CastCard
                 key={member.id}
@@ -203,58 +239,14 @@ export default async function Page({
               />
             ))}
           </section>
-          {/* 상단 바(68px) 아래에 붙어 따라온다. */}
-          {showAds && (
-            <aside className="sticky top-[92px] hidden shrink-0 lg:block">
-              <MobonBanner placement="rail" />
-            </aside>
-          )}
-        </div>
+        </WithBanner>
       ) : (
-        <EmptyCard>{dict.season.castPendingBody}</EmptyCard>
+        <>
+          <EmptyCard>{dict.season.castPendingBody}</EmptyCard>
+          {below}
+        </>
       )}
 
-      {/* 휴대폰은 격자 아래다 — 방문자가 핸들을 찾은 다음 자리라야 명단을 밀지 않는다. */}
-      {showAds && (
-        <div className="mt-10 lg:hidden">
-          <MobonBanner placement="inline" />
-        </div>
-      )}
-
-      {/* 격자 아래다 — 위에 두면 이 기수의 명단을 밀어 내린다. 명단을 훑고 계정이
-          없다는 걸 확인한 다음 자리가 "그럼 어디로" 다. 제목은 프로그램 화면의
-          목록과 같은 말(`지난 기수`·`지난 시즌`)이다. */}
-      {previous && (
-        <section className="mt-2 lg:mt-6">
-          <GroupHeading>{programStrings(programId, lang).pastSeasons}</GroupHeading>
-          <div className="gutter max-w-[560px]">
-            <PreviousSeasonLink season={previous} />
-          </div>
-        </section>
-      )}
-
-      {/* 소개는 격자 아래다 — 방문자는 핸들을 찾으러 오므로 문단이 격자를 밀어
-          내리면 안 된다. 읽는 글이라 격자 폭이 아니라 좁은 기둥에 선다. */}
-      {description.length > 0 && (
-        <section className="mt-6 lg:mt-10">
-          <GroupHeading>{fill(dict.season.aboutHeading, { season: label })}</GroupHeading>
-          <div className="gutter max-w-[68ch] space-y-3 text-[14px] leading-[1.75] break-keep text-muted-foreground [overflow-wrap:anywhere]">
-            {description.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* 회차별 정리는 맨 아래다 — 소개 문단이 기수를 한 번에 요약하고, 이 글이
-          방송 날짜순으로 풀어 쓴다. 글 속 이름은 위 격자의 카드로 돌아간다. */}
-      {episodes.length > 0 && (
-        <SeasonEpisodes
-          episodes={episodes}
-          cast={season.cast}
-          heading={fill(dict.season.episodesHeading, { season: label })}
-        />
-      )}
     </main>
   );
 }
