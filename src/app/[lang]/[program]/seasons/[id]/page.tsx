@@ -134,6 +134,7 @@ export default async function Page({
   // 방영 중인 기수만 앞 기수로 잇는다 — 사람들이 몰려오는데 계정이 잠겨 있는
   // 자리다. 앞 기수도 확인한 계정이 없으면 이어 줘 봐야 같은 빈 화면이다.
   const airingEmpty = season.onAir && coverage.found === 0;
+  const showAds = hasAdContent(season);
   const candidate = season.onAir ? getPreviousSeason(program, season) : undefined;
   const previous =
     candidate && getCoverage(candidate.cast).found > 0 ? candidate : undefined;
@@ -142,7 +143,7 @@ export default async function Page({
     <main>
       <JsonLd data={seasonSchema(program, season, lang)} />
       {/* 계정을 하나도 못 찾은 기수에는 광고를 걸지 않는다 — `hasAdContent` 참고. */}
-      {hasAdContent(season) && <AutoAds />}
+      {showAds && <AutoAds />}
 
       <header className="gutter pt-8 lg:pt-12">
         <PageEyebrow>{programName}</PageEyebrow>
@@ -186,22 +187,39 @@ export default async function Page({
       </header>
 
       {season.cast.length > 0 ? (
-        <section className="gutter mt-7 grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:gap-5">
-          {season.cast.map((member) => (
-            <CastCard
-              key={member.id}
-              member={member}
-              earlier={earlier[member.id]}
-            />
-          ))}
-        </section>
+        // 광고가 걸리는 기수는 데스크톱에서 두 칸이다 — 격자 오른쪽에 세로 배너가
+        // 따라 붙는다. 옆 칸이 160px 를 가져가므로 격자는 `xl` 에서야 5열이 된다.
+        <div className="gutter mt-7 lg:flex lg:items-start lg:gap-8">
+          <section
+            className={`grid min-w-0 flex-1 grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 ${
+              showAds ? "xl:grid-cols-5" : "lg:grid-cols-5"
+            }`}
+          >
+            {season.cast.map((member) => (
+              <CastCard
+                key={member.id}
+                member={member}
+                earlier={earlier[member.id]}
+              />
+            ))}
+          </section>
+          {/* 상단 바(68px) 아래에 붙어 따라온다. */}
+          {showAds && (
+            <aside className="sticky top-[92px] hidden shrink-0 lg:block">
+              <MobonBanner placement="rail" />
+            </aside>
+          )}
+        </div>
       ) : (
         <EmptyCard>{dict.season.castPendingBody}</EmptyCard>
       )}
 
-      {/* 모비온 배너는 격자 아래다 — 방문자가 핸들을 찾은 다음 자리라야 명단을
-          밀지 않는다. 거는 기준은 애드센스와 같다. */}
-      {hasAdContent(season) && <MobonBanner />}
+      {/* 휴대폰은 격자 아래다 — 방문자가 핸들을 찾은 다음 자리라야 명단을 밀지 않는다. */}
+      {showAds && (
+        <div className="mt-10 lg:hidden">
+          <MobonBanner placement="inline" />
+        </div>
+      )}
 
       {/* 격자 아래다 — 위에 두면 이 기수의 명단을 밀어 내린다. 명단을 훑고 계정이
           없다는 걸 확인한 다음 자리가 "그럼 어디로" 다. 제목은 프로그램 화면의
