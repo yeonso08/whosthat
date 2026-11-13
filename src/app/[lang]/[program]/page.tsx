@@ -62,7 +62,12 @@ export default async function Page({
     // **읽는 화면은 좁은 기둥으로 묶는다.** 1280px 을 다 쓰면 기수 한 줄이
     // 왼쪽 끝의 제목과 오른쪽 끝의 숫자로 찢어져서, 한 줄인데 두 덩어리로
     // 읽힌다. 격자 화면(홈·기수 상세)만 컨테이너를 다 쓴다.
-    <main className="mx-auto w-full max-w-[860px]">
+    //
+    // 모비온 배너가 걸리면 데스크톱에서 오른쪽 세로 칸(간격 32 + 배너 160 + 끝 여백 32)만큼
+    // 판을 넓힌다 — 기둥 폭은 860px 그대로다.
+    <main
+      className={`mx-auto w-full max-w-[860px] ${showBanner ? "lg:max-w-[1084px]" : ""}`}
+    >
       <JsonLd data={breadcrumbSchema(lang, programCrumb(program, lang))} />
       {/* 확인한 계정이 한 건도 없는 프로그램에는 광고를 걸지 않는다. */}
       {programHasAdContent(program) && <AutoAds />}

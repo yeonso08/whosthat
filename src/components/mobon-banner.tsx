@@ -6,9 +6,7 @@ import { useEffect, useRef, useState } from "react";
  * 모비온 배너. 자리가 둘이고, 한 방문자에게는 둘 중 하나만 뜬다.
  *
  * - `inline` — 휴대폰. 본문 아래 300×250(모바일 지면).
- * - `rail` — 데스크톱. 본문 오른쪽에 붙어 따라오는 300×600(웹 지면). 큰 화면에서 본문 아래
- *   300×250 은 넓은 바닥 한가운데 뜬 상자라 어색했고, 그다음 160×600 은 작아 보여서
- *   하프 페이지로 키웠다(2026-11-13).
+ * - `rail` — 데스크톱. 본문 오른쪽에 붙어 따라오는 160×600(웹 지면).
  *
  * **지면이 기기마다 따로인 건 모비온 쪽 사정이다.** 웹 지면(`platform: "W"`, 반응형)은
  * 휴대폰에서 스스로 광고를 안 띄우고(`HawkEyesMaker.js` 의 `checkLanding`), 모바일
@@ -38,10 +36,10 @@ const MOBON_FRAMES = {
     responsive: "Y",
     platform: "W",
     scriptCode: "1073270",
-    frameCode: "90",
-    width: "300",
+    frameCode: "69",
+    width: "160",
     height: "600",
-    settings: { cntad: "1", cntsr: "2" },
+    settings: { cntad: "1", cntsr: "1" },
   },
   inline: {
     type: "banner",
