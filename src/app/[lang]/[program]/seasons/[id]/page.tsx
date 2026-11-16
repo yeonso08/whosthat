@@ -194,8 +194,21 @@ export default async function Page({
             {special}
           </p>
         )}
-        {/* 기수만 친 검색(`나는솔로 10기`)이 묻는 것 — 언제 방송됐고 누가 커플이 됐는지 —
-            을 제목 바로 아래에서 말한다. 표로 세우지 않고 줄로 둔다. */}
+        {/* 시험 목록 밖의 기수는 예전 한 줄(`2022년 12월 방영 · 12명 중 5명 계정 확인`)
+            그대로다 — 비교군이라 모양까지 바뀌면 안 된다(`showsSeasonFacts`). */}
+        {!facts ? (
+          <p className="mt-2 text-[13px] text-muted-foreground">
+            {airPeriod ? `${airPeriod} · ` : ""}
+            {coverage.total === 0
+              ? dict.season.castPending
+              : fill(dict.season.castCount, {
+                  total: coverage.total,
+                  found: coverage.found,
+                })}
+          </p>
+        ) : (
+        // 기수만 친 검색(`나는솔로 10기`)이 묻는 것 — 언제 방송됐고 누가 커플이 됐는지 —
+        // 을 제목 바로 아래에서 말한다. 표로 세우지 않고 줄로 둔다.
         <div className="mt-2 space-y-1 text-[13px] text-muted-foreground">
           {airPeriod && <p>{airPeriod}</p>}
           <p>
@@ -215,6 +228,7 @@ export default async function Page({
             finalCouples && <p>{dict.season.noFinalCouple}</p>
           )}
         </div>
+        )}
 
         {/* 방영 중이라 계정이 하나도 없는 이유를 사실로 말한다. "끝나면 채운다"
             같은 약속은 적지 않는다 — 지키는지 화면이 확인해 주지 못한다. */}
