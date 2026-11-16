@@ -30,6 +30,7 @@ import { DEFAULT_LOCALE, LOCALES, isLocale, type Locale } from "./locales";
 import { hasRegisteredStrings, lookupProgramStrings } from "./program-strings";
 import { lookupAlias, lookupSpecial } from "./translations";
 import type { ProgramStrings } from "./types";
+import { getAirPeriod, getFinalCouples } from "./types";
 import type { CastMember, Coverage, Episode, Season, Totals } from "./types";
 
 // 언어 목록은 `locales.ts` 가 갖고 있지만, 화면 쪽 파일이 두 군데서 가져오지
@@ -245,6 +246,20 @@ export function formatChecked(date: string, locale: Locale): string {
   });
 }
 
+/** "2022-08-24" → "2022년 8월 24일" / "August 24, 2022" */
+function formatFullDate(date: string, locale: Locale): string {
+  const parts = date.split("-");
+  const [year, month, day] = parts;
+  if (!year || !month || !day) return "";
+  if (locale === "ko") return `${year}년 ${Number(month)}월 ${Number(day)}일`;
+
+  return formatUtcDate(parts, locale, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
 /** 회차 방송일. "2026-08-05" → "8월 5일" / "August 5" — 기수 안이라 연도는 뺀다. */
 export function formatEpisodeDate(date: string, locale: Locale): string {
   const parts = date.split("-");
@@ -353,6 +368,56 @@ export function formatMetaCast(
       ),
     )
     .join(dict.metaCastSeparator);
+}
+
+/**
+ * 기수 머리글의 방송 줄. "2022년 8월 24일 ~ 10월 26일 방영 · 10회" / "2026년 10월 7일부터 방영 중".
+ *
+ * **날짜까지 적는다**(2026-11-16) — `나는솔로 10기` 로 검색한 사람에게 네이버 AI
+ * 브리핑이 내는 첫 문장이 방송 기간이고, 월 단위로는 그 문장의 재료가 못 됐다.
+ * 날짜는 회차별 정리에서 온다(`getAirPeriod`). 회차가 없는 기수는 예전대로 월이다.
+ * 방영 중에는 횟수를 적지 않는다 — 회차 정리가 방송보다 늦게 올라와 틀린 숫자가 된다.
+ */
+export function formatAirPeriod(season: Season, locale: Locale): string {
+  const dict = getDictionary(locale).season;
+  const period = getAirPeriod(season);
+  if (!period) {
+    const date = formatAirDate(season.airDate, locale);
+    return date ? fill(dict.aired, { date }) : "";
+  }
+
+  const first = formatFullDate(period.first, locale);
+  if (season.onAir) return fill(dict.airingSince, { first });
+
+  // 한국어는 같은 해에 끝났으면 끝 날짜의 연도를 뺀다 — 한 줄에 같은 연도가 두 번 찍힌다.
+  const sameYear = period.first.slice(0, 4) === period.last.slice(0, 4);
+  const last =
+    locale === "ko" && sameYear
+      ? formatEpisodeDate(period.last, locale)
+      : formatFullDate(period.last, locale);
+  return fill(dict.airedPeriod, { first, last, count: period.episodes });
+}
+
+/**
+ * "영철·현숙, 광수·영자". 최종 선택이 방송되지 않았거나 커플이 없으면 `undefined` —
+ * 그 둘을 가르는 건 쓰는 쪽이 `getFinalCouples` 로 한다.
+ */
+export function formatFinalCouples(
+  season: Season,
+  locale: Locale,
+): string | undefined {
+  const couples = getFinalCouples(season);
+  if (!couples || couples.length === 0) return undefined;
+
+  const dict = getDictionary(locale).season;
+  return couples
+    .map(([a, b]) =>
+      fill(dict.couplePair, {
+        a: localizeAlias(a.alias, locale),
+        b: localizeAlias(b.alias, locale),
+      }),
+    )
+    .join(dict.coupleSeparator);
 }
 
 /** 기수 카드가 쓰는 문구 묶음. 라벨과 특집이 늘 같이 필요해서 함께 만든다. */

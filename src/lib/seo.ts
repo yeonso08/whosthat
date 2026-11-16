@@ -13,6 +13,8 @@ import type { Metadata } from "next";
 import { BRAND_WORDMARK } from "./brand";
 import {
   fill,
+  formatFinalCouples,
+  formatMetaCast,
   getDictionary,
   languageAlternates,
   localizeAlias,
@@ -35,10 +37,33 @@ import {
   TAKEDOWN_PATH,
 } from "./links";
 import { absoluteUrl, SITE_URL } from "./site";
-import { getCoverage, getTotals, type Program, type Season } from "./types";
+import {
+  getAirPeriod,
+  getCoverage,
+  getFinalCouples,
+  getTotals,
+  type Program,
+  type Season,
+} from "./types";
 
 /** JSON-LD 한 덩어리. 스키마가 자유 형식이라 여기까지만 좁힌다. */
 export type Schema = Record<string, unknown>;
+
+/**
+ * 기수 정보(방송 기간 날짜·최종 커플·넓힌 제목·`TVSeason`)를 시험 중인 기수.
+ * **2026-11-16 부터 나는 솔로 10·11·16·20기에만 켰다** — 나머지는 비교군이라
+ * 예전 모양 그대로다. 11월 말에 두 그룹을 `docs/HISTORY.md` §17 의 출처 표와
+ * 비교하고(`docs/PROGRESS.md`), 좋으면 이 목록을 지워 전 기수에 연다.
+ * 결과를 보기 전에 기수를 더하지 말 것 — 비교군이 줄어 비교가 안 된다.
+ */
+const SEASON_FACTS_TRIAL: Record<string, readonly string[]> = {
+  "i-am-solo": ["s10", "s11", "s16", "s20"],
+};
+
+/** 이 기수 화면이 방송 기간·최종 커플을 말하는지. 위 시험 목록에 든 기수만 그렇다. */
+export function showsSeasonFacts(season: Season): boolean {
+  return SEASON_FACTS_TRIAL[season.programId]?.includes(season.id) ?? false;
+}
 
 /**
  * 이 기수를 색인에 올릴지. 명단을 아직 못 채운 기수는 화면에 "명단 정리 중"
@@ -263,7 +288,98 @@ export function faqSchema(locale: Locale): Schema {
 }
 
 /**
- * 기수 상세가 내보내는 구조화 데이터. 빵부스러기 + 계정을 찾아 둔 사람 목록이다.
+ * 기수 상세의 제목·설명. 검색 결과 한 칸에 그대로 나간다.
+ *
+ * **제목이 `출연진 인스타` 에서 넓어졌다**(2026-11-16). `나는솔로 10기` 처럼 기수만
+ * 친 검색에서 네이버 AI 브리핑이 누꼬보다 얇은 페이지를 앞에 세웠다 — 브리핑이 답하는
+ * 건 방송 기간·출연진·최종 커플인데 제목이 "인스타 페이지" 라고만 말하고 있었다.
+ * `인스타` 는 남긴다(그 검색에서는 누꼬가 첫 출처다). 최종 선택이 방송된 기수는
+ * 최종 커플을, 방영 중이라 아직 없는 기수는 직업을 세 번째로 말한다. 둘 다 없는
+ * 기수(회차별 정리가 없는 솔로지옥)는 예전 제목이다 — 화면에 없는 것을 제목이 약속하지 않는다.
+ */
+export function seasonMetaText(
+  season: Season,
+  locale: Locale,
+): { title: string; description: string } {
+  const dict = getDictionary(locale).season;
+  const coverage = getCoverage(season.cast);
+  const { label, special } = localizeSeason(season, locale);
+  const cast = formatMetaCast(season.cast, locale);
+  const couples = formatFinalCouples(season, locale);
+  const values = {
+    program: localizeProgramName(season.programId, locale),
+    season: label,
+    special: special ? ` ${special}` : "",
+    total: coverage.total,
+    found: coverage.found,
+    cast: cast ?? "",
+    couples: couples ?? "",
+  };
+
+  // 시험 목록 밖의 기수는 예전 제목·설명이다(`showsSeasonFacts`).
+  const facts = showsSeasonFacts(season);
+  if (!facts) values.couples = "";
+  const couplesShown = facts ? couples : undefined;
+
+  const title = !facts
+    ? dict.metaTitle
+    : getFinalCouples(season)
+      ? dict.metaTitleCouples
+      : season.onAir && cast
+        ? dict.metaTitleAiring
+        : dict.metaTitle;
+
+  // 직업이 있는 기수는 사이트 소개 대신 누가 나왔는지를 보여 준다 — `formatMetaCast`.
+  // 최종 커플이 있으면 그 앞에 둔다: 모바일 검색 결과가 뒤를 자르면 명단이 먼저 잘린다.
+  const description =
+    coverage.total === 0
+      ? dict.metaDescriptionPending
+      : cast
+        ? couplesShown
+          ? dict.metaDescriptionCastCouples
+          : dict.metaDescriptionCast
+        : couplesShown
+          ? dict.metaDescriptionCouples
+          : dict.metaDescription;
+
+  return { title: fill(title, values), description: fill(description, values) };
+}
+
+/**
+ * 기수 자체를 말하는 구조화 데이터 — 언제 방송됐고 몇 회였는지.
+ *
+ * 화면 머리글의 방송 줄을 그대로 옮긴 것이다(`formatAirPeriod` 와 같은 값).
+ * 방영 중에는 끝 날짜와 횟수를 뺀다 — 화면도 안 적는다. 회차가 없는 기수는 날짜를
+ * 모르므로 통째로 안 낸다.
+ */
+function tvSeasonSchema(
+  program: Program,
+  season: Season,
+  locale: Locale,
+): Schema | undefined {
+  const period = getAirPeriod(season);
+  if (!period || !showsSeasonFacts(season)) return undefined;
+
+  const programName = localizeProgramName(program.id, locale);
+  const { label } = localizeSeason(season, locale);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "TVSeason",
+    name: `${programName} ${label}`,
+    seasonNumber: season.number,
+    url: absoluteUrl(seasonHref(locale, program.id, season.id)),
+    inLanguage: locale,
+    startDate: period.first,
+    ...(season.onAir
+      ? {}
+      : { endDate: period.last, numberOfEpisodes: period.episodes }),
+    partOfSeries: { "@type": "TVSeries", name: programName },
+  };
+}
+
+/**
+ * 기수 상세가 내보내는 구조화 데이터. 빵부스러기 + 기수(방송 기간) + 계정을 찾아 둔 사람 목록이다.
  *
  * **`found` 인 사람만 넣는다.** 계정을 못 찾은 사람은 이을 곳(`sameAs`)이 없어서,
  * 넣어 봐야 "사람이 있다"는 주장만 남는다 — 화면에 없는 말을 마크업으로 더하지
@@ -289,12 +405,14 @@ export function seasonSchema(
       ? [{ alias: member.alias, handle: member.instagramHandle }]
       : [],
   );
-  if (found.length === 0) return [crumb];
+  const tvSeason = tvSeasonSchema(program, season, locale);
+  const base = tvSeason ? [crumb, tvSeason] : [crumb];
+  if (found.length === 0) return base;
 
   const coverage = getCoverage(season.cast);
 
   return [
-    crumb,
+    ...base,
     {
       "@context": "https://schema.org",
       "@type": "ItemList",
