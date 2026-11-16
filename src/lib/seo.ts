@@ -50,6 +50,22 @@ import {
 export type Schema = Record<string, unknown>;
 
 /**
+ * 기수 정보(방송 기간 날짜·최종 커플·넓힌 제목·`TVSeason`)를 시험 중인 기수.
+ * **2026-11-16 부터 나는 솔로 10·11·16·20기에만 켰다** — 나머지는 비교군이라
+ * 예전 모양 그대로다. 11월 말에 두 그룹을 `docs/HISTORY.md` §17 의 출처 표와
+ * 비교하고(`docs/PROGRESS.md`), 좋으면 이 목록을 지워 전 기수에 연다.
+ * 결과를 보기 전에 기수를 더하지 말 것 — 비교군이 줄어 비교가 안 된다.
+ */
+const SEASON_FACTS_TRIAL: Record<string, readonly string[]> = {
+  "i-am-solo": ["s10", "s11", "s16", "s20"],
+};
+
+/** 이 기수 화면이 방송 기간·최종 커플을 말하는지. 위 시험 목록에 든 기수만 그렇다. */
+export function showsSeasonFacts(season: Season): boolean {
+  return SEASON_FACTS_TRIAL[season.programId]?.includes(season.id) ?? false;
+}
+
+/**
  * 이 기수를 색인에 올릴지. 명단을 아직 못 채운 기수는 화면에 "명단 정리 중"
  * 한 문장뿐이라 크롤러가 soft 404 로 읽는다 — 그 판정은 그 페이지 하나로 끝나지
  * 않고 사이트 전체 평가로 번진다.
@@ -300,11 +316,18 @@ export function seasonMetaText(
     couples: couples ?? "",
   };
 
-  const title = getFinalCouples(season)
-    ? dict.metaTitleCouples
-    : season.onAir && cast
-      ? dict.metaTitleAiring
-      : dict.metaTitle;
+  // 시험 목록 밖의 기수는 예전 제목·설명이다(`showsSeasonFacts`).
+  const facts = showsSeasonFacts(season);
+  if (!facts) values.couples = "";
+  const couplesShown = facts ? couples : undefined;
+
+  const title = !facts
+    ? dict.metaTitle
+    : getFinalCouples(season)
+      ? dict.metaTitleCouples
+      : season.onAir && cast
+        ? dict.metaTitleAiring
+        : dict.metaTitle;
 
   // 직업이 있는 기수는 사이트 소개 대신 누가 나왔는지를 보여 준다 — `formatMetaCast`.
   // 최종 커플이 있으면 그 앞에 둔다: 모바일 검색 결과가 뒤를 자르면 명단이 먼저 잘린다.
@@ -312,10 +335,10 @@ export function seasonMetaText(
     coverage.total === 0
       ? dict.metaDescriptionPending
       : cast
-        ? couples
+        ? couplesShown
           ? dict.metaDescriptionCastCouples
           : dict.metaDescriptionCast
-        : couples
+        : couplesShown
           ? dict.metaDescriptionCouples
           : dict.metaDescription;
 
@@ -335,7 +358,7 @@ function tvSeasonSchema(
   locale: Locale,
 ): Schema | undefined {
   const period = getAirPeriod(season);
-  if (!period) return undefined;
+  if (!period || !showsSeasonFacts(season)) return undefined;
 
   const programName = localizeProgramName(program.id, locale);
   const { label } = localizeSeason(season, locale);

@@ -41,6 +41,7 @@ import {
   openGraphBase,
   seasonMetaText,
   seasonSchema,
+  showsSeasonFacts,
 } from "@/lib/seo";
 import { getCoverage, getFinalCouples } from "@/lib/types";
 
@@ -106,11 +107,18 @@ export default async function Page({
 
   const dict = getDictionary(lang);
   const coverage = getCoverage(season.cast);
-  const { label, special } = localizeSeason(season, lang);
-  const airPeriod = formatAirPeriod(season, lang);
+  const { label, special, airDate } = localizeSeason(season, lang);
+  // 방송 기간 날짜·최종 커플 줄은 시험 중인 기수만 낸다(`showsSeasonFacts`).
+  // 나머지는 예전처럼 방송 달 하나다.
+  const facts = showsSeasonFacts(season);
+  const airPeriod = facts
+    ? formatAirPeriod(season, lang)
+    : airDate
+      ? fill(dict.season.aired, { date: airDate })
+      : "";
   // 최종 선택이 방송됐는데 커플이 없는 것(빈 배열)과 아직 방송 전(undefined)을 가른다.
-  const finalCouples = getFinalCouples(season);
-  const couples = formatFinalCouples(season, lang);
+  const finalCouples = facts ? getFinalCouples(season) : undefined;
+  const couples = facts ? formatFinalCouples(season, lang) : undefined;
   const programName = localizeProgramName(programId, lang);
   const description = seasonDescription(season, lang);
   const episodes = seasonEpisodes(season, lang);
