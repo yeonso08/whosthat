@@ -291,3 +291,58 @@ export function finalCouples(round: PickRound): [string, string][] {
       : [],
   );
 }
+
+/**
+ * 최종 커플을 화면에 내는 순서로. 남자를 앞에 두고, 짝은 출연진 격자의 순서로 둔다 —
+ * id 순으로 두면 격자와 어긋난다. 회차별 정리의 커플 카드와 기수 머리글이 같은
+ * 순서를 말해야 해서 한 곳에서 정한다.
+ */
+export function orderedFinalCouples(
+  round: PickRound,
+  cast: CastMember[],
+): [CastMember, CastMember][] {
+  const byId = new Map(cast.map((member) => [member.id, member]));
+  const order = cast.map((member) => member.id);
+  return finalCouples(round)
+    .flatMap(([a, b]) => {
+      const first = byId.get(a);
+      const second = byId.get(b);
+      if (!first || !second) return [];
+      return [
+        (first.gender === "male" ? [first, second] : [second, first]) as [
+          CastMember,
+          CastMember,
+        ],
+      ];
+    })
+    .sort((x, y) => order.indexOf(x[0].id) - order.indexOf(y[0].id));
+}
+
+/**
+ * 기수의 최종 커플. **최종 선택이 아직 방송되지 않았으면(또는 고르는 형식이 아닌
+ * 프로그램이면) `undefined`, 방송됐는데 커플이 없으면 빈 배열이다** — 둘은 다른
+ * 방송 사실이라 섞지 않는다.
+ */
+export function getFinalCouples(
+  season: Season,
+): [CastMember, CastMember][] | undefined {
+  const round = season.episodes
+    .flatMap((episode) => episode.blocks)
+    .find((block) => block.kind === "picks" && block.round?.isFinal)?.round;
+  return round ? orderedFinalCouples(round, season.cast) : undefined;
+}
+
+/** 방송 기간. 회차별 정리의 첫 방송일·마지막 방송일·방송 횟수다(YYYY-MM-DD). */
+export type AirPeriod = { first: string; last: string; episodes: number };
+
+/**
+ * 회차별 정리에서 방송 기간을 뽑는다. 따로 저장하지 않는다 — 회차가 기사로 확인한
+ * 방송일을 이미 갖고 있어서, 두 곳에 적으면 한 회를 더할 때 어긋난다.
+ * 회차별 정리가 없는 기수(솔로지옥)는 `undefined` 라 화면이 월 단위(`airDate`)로 간다.
+ */
+export function getAirPeriod(season: Season): AirPeriod | undefined {
+  const first = season.episodes[0];
+  const last = season.episodes[season.episodes.length - 1];
+  if (!first || !last) return undefined;
+  return { first: first.airDate, last: last.airDate, episodes: season.episodes.length };
+}

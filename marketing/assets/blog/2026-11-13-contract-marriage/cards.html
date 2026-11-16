@@ -1,0 +1,141 @@
+<!doctype html>
+<!--
+  블로그 글(posts/2026-11-13_계약결혼_추가_블로그.md) 이미지 원본. 1080×1080.
+  2026-10-26 결혼 글 cards.html 과 같은 판형 — 흑백, 왼쪽 정렬. 출연자 사진·방송 캡처·핸들은 넣지 않는다.
+  cards.html?c=c1 처럼 고른다.
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800;900&family=Manrope:wght@600;800&display=block" rel="stylesheet">
+<style>
+  :root { --ink: #0a0a0c; --paper: #f4f4f6; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1080px; overflow: hidden; }
+  body { font-family: "Gothic A1", sans-serif; word-break: keep-all; }
+  .card { display: none; width: 1080px; height: 1080px; padding: 80px 88px; flex-direction: column; }
+  .card.on { display: flex; }
+  .dark { background: var(--ink); color: var(--paper); }
+  .light { background: var(--paper); color: var(--ink); }
+  .top { display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-family: "Manrope", sans-serif; font-weight: 800; font-size: 40px; letter-spacing: -0.02em; }
+  .page { font-family: "Manrope", sans-serif; font-weight: 600; font-size: 28px; }
+  .label { margin-top: 56px; font-size: 34px; font-weight: 500; opacity: .82; }
+  .h1 { margin-top: 20px; font-size: 104px; font-weight: 900; line-height: 1.14; letter-spacing: -0.035em; }
+  .h2 { margin-top: 40px; font-size: 68px; font-weight: 900; line-height: 1.16; letter-spacing: -0.03em; }
+  .lat { font-family: "Manrope", sans-serif; }
+  .date { margin-top: 40px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 56px; letter-spacing: -0.02em; }
+  .foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 30px; font-weight: 700; }
+  /* 줄 목록 */
+  .tl { margin-top: 40px; }
+  .tl div { display: grid; grid-template-columns: 220px 1fr; padding: 22px 0; border-top: 2px solid currentColor; align-items: baseline; }
+  .tl div:last-child { border-bottom: 2px solid currentColor; }
+  .tl b { font-family: "Manrope", "Gothic A1", sans-serif; font-weight: 800; font-size: 34px; }
+  .tl span { font-size: 34px; font-weight: 700; }
+  .tl small { display: block; margin-top: 6px; font-size: 25px; font-weight: 500; opacity: .7; }
+  .tl .hl { background: var(--ink); color: var(--paper); padding: 22px 20px; margin: 0 -20px; border-radius: 12px; border: 0; }
+  .dark .tl .hl { background: var(--paper); color: var(--ink); }
+  /* 화살표 관계 */
+  .rel { margin-top: 40px; display: flex; flex-direction: column; gap: 18px; }
+  .rel div { display: grid; grid-template-columns: 130px 60px 1fr; align-items: baseline; font-size: 40px; font-weight: 800; }
+  .rel i { font-style: normal; font-family: "Manrope", sans-serif; opacity: .6; }
+  .rel em { font-style: normal; font-size: 26px; font-weight: 500; opacity: .7; margin-left: 10px; }
+  /* 인용 */
+  .q { margin-top: 30px; padding: 24px 28px; border-left: 8px solid currentColor; font-size: 38px; font-weight: 800; line-height: 1.35; }
+  .q small { display: block; margin-top: 8px; font-size: 25px; font-weight: 500; opacity: .7; }
+  /* 직업 표 */
+  .jobs { margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 44px; }
+  .jobs div { display: grid; grid-template-columns: 82px 64px 1fr; padding: 15px 0; border-top: 2px solid currentColor; align-items: baseline; font-size: 27px; }
+  .jobs b { font-weight: 800; font-size: 30px; }
+  .jobs .n { font-family: "Manrope", sans-serif; font-weight: 800; }
+  .jobs span { font-weight: 500; line-height: 1.3; }
+  .grid { margin-top: 40px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .cell { border: 2px solid currentColor; border-radius: 14px; padding: 20px 0; text-align: center; font-size: 34px; font-weight: 800; }
+  .sub { margin-top: 24px; font-size: 28px; font-weight: 500; opacity: .75; }
+  .url { margin-top: 40px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 44px; letter-spacing: -0.02em; }
+  .couple { margin-top: 36px; padding: 30px 0; border-top: 2px solid currentColor; }
+  .couple .where { font-size: 28px; font-weight: 700; opacity: .7; }
+  .couple .pair { margin-top: 14px; display: grid; grid-template-columns: 1fr 70px 1fr; align-items: start; }
+  .couple .pair i { font-style: normal; font-size: 48px; text-align: center; opacity: .6; }
+  .couple b { display: block; font-size: 50px; font-weight: 900; letter-spacing: -0.02em; }
+  .couple span { display: block; margin-top: 8px; font-size: 28px; font-weight: 700; }
+  .couple small { display: block; margin-top: 6px; font-size: 24px; font-weight: 500; opacity: .7; line-height: 1.35; }
+</style>
+</head>
+<body>
+<!-- 1. 표지 -->
+<section class="card dark" id="c1">
+  <div class="top"><span class="logo">nukko</span><span class="page">01 / 05</span></div>
+  <p class="label">MBC every1 · KBS joy · 시즌 1</p>
+  <h1 class="h1">계약결혼<br>출연진 정리</h1>
+  <p class="h2" style="font-size:52px;margin-top:32px">16기 상철 · 28기 영숙<br>32기 영수 · 사계 국화</p>
+  <div class="foot"><span>누꼬에 추가됐어요</span><span class="lat" style="font-weight:800;font-size:34px">nukko.net</span></div>
+</section>
+
+<!-- 2. 두 부부 -->
+<section class="card light" id="c2">
+  <div class="top"><span class="logo">nukko</span><span class="page">02 / 05</span></div>
+  <h2 class="h2">계약 부부 두 쌍</h2>
+  <div class="couple">
+    <p class="where">첫 번째 · 미국 시애틀</p>
+    <div class="pair">
+      <div><b>강정환</b><span>나는 솔로 16기 상철</span><small>항공기 제조사 공급망 분석가 · 44세</small></div>
+      <i>♥</i>
+      <div><b>정유진</b><span>나는 솔로 28기 영숙</span><small>간호사 · 40세</small></div>
+    </div>
+  </div>
+  <div class="couple" style="border-bottom:2px solid currentColor">
+    <p class="where">두 번째 · 경기 파주</p>
+    <div class="pair">
+      <div><b>최정현</b><span>나는 솔로 32기 영수</span><small>공인회계사 · 45세</small></div>
+      <i>♥</i>
+      <div><b>정민현</b><span>나솔사계 솔로민박 13 국화</span><small>SRT 승무원 · 36세</small></div>
+    </div>
+  </div>
+  <div class="foot" style="font-size:26px;opacity:.7"><span>나이·직업은 방송 기준</span></div>
+</section>
+
+<!-- 3. 계약서 -->
+<section class="card dark" id="c3">
+  <div class="top"><span class="logo">nukko</span><span class="page">03 / 05</span></div>
+  <h2 class="h2">결혼식 뒤<br>계약서에 서명</h2>
+  <p class="q">하루 한 끼 이상 함께 식사</p>
+  <p class="q">한 지붕 아래 같은 방에서 취침</p>
+  <p class="q">결혼 생활 중 다른 이성의<br>마음을 훔치지 않을 것</p>
+  <p class="q">한 사람이 떠나는 순간 계약 종료</p>
+  <div class="foot" style="font-size:26px;opacity:.7"><span>1회 시애틀 부부의 계약서 조항 중</span></div>
+</section>
+
+<!-- 4. 회차 -->
+<section class="card light" id="c4">
+  <div class="top"><span class="logo">nukko</span><span class="page">04 / 05</span></div>
+  <h2 class="h2" style="margin-top:28px">회차별로 보면</h2>
+  <div class="tl" style="margin-top:28px">
+    <div style="padding:16px 0"><b>1회 · 9.28</b><span>시애틀의 첫 만남과 결혼식</span></div>
+    <div style="padding:16px 0"><b>2회 · 10.5</b><span>얼굴도 모른 채 만난 두 번째 부부</span></div>
+    <div style="padding:16px 0"><b>3회 · 10.12</b><span>신혼 둘째 날</span></div>
+    <div style="padding:16px 0"><b>4회 · 10.19</b><span>아이 이야기와 미역국</span></div>
+    <div style="padding:16px 0"><b>5회 · 10.26</b><span>각방 이야기와 감정의 속도</span></div>
+    <div style="padding:16px 0"><b>6회 · 11.2</b><span>몰래 켜 둔 카메라</span></div>
+    <div style="padding:16px 0"><b>7회 · 11.9</b><span>물범과 출근길</span></div>
+  </div>
+  <div class="foot" style="font-size:26px;opacity:.7"><span>회차별 정리는 시즌 1 페이지 맨 아래에 있어요</span></div>
+</section>
+
+<!-- 5. 누꼬 안내 (핸들은 싣지 않는다) -->
+<section class="card dark" id="c5">
+  <div class="top"><span class="logo">nukko</span><span class="page">05 / 05</span></div>
+  <h2 class="h2" style="margin-top:56px">예전 이름으로<br>검색해도 나와요</h2>
+  <div class="grid" style="grid-template-columns:repeat(2,1fr)">
+    <div class="cell">16기 상철</div><div class="cell">28기 영숙</div><div class="cell">32기 영수</div><div class="cell">사계 국화</div>
+  </div>
+  <p class="sub">출연진 4명의 직업·나이 · 출신 기수 · 확인된 인스타 계정</p>
+  <p class="url">nukko.net → 계약결혼 → 시즌 1</p>
+  <div class="foot" style="font-size:28px"><span>직접 열어서 확인한 계정만 올려요</span></div>
+</section>
+
+<script>
+  document.getElementById(new URLSearchParams(location.search).get("c") || "c1").classList.add("on");
+</script>
+</body>
+</html>
