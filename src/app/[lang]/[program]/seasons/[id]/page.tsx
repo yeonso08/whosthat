@@ -23,7 +23,8 @@ import {
 } from "@/lib/data";
 import {
   fill,
-  formatMetaCast,
+  formatAirPeriod,
+  formatFinalCouples,
   getDictionary,
   isLocale,
   languageAlternates,
@@ -38,9 +39,10 @@ import {
   hasAdContent,
   isIndexable,
   openGraphBase,
+  seasonMetaText,
   seasonSchema,
 } from "@/lib/seo";
-import { getCoverage } from "@/lib/types";
+import { getCoverage, getFinalCouples } from "@/lib/types";
 
 /**
  * 언어는 루트 레이아웃이 만들고 여기서 프로그램 × 기수를 곱한다.
@@ -66,28 +68,7 @@ export async function generateMetadata({
   const season = await getSeason(programId, id);
   if (!season) return {};
 
-  const dict = getDictionary(lang);
-  const coverage = getCoverage(season.cast);
-  const { label, special } = localizeSeason(season, lang);
-  const values = {
-    program: localizeProgramName(programId, lang),
-    season: label,
-    special: special ? ` ${special}` : "",
-    total: coverage.total,
-    found: coverage.found,
-  };
-
-  const title = fill(dict.season.metaTitle, values);
-  // 직업이 있는 기수는 사이트 소개 대신 누가 나왔는지를 보여 준다 — `formatMetaCast`.
-  const cast = formatMetaCast(season.cast, lang);
-  const description = fill(
-    coverage.total === 0
-      ? dict.season.metaDescriptionPending
-      : cast
-        ? dict.season.metaDescriptionCast
-        : dict.season.metaDescription,
-    { ...values, cast: cast ?? "" },
-  );
+  const { title, description } = seasonMetaText(season, lang);
   const path = seasonHref(lang, programId, season.id);
 
   return {
@@ -125,7 +106,11 @@ export default async function Page({
 
   const dict = getDictionary(lang);
   const coverage = getCoverage(season.cast);
-  const { label, special, airDate } = localizeSeason(season, lang);
+  const { label, special } = localizeSeason(season, lang);
+  const airPeriod = formatAirPeriod(season, lang);
+  // 최종 선택이 방송됐는데 커플이 없는 것(빈 배열)과 아직 방송 전(undefined)을 가른다.
+  const finalCouples = getFinalCouples(season);
+  const couples = formatFinalCouples(season, lang);
   const programName = localizeProgramName(programId, lang);
   const description = seasonDescription(season, lang);
   const episodes = seasonEpisodes(season, lang);
@@ -201,15 +186,27 @@ export default async function Page({
             {special}
           </p>
         )}
-        <p className="mt-2 text-[13px] text-muted-foreground">
-          {airDate ? `${fill(dict.season.aired, { date: airDate })} · ` : ""}
-          {coverage.total === 0
-            ? dict.season.castPending
-            : fill(dict.season.castCount, {
-                total: coverage.total,
-                found: coverage.found,
-              })}
-        </p>
+        {/* 기수만 친 검색(`나는솔로 10기`)이 묻는 것 — 언제 방송됐고 누가 커플이 됐는지 —
+            을 제목 바로 아래에서 말한다. 표로 세우지 않고 줄로 둔다. */}
+        <div className="mt-2 space-y-1 text-[13px] text-muted-foreground">
+          {airPeriod && <p>{airPeriod}</p>}
+          <p>
+            {coverage.total === 0
+              ? dict.season.castPending
+              : fill(dict.season.castCount, {
+                  total: coverage.total,
+                  found: coverage.found,
+                })}
+          </p>
+          {couples ? (
+            <p>
+              {dict.season.finalCouple}{" "}
+              <span className="font-semibold text-foreground">{couples}</span>
+            </p>
+          ) : (
+            finalCouples && <p>{dict.season.noFinalCouple}</p>
+          )}
+        </div>
 
         {/* 방영 중이라 계정이 하나도 없는 이유를 사실로 말한다. "끝나면 채운다"
             같은 약속은 적지 않는다 — 지키는지 화면이 확인해 주지 못한다. */}

@@ -7,7 +7,7 @@ import {
   type Dictionary,
 } from "@/lib/i18n";
 import {
-  finalCouples,
+  orderedFinalCouples,
   type CastMember,
   type Episode,
   type EpisodeBlock,
@@ -224,17 +224,9 @@ function Picks({ round, members, dict }: RoundProps) {
   );
 }
 
-/**
- * 최종 선택은 커플만 그린다. 서로 고른 짝을 세고(`finalCouples`), 남자 이름을 앞에,
- * 카드는 위 격자의 출연진 순서로 둔다 — 짝을 id 순으로 두면 격자와 순서가 어긋난다.
- */
+/** 최종 선택은 커플만 그린다. 짝과 순서는 `orderedFinalCouples` 가 정한다(기수 머리글과 같다). */
 function Couples({ round, members, dict }: RoundProps) {
-  const order = [...members.keys()];
-  const pairs = finalCouples(round)
-    .map((pair) =>
-      members.get(pair[0])?.gender === "male" ? pair : ([pair[1], pair[0]] as const),
-    )
-    .sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]));
+  const pairs = orderedFinalCouples(round, [...members.values()]);
   if (pairs.length === 0) {
     return (
       <div className="rounded-2xl bg-card px-5 py-4 shadow-soft">
@@ -246,20 +238,17 @@ function Couples({ round, members, dict }: RoundProps) {
   return (
     <div className="space-y-3">
       <div className="grid gap-3 sm:grid-cols-2">
-        {pairs.map(([a, b]) => {
-          const first = aliasOf(a, members);
-          return (
-            <div key={a} className="rounded-2xl bg-card px-5 py-4 shadow-soft">
-              <p className="text-[13px] font-semibold text-muted-foreground">
-                {dict.season.finalCouple}
-              </p>
-              <p className="mt-1 text-[18px] font-bold tracking-[-0.02em]">
-                {first}
-                {withParticle(first)} {aliasOf(b, members)}
-              </p>
-            </div>
-          );
-        })}
+        {pairs.map(([a, b]) => (
+          <div key={a.id} className="rounded-2xl bg-card px-5 py-4 shadow-soft">
+            <p className="text-[13px] font-semibold text-muted-foreground">
+              {dict.season.finalCouple}
+            </p>
+            <p className="mt-1 text-[18px] font-bold tracking-[-0.02em]">
+              {a.alias}
+              {withParticle(a.alias)} {b.alias}
+            </p>
+          </div>
+        ))}
       </div>
       {round.note && (
         <p className="text-[13px] leading-[1.6] break-keep text-muted-foreground">{round.note}</p>
