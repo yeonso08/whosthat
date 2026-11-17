@@ -6,8 +6,9 @@ import {
   getDictionary,
   type Dictionary,
 } from "@/lib/i18n";
-import { episodeAnchor } from "@/lib/links";
 import {
+  getEpisodeHeading,
+  getEpisodeList,
   orderedFinalCouples,
   type CastMember,
   type Episode,
@@ -40,7 +41,6 @@ type Group =
 export async function SeasonEpisodes({ episodes, cast, heading }: Props) {
   const locale = await currentLocale();
   const dict = getDictionary(locale);
-  const members: Members = new Map(cast.map((m) => [m.id, m]));
   const first = episodes[0];
   const last = episodes[episodes.length - 1];
 
@@ -59,13 +59,7 @@ export async function SeasonEpisodes({ episodes, cast, heading }: Props) {
       {/* 방송 순서가 실제 순서라 세로 선으로 잇는다. */}
       <ol className="mt-8 border-l border-border">
         {episodes.map((episode) => (
-          // 홈의 "최근 방송" 이 이 id 로 내려온다. 상단 바가 붙어 있어서 그 높이만큼
-          // 띄워야 회차 날짜 줄이 바 밑에 깔리지 않는다.
-          <li
-            key={episode.id}
-            id={episodeAnchor(episode.id)}
-            className="relative scroll-mt-24 pb-12 pl-6 last:pb-2 lg:pl-8"
-          >
+          <li key={episode.id} className="relative pb-12 pl-6 last:pb-2 lg:pl-8">
             <span className="absolute top-[7px] -left-[5px] size-[9px] rounded-full bg-foreground" />
             <p className="font-lat text-[12px] font-semibold text-muted-foreground">
               {fill(dict.season.episodeAired, {
@@ -75,14 +69,8 @@ export async function SeasonEpisodes({ episodes, cast, heading }: Props) {
             <h3 className="mt-1 text-[18px] leading-[1.35] font-bold tracking-[-0.02em] break-keep">
               {episode.title}
             </h3>
-            <div className="mt-4 space-y-4">
-              {group(episode.blocks).map((g, i) =>
-                g.kind === "profiles" ? (
-                  <Profiles key={i} blocks={g.blocks} members={members} dict={dict} />
-                ) : (
-                  <Block key={i} block={g.block} members={members} dict={dict} />
-                ),
-              )}
+            <div className="mt-4">
+              <EpisodeBlocks blocks={episode.blocks} cast={cast} />
             </div>
           </li>
         ))}
@@ -92,6 +80,55 @@ export async function SeasonEpisodes({ episodes, cast, heading }: Props) {
         {dict.season.episodesSource}
       </p>
     </article>
+  );
+}
+
+type BlocksProps = {
+  blocks: EpisodeBlock[];
+  cast: CastMember[];
+  /**
+   * 글 속 이름이 가는 곳. 기수 화면에서는 같은 화면 위쪽의 카드(`#id`)라 안 줘도
+   * 되고, 회차 글 페이지는 카드가 다른 화면에 있어서 그 주소를 만들어 준다.
+   */
+  memberHref?: (memberId: string) => string;
+  /**
+   * 글 속 소제목의 단계. 회차 제목 바로 아래 단계라야 한다 — 기수 화면은 회차
+   * 제목이 h3 이라 h4, 회차 글 페이지는 제목이 h1 이라 h2 다.
+   */
+  headingTag?: "h2" | "h4";
+};
+
+/**
+ * 한 회차의 본문 — 문단·인용·자기소개·선택 결과를 방송 순서대로. 기수 화면의
+ * 회차별 정리와 회차 글 페이지가 같은 것을 그린다: 두 곳이 각자 그리면 한쪽만
+ * 고치게 되고, 같은 회차가 화면마다 다르게 읽힌다.
+ */
+export async function EpisodeBlocks({
+  blocks,
+  cast,
+  memberHref = (memberId) => `#${memberId}`,
+  headingTag = "h4",
+}: BlocksProps) {
+  const dict = getDictionary(await currentLocale());
+  const members: Members = new Map(cast.map((m) => [m.id, m]));
+
+  return (
+    <div className="space-y-4">
+      {group(blocks).map((g, i) =>
+        g.kind === "profiles" ? (
+          <Profiles key={i} blocks={g.blocks} members={members} dict={dict} />
+        ) : (
+          <Block
+            key={i}
+            block={g.block}
+            members={members}
+            dict={dict}
+            memberHref={memberHref}
+            headingTag={headingTag}
+          />
+        ),
+      )}
+    </div>
   );
 }
 
@@ -110,16 +147,58 @@ function group(blocks: EpisodeBlock[]): Group[] {
   return groups;
 }
 
-type BlockProps = { block: EpisodeBlock; members: Members; dict: Dictionary };
+type BlockProps = {
+  block: EpisodeBlock;
+  members: Members;
+  dict: Dictionary;
+  memberHref: (memberId: string) => string;
+  headingTag: "h2" | "h4";
+};
 
-function Block({ block, members, dict }: BlockProps): ReactNode {
+function Block({
+  block,
+  members,
+  dict,
+  memberHref,
+  headingTag: Heading,
+}: BlockProps): ReactNode {
   switch (block.kind) {
-    case "text":
+    case "text": {
+      // 글머리가 소제목 표기면 문단이 아니라 제목으로 그린다(`getEpisodeHeading`).
+      // 위 여백을 넓혀 앞 장면과 끊는다 — 소제목이 문단에 붙으면 굵은 문장으로 읽힌다.
+      const heading = getEpisodeHeading(block);
+      if (heading !== undefined) {
+        return (
+          <Heading className="pt-5 text-[18px] leading-[1.4] font-bold tracking-[-0.02em] break-keep first:pt-0">
+            {heading}
+          </Heading>
+        );
+      }
+      // 모든 줄이 목록 표기면 한 줄씩 세운다(`getEpisodeList`). 판에 담는 건 선택
+      // 상자와 같은 이유다 — 문단 사이에 그냥 두면 짧은 문장 여러 개로 읽힌다.
+      const list = getEpisodeList(block);
+      if (list !== undefined) {
+        return (
+          <ul className="space-y-2 rounded-2xl bg-card px-5 py-4 text-[15px] leading-[1.6] break-keep shadow-soft">
+            {list.map((line, i) => (
+              <li key={i} className="flex gap-2.5">
+                <span aria-hidden className="text-muted-foreground">
+                  ·
+                </span>
+                <span className="min-w-0 text-foreground/85">
+                  {linkNames(line, members, memberHref)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        );
+      }
       return (
         <p className="text-[15px] leading-[1.8] break-keep text-foreground/85 [overflow-wrap:anywhere]">
-          {linkNames(block.body ?? "", members)}
+          {linkNames(block.body ?? "", members, memberHref)}
         </p>
       );
+    }
 
     case "quote":
       return (
@@ -277,8 +356,12 @@ function aliasOf(id: string | null, members: Members): string {
   return (id && members.get(id)?.alias) || "";
 }
 
-/** `[영수]` 를 위 카드로 가는 링크로 바꾼다. 기수에 없는 이름이면 괄호만 벗긴다. */
-function linkNames(text: string, members: Members) {
+/** `[영수]` 를 그 사람 카드로 가는 링크로 바꾼다. 기수에 없는 이름이면 괄호만 벗긴다. */
+function linkNames(
+  text: string,
+  members: Members,
+  memberHref: (memberId: string) => string,
+) {
   const byAlias = new Map([...members.values()].map((m) => [m.alias, m]));
   return text.split(/(\[[^\]]+\])/).map((part, i) => {
     const alias = part.match(/^\[(.+)\]$/)?.[1];
@@ -287,7 +370,7 @@ function linkNames(text: string, members: Members) {
     return member ? (
       <a
         key={i}
-        href={`#${member.id}`}
+        href={memberHref(member.id)}
         className="focus-ring font-semibold text-foreground underline decoration-border decoration-1 underline-offset-[5px] hover:decoration-foreground"
       >
         {alias}

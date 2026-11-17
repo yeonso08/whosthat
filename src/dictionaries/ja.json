@@ -58,6 +58,12 @@
     "pickedNobody": "選ばず",
     "episodesSource": "放送と放送を報じた記事をもとにまとめました。"
   },
+  "episode": {
+    "metaTitle": "{title} — {program} {season} {date}放送",
+    "backLabel": "{season}へ戻る",
+    "castLink": "{season} 出演者のインスタ",
+    "othersHeading": "{season}の他の回"
+  },
   "couples": {
     "heading": "最終カップル",
     "navLabel": "最終カップル",

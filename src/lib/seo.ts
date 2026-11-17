@@ -40,8 +40,10 @@ import { absoluteUrl, SITE_URL } from "./site";
 import {
   getAirPeriod,
   getCoverage,
+  getEpisodeLength,
   getFinalCouples,
   getTotals,
+  type Episode,
   type Program,
   type Season,
 } from "./types";
@@ -75,6 +77,23 @@ export function showsSeasonFacts(season: Season): boolean {
  */
 export function isIndexable(season: Season): boolean {
   return season.cast.length > 0;
+}
+
+/**
+ * 회차 글을 색인에 올리는 최소 분량(글자 수). 블로그 글 한 편으로 읽히는 하한이다.
+ *
+ * 2026-11-17 에 재 보니 회차 451개의 중간값이 256자였고 600자를 넘는 건 26개뿐이다 —
+ * 지금 글은 기수 화면 안의 한 토막으로 쓴 것이라 혼자 서면 대부분 얇다. 그런 글
+ * 수백 편이 색인되면 그 판정이 사이트 전체로 번진다(명단 빈 기수와 같은 이유).
+ */
+const EPISODE_MIN_LENGTH = 600;
+
+/**
+ * 이 회차 글을 색인에 올릴지. 짧은 글은 페이지는 있되 색인에서 빠지고, 글을 채우면
+ * 저절로 돌아온다. `robots` 와 sitemap 이 같이 본다.
+ */
+export function isEpisodeIndexable(episode: Episode): boolean {
+  return getEpisodeLength(episode) >= EPISODE_MIN_LENGTH;
 }
 
 /**

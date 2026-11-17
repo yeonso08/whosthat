@@ -58,6 +58,12 @@
     "pickedNobody": "Chose no one",
     "episodesSource": "Written from the broadcast and news coverage of it."
   },
+  "episode": {
+    "metaTitle": "{title} — {program} {season}, aired {date}",
+    "backLabel": "Back to {season}",
+    "castLink": "{season} cast on Instagram",
+    "othersHeading": "More from {season}"
+  },
   "couples": {
     "heading": "Final couples",
     "navLabel": "Final couples",

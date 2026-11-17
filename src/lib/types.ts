@@ -339,6 +339,38 @@ export function getFinalCouples(
 }
 
 /** 방송 기간. 회차별 정리의 첫 방송일·마지막 방송일·방송 횟수다(YYYY-MM-DD). */
+/**
+ * 회차 글의 소제목 표기. **문단 블록의 글이 이 말로 시작하면 소제목이다**
+ * (`## 순자의 2대1 데이트`). 블록 종류를 하나 더 만들지 않고 글머리 약속으로 둔
+ * 건, 종류를 늘리면 DB 제약·API 검사·관리자 화면을 함께 고쳐야 해서다 —
+ * 관리자에서는 문단 블록에 그대로 적으면 된다.
+ */
+const EPISODE_HEADING_PREFIX = "## ";
+
+/** 이 블록이 소제목이면 그 글자를, 아니면 undefined 를 준다. */
+export function getEpisodeHeading(block: EpisodeBlock): string | undefined {
+  return block.kind === "text" && block.body?.startsWith(EPISODE_HEADING_PREFIX)
+    ? block.body.slice(EPISODE_HEADING_PREFIX.length).trim()
+    : undefined;
+}
+
+/**
+ * 회차 글의 목록 표기. **문단 블록의 모든 줄이 이 말로 시작하면 목록이다**
+ * (`- 첫인상 (10월 7일) — 순자와 현숙이 3표씩`). 지금까지의 흐름이나 회차가 끝난
+ * 뒤 마음의 방향처럼 나란한 사실을 한 줄씩 세울 때 쓴다. 소제목과 같은 이유로
+ * 블록 종류가 아니라 글머리 약속이다.
+ */
+const EPISODE_LIST_PREFIX = "- ";
+
+/** 이 블록이 목록이면 줄들을, 아니면 undefined 를 준다. */
+export function getEpisodeList(block: EpisodeBlock): string[] | undefined {
+  if (block.kind !== "text" || !block.body) return undefined;
+  const lines = block.body.split("\n").map((line) => line.trim()).filter(Boolean);
+  return lines.length > 0 && lines.every((line) => line.startsWith(EPISODE_LIST_PREFIX))
+    ? lines.map((line) => line.slice(EPISODE_LIST_PREFIX.length))
+    : undefined;
+}
+
 /** 홈의 "최근 방송" 한 줄 — 어느 기수의 어느 회차인지. */
 export type LatestEpisode = { season: Season; episode: Episode };
 
@@ -348,8 +380,24 @@ export type LatestEpisode = { season: Season; episode: Episode };
  * 링크를 걸 자리가 아니라 괄호만 벗긴다. 문단이 없는 회차는 빈 글이다.
  */
 export function getEpisodeExcerpt(episode: Episode): string {
-  const first = episode.blocks.find((block) => block.kind === "text" && block.body);
+  // 소제목과 목록은 건너뛴다 — 맛보기 자리에 제목 한 줄이나 `- ` 가 붙은 줄이
+  // 나오면 글이 없는 것처럼 보인다.
+  const first = episode.blocks.find(
+    (block) =>
+      block.kind === "text" &&
+      block.body &&
+      getEpisodeHeading(block) === undefined &&
+      getEpisodeList(block) === undefined,
+  );
   return (first?.body ?? "").replace(/\[([^\]]+)\]/g, "$1");
+}
+
+/**
+ * 회차 글의 분량 — 문단·인용·자기소개의 글자 수. 선택 상자는 세지 않는다(줄 수가
+ * 출연자 수만큼이라 글이 한 줄이어도 길어 보인다). 색인 여부가 이 수를 본다.
+ */
+export function getEpisodeLength(episode: Episode): number {
+  return episode.blocks.reduce((sum, block) => sum + (block.body?.length ?? 0), 0);
 }
 
 /**
