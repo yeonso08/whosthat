@@ -52,17 +52,6 @@ export type CastMember = {
  */
 export type EarlierAppearance = { text: string; href: string };
 
-/**
- * 기수 띠(`SeasonRail`)의 한 칸. 클라이언트 컴포넌트가 받으므로 이미 그 화면
- * 언어로 만든 글자와 주소만 담는다.
- */
-export type SeasonRailItem = {
-  href: string;
-  label: string;
-  current: boolean;
-  onAir: boolean;
-};
-
 export type Season = {
   id: string;
   programId: string;
