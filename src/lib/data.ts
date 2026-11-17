@@ -151,24 +151,6 @@ export function getPreviousSeason(
   return getSeasons(program).find((s) => s.number < season.number);
 }
 
-/**
- * 같은 프로그램에서 번호가 바로 앞·뒤인 기수. 기수 상세가 격자 아래에서 이 둘로 잇는다 —
- * 카드의 링크가 전부 인스타로 나가서, 이게 없으면 기수 화면이 막다른 길이다.
- *
- * **명단이 빈 기수는 건너뛴다.** 거기로 보내면 "명단 정리 중" 한 문장뿐인 화면에
- * 닿는다 — 막다른 길을 없애려던 링크가 다른 막다른 길로 간다.
- */
-export function getAdjacentSeasons(
-  program: Program,
-  season: Season,
-): { previous?: Season; next?: Season } {
-  const listed = getSeasons(program).filter((s) => s.cast.length > 0);
-  return {
-    previous: listed.find((s) => s.number < season.number),
-    next: listed.findLast((s) => s.number > season.number),
-  };
-}
-
 /** 모든 프로그램의 기수를 한 줄로. sitemap 과 정적 생성이 같은 목록을 본다. */
 export async function getAllSeasons(): Promise<Season[]> {
   return (await getPrograms()).flatMap(getSeasons);
