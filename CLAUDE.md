@@ -60,7 +60,7 @@ src/data/singles-inferno.json              솔로지옥 시즌 1~5 골격 — �
 src/components/ads.tsx               AutoAds — 애드센스 스니펫. 레이아웃이 아니라 페이지가 건다(위 "광고" 절)
 src/components/with-banner.tsx       모비온 배너 자리 — 데스크톱 본문 옆 세로 칸 + 휴대폰 본문 아래. 홈·프로그램·기수 상세가 감싼다
 src/components/mobon-banner.tsx      모비온 지면 코드와 스니펫 실행 — 기기를 보고 웹·모바일 지면 중 하나만 건다
-src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-row, season-feature, season-search, season-pager, list-card, live-row, live-dot, previous-season-link, site-footer, site-nav, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
+src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-row, season-feature, season-search, season-rail, list-card, live-row, live-dot, previous-season-link, site-footer, site-nav, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
 public/<키>.txt · scripts/indexnow.mjs  IndexNow 키 파일과 알림 스크립트 — 매시간 .github/workflows/indexnow.yml 이 돌린다(아래 "검색 노출" 절)
@@ -274,7 +274,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - 폰트는 세 역할이다: 한글 `Gothic A1`(`--font-sans`), 라틴·숫자 `Manrope`(`--font-lat`), **인스타 핸들 `IBM Plex Mono`(`--font-mono`)**. 핸들만 고정폭인 건 그게 **문장이 아니라 식별자**이기 때문이다 — 방문자가 이 사이트에서 실제로 가져가는 유일한 값이고 한 글자만 달라도 다른 사람이 된다. 날짜·개수는 계속 `font-lat` 이다.
 - **카드 이름 아래 출신 줄**(2026-11-13) — 같은 사람(`personId`)이 **먼저 방송된** 출연을 `나는 솔로 16기 상철` 처럼 적는다(`getEarlierAppearances`). 실명으로 나오는 계약결혼에서 "이 사람이 그 16기 상철" 이 이름 다음으로 궁금한 값이라 직업보다 진하게 둔다. 이름이 이미 출신을 말하면(나솔사계 `16기 상철` 카드) 같은 말이 두 번이라 빼고, 나중 출연(16기 상철 카드에 계약결혼)은 근황이라 안 적는다. 검색도 같은 사람의 다른 출연 이름으로 걸린다(`otherNamesByPerson`).
 - **출신 줄은 그 기수의 그 사람 카드로 가는 링크다**(2026-11-17). 그래서 **출연진 카드는 `<a>` 가 아니라 상자고, 인스타 링크가 그 위를 통째로 덮는다**(`CARD_LINK_LAYER`) — 판 자체를 링크로 되돌리면 출신 줄이 링크 안의 링크가 된다. 출신 줄 링크만 덮개 위로 올라온다(`EARLIER_LINK_LAYER`). 포커스 테두리는 판이 그린다(`focus-ring-cover`) — 판이 `overflow-hidden` 이라 덮개에 그리면 잘린다.
-- **기수 상세의 출연진 격자 바로 아래에 이전·다음 기수가 선다**(`SeasonPager`, 2026-11-17). 맨 아래에 뒀다가 올렸다 — 거기는 회차별 정리를 끝까지 읽은 사람만 본다. 카드의 링크가 전부 인스타로 나가서, 그전엔 사이트 안으로 가는 길이 뒤로가기 하나였다. 명단이 빈 기수는 건너뛰고(`getAdjacentSeasons`), 방영 중 기수가 위에서 앞 기수 판(`PreviousSeasonLink`)을 이미 세웠으면 같은 기수를 또 가리키지 않는다. 낱말은 `이전`·`다음` 이다 — `기수`·`시즌` 을 넣으면 프로그램마다 문구가 갈린다.
+- **기수 상세의 출연진 격자 바로 아래에 기수 띠가 선다**(`SeasonRail`, 2026-11-17). 그 프로그램의 기수 전부가 한 줄이고 지금 기수가 칠해져 있다 — 카드의 링크가 전부 인스타로 나가서, 그전엔 사이트 안으로 가는 길이 뒤로가기 하나였다. **`이전`·`다음` 두 판으로 먼저 만들었다가 반려됐다** — 판 둘이 폭을 다 쓰면서 번호 둘만 말했다. 좁은 화면은 옆으로 넘기고(지금 기수가 가운데 오게 열린다) `lg` 부터 줄을 접는다. 제목은 프로그램 문구의 `heading`(`전체 기수`)이라 새 낱말이 없다. 명단이 빈 기수는 빼고, 기수가 하나뿐이면 안 세운다. 맨 아래에 두지 말 것 — 거기는 회차별 정리를 끝까지 읽은 사람만 본다.
 - **출연진 카드는 사진 유무로 구성이 갈리지 않는다.** 사진이 있든 없든 글자 블록이 같은 자리에 같은 모양으로 앉고, 사진은 뒤에 깔릴 뿐이다. 예전에는 사진이 없으면 그 자리를 흐린 가명이 채우고 아래에 같은 가명이 또 나와서 **한 카드에 같은 이름이 두 번** 찍혔다 — 사진이 0장인 동안 격자 전체가 그 그림이었다. `CastAvatar` 는 작은 원(히어로·목록 줄) 전용이고 카드에는 안 쓴다.
 - 모서리 반경 12~16px, 전환 180~220ms.
 
