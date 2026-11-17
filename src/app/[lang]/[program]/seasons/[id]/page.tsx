@@ -12,8 +12,10 @@ import {
 } from "@/components/page-heading";
 import { PreviousSeasonLink } from "@/components/previous-season-link";
 import { SeasonEpisodes } from "@/components/season-episodes";
+import { SeasonPager } from "@/components/season-pager";
 import { WithBanner } from "@/components/with-banner";
 import {
+  getAdjacentSeasons,
   getEarlierAppearances,
   getPreviousSeason,
   getProgram,
@@ -126,9 +128,13 @@ export default async function Page({
 
   // 방영 중인 기수만 앞 기수로 잇는다 — 사람들이 몰려오는데 계정이 잠겨 있는
   // 자리다. 앞 기수도 확인한 계정이 없으면 이어 줘 봐야 같은 빈 화면이다.
-  const airingEmpty = season.onAir && coverage.found === 0;  const candidate = season.onAir ? getPreviousSeason(program, season) : undefined;
+  const airingEmpty = season.onAir && coverage.found === 0;
+  const candidate = season.onAir ? getPreviousSeason(program, season) : undefined;
   const previous =
     candidate && getCoverage(candidate.cast).found > 0 ? candidate : undefined;
+  // 위에서 앞 기수 판을 이미 세웠으면 맨 아래에서 같은 기수를 또 가리키지 않는다.
+  const adjacent = getAdjacentSeasons(program, season);
+  const pager = previous ? { next: adjacent.next } : adjacent;
 
   const below = (
     <>
@@ -166,6 +172,9 @@ export default async function Page({
           heading={fill(dict.season.episodesHeading, { season: label })}
         />
       )}
+
+      {/* 맨 아래는 옆 기수다 — 다 읽은 사람이 뒤로가기 말고 갈 곳이 있어야 한다. */}
+      <SeasonPager previous={pager.previous} next={pager.next} />
     </>
   );
 

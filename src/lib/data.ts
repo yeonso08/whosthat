@@ -10,10 +10,12 @@ import {
   programStrings,
   type Locale,
 } from "./i18n";
+import { castMemberHref } from "./links";
 import { registerProgramStrings } from "./program-strings";
 import { registerTranslations } from "./translations";
 import {
   getCoverage,
+  type EarlierAppearance,
   type Program,
   type SearchIndex,
   type Season,
@@ -149,6 +151,24 @@ export function getPreviousSeason(
   return getSeasons(program).find((s) => s.number < season.number);
 }
 
+/**
+ * 같은 프로그램에서 번호가 바로 앞·뒤인 기수. 기수 상세 맨 아래가 이 둘로 잇는다 —
+ * 카드의 링크가 전부 인스타로 나가서, 이게 없으면 기수 화면이 막다른 길이다.
+ *
+ * **명단이 빈 기수는 건너뛴다.** 거기로 보내면 "명단 정리 중" 한 문장뿐인 화면에
+ * 닿는다 — 막다른 길을 없애려던 링크가 다른 막다른 길로 간다.
+ */
+export function getAdjacentSeasons(
+  program: Program,
+  season: Season,
+): { previous?: Season; next?: Season } {
+  const listed = getSeasons(program).filter((s) => s.cast.length > 0);
+  return {
+    previous: listed.find((s) => s.number < season.number),
+    next: listed.findLast((s) => s.number > season.number),
+  };
+}
+
 /** 모든 프로그램의 기수를 한 줄로. sitemap 과 정적 생성이 같은 목록을 본다. */
 export async function getAllSeasons(): Promise<Season[]> {
   return (await getPrograms()).flatMap(getSeasons);
@@ -254,6 +274,8 @@ export async function buildSearchIndex(
 /**
  * 기수 카드의 "출신" 줄 — 같은 사람(`personId`)이 **먼저 방송된** 다른 출연을
  * `나는 솔로 16기 상철` 처럼 그 화면 언어로 돌려준다. 키는 출연자 id 다.
+ * 줄마다 그 기수 화면의 그 사람 카드로 가는 주소가 함께 온다 — 출신을 읽은 사람이
+ * 다음으로 누르고 싶은 곳이 거기다.
  *
  * 계약결혼은 실명으로 나와서, 카드만 봐서는 강정환이 16기 상철인지 알 수 없다.
  * 같은 사람인지는 관리자 백엔드가 묶어 준다(2026-11-13, 사람·출연 분리) — 계정을
@@ -269,9 +291,9 @@ export async function getEarlierAppearances(
   program: Program,
   season: Season,
   locale: Locale,
-): Promise<Record<string, string[]>> {
+): Promise<Record<string, EarlierAppearance[]>> {
   const appearances = appearancesByPerson(await getPrograms());
-  const result: Record<string, string[]> = {};
+  const result: Record<string, EarlierAppearance[]> = {};
 
   for (const member of season.cast) {
     if (!season.airDate) continue;
@@ -284,13 +306,19 @@ export async function getEarlierAppearances(
     );
     if (earlier.length === 0) continue;
 
-    result[member.id] = earlier.map((other) =>
-      [
+    result[member.id] = earlier.map((other) => ({
+      text: [
         localizeProgramShortName(other.programId, locale),
         localizeSeasonLabel(other.programId, other.number, locale),
         localizeAlias(other.alias, locale),
       ].join(" "),
-    );
+      href: castMemberHref(
+        locale,
+        other.programId,
+        other.seasonId,
+        other.memberId,
+      ),
+    }));
   }
   return result;
 }
