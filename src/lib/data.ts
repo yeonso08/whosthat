@@ -15,8 +15,11 @@ import { registerProgramStrings } from "./program-strings";
 import { registerTranslations } from "./translations";
 import {
   getCoverage,
+  getFinalCouples,
   type EarlierAppearance,
+  type LatestEpisode,
   type Program,
+  type ProgramCouples,
   type SearchIndex,
   type Season,
 } from "./types";
@@ -165,6 +168,40 @@ export async function getAllSeasons(): Promise<Season[]> {
  */
 export async function getAiringSeasons(): Promise<Season[]> {
   return (await getAllSeasons()).filter((season) => season.onAir);
+}
+
+/**
+ * 홈의 "최근 방송" — 기수마다 마지막 회차를 하나씩 꺼내 방송일이 늦은 순으로.
+ *
+ * 방영 중인 기수만 고르지 않는다: 방영 중인 게 없는 주에도 막 끝난 기수의 최종
+ * 선택 회차가 여기 서야 한다. 한 기수에서 여러 회차를 꺼내지도 않는다 — 한
+ * 프로그램이 칸을 다 차지하면 다른 프로그램을 보는 사람에게는 빈 묶음이다.
+ */
+export async function getLatestEpisodes(count: number): Promise<LatestEpisode[]> {
+  return (await getAllSeasons())
+    .flatMap((season) => {
+      const episode = season.episodes?.at(-1);
+      return episode ? [{ season, episode }] : [];
+    })
+    .sort((a, b) => b.episode.airDate.localeCompare(a.episode.airDate))
+    .slice(0, count);
+}
+
+/**
+ * 최종 커플 모음 화면의 데이터 — 프로그램마다, 최종 선택이 방송된 기수를 최신부터.
+ *
+ * **최종 선택 기록이 없는 기수는 뺀다**(방영 중이거나 회차별 정리가 아직 없는
+ * 기수). 커플이 없다는 것과 아직 모른다는 것은 다른 말이라, 모르는 기수를 빈
+ * 칸으로 세우면 화면이 방송 사실을 바꾼다. 그런 기수뿐인 프로그램도 빠진다.
+ */
+export async function getProgramCouples(): Promise<ProgramCouples[]> {
+  return (await getPrograms()).flatMap((program) => {
+    const seasons = getSeasons(program).flatMap((season) => {
+      const couples = getFinalCouples(season);
+      return couples ? [{ season, couples }] : [];
+    });
+    return seasons.length > 0 ? [{ program, seasons }] : [];
+  });
 }
 
 /**

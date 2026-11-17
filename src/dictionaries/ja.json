@@ -11,7 +11,9 @@
   },
   "home": {
     "heading": "出演者インスタ",
-    "programsHeading": "番組"
+    "programsHeading": "番組",
+    "collectionsHeading": "まとめ",
+    "latestHeading": "最近の放送"
   },
   "program": {
     "posterAlt": "{program} のポスター",
@@ -55,6 +57,18 @@
     "noFinalCouple": "最終カップルは誕生しませんでした。",
     "pickedNobody": "選ばず",
     "episodesSource": "放送と放送を報じた記事をもとにまとめました。"
+  },
+  "couples": {
+    "heading": "最終カップル",
+    "navLabel": "最終カップル",
+    "metaTitle": "{programs} 最終カップルまとめ",
+    "description": "{programs}の最終選択で互いを選んだカップル{couples}組を番組別にまとめました。放送された結果だけを記載しています。",
+    "lead": "最終選択で互いを選んだカップル{couples}組を番組別にまとめました。\n放送された結果であり、その後の知らせは各ページの紹介に日付とともに記しています。",
+    "count": "{count}組",
+    "countOne": "{count}組",
+    "programSeparator": "・",
+    "searchPlaceholder": "シーズンや名前で探す",
+    "summary": "{programs} {couples}組"
   },
   "status": {
     "none": "アカウントなし",

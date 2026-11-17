@@ -72,6 +72,15 @@ export function search(index: SearchIndex, query: string): SearchResults {
 }
 
 /** "22기 영수" → ["22기", "영수"]. 빈 질의는 빈 배열이다. */
+/**
+ * 글 한 덩어리가 질의의 모든 토큰을 담고 있는지. 최종 커플 모음의 판 걸러내기가
+ * 같은 규칙을 쓴다 — 검색창마다 매칭이 다르면 한쪽에서 찾히던 말이 다른 쪽에서
+ * 안 찾힌다. 빈 질의는 전부 통과다.
+ */
+export function matchesQuery(text: string, query: string): boolean {
+  return matches(text, tokenize(query));
+}
+
 function tokenize(query: string): string[] {
   return query.toLowerCase().split(/\s+/).filter(Boolean);
 }

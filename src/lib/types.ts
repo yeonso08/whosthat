@@ -339,6 +339,43 @@ export function getFinalCouples(
 }
 
 /** 방송 기간. 회차별 정리의 첫 방송일·마지막 방송일·방송 횟수다(YYYY-MM-DD). */
+/** 홈의 "최근 방송" 한 줄 — 어느 기수의 어느 회차인지. */
+export type LatestEpisode = { season: Season; episode: Episode };
+
+/**
+ * 회차를 한두 줄로 보여 줄 때 쓰는 글 — 그 회차의 첫 문단이다. 본문은 출연자
+ * 이름을 `[영수]` 로 적어 두는데(기수 화면이 그걸 카드 링크로 바꾼다), 여기서는
+ * 링크를 걸 자리가 아니라 괄호만 벗긴다. 문단이 없는 회차는 빈 글이다.
+ */
+export function getEpisodeExcerpt(episode: Episode): string {
+  const first = episode.blocks.find((block) => block.kind === "text" && block.body);
+  return (first?.body ?? "").replace(/\[([^\]]+)\]/g, "$1");
+}
+
+/**
+ * 최종 커플 모음의 한 칸 — 한 기수와 그 기수의 최종 커플. 커플이 없는 기수도
+ * 빈 배열로 들어온다(최종 선택은 방송됐는데 아무도 안 맺어진 것이다).
+ */
+export type SeasonCouples = {
+  season: Season;
+  couples: [CastMember, CastMember][];
+};
+
+/** 최종 커플 모음의 한 묶음 — 프로그램 하나와 최종 선택이 방송된 기수들. */
+export type ProgramCouples = {
+  program: Program;
+  seasons: SeasonCouples[];
+};
+
+/** 묶음들의 커플 수. 모음 화면의 머리글·탭과 홈의 판이 같은 셈을 쓴다. */
+export function countCouples(groups: ProgramCouples[]): number {
+  return groups.reduce(
+    (sum, { seasons }) =>
+      sum + seasons.reduce((n, { couples }) => n + couples.length, 0),
+    0,
+  );
+}
+
 export type AirPeriod = { first: string; last: string; episodes: number };
 
 /**
