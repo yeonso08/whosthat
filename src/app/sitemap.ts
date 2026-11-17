@@ -4,6 +4,7 @@ import { languageAlternates } from "@/lib/i18n";
 import {
   ABOUT_PATH,
   COUPLES_PATH,
+  episodePath,
   FAQ_PATH,
   HOME_PATH,
   localePath,
@@ -12,8 +13,12 @@ import {
   seasonPath,
   TAKEDOWN_PATH,
 } from "@/lib/links";
-import { LOCALES } from "@/lib/locales";
-import { isIndexable, isProgramIndexable } from "@/lib/seo";
+import { DEFAULT_LOCALE, LOCALES } from "@/lib/locales";
+import {
+  isEpisodeIndexable,
+  isIndexable,
+  isProgramIndexable,
+} from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 import type { Season } from "@/lib/types";
 
@@ -86,13 +91,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // 언어마다 한 줄씩 내되, 서로가 서로의 다른 언어 판이라고 알려 준다 —
   // 그래야 크롤러가 같은 내용의 중복이 아니라 번역으로 읽는다.
-  return pages.flatMap(({ path, ...meta }) =>
-    LOCALES.map((locale) => ({
-      url: absoluteUrl(localePath(locale, path)),
-      ...meta,
-      alternates: { languages: absolute(languageAlternates(path)) },
-    })),
+  // 회차 글은 한국어 화면뿐이라 한 줄씩이고 hreflang 도 없다 — 없는 언어 판을
+  // 가리키면 크롤러가 404 를 번역본으로 받아 간다. 얇은 글은 noindex 라 여기서도
+  // 뺀다(`isEpisodeIndexable`). 회차에는 수정 시각이 따로 없어 그 기수의 것을 쓴다.
+  const episodes = programs.flatMap((program) =>
+    getSeasons(program)
+      .filter(isIndexable)
+      .flatMap((season) =>
+        (season.episodes ?? []).filter(isEpisodeIndexable).map((episode) => ({
+          url: absoluteUrl(
+            localePath(
+              DEFAULT_LOCALE,
+              episodePath(program.id, season.id, episode.airDate),
+            ),
+          ),
+          lastModified: new Date(season.updatedAt),
+          changeFrequency: "monthly" as const,
+          priority: 0.6,
+        })),
+      ),
   );
+
+  return [
+    ...pages.flatMap(({ path, ...meta }) =>
+      LOCALES.map((locale) => ({
+        url: absoluteUrl(localePath(locale, path)),
+        ...meta,
+        alternates: { languages: absolute(languageAlternates(path)) },
+      })),
+    ),
+    ...episodes,
+  ];
 }
 
 /** hreflang 은 절대 URL 이라야 한다. 화면 쪽 alternates 는 상대경로를 쓴다. */

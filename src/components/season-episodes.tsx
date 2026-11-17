@@ -6,7 +6,6 @@ import {
   getDictionary,
   type Dictionary,
 } from "@/lib/i18n";
-import { episodeAnchor } from "@/lib/links";
 import {
   orderedFinalCouples,
   type CastMember,
@@ -40,7 +39,6 @@ type Group =
 export async function SeasonEpisodes({ episodes, cast, heading }: Props) {
   const locale = await currentLocale();
   const dict = getDictionary(locale);
-  const members: Members = new Map(cast.map((m) => [m.id, m]));
   const first = episodes[0];
   const last = episodes[episodes.length - 1];
 
@@ -59,13 +57,7 @@ export async function SeasonEpisodes({ episodes, cast, heading }: Props) {
       {/* 방송 순서가 실제 순서라 세로 선으로 잇는다. */}
       <ol className="mt-8 border-l border-border">
         {episodes.map((episode) => (
-          // 홈의 "최근 방송" 이 이 id 로 내려온다. 상단 바가 붙어 있어서 그 높이만큼
-          // 띄워야 회차 날짜 줄이 바 밑에 깔리지 않는다.
-          <li
-            key={episode.id}
-            id={episodeAnchor(episode.id)}
-            className="relative scroll-mt-24 pb-12 pl-6 last:pb-2 lg:pl-8"
-          >
+          <li key={episode.id} className="relative pb-12 pl-6 last:pb-2 lg:pl-8">
             <span className="absolute top-[7px] -left-[5px] size-[9px] rounded-full bg-foreground" />
             <p className="font-lat text-[12px] font-semibold text-muted-foreground">
               {fill(dict.season.episodeAired, {
@@ -75,14 +67,8 @@ export async function SeasonEpisodes({ episodes, cast, heading }: Props) {
             <h3 className="mt-1 text-[18px] leading-[1.35] font-bold tracking-[-0.02em] break-keep">
               {episode.title}
             </h3>
-            <div className="mt-4 space-y-4">
-              {group(episode.blocks).map((g, i) =>
-                g.kind === "profiles" ? (
-                  <Profiles key={i} blocks={g.blocks} members={members} dict={dict} />
-                ) : (
-                  <Block key={i} block={g.block} members={members} dict={dict} />
-                ),
-              )}
+            <div className="mt-4">
+              <EpisodeBlocks blocks={episode.blocks} cast={cast} />
             </div>
           </li>
         ))}
@@ -92,6 +78,48 @@ export async function SeasonEpisodes({ episodes, cast, heading }: Props) {
         {dict.season.episodesSource}
       </p>
     </article>
+  );
+}
+
+type BlocksProps = {
+  blocks: EpisodeBlock[];
+  cast: CastMember[];
+  /**
+   * 글 속 이름이 가는 곳. 기수 화면에서는 같은 화면 위쪽의 카드(`#id`)라 안 줘도
+   * 되고, 회차 글 페이지는 카드가 다른 화면에 있어서 그 주소를 만들어 준다.
+   */
+  memberHref?: (memberId: string) => string;
+};
+
+/**
+ * 한 회차의 본문 — 문단·인용·자기소개·선택 결과를 방송 순서대로. 기수 화면의
+ * 회차별 정리와 회차 글 페이지가 같은 것을 그린다: 두 곳이 각자 그리면 한쪽만
+ * 고치게 되고, 같은 회차가 화면마다 다르게 읽힌다.
+ */
+export async function EpisodeBlocks({
+  blocks,
+  cast,
+  memberHref = (memberId) => `#${memberId}`,
+}: BlocksProps) {
+  const dict = getDictionary(await currentLocale());
+  const members: Members = new Map(cast.map((m) => [m.id, m]));
+
+  return (
+    <div className="space-y-4">
+      {group(blocks).map((g, i) =>
+        g.kind === "profiles" ? (
+          <Profiles key={i} blocks={g.blocks} members={members} dict={dict} />
+        ) : (
+          <Block
+            key={i}
+            block={g.block}
+            members={members}
+            dict={dict}
+            memberHref={memberHref}
+          />
+        ),
+      )}
+    </div>
   );
 }
 
@@ -110,14 +138,19 @@ function group(blocks: EpisodeBlock[]): Group[] {
   return groups;
 }
 
-type BlockProps = { block: EpisodeBlock; members: Members; dict: Dictionary };
+type BlockProps = {
+  block: EpisodeBlock;
+  members: Members;
+  dict: Dictionary;
+  memberHref: (memberId: string) => string;
+};
 
-function Block({ block, members, dict }: BlockProps): ReactNode {
+function Block({ block, members, dict, memberHref }: BlockProps): ReactNode {
   switch (block.kind) {
     case "text":
       return (
         <p className="text-[15px] leading-[1.8] break-keep text-foreground/85 [overflow-wrap:anywhere]">
-          {linkNames(block.body ?? "", members)}
+          {linkNames(block.body ?? "", members, memberHref)}
         </p>
       );
 
@@ -277,8 +310,12 @@ function aliasOf(id: string | null, members: Members): string {
   return (id && members.get(id)?.alias) || "";
 }
 
-/** `[영수]` 를 위 카드로 가는 링크로 바꾼다. 기수에 없는 이름이면 괄호만 벗긴다. */
-function linkNames(text: string, members: Members) {
+/** `[영수]` 를 그 사람 카드로 가는 링크로 바꾼다. 기수에 없는 이름이면 괄호만 벗긴다. */
+function linkNames(
+  text: string,
+  members: Members,
+  memberHref: (memberId: string) => string,
+) {
   const byAlias = new Map([...members.values()].map((m) => [m.alias, m]));
   return text.split(/(\[[^\]]+\])/).map((part, i) => {
     const alias = part.match(/^\[(.+)\]$/)?.[1];
@@ -287,7 +324,7 @@ function linkNames(text: string, members: Members) {
     return member ? (
       <a
         key={i}
-        href={`#${member.id}`}
+        href={memberHref(member.id)}
         className="focus-ring font-semibold text-foreground underline decoration-border decoration-1 underline-offset-[5px] hover:decoration-foreground"
       >
         {alias}

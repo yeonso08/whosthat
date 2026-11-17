@@ -14,7 +14,7 @@ import { getEpisodeExcerpt, type LatestEpisode } from "@/lib/types";
 
 /**
  * 홈 "최근 방송" 판의 한 줄 — 어느 프로그램 몇 기의 언제 방송인지, 그 회차의 제목,
- * 첫 문단 두 줄. 누르면 그 기수 화면의 그 회차로 내려간다.
+ * 첫 문단 두 줄. 누르면 그 회차의 글 페이지로 간다.
  *
  * **이 줄이 홈에 다시 올 이유다.** 방영 중인 프로그램은 매주 한 회차씩 정리가
  * 붙는데, 그전에는 기수 화면 맨 아래까지 내려가야 보였다. 글이 주인공이라 얼굴도
@@ -27,7 +27,7 @@ export async function EpisodeRow({ season, episode }: LatestEpisode) {
 
   return (
     <Link
-      href={episodeHref(locale, season.programId, season.id, episode.id)}
+      href={episodeHref(locale, season.programId, season.id, episode.airDate)}
       className="press focus-ring group flex items-center gap-4 px-5 py-4.5 hover:bg-elevated/40 lg:px-6 lg:py-5"
     >
       <span className="min-w-0 flex-1">

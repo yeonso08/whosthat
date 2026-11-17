@@ -353,6 +353,14 @@ export function getEpisodeExcerpt(episode: Episode): string {
 }
 
 /**
+ * 회차 글의 분량 — 문단·인용·자기소개의 글자 수. 선택 상자는 세지 않는다(줄 수가
+ * 출연자 수만큼이라 글이 한 줄이어도 길어 보인다). 색인 여부가 이 수를 본다.
+ */
+export function getEpisodeLength(episode: Episode): number {
+  return episode.blocks.reduce((sum, block) => sum + (block.body?.length ?? 0), 0);
+}
+
+/**
  * 최종 커플 모음의 한 칸 — 한 기수와 그 기수의 최종 커플. 커플이 없는 기수도
  * 빈 배열로 들어온다(최종 선택은 방송됐는데 아무도 안 맺어진 것이다).
  */
