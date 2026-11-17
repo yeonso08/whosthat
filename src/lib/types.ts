@@ -46,6 +46,12 @@ export type CastMember = {
   source?: string;
 };
 
+/**
+ * 카드의 출신 줄 한 칸 — 같은 사람이 먼저 나온 출연. `text` 는 이미 그 화면
+ * 언어로 만든 `나는 솔로 16기 상철` 이고, `href` 는 그 기수 화면의 그 사람 카드다.
+ */
+export type EarlierAppearance = { text: string; href: string };
+
 export type Season = {
   id: string;
   programId: string;
