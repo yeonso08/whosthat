@@ -247,7 +247,7 @@ export function formatChecked(date: string, locale: Locale): string {
 }
 
 /** "2022-08-24" → "2022년 8월 24일" / "August 24, 2022" */
-function formatFullDate(date: string, locale: Locale): string {
+export function formatFullDate(date: string, locale: Locale): string {
   const parts = date.split("-");
   const [year, month, day] = parts;
   if (!year || !month || !day) return "";

@@ -78,22 +78,27 @@ export function castMemberHref(
 }
 
 /**
- * 기수 상세 안의 한 회차. 홈의 "최근 방송" 이 곧장 그 회차로 내려간다.
+ * 회차 글 한 편. `app/[lang]/[program]/seasons/[id]/episodes/[date]` 와 짝이다.
  *
- * 앵커는 `SeasonEpisodes` 가 회차마다 거는 DOM id 와 짝이다(`episodeAnchor`) —
- * 한쪽만 고치면 링크가 조용히 기수 맨 위로 떨어진다.
+ * **주소의 끝은 방송일이다**(`2026-11-11`). DB 의 회차 번호(id)는 백업에서 되살리거나
+ * 다시 넣으면 바뀔 수 있고, 방송 회차 수(`279회`)는 데이터에 없다. 방송일은 한 기수
+ * 안에서 겹치지 않고(넣는 스크립트가 날짜로 중복을 거른다) 읽어서 뜻이 통한다.
  */
-export function episodeAnchor(episodeId: number): string {
-  return `ep-${episodeId}`;
+export function episodePath(
+  programId: string,
+  seasonId: string,
+  airDate: string,
+): string {
+  return `${seasonPath(programId, seasonId)}/episodes/${airDate}`;
 }
 
 export function episodeHref(
   locale: Locale,
   programId: string,
   seasonId: string,
-  episodeId: number,
+  airDate: string,
 ): string {
-  return `${seasonHref(locale, programId, seasonId)}#${episodeAnchor(episodeId)}`;
+  return localePath(locale, episodePath(programId, seasonId, airDate));
 }
 
 /** 최종 커플 모음. `app/[lang]/couples` 와 짝이다. */
