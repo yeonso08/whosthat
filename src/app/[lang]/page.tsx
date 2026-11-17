@@ -1,24 +1,61 @@
+import { Heart } from "lucide-react";
 import { notFound } from "next/navigation";
+import type { ReactNode } from "react";
 import { AutoAds } from "@/components/ads";
+import { CollectionLink } from "@/components/collection-link";
+import { EpisodeRow } from "@/components/episode-row";
 import { JsonLd } from "@/components/json-ld";
+import { ListPanel } from "@/components/list-card";
 import { GroupHeading, PageTitle } from "@/components/page-heading";
 import { LiveRow } from "@/components/live-row";
 import { ProgramCard } from "@/components/program-card";
 import { SeasonSearch } from "@/components/season-search";
 import { WithBanner } from "@/components/with-banner";
-import { buildSearchIndex, getAiringSeasons, getPrograms } from "@/lib/data";
-import { getDictionary, isLocale } from "@/lib/i18n";
+import {
+  buildSearchIndex,
+  getAiringSeasons,
+  getLatestEpisodes,
+  getProgramCouples,
+  getPrograms,
+} from "@/lib/data";
+import {
+  fill,
+  getDictionary,
+  isLocale,
+  localizeProgramShortName,
+} from "@/lib/i18n";
+import { couplesHref } from "@/lib/links";
 import { websiteSchema } from "@/lib/seo";
+import { countCouples } from "@/lib/types";
+
+/** "최근 방송" 에 세우는 회차 수. 방영 중인 프로그램이 셋이라 한 주치가 다 들어간다. */
+const LATEST_COUNT = 3;
+
+/**
+ * 두 단의 제목. 판의 왼쪽 끝과 같은 선에서 시작한다 — `GroupHeading` 은 화면
+ * 여백(`gutter`)을 제 안에 갖고 있어서 격자 칸 안에 넣으면 여백이 두 번 걸린다.
+ */
+function DigestHeading({ children }: { children: ReactNode }) {
+  return (
+    <h2 className="pt-9 pb-3.5 text-[15px] font-bold tracking-[-0.02em] lg:text-base">
+      {children}
+    </h2>
+  );
+}
 
 export default async function Page({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
 
   const dict = getDictionary(lang);
-  const [programs, airing] = await Promise.all([
+  const [programs, airing, coupleGroups, latest] = await Promise.all([
     getPrograms(),
     getAiringSeasons(),
+    getProgramCouples(),
+    // 회차별 정리는 한국어 화면에만 나온다(`seasonEpisodes` 와 같은 이유).
+    lang === "ko" ? getLatestEpisodes(LATEST_COUNT) : [],
   ]);
+  const couples = countCouples(coupleGroups);
 
   return (
     <main>
@@ -102,6 +139,61 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
                 <ProgramCard key={program.id} program={program} />
               ))}
             </section>
+
+            {/*
+             * 진열대 아래는 두 단이다 — 왼쪽은 **다시 올 이유**(최근 방송 정리),
+             * 오른쪽은 **더 둘러볼 곳**(프로그램을 가로질러 모은 화면)이다. 폭은
+             * 포스터 네 장 줄과 같아서 양 끝이 진열대와 같은 세로선에 선다.
+             *
+             * 여기는 가운데로 모으지 않는다 — 읽는 줄이라 눈이 돌아갈 왼쪽 선이
+             * 있어야 한다. 회차별 정리는 한국어 화면에만 있어서, 다른 언어에서는
+             * 모아 보기 한 단만 가운데에 선다.
+             */}
+            {(latest.length > 0 || couples > 0) && (
+              <div
+                className={`gutter mx-auto grid w-full gap-x-6 pt-4 ${
+                  latest.length > 0
+                    ? "max-w-[984px] lg:grid-cols-[minmax(0,1fr)_320px]"
+                    : "max-w-[512px]"
+                }`}
+              >
+                {latest.length > 0 && (
+                  <section>
+                    <DigestHeading>{dict.home.latestHeading}</DigestHeading>
+                    <ListPanel>
+                      {latest.map(({ season, episode }) => (
+                        <EpisodeRow
+                          key={`${season.programId}-${season.id}`}
+                          season={season}
+                          episode={episode}
+                        />
+                      ))}
+                    </ListPanel>
+                  </section>
+                )}
+
+                {couples > 0 && (
+                  <section>
+                    <DigestHeading>{dict.home.collectionsHeading}</DigestHeading>
+                    <ListPanel>
+                      <CollectionLink
+                        href={couplesHref(lang)}
+                        title={dict.couples.heading}
+                        summary={fill(dict.couples.summary, {
+                          programs: coupleGroups
+                            .map(({ program }) =>
+                              localizeProgramShortName(program.id, lang),
+                            )
+                            .join(dict.couples.programSeparator),
+                          couples,
+                        })}
+                        icon={<Heart className="size-4.5 fill-couple text-couple" />}
+                      />
+                    </ListPanel>
+                  </section>
+                )}
+              </div>
+            )}
           </>
         </SeasonSearch>
       </WithBanner>

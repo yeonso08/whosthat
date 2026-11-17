@@ -6,6 +6,7 @@ import {
   getDictionary,
   type Dictionary,
 } from "@/lib/i18n";
+import { episodeAnchor } from "@/lib/links";
 import {
   orderedFinalCouples,
   type CastMember,
@@ -58,7 +59,13 @@ export async function SeasonEpisodes({ episodes, cast, heading }: Props) {
       {/* 방송 순서가 실제 순서라 세로 선으로 잇는다. */}
       <ol className="mt-8 border-l border-border">
         {episodes.map((episode) => (
-          <li key={episode.id} className="relative pb-12 pl-6 last:pb-2 lg:pl-8">
+          // 홈의 "최근 방송" 이 이 id 로 내려온다. 상단 바가 붙어 있어서 그 높이만큼
+          // 띄워야 회차 날짜 줄이 바 밑에 깔리지 않는다.
+          <li
+            key={episode.id}
+            id={episodeAnchor(episode.id)}
+            className="relative scroll-mt-24 pb-12 pl-6 last:pb-2 lg:pl-8"
+          >
             <span className="absolute top-[7px] -left-[5px] size-[9px] rounded-full bg-foreground" />
             <p className="font-lat text-[12px] font-semibold text-muted-foreground">
               {fill(dict.season.episodeAired, {

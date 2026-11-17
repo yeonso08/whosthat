@@ -21,6 +21,7 @@ import type { Locale } from "./locales";
 export const HOME_PATH = "";
 export const ABOUT_PATH = "/about";
 export const FAQ_PATH = "/faq";
+export const COUPLES_PATH = "/couples";
 export const TAKEDOWN_PATH = "/takedown";
 export const PRIVACY_PATH = "/privacy";
 
@@ -74,6 +75,30 @@ export function castMemberHref(
   memberId: string,
 ): string {
   return `${seasonHref(locale, programId, seasonId)}#${memberId}`;
+}
+
+/**
+ * 기수 상세 안의 한 회차. 홈의 "최근 방송" 이 곧장 그 회차로 내려간다.
+ *
+ * 앵커는 `SeasonEpisodes` 가 회차마다 거는 DOM id 와 짝이다(`episodeAnchor`) —
+ * 한쪽만 고치면 링크가 조용히 기수 맨 위로 떨어진다.
+ */
+export function episodeAnchor(episodeId: number): string {
+  return `ep-${episodeId}`;
+}
+
+export function episodeHref(
+  locale: Locale,
+  programId: string,
+  seasonId: string,
+  episodeId: number,
+): string {
+  return `${seasonHref(locale, programId, seasonId)}#${episodeAnchor(episodeId)}`;
+}
+
+/** 최종 커플 모음. `app/[lang]/couples` 와 짝이다. */
+export function couplesHref(locale: Locale): string {
+  return localePath(locale, COUPLES_PATH);
 }
 
 /** 사이트 소개. `app/[lang]/about` 과 짝이다. */
