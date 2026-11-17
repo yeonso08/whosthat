@@ -61,7 +61,7 @@ src/data/singles-inferno.json              솔로지옥 시즌 1~5 골격 — �
 src/components/ads.tsx               AutoAds — 애드센스 스니펫. 레이아웃이 아니라 페이지가 건다(위 "광고" 절)
 src/components/with-banner.tsx       모비온 배너 자리 — 데스크톱 본문 옆 세로 칸 + 휴대폰 본문 아래. 홈·프로그램·기수 상세가 감싼다
 src/components/mobon-banner.tsx      모비온 지면 코드와 스니펫 실행 — 기기를 보고 웹·모바일 지면 중 하나만 건다
-src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-row, season-feature, season-search, season-pager, list-card, live-row, live-dot, previous-season-link, site-footer, site-nav, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
+src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-row, season-feature, season-search, couple-card, couple-browser, collection-link, episode-row, list-card, live-row, live-dot, previous-season-link, site-footer, site-nav, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
 public/<키>.txt · scripts/indexnow.mjs  IndexNow 키 파일과 알림 스크립트 — 매시간 .github/workflows/indexnow.yml 이 돌린다(아래 "검색 노출" 절)
@@ -169,6 +169,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **손으로 짜기 전에 레지스트리를 먼저 확인한다.** 있으면 그걸 쓴다. 받는 건 로컬 CLI 로 — `pnpm exec shadcn add <name>`. `dlx shadcn@latest` 는 설치된 버전(4.18.0)·스타일(`base-nova`)과 어긋날 수 있으니 쓰지 않는다.
 - **접근성이 걸린 것은 특히 직접 만들지 않는다.** dialog, dropdown, popover, tooltip, tabs, sheet, command, form, input. 포커스 트랩·키보드 이동·ARIA 를 손으로 다시 짜면 반드시 빠뜨린다. 제보 폼은 `form` + `input` 부터 본다.
 - 아이콘도 같다. `lucide-react` 가 이미 깔려 있다(`components.json` 의 `iconLibrary: lucide`). 새 아이콘은 lucide 에서 가져오고, `components/icons.tsx` 에는 **lucide 에 없는 것만** 둔다(인스타그램 같은 브랜드 마크).
+- **`shadcn add` 가 받은 파일의 `cn` import 를 본다.** `tabs` 를 받을 때 `import { cn } from "cn"` 으로 들어오고 `cn` 이라는 엉뚱한 패키지가 의존성에 추가됐다(2026-11-17) — `@/lib/utils` 로 고치고 패키지는 지웠다.
 - 받은 뒤에는 **시안 D 에 맞춰 고쳐 쓴다.** 들어온 순간 우리 코드라 수정해도 된다 — 다만 기본 스타일이 디자인 규칙(흑백, 유채색은 `searching` 전용, 반경 12~16px)을 이기게 두지 않는다.
 - **`components/ui/` 는 shadcn 자리, `components/` 바로 아래는 우리 자리.** 섞지 않아야 나중에 `add` 로 덮어써도 안전하다. 다만 **레지스트리가 빠뜨린 부품은 그 파일에 채워 넣는다** — `dropdown-menu.tsx` 의 `DropdownMenuLinkItem` 이 그렇다(Base UI 의 `Menu.LinkItem` 껍데기). 도메인이 아니라 그 부품의 형제라서 여기가 맞고, `add` 로 덮어쓸 때 같이 날아가니 그때 다시 넣어야 한다.
 - 직접 만드는 건 레지스트리에 없거나 **도메인이 들어갈 때**다. `CastCard` 는 `found/none/searching` 3상태를 아는 컴포넌트라 우리 것이 맞다.
@@ -264,7 +265,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **사진이 없는 사람은 가명 두 글자 배지(`CastAvatar`)로 대신 채운다.** 사진이 있는 쪽이 한동안 소수라 일괄 실루엣으로 두면 화면 전체가 같은 그림이 된다. 배지는 **저대비 워터마크**다 — 카드 크기에서 또렷하면 색면이 화면을 먹는다. 상태는 카드 아래 상태 줄이 또렷하게 말한다.
 - **자리 크기·모양·글자 크기는 감싸는 쪽이 정한다.** `CastPhoto`·`CastAvatar` 는 `h-full w-full` 로 채우기만 하고, `relative` 박스와 `text-[…]` 는 호출부에 있다(`CARD_SIZES`, `FALLBACK_TEXT`, `FACE_SHAPE`).
 - 사이트는 **라이트·다크 두 팔레트를 다 가진다**(2026-08-20 부로 "다크 전용" 원칙 폐기). `globals.css` 의 `:root` 가 라이트, `.dark` 가 다크다 — 둘 다 위 시안 D 팔레트를 흑백 축으로 그대로 짝지은 것이라 명도만 뒤집혔지 구조는 같다. `next-themes` 로 전환하고(`ThemeProvider`, `attribute="class"`), 기본값은 여전히 `dark`다 — 원래 시안의 첫인상을 지키려는 것이다. 전환 버튼(`ModeToggle`)은 상단 바(`SiteNav`)에 있다 — 워드마크·언어 선택과 한 줄이고, 레이아웃에 있어 페이지마다 그 줄을 반복하지 않는다.
-- **유채색은 둘뿐이고, 둘 다 자리가 못박혀 있다**: `--verified`(앰버)는 확인된 계정의 핸들, `--live`(빨강)는 방영 중 점. 강조·CTA·배지 같은 다른 용도로 번지게 하지 말 것 — **셋째 자리가 생기는 순간 둘 다 신호이길 그만둔다.**
+- **유채색은 셋이고, 셋 다 자리가 못박혀 있다**: `--verified`(앰버)는 확인된 계정의 핸들, `--live`(빨강)는 방영 중 점, `--couple`(장미색)은 커플을 가리키는 하트 하나(최종 커플 모음의 두 이름 사이, 홈 "모아 보기" 줄의 그림). 강조·CTA·배지 같은 다른 용도로 번지게 하지 말 것 — **자리가 늘어나는 순간 신호이길 그만둔다.** 장미색은 2026-11-17 에 들였다: 사용자가 커플 화면을 "어둡고 딱딱하지 않게" 해 달라고 했고, `영철♥정숙` 은 이 장르의 글이 커플을 적는 표기 그대로다.
 - **2026-08-31 에 그 색의 의미를 뒤집었다. 되돌리지 말 것.** 그전에는 유일한 유채색이 `--searching`("아직 못 찾음") 이었는데, 그러면 **데이터가 채워질수록 화면에서 색이 사라진다** — 22기(14/14)는 완전한 무채색이고 33기(0/12)만 색이 도는, 성취와 색이 반대로 붙은 구조였다. "화면이 밋밋하다"는 지적의 원인이 취향이 아니라 여기였다. 지금은 아카이브가 채워질수록 화면이 산다.
 - **`--searching` 은 무채색이다.** 못 찾은 자리를 색으로 부각하면 눈이 구멍부터 훑는데, 이 사이트가 파는 건 구멍이 아니라 확인이다. "찾는 중" 이라는 사실은 글자가 그대로 말한다.
 - **`방영 중` 은 빨간 점이다**(`LiveDot`, 2026-08-31). 그전에는 명도만으로 세웠는데(`bg-foreground` 점) 방영 중인지 아닌지가 화면에서 거의 안 읽혔다. 빨강은 방송의 라이브 표시라 설명이 필요 없는 기호고, `--verified` 를 빌려 쓰지 않으므로 "확인" 과 "방영" 두 축도 안 뭉갠다.
@@ -275,6 +276,8 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - 폰트는 세 역할이다: 한글 `Gothic A1`(`--font-sans`), 라틴·숫자 `Manrope`(`--font-lat`), **인스타 핸들 `IBM Plex Mono`(`--font-mono`)**. 핸들만 고정폭인 건 그게 **문장이 아니라 식별자**이기 때문이다 — 방문자가 이 사이트에서 실제로 가져가는 유일한 값이고 한 글자만 달라도 다른 사람이 된다. 날짜·개수는 계속 `font-lat` 이다.
 - **카드 이름 아래 출신 줄**(2026-11-13) — 같은 사람(`personId`)이 **먼저 방송된** 출연을 `나는 솔로 16기 상철` 처럼 적는다(`getEarlierAppearances`). 실명으로 나오는 계약결혼에서 "이 사람이 그 16기 상철" 이 이름 다음으로 궁금한 값이라 직업보다 진하게 둔다. 이름이 이미 출신을 말하면(나솔사계 `16기 상철` 카드) 같은 말이 두 번이라 빼고, 나중 출연(16기 상철 카드에 계약결혼)은 근황이라 안 적는다. 검색도 같은 사람의 다른 출연 이름으로 걸린다(`otherNamesByPerson`).
 - **출신 줄은 그 기수의 그 사람 카드로 가는 링크다**(2026-11-17). 그래서 **출연진 카드는 `<a>` 가 아니라 상자고, 인스타 링크가 그 위를 통째로 덮는다**(`CARD_LINK_LAYER`) — 판 자체를 링크로 되돌리면 출신 줄이 링크 안의 링크가 된다. 출신 줄 링크만 덮개 위로 올라온다(`EARLIER_LINK_LAYER`). 포커스 테두리는 판이 그린다(`focus-ring-cover`) — 판이 `overflow-hidden` 이라 덮개에 그리면 잘린다.
+- **홈의 진열대 아래는 두 단이다**(2026-11-17) — 왼쪽 "최근 방송"(기수마다 마지막 회차 하나씩, 방송일이 늦은 순 셋, `EpisodeRow` — 그 기수 화면의 그 회차로 내려간다), 오른쪽 "모아 보기"(프로그램을 가로질러 모은 화면들, `CollectionLink`). 폭은 포스터 네 장 줄과 같다. **모음 화면의 진입점을 판 하나짜리 타일로 세우지 말 것** — 포스터 줄 아래에 혼자 서면 어떤 모양이든 얹어 놓은 것처럼 보여 두 번 반려됐다. 상단 바에 건 것도 반려됐다. 새 모음 화면(방송 뒤 소식 등)은 "모아 보기" 판에 줄로 더한다. 회차별 정리가 한국어 화면에만 있어서 다른 언어 홈에는 모아 보기 한 단만 가운데에 선다.
+- **최종 커플 모음(`/couples`)** — 프로그램은 탭으로 가르고 그 안에서 기수 번호·이름으로 찾는다(`CoupleBrowser`). 위아래로 이어 붙였을 때는 둘째 프로그램이 첫째의 기수를 다 지나야 나왔다. 판 안의 커플은 옆으로 흘린다 — 한 줄씩 쌓으면 판 키가 세 배까지 달라 격자가 들쭉날쭉했다. 최종 선택 기록이 없는 기수(방영 중)는 뺀다: 커플이 없다는 것과 아직 모른다는 것은 다른 말이다. 안 보이는 탭도 HTML 에는 남긴다(`keepMounted`).
 - **기수 상세에 옆 기수로 가는 자리를 두지 않는다**(2026-11-17, 사용자 결정). 격자 아래에 `이전`·`다음` 두 판을 내보냈다가 같은 날 뺐다 — 두 판, 전 기수 칩 띠, 카드 진열대 셋 다 화면과 안 어울렸고, 있다고 방문자가 늘 것 같지 않다는 판단이다. 다시 올리지 말 것.
 - **출연진 카드는 사진 유무로 구성이 갈리지 않는다.** 사진이 있든 없든 글자 블록이 같은 자리에 같은 모양으로 앉고, 사진은 뒤에 깔릴 뿐이다. 예전에는 사진이 없으면 그 자리를 흐린 가명이 채우고 아래에 같은 가명이 또 나와서 **한 카드에 같은 이름이 두 번** 찍혔다 — 사진이 0장인 동안 격자 전체가 그 그림이었다. `CastAvatar` 는 작은 원(히어로·목록 줄) 전용이고 카드에는 안 쓴다.
 - 모서리 반경 12~16px, 전환 180~220ms.
@@ -460,6 +463,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 - **번역이 없으면 한국어로 떨어진다. 던지지 않는다.** 상용 CMS 가 다 그렇고(Payload 는 `fallback` 이 기본값), 누꼬도 원래 가명·특집은 그랬다. `programStrings` 만 던지고 있었는데 그것 때문에 **관리자에서 프로그램을 만드는 순간 홈이 500 이 됐다**(재현해서 확인). 지금은 `getPrograms()` 가 문구 없는 프로그램을 걸러낸다 — **그 장치를 없애지 말 것.**
 - **레지스트리를 모듈 지역 변수로 두지 말 것**(`program-strings.ts`·`translations.ts`). Next 가 서버 코드를 라우트별로 쪼개면 모듈이 복제돼 **채우는 Map 과 읽는 Map 이 다른 객체가 된다.** 빌드는 통과하는데 값이 안 나와서 원인을 찾기 어렵다. `globalThis` 에 붙인다.
+- **`src/app/[lang]/` 아래 파일에 새 Tailwind 클래스를 썼는데 로컬 화면에 안 먹으면 dev 서버를 다시 켠다**(2026-11-17). 홈(`[lang]/page.tsx`)에 새로 쓴 임의값 클래스가 CSS 에 생성되지 않았고, 재시작하니 생겼다. 컴포넌트 파일에 쓴 클래스는 바로 생겼다.
 - **로컬은 캐시 키가 서버를 켠 시각이다**(`local-${Date.now()}`). 고정값(`local`)이던 때는 DB 를 고쳐도 로컬 화면이 옛 응답을 보였고, dev 서버가 메모리에도 들고 있어 `.next/cache` 를 지워도 안 풀렸다(2026-09-22). **로컬 화면이 DB 와 다르면 dev 서버를 다시 켠다.**
 
 - **"사이트에 반영" 을 누르면 사이트를 통째로 다시 빌드한다 — Vercel Deploy Hook**(2026-09-22). 관리자 화면 위쪽 버튼이 백엔드 `POST /admin/publish` 를 부르고, 백엔드가 훅 주소(`NUKKO_DEPLOY_HOOK_URL`, OCI `.env`)를 불러 누꼬가 약 1분 걸려 144페이지를 새로 굽는다. **저장만으로는 빌드하지 않는다** — 처음엔 저장마다 빌드했는데, 새 기수를 채우느라 저장을 열 번 넘게 누르면 빌드도 열 번 넘게 줄을 섰다. 저장은 백엔드 DB 의 반영 대기 수(`site_publish`)만 올리고, 관리자 화면이 그 수를 늘 보여 준다(반영을 잊는 게 이 방식의 약점이라). 자동 반영(몇 분 조용하면 빌드)도 검토했지만 사용자가 버튼만 두기로 했다. 정적 사이트 + CMS 의 흔한 구성이다. 그전 방식(`/api/revalidate` + `revalidateTag`)을 버린 이유는 둘이다:
