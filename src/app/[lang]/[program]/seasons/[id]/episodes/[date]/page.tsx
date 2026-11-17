@@ -170,6 +170,7 @@ export default async function Page({
         <EpisodeBlocks
           blocks={episode.blocks}
           cast={season.cast}
+          headingTag="h2"
           memberHref={(memberId) =>
             castMemberHref(locale, programId, season.id, memberId)
           }

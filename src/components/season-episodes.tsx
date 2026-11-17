@@ -7,6 +7,8 @@ import {
   type Dictionary,
 } from "@/lib/i18n";
 import {
+  getEpisodeHeading,
+  getEpisodeList,
   orderedFinalCouples,
   type CastMember,
   type Episode,
@@ -89,6 +91,11 @@ type BlocksProps = {
    * 되고, 회차 글 페이지는 카드가 다른 화면에 있어서 그 주소를 만들어 준다.
    */
   memberHref?: (memberId: string) => string;
+  /**
+   * 글 속 소제목의 단계. 회차 제목 바로 아래 단계라야 한다 — 기수 화면은 회차
+   * 제목이 h3 이라 h4, 회차 글 페이지는 제목이 h1 이라 h2 다.
+   */
+  headingTag?: "h2" | "h4";
 };
 
 /**
@@ -100,6 +107,7 @@ export async function EpisodeBlocks({
   blocks,
   cast,
   memberHref = (memberId) => `#${memberId}`,
+  headingTag = "h4",
 }: BlocksProps) {
   const dict = getDictionary(await currentLocale());
   const members: Members = new Map(cast.map((m) => [m.id, m]));
@@ -116,6 +124,7 @@ export async function EpisodeBlocks({
             members={members}
             dict={dict}
             memberHref={memberHref}
+            headingTag={headingTag}
           />
         ),
       )}
@@ -143,16 +152,53 @@ type BlockProps = {
   members: Members;
   dict: Dictionary;
   memberHref: (memberId: string) => string;
+  headingTag: "h2" | "h4";
 };
 
-function Block({ block, members, dict, memberHref }: BlockProps): ReactNode {
+function Block({
+  block,
+  members,
+  dict,
+  memberHref,
+  headingTag: Heading,
+}: BlockProps): ReactNode {
   switch (block.kind) {
-    case "text":
+    case "text": {
+      // 글머리가 소제목 표기면 문단이 아니라 제목으로 그린다(`getEpisodeHeading`).
+      // 위 여백을 넓혀 앞 장면과 끊는다 — 소제목이 문단에 붙으면 굵은 문장으로 읽힌다.
+      const heading = getEpisodeHeading(block);
+      if (heading !== undefined) {
+        return (
+          <Heading className="pt-5 text-[18px] leading-[1.4] font-bold tracking-[-0.02em] break-keep first:pt-0">
+            {heading}
+          </Heading>
+        );
+      }
+      // 모든 줄이 목록 표기면 한 줄씩 세운다(`getEpisodeList`). 판에 담는 건 선택
+      // 상자와 같은 이유다 — 문단 사이에 그냥 두면 짧은 문장 여러 개로 읽힌다.
+      const list = getEpisodeList(block);
+      if (list !== undefined) {
+        return (
+          <ul className="space-y-2 rounded-2xl bg-card px-5 py-4 text-[15px] leading-[1.6] break-keep shadow-soft">
+            {list.map((line, i) => (
+              <li key={i} className="flex gap-2.5">
+                <span aria-hidden className="text-muted-foreground">
+                  ·
+                </span>
+                <span className="min-w-0 text-foreground/85">
+                  {linkNames(line, members, memberHref)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        );
+      }
       return (
         <p className="text-[15px] leading-[1.8] break-keep text-foreground/85 [overflow-wrap:anywhere]">
           {linkNames(block.body ?? "", members, memberHref)}
         </p>
       );
+    }
 
     case "quote":
       return (
