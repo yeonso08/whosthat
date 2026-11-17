@@ -16,9 +16,21 @@ type Props = { children: ReactNode; className?: string };
 export function ListCard({ children, className = "" }: Props) {
   return (
     <div className={`gutter ${className}`}>
-      <div className="divide-y divide-border overflow-hidden rounded-2xl bg-card shadow-soft">
-        {children}
-      </div>
+      <ListPanel>{children}</ListPanel>
+    </div>
+  );
+}
+
+/**
+ * 여백 없는 판만. 홈의 두 단(최근 방송 · 모아 보기)처럼 판을 격자 칸에 넣을 때
+ * 쓴다 — 거기서는 여백을 격자가 한 번만 걸어야 두 판의 끝이 화면 여백선에 선다.
+ */
+export function ListPanel({ children, className = "" }: Props) {
+  return (
+    <div
+      className={`divide-y divide-border overflow-hidden rounded-2xl bg-card shadow-soft ${className}`}
+    >
+      {children}
     </div>
   );
 }

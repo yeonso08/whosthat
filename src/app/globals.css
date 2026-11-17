@@ -11,6 +11,7 @@
   --color-searching: var(--searching);
   --color-verified: var(--verified);
   --color-live: var(--live);
+  --color-couple: var(--couple);
   --font-sans: var(--font-sans);
   --font-lat: var(--font-lat);
   --font-mono: var(--font-mono);
@@ -53,6 +54,11 @@
  * 계정의 핸들, `--live`(빨강)는 방영 중 표시의 점. 그 밖의 자리(강조·CTA·배지)로
  * 번지게 하지 말 것 — 셋째 자리가 생기는 순간 둘 다 신호이길 그만둔다.
  *
+ * **`--couple`(장미색)은 최종 커플 모음에서 두 이름 사이의 하트 하나에만 쓴다**
+ * (2026-11-17). 사용자가 그 화면을 "어둡고 딱딱하지 않게" 해 달라고 해서 들였다 —
+ * `영철♥정숙` 은 이 장르의 글이 커플을 적는 표기 그대로다. 글자·판·테두리로
+ * 번지게 하지 말 것.
+ *
  * **앰버는 확인된 핸들에 쓴다.** 2026-08-31 에 뒤집었다: 그전에는 유일한 유채색이
  * `--searching`("아직 못 찾음")이라 **데이터가 채워질수록 화면에서 색이 사라졌다.**
  * 22기처럼 다 채운 기수는 완전한 무채색이고 33기처럼 빈 기수만 색이 도는, 성취와
@@ -76,6 +82,7 @@
   --searching: #82828d;
   --verified: #92400e;
   --live: #d92c20;
+  --couple: #d6336c;
   --popover: #ffffff;
   --popover-foreground: #101013;
   --primary: #101013;
@@ -124,6 +131,7 @@
   --searching: #7c7c87;
   --verified: #d9a44b;
   --live: #ff4f42;
+  --couple: #ff7aa2;
   --popover: #1d1d23;
   --popover-foreground: #f4f4f6;
   --primary: #f4f4f6;

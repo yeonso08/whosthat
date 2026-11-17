@@ -3,6 +3,7 @@ import { getPrograms, getSeasons } from "@/lib/data";
 import { languageAlternates } from "@/lib/i18n";
 import {
   ABOUT_PATH,
+  COUPLES_PATH,
   FAQ_PATH,
   HOME_PATH,
   localePath,
@@ -60,6 +61,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           priority: season.onAir ? 0.8 : 0.7,
         })),
     ]),
+    // 최종 커플 모음은 기수들의 최종 선택을 모아 보여 주므로, 홈과 같이 그 기수 중
+    // 가장 최근에 바뀐 때가 곧 이 화면이 바뀐 때다.
+    {
+      path: COUPLES_PATH,
+      lastModified: latestUpdate(programs.flatMap((p) => p.seasons)),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    },
     // 소개·FAQ 는 이 사이트가 무엇을 어떻게 하는지 적어 둔 산문이라 색인에
     // 올린다 — 기수 목록보다 낮고 정책 문서보다는 높다.
     ...[ABOUT_PATH, FAQ_PATH].map((path) => ({

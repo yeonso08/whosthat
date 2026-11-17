@@ -11,7 +11,9 @@
   },
   "home": {
     "heading": "Cast Instagram",
-    "programsHeading": "Programs"
+    "programsHeading": "Programs",
+    "collectionsHeading": "Collections",
+    "latestHeading": "Latest episodes"
   },
   "program": {
     "posterAlt": "{program} poster",
@@ -55,6 +57,18 @@
     "noFinalCouple": "No final couples were formed.",
     "pickedNobody": "Chose no one",
     "episodesSource": "Written from the broadcast and news coverage of it."
+  },
+  "couples": {
+    "heading": "Final couples",
+    "navLabel": "Final couples",
+    "metaTitle": "{programs} final couples",
+    "description": "The {couples} couples who chose each other in the final selection of {programs}, grouped by program. Only what aired is recorded.",
+    "lead": "The {couples} couples who chose each other in the final selection, grouped by program.\nThis is what aired. Later news is noted, with dates, in the introduction on each page.",
+    "count": "{count} couples",
+    "countOne": "{count} couple",
+    "programSeparator": ", ",
+    "searchPlaceholder": "Find by season or name",
+    "summary": "{couples} couples from {programs}"
   },
   "status": {
     "none": "No account",

@@ -34,6 +34,7 @@ git push origin --delete <branch> && git branch -d <branch>
 src/app/[lang]/page.tsx              프로그램 목록(홈) — 검색창 + 프로그램 카드. [lang] 이 루트 세그먼트다(전 화면이 그 아래)
 src/app/[lang]/[program]/page.tsx    한 프로그램의 기수 목록 (히어로 + 검색 + 목록)
 src/app/[lang]/[program]/seasons/[id]/page.tsx 기수 상세 (언어 × 프로그램 × 기수로 전부 프리렌더)
+src/app/[lang]/couples/page.tsx      최종 커플 모음 — 프로그램 탭 + 찾기 + 기수별 판 (최종 선택이 방송된 기수만)
 src/app/[lang]/about/page.tsx        사이트 소개 — 무엇을 싣고 계정을 어떻게 확인하는지 (애드센스가 요구한 고유 콘텐츠)
 src/app/[lang]/faq/page.tsx          자주 묻는 질문 — 문답 10개 + FAQPage JSON-LD
 src/app/[lang]/takedown/page.tsx     삭제·정정 요청 창구
