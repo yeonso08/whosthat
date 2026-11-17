@@ -1,5 +1,6 @@
 import Image from "next/image";
-import type { ReactElement } from "react";
+import Link from "next/link";
+import { Fragment, type ReactElement } from "react";
 import { InstagramIcon } from "@/components/icons";
 import {
   currentLocale,
@@ -12,16 +13,17 @@ import {
   type Locale,
 } from "@/lib/i18n";
 import { instagramUrl } from "@/lib/links";
-import type { CastMember } from "@/lib/types";
+import type { CastMember, EarlierAppearance } from "@/lib/types";
 
 /** 카드와 그 안의 상태 줄이 같은 사람을 그리므로 타입을 함께 쓴다. */
 type Props = { member: CastMember };
 
 /**
  * `earlier` 는 같은 사람이 먼저 나온 프로그램 — 이미 그 화면 언어로 만든
- * `나는 솔로 16기 상철` 이다(`getEarlierAppearances`). 없으면 줄이 빠진다.
+ * `나는 솔로 16기 상철` 과 그 카드로 가는 주소다(`getEarlierAppearances`).
+ * 없으면 줄이 빠진다.
  */
-type CardProps = Props & { earlier?: string[] };
+type CardProps = Props & { earlier?: EarlierAppearance[] };
 
 /** 사전을 통째로 받지 않는다 — 이 줄이 읽는 건 `status` 묶음뿐이다. */
 type StatusProps = Props & { status: Dictionary["status"]; locale: Locale };
@@ -35,6 +37,14 @@ const CARD_SIZES =
  * 붙어 있으면 위에 뭐가 더 있는지 안 보여서 목록의 첫 줄처럼 읽힌다.
  */
 const ANCHOR_OFFSET = "scroll-mt-4";
+
+/**
+ * 판 안의 두 겹. 인스타 링크가 판 전체를 덮고(`CARD_LINK_LAYER`), 출신 줄의 링크만
+ * 그 위로 올라온다 — 링크 안에 링크를 넣을 수 없어서 겹으로 가른다. 둘은 짝이라
+ * 위쪽 값이 아래쪽보다 커야 한다.
+ */
+const CARD_LINK_LAYER = "z-10";
+const EARLIER_LINK_LAYER = "z-20";
 
 /**
  * 출연진 한 장.
@@ -109,7 +119,20 @@ export async function CastCard({ member, earlier }: CardProps) {
             둬서 두 줄이 한 덩어리로 안 뭉친다. */}
         {earlier && earlier.length > 0 && (
           <span className="mt-1 text-[12px] leading-[1.45] font-semibold break-keep text-foreground/75">
-            {earlier.join(" · ")}
+            {earlier.map((appearance, index) => (
+              <Fragment key={appearance.href}>
+                {index > 0 && " · "}
+                {/* 밑줄을 평소에도 긋는다 — 판 전체가 인스타로 가는 자리라, 이 줄만
+                    다른 곳으로 간다는 걸 손을 올리기 전에(휴대폰은 아예 못 올린다)
+                    알려야 한다. 위아래로 탭 영역만 넓히고 줄 간격은 그대로 둔다. */}
+                <Link
+                  href={appearance.href}
+                  className={`focus-ring relative ${EARLIER_LINK_LAYER} -my-1 rounded-sm py-1 underline decoration-foreground/30 underline-offset-[3px] transition-colors duration-200 hover:text-foreground hover:decoration-foreground`}
+                >
+                  {appearance.text}
+                </Link>
+              </Fragment>
+            ))}
           </span>
         )}
         {/* 직업은 방송 자막 그대로라 길다("P회사 기술연구원 수석연구원"). 한 줄로
@@ -152,16 +175,23 @@ export async function CastCard({ member, earlier }: CardProps) {
     );
   }
 
+  // 판은 링크가 아니라 상자고, 인스타 링크가 그 위를 통째로 덮는다. 판 자체를
+  // `<a>` 로 두면 출신 줄의 링크가 링크 안의 링크가 된다(HTML 이 금지한다).
+  // 포커스 테두리는 판이 대신 그린다 — 덮개에 그리면 `overflow-hidden` 에 잘린다.
   return (
-    <a
-      id={member.id}
-      href={instagramUrl(handle)}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`focus-ring lift ${shell}`}
-    >
+    <div id={member.id} className={`focus-ring-cover lift ${shell}`}>
       {body}
-    </a>
+      <a
+        href={instagramUrl(handle)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`absolute inset-0 ${CARD_LINK_LAYER} outline-none`}
+      >
+        <span className="sr-only">
+          {alias} @{handle}
+        </span>
+      </a>
+    </div>
   );
 }
 

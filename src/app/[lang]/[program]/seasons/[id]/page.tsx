@@ -12,8 +12,10 @@ import {
 } from "@/components/page-heading";
 import { PreviousSeasonLink } from "@/components/previous-season-link";
 import { SeasonEpisodes } from "@/components/season-episodes";
+import { SeasonPager } from "@/components/season-pager";
 import { WithBanner } from "@/components/with-banner";
 import {
+  getAdjacentSeasons,
   getEarlierAppearances,
   getPreviousSeason,
   getProgram,
@@ -126,12 +128,20 @@ export default async function Page({
 
   // 방영 중인 기수만 앞 기수로 잇는다 — 사람들이 몰려오는데 계정이 잠겨 있는
   // 자리다. 앞 기수도 확인한 계정이 없으면 이어 줘 봐야 같은 빈 화면이다.
-  const airingEmpty = season.onAir && coverage.found === 0;  const candidate = season.onAir ? getPreviousSeason(program, season) : undefined;
+  const airingEmpty = season.onAir && coverage.found === 0;
+  const candidate = season.onAir ? getPreviousSeason(program, season) : undefined;
   const previous =
     candidate && getCoverage(candidate.cast).found > 0 ? candidate : undefined;
+  // 앞 기수 판을 따로 세우는 화면에서는 바로 위에서 같은 기수를 또 가리키지 않는다.
+  const adjacent = getAdjacentSeasons(program, season);
+  const pager = previous ? { next: adjacent.next } : adjacent;
 
   const below = (
     <>
+      {/* 옆 기수는 격자 바로 아래다 — 인스타만 찾고 나가는 사람에게도 보여야 한다.
+          맨 아래에 두면 회차별 정리를 끝까지 읽은 사람만 본다. */}
+      <SeasonPager previous={pager.previous} next={pager.next} />
+
       {/* 격자 아래다 — 위에 두면 이 기수의 명단을 밀어 내린다. 명단을 훑고 계정이
           없다는 걸 확인한 다음 자리가 "그럼 어디로" 다. 제목은 프로그램 화면의
           목록과 같은 말(`지난 기수`·`지난 시즌`)이다. */}
