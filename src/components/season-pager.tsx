@@ -9,11 +9,11 @@ type Props = { previous?: Season; next?: Season };
 type SideProps = { season: Season; direction: "previous" | "next" };
 
 /**
- * 기수 상세 맨 아래의 이전·다음 기수.
+ * 기수 상세의 출연진 격자 바로 아래에 서는 이전·다음 기수.
  *
  * 카드의 링크는 전부 인스타로 나가고, 이게 없던 동안 사이트 안으로 가는 길은
- * 제목 옆 뒤로가기 하나였다 — 기수 화면이 통째로 막다른 길이었다. 회차별 정리를
- * 끝까지 읽은 사람이 다음으로 갈 곳이 옆 기수다.
+ * 제목 옆 뒤로가기 하나였다 — 기수 화면이 통째로 막다른 길이었다. 명단을 훑은
+ * 사람이 다음으로 갈 곳이 옆 기수다.
  *
  * **이전은 왼쪽, 다음은 오른쪽에 못박는다.** 한쪽만 있을 때(1기·최신 기수)도
  * 자리를 안 당긴다 — 기수를 넘겨 가며 볼 때 같은 버튼이 같은 자리에 있어야 한다.
@@ -26,7 +26,7 @@ export async function SeasonPager({ previous, next }: Props) {
   return (
     <nav
       aria-label={dict.season.pagerLabel}
-      className="gutter mt-10 grid max-w-[720px] grid-cols-2 gap-3 lg:mt-14"
+      className="gutter mt-6 grid max-w-[720px] grid-cols-2 gap-3 lg:mt-10"
     >
       {previous && <PagerSide season={previous} direction="previous" />}
       {next && <PagerSide season={next} direction="next" />}
