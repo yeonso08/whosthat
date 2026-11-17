@@ -12,10 +12,9 @@ import {
 } from "@/components/page-heading";
 import { PreviousSeasonLink } from "@/components/previous-season-link";
 import { SeasonEpisodes } from "@/components/season-episodes";
-import { SeasonPager } from "@/components/season-pager";
+import { SeasonRail } from "@/components/season-rail";
 import { WithBanner } from "@/components/with-banner";
 import {
-  getAdjacentSeasons,
   getEarlierAppearances,
   getPreviousSeason,
   getProgram,
@@ -132,22 +131,36 @@ export default async function Page({
   const candidate = season.onAir ? getPreviousSeason(program, season) : undefined;
   const previous =
     candidate && getCoverage(candidate.cast).found > 0 ? candidate : undefined;
-  // 앞 기수 판을 따로 세우는 화면에서는 바로 위에서 같은 기수를 또 가리키지 않는다.
-  const adjacent = getAdjacentSeasons(program, season);
-  const pager = previous ? { next: adjacent.next } : adjacent;
+  // 기수 띠 — 명단이 빈 기수는 뺀다. 거기로 보내면 "명단 정리 중" 한 문장뿐인
+  // 화면이라, 막다른 길을 없애려던 링크가 다른 막다른 길로 간다.
+  const strings = programStrings(programId, lang);
+  const rail = getSeasons(program)
+    .filter((s) => isIndexable(s) || s.id === season.id)
+    .map((s) => ({
+      href: seasonHref(lang, programId, s.id),
+      label: localizeSeason(s, lang).label,
+      current: s.id === season.id,
+      onAir: Boolean(s.onAir),
+    }));
 
   const below = (
     <>
-      {/* 옆 기수는 격자 바로 아래다 — 인스타만 찾고 나가는 사람에게도 보여야 한다.
-          맨 아래에 두면 회차별 정리를 끝까지 읽은 사람만 본다. */}
-      <SeasonPager previous={pager.previous} next={pager.next} />
+      {/* 기수 띠는 격자 바로 아래다 — 인스타만 찾고 나가는 사람에게도 보여야 한다.
+          맨 아래에 두면 회차별 정리를 끝까지 읽은 사람만 본다. 기수가 하나뿐인
+          프로그램은 갈 곳이 없어서 띠를 안 세운다. */}
+      {rail.length > 1 && (
+        <section className="-mt-2 lg:mt-2">
+          <GroupHeading>{strings.heading}</GroupHeading>
+          <SeasonRail items={rail} label={strings.heading} />
+        </section>
+      )}
 
       {/* 격자 아래다 — 위에 두면 이 기수의 명단을 밀어 내린다. 명단을 훑고 계정이
           없다는 걸 확인한 다음 자리가 "그럼 어디로" 다. 제목은 프로그램 화면의
           목록과 같은 말(`지난 기수`·`지난 시즌`)이다. */}
       {previous && (
         <section className="mt-2 lg:mt-6">
-          <GroupHeading>{programStrings(programId, lang).pastSeasons}</GroupHeading>
+          <GroupHeading>{strings.pastSeasons}</GroupHeading>
           <div className="gutter max-w-[560px]">
             <PreviousSeasonLink season={previous} />
           </div>
