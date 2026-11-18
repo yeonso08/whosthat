@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BackLink } from "@/components/back-link";
-import { CoupleBrowser } from "@/components/couple-browser";
+import { CollectionBrowser } from "@/components/collection-browser";
 import { CoupleCard } from "@/components/couple-card";
 import { JsonLd } from "@/components/json-ld";
 import { PageTitle } from "@/components/page-heading";
@@ -135,7 +135,7 @@ export default async function Page({ params }: PageProps<"/[lang]/couples">) {
         </p>
       </header>
 
-      <CoupleBrowser
+      <CollectionBrowser
         groups={groups.map((group) => ({
           id: group.program.id,
           name: localizeProgramShortName(group.program.id, lang),

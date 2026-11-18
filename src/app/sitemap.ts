@@ -4,6 +4,7 @@ import { languageAlternates } from "@/lib/i18n";
 import {
   ABOUT_PATH,
   COUPLES_PATH,
+  EPISODES_PATH,
   episodePath,
   FAQ_PATH,
   HOME_PATH,
@@ -112,6 +113,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ),
   );
 
+  // 회차별 정리 모음도 한국어 화면뿐이라 한 줄이다. 회차가 붙을 때마다 바뀐다.
+  const episodeSeasons = programs.flatMap((p) =>
+    p.seasons.filter((season) => (season.episodes?.length ?? 0) > 0),
+  );
+  const episodesIndex: MetadataRoute.Sitemap =
+    episodeSeasons.length > 0
+      ? [
+          {
+            url: absoluteUrl(localePath(DEFAULT_LOCALE, EPISODES_PATH)),
+            lastModified: latestUpdate(episodeSeasons),
+            changeFrequency: "weekly",
+            priority: 0.6,
+          },
+        ]
+      : [];
+
   return [
     ...pages.flatMap(({ path, ...meta }) =>
       LOCALES.map((locale) => ({
@@ -120,6 +137,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         alternates: { languages: absolute(languageAlternates(path)) },
       })),
     ),
+    ...episodesIndex,
     ...episodes,
   ];
 }

@@ -28,7 +28,7 @@ type Props = {
 };
 
 /**
- * 최종 커플 모음의 프로그램 탭 + 찾기.
+ * 모음 화면(최종 커플·회차별 정리)의 프로그램 탭 + 찾기.
  *
  * 처음엔 프로그램을 위아래로 쭉 이어 붙였는데, 그러면 둘째 프로그램은 첫째의 기수를
  * 다 지나야 나오고 기수가 늘수록 더 멀어진다. **프로그램은 탭으로 가르고, 그 안에서는
@@ -41,7 +41,7 @@ type Props = {
  * 안 보이는 탭도 지우지 않고 둔다(`keepMounted`) — 크롤러가 받는 HTML 에 모든
  * 프로그램의 커플이 들어 있어야 한다.
  */
-export function CoupleBrowser({ groups, text }: Props) {
+export function CollectionBrowser({ groups, text }: Props) {
   const [picked, setPicked] = useState(groups[0]?.id);
   const [query, setQuery] = useState("");
 

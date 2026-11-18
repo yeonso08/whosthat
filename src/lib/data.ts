@@ -20,6 +20,7 @@ import {
   type LatestEpisode,
   type Program,
   type ProgramCouples,
+  type ProgramEpisodes,
   type SearchIndex,
   type Season,
 } from "./types";
@@ -200,6 +201,21 @@ export async function getProgramCouples(): Promise<ProgramCouples[]> {
       const couples = getFinalCouples(season);
       return couples ? [{ season, couples }] : [];
     });
+    return seasons.length > 0 ? [{ program, seasons }] : [];
+  });
+}
+
+/**
+ * 회차별 정리 모음 화면의 데이터 — 프로그램마다, 회차 글이 있는 기수를 최신부터.
+ *
+ * 홈 "최근 방송" 은 기수마다 마지막 회차 하나뿐이라, 기수가 늘수록 거기 안 서는
+ * 글이 쌓인다. 이 화면이 그 글들로 가는 길이다. 회차 글이 없는 기수·프로그램은 뺀다.
+ */
+export async function getProgramEpisodes(): Promise<ProgramEpisodes[]> {
+  return (await getPrograms()).flatMap((program) => {
+    const seasons = getSeasons(program).filter(
+      (season) => (season.episodes?.length ?? 0) > 0,
+    );
     return seasons.length > 0 ? [{ program, seasons }] : [];
   });
 }
