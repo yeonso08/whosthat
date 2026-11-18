@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
-import { getPrograms, getSeasons } from "@/lib/data";
+import { getPrograms, getSeasons, getSolonaraSeasons } from "@/lib/data";
 import { languageAlternates } from "@/lib/i18n";
 import {
   ABOUT_PATH,
   COUPLES_PATH,
   EPISODES_PATH,
+  SOLONARA_PATH,
   episodePath,
   FAQ_PATH,
   HOME_PATH,
@@ -129,6 +130,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ]
       : [];
 
+  // 숙소와 게임도 한국어 화면뿐이라 한 줄이다. 나는 솔로 기수의 수정 시각을 따른다.
+  const solonara = await getSolonaraSeasons();
+  const solonaraIndex: MetadataRoute.Sitemap =
+    solonara.length > 0
+      ? [
+          {
+            url: absoluteUrl(localePath(DEFAULT_LOCALE, SOLONARA_PATH)),
+            lastModified: latestUpdate(solonara.map(({ season }) => season)),
+            changeFrequency: "monthly",
+            priority: 0.6,
+          },
+        ]
+      : [];
+
   return [
     ...pages.flatMap(({ path, ...meta }) =>
       LOCALES.map((locale) => ({
@@ -138,6 +153,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })),
     ),
     ...episodesIndex,
+    ...solonaraIndex,
     ...episodes,
   ];
 }

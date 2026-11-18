@@ -93,6 +93,33 @@
     "more": "Show {count} more",
     "less": "Show less"
   },
+  "solonara": {
+    "heading": "Stays and games",
+    "navLabel": "Stays and games by season",
+    "metaTitle": "I Am SOLO stays and games by season",
+    "description": "Where each season of I Am SOLO stayed, and how first impressions, dates and super date tickets were decided, for {count} seasons.",
+    "lead": "Where {count} seasons of I Am SOLO stayed, and how first impressions and dates were decided.",
+    "count": "{count} seasons",
+    "searchPlaceholder": "Search by season, stay or game",
+    "summary": "Stays, picks and games for {count} seasons of I Am SOLO",
+    "stay": "Stay",
+    "stayUnknown": "Sources disagree on the name of this stay.",
+    "noItems": "Picks and games for this season are not listed yet.",
+    "kinds": {
+      "firstImpression": "First impressions",
+      "dateChoice": "Date picks",
+      "random": "Random dates",
+      "superDate": "Super date games"
+    },
+    "all": "All",
+    "who": {
+      "male": "Men pick",
+      "female": "Women pick"
+    },
+    "scene": "On the show",
+    "more": "Show {count} more",
+    "less": "Show less"
+  },
   "status": {
     "none": "No account",
     "searching": "Searching",

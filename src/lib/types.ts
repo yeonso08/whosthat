@@ -455,3 +455,39 @@ export function getAirPeriod(season: Season): AirPeriod | undefined {
   if (!first || !last) return undefined;
   return { first: first.airDate, last: last.airDate, episodes: season.episodes.length };
 }
+
+/**
+ * 솔로나라 기록(숙소와 게임)의 한 줄이 무엇을 정하는 장면인지. 판 안에서 이 순서로
+ * 묶어 보인다 — 방송에서 나오는 순서(첫인상 → 데이트 → 랜덤 → 슈퍼 데이트권)다.
+ */
+export const SOLONARA_ITEM_KINDS = [
+  "firstImpression",
+  "dateChoice",
+  "random",
+  "superDate",
+] as const;
+export type SolonaraItemKind = (typeof SOLONARA_ITEM_KINDS)[number];
+
+/**
+ * 게임·방식 하나 — 이름, 따라 할 수 있게 적은 진행 방법, 방송에서 어떻게 됐는지(있으면).
+ * `date` 는 그 장면이 나온 방송일로, 출처를 되짚을 때 쓴다(화면에는 안 나온다).
+ */
+export type SolonaraItem = {
+  kind: SolonaraItemKind;
+  /** 누가 고르는 판인지 — 첫인상·데이트 선택에만 있다. 랜덤·게임은 다 같이 한다. */
+  who?: "male" | "female";
+  name: string;
+  how: string;
+  scene?: string;
+  date: string;
+};
+
+/**
+ * 한 기수의 숙소와 방식들. `stay` 가 없으면 출처가 엇갈려 이름을 못 정한 기수고,
+ * `address` 가 없으면 이름만 알려진 곳이다.
+ */
+export type SolonaraSeason = {
+  season: Season;
+  stay: { name: string; address: string | null } | null;
+  items: SolonaraItem[];
+};
