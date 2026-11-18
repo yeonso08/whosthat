@@ -13,7 +13,8 @@
     "heading": "出演者インスタ",
     "programsHeading": "番組",
     "collectionsHeading": "まとめ",
-    "latestHeading": "最近の放送"
+    "latestHeading": "最近の放送",
+    "latestAll": "すべて見る"
   },
   "program": {
     "posterAlt": "{program} のポスター",
@@ -77,6 +78,20 @@
     "programSeparator": "・",
     "searchPlaceholder": "シーズンや名前で探す",
     "summary": "{programs} {couples}組"
+  },
+  "episodes": {
+    "heading": "放送回まとめ",
+    "navLabel": "放送回まとめ",
+    "metaTitle": "{programs} 放送回まとめ",
+    "description": "{programs}の放送を回ごとにまとめた記事{count}本を番組・シーズン別に集めました。",
+    "lead": "放送日ごとにまとめた記事{count}本を番組・シーズン別に集めました。\n放送と放送を扱った記事をもとにまとめています。",
+    "count": "{count}本",
+    "countOne": "{count}本",
+    "programSeparator": "・",
+    "searchPlaceholder": "シーズンや名前で探す",
+    "summary": "{programs} {count}本",
+    "more": "残り{count}本を見る",
+    "less": "閉じる"
   },
   "status": {
     "none": "アカウントなし",

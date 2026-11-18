@@ -36,6 +36,7 @@ src/app/[lang]/[program]/page.tsx    한 프로그램의 기수 목록 (히어�
 src/app/[lang]/[program]/seasons/[id]/page.tsx 기수 상세 (언어 × 프로그램 × 기수로 전부 프리렌더)
 src/app/[lang]/[program]/seasons/[id]/episodes/[date]/page.tsx 회차 글 한 편 — 한국어 화면만, 주소 끝이 방송일. 얇은 글은 noindex
 src/app/[lang]/couples/page.tsx      최종 커플 모음 — 프로그램 탭 + 찾기 + 기수별 판 (최종 선택이 방송된 기수만)
+src/app/[lang]/episodes/page.tsx     회차별 정리 모음 — 프로그램 탭 + 찾기 + 기수별 판(최신 회차 넷, 나머지는 접힘). 한국어 화면만
 src/app/[lang]/about/page.tsx        사이트 소개 — 무엇을 싣고 계정을 어떻게 확인하는지 (애드센스가 요구한 고유 콘텐츠)
 src/app/[lang]/faq/page.tsx          자주 묻는 질문 — 문답 10개 + FAQPage JSON-LD
 src/app/[lang]/takedown/page.tsx     삭제·정정 요청 창구
@@ -62,7 +63,7 @@ src/data/singles-inferno.json              솔로지옥 시즌 1~5 골격 — �
 src/components/ads.tsx               AutoAds — 애드센스 스니펫. 레이아웃이 아니라 페이지가 건다(위 "광고" 절)
 src/components/with-banner.tsx       모비온 배너 자리 — 데스크톱 본문 옆 세로 칸 + 휴대폰 본문 아래. 홈·프로그램·기수 상세가 감싼다
 src/components/mobon-banner.tsx      모비온 지면 코드와 스니펫 실행 — 기기를 보고 웹·모바일 지면 중 하나만 건다
-src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-row, season-feature, season-search, couple-card, couple-browser, collection-link, episode-row, list-card, live-row, live-dot, previous-season-link, site-footer, site-nav, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
+src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-row, season-feature, season-search, couple-card, collection-browser, collection-link, episode-row, episode-season-card, fold-list, list-card, live-row, live-dot, previous-season-link, site-footer, site-nav, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
 public/<키>.txt · scripts/indexnow.mjs  IndexNow 키 파일과 알림 스크립트 — 매시간 .github/workflows/indexnow.yml 이 돌린다(아래 "검색 노출" 절)
@@ -278,8 +279,9 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - 폰트는 세 역할이다: 한글 `Gothic A1`(`--font-sans`), 라틴·숫자 `Manrope`(`--font-lat`), **인스타 핸들 `IBM Plex Mono`(`--font-mono`)**. 핸들만 고정폭인 건 그게 **문장이 아니라 식별자**이기 때문이다 — 방문자가 이 사이트에서 실제로 가져가는 유일한 값이고 한 글자만 달라도 다른 사람이 된다. 날짜·개수는 계속 `font-lat` 이다.
 - **카드 이름 아래 출신 줄**(2026-11-13) — 같은 사람(`personId`)이 **먼저 방송된** 출연을 `나는 솔로 16기 상철` 처럼 적는다(`getEarlierAppearances`). 실명으로 나오는 계약결혼에서 "이 사람이 그 16기 상철" 이 이름 다음으로 궁금한 값이라 직업보다 진하게 둔다. 이름이 이미 출신을 말하면(나솔사계 `16기 상철` 카드) 같은 말이 두 번이라 빼고, 나중 출연(16기 상철 카드에 계약결혼)은 근황이라 안 적는다. 검색도 같은 사람의 다른 출연 이름으로 걸린다(`otherNamesByPerson`).
 - **출신 줄은 그 기수의 그 사람 카드로 가는 링크다**(2026-11-17). 그래서 **출연진 카드는 `<a>` 가 아니라 상자고, 인스타 링크가 그 위를 통째로 덮는다**(`CARD_LINK_LAYER`) — 판 자체를 링크로 되돌리면 출신 줄이 링크 안의 링크가 된다. 출신 줄 링크만 덮개 위로 올라온다(`EARLIER_LINK_LAYER`). 포커스 테두리는 판이 그린다(`focus-ring-cover`) — 판이 `overflow-hidden` 이라 덮개에 그리면 잘린다.
-- **홈의 진열대 아래는 두 단이다**(2026-11-17) — 왼쪽 "최근 방송"(기수마다 마지막 회차 하나씩, 방송일이 늦은 순 셋, `EpisodeRow` — 그 회차의 글 페이지로 간다), 오른쪽 "모아 보기"(프로그램을 가로질러 모은 화면들, `CollectionLink`). 폭은 포스터 네 장 줄과 같다. **모음 화면의 진입점을 판 하나짜리 타일로 세우지 말 것** — 포스터 줄 아래에 혼자 서면 어떤 모양이든 얹어 놓은 것처럼 보여 두 번 반려됐다. 상단 바에 건 것도 반려됐다. 새 모음 화면(방송 뒤 소식 등)은 "모아 보기" 판에 줄로 더한다. 회차별 정리가 한국어 화면에만 있어서 다른 언어 홈에는 모아 보기 한 단만 가운데에 선다.
-- **최종 커플 모음(`/couples`)** — 프로그램은 탭으로 가르고 그 안에서 기수 번호·이름으로 찾는다(`CoupleBrowser`). 위아래로 이어 붙였을 때는 둘째 프로그램이 첫째의 기수를 다 지나야 나왔다. 판 안의 커플은 옆으로 흘린다 — 한 줄씩 쌓으면 판 키가 세 배까지 달라 격자가 들쭉날쭉했다. 최종 선택 기록이 없는 기수(방영 중)는 뺀다: 커플이 없다는 것과 아직 모른다는 것은 다른 말이다. 안 보이는 탭도 HTML 에는 남긴다(`keepMounted`).
+- **홈의 진열대 아래는 두 단이다**(2026-11-17) — 왼쪽 "최근 방송"(기수마다 마지막 회차 하나씩, 방송일이 늦은 순 셋, `EpisodeRow` — 그 회차의 글 페이지로 간다), 오른쪽 "모아 보기"(프로그램을 가로질러 모은 화면들, `CollectionLink`). 폭은 포스터 네 장 줄과 같다. **모음 화면의 진입점을 판 하나짜리 타일로 세우지 말 것** — 포스터 줄 아래에 혼자 서면 어떤 모양이든 얹어 놓은 것처럼 보여 두 번 반려됐다. 상단 바에 건 것도 반려됐다. 새 모음 화면(방송 뒤 소식 등)은 "모아 보기" 판에 줄로 더한다. **두 단은 3:2 다**(2026-11-18, 사용자 요청 — "차지하는 영역이 너무 작다" — 그전엔 오른쪽이 320px 고정이었다). 폭만 넓혔다: 판을 옆 판 바닥까지 늘리고 줄의 아이콘·글자를 키운 안은 같은 날 "디자인은 아까처럼" 으로 반려됐다. 모음 화면으로 가는 링크는 푸터에 두지 않는다 — 이 판이 진다. 회차별 정리가 한국어 화면에만 있어서 다른 언어 홈에는 모아 보기 한 단만 가운데에 선다.
+- **최종 커플 모음(`/couples`)** — 프로그램은 탭으로 가르고 그 안에서 기수 번호·이름으로 찾는다(`CollectionBrowser`). 위아래로 이어 붙였을 때는 둘째 프로그램이 첫째의 기수를 다 지나야 나왔다. 판 안의 커플은 옆으로 흘린다 — 한 줄씩 쌓으면 판 키가 세 배까지 달라 격자가 들쭉날쭉했다. 최종 선택 기록이 없는 기수(방영 중)는 뺀다: 커플이 없다는 것과 아직 모른다는 것은 다른 말이다. 안 보이는 탭도 HTML 에는 남긴다(`keepMounted`).
+- **회차별 정리 모음(`/ko/episodes`)** 은 최종 커플 모음과 같은 틀이다(`CollectionBrowser` + 기수 판 `EpisodeSeasonCard`, 2026-11-18). 홈 "최근 방송" 이 기수마다 마지막 한 편뿐이라 기수가 늘수록 거기 안 서는 글이 쌓여서 만들었다 — 홈 "모아 보기" 판의 줄과 "최근 방송" 제목 줄 끝의 `전체 보기` 가 이리로 온다. 판 머리(기수·편 수)는 링크가 아니다 — 커플 판처럼 기수 화면으로 보냈더니 `9편 ›` 를 "다 보기" 로 읽고 눌러 인스타 화면이 열렸다. 판에는 최신 네 편만 펼치고 나머지는 접는다(`FoldList` — 펼치면 판 키가 다섯 배씩 달라진다). 접어도 HTML 에 남아 크롤러가 모든 글 링크를 받는다. **`<details>` 로 되돌리지 말 것** — 여는 줄이 목록 한가운데 남고 펼친 줄이 위 목록과 끊겨 반려됐다. 지금은 한 목록이 그대로 길어지고 버튼은 판 맨 아래, 판 폭을 채운 둥근 버튼이다(`접기`). 판 끝까지 번지는 띠로 짰다가 버튼이 글자 폭만 잡혀 왼쪽 끝에 붙었다 — `<button>` 은 블록 안에서 저절로 늘지 않으니 `w-full` 을 뺄 때 조심할 것. 판은 `h-full` 을 안 건다 — 한 판을 펼치면 같은 줄의 판까지 늘어났다. 한국어 화면만 있고 hreflang 이 없다(글 페이지와 같은 이유).
 - **기수 상세에 옆 기수로 가는 자리를 두지 않는다**(2026-11-17, 사용자 결정). 격자 아래에 `이전`·`다음` 두 판을 내보냈다가 같은 날 뺐다 — 두 판, 전 기수 칩 띠, 카드 진열대 셋 다 화면과 안 어울렸고, 있다고 방문자가 늘 것 같지 않다는 판단이다. 다시 올리지 말 것.
 - **출연진 카드는 사진 유무로 구성이 갈리지 않는다.** 사진이 있든 없든 글자 블록이 같은 자리에 같은 모양으로 앉고, 사진은 뒤에 깔릴 뿐이다. 예전에는 사진이 없으면 그 자리를 흐린 가명이 채우고 아래에 같은 가명이 또 나와서 **한 카드에 같은 이름이 두 번** 찍혔다 — 사진이 0장인 동안 격자 전체가 그 그림이었다. `CastAvatar` 는 작은 원(히어로·목록 줄) 전용이고 카드에는 안 쓴다.
 - 모서리 반경 12~16px, 전환 180~220ms.
