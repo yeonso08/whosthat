@@ -18,16 +18,16 @@ export function CollectionLink({ href, title, summary, icon }: Props) {
   return (
     <Link
       href={href}
-      className="press focus-ring group flex items-center gap-4 px-6 py-5 hover:bg-elevated/40"
+      className="press focus-ring group flex items-center gap-3.5 px-5 py-4.5 hover:bg-elevated/40"
     >
-      <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-elevated [&_svg]:size-5.5">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-elevated">
         {icon}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[17px] leading-[1.35] font-bold tracking-[-0.02em] break-keep">
+        <span className="block text-[15px] leading-[1.35] font-bold tracking-[-0.02em] break-keep">
           {title}
         </span>
-        <span className="mt-1 block text-[13px] leading-[1.5] break-keep text-muted-foreground">
+        <span className="mt-0.5 block text-[12px] leading-[1.5] break-keep text-muted-foreground">
           {summary}
         </span>
       </span>

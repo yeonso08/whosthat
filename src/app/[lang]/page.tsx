@@ -188,11 +188,9 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
                 )}
 
                 {(couples > 0 || episodes > 0) && (
-                  // 판이 옆 "최근 방송" 판의 바닥까지 내려온다 — 줄이 둘뿐이라 제 키로
-                  // 두면 옆 판의 절반에서 끝나 덧붙인 칸처럼 보였다. 줄이 나눠서 채운다.
-                  <section className="flex flex-col">
+                  <section>
                     <DigestHeading>{dict.home.collectionsHeading}</DigestHeading>
-                    <ListPanel className="flex flex-1 flex-col *:flex-1">
+                    <ListPanel>
                       {episodes > 0 && (
                         <CollectionLink
                           href={episodesHref(lang)}
