@@ -12,6 +12,11 @@
   --color-verified: var(--verified);
   --color-live: var(--live);
   --color-couple: var(--couple);
+  --color-he: var(--he);
+  --color-he-soft: var(--he-soft);
+  --color-she: var(--she);
+  --color-she-soft: var(--she-soft);
+  --color-pop: var(--pop);
   --font-sans: var(--font-sans);
   --font-lat: var(--font-lat);
   --font-mono: var(--font-mono);
@@ -83,6 +88,16 @@
   --verified: #92400e;
   --live: #d92c20;
   --couple: #d6336c;
+  /*
+   * 회차 글 전용(2026-11-18, 사용자 요청 — "흰색 회색 검은색 끝" 이라 커뮤니티
+   * 글처럼). 솔로남 파랑·솔로녀 분홍은 이 장르가 늘 쓰는 짝이고, `--pop` 은
+   * 소제목에 긋는 형광펜이다. 회차 글 밖으로 번지게 하지 말 것.
+   */
+  --he: #2f62e8;
+  --he-soft: #e8efff;
+  --she: #e0397a;
+  --she-soft: #ffe8f1;
+  --pop: #ffe766;
   --popover: #ffffff;
   --popover-foreground: #101013;
   --primary: #101013;
@@ -132,6 +147,11 @@
   --verified: #d9a44b;
   --live: #ff4f42;
   --couple: #ff7aa2;
+  --he: #8fb0ff;
+  --he-soft: #172442;
+  --she: #ff8db6;
+  --she-soft: #3a1726;
+  --pop: #6b5a10;
   --popover: #1d1d23;
   --popover-foreground: #f4f4f6;
   --primary: #f4f4f6;
