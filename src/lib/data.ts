@@ -12,6 +12,7 @@ import {
 } from "./i18n";
 import { castMemberHref } from "./links";
 import { registerProgramStrings } from "./program-strings";
+import solonara from "@/data/solonara.json";
 import { registerTranslations } from "./translations";
 import {
   getCoverage,
@@ -23,6 +24,8 @@ import {
   type ProgramEpisodes,
   type SearchIndex,
   type Season,
+  type SolonaraItem,
+  type SolonaraSeason,
 } from "./types";
 
 /**
@@ -217,6 +220,31 @@ export async function getProgramEpisodes(): Promise<ProgramEpisodes[]> {
       (season) => (season.episodes?.length ?? 0) > 0,
     );
     return seasons.length > 0 ? [{ program, seasons }] : [];
+  });
+}
+
+/**
+ * 솔로나라 기록(기수별 숙소와 게임)의 데이터 — 최신 기수부터.
+ *
+ * **아직 DB 가 아니라 `src/data/solonara.json` 이다**(2026-11-18). 화면 모양이 정해지기
+ * 전이라 관리자·API·표를 같이 만들지 않았다 — 자리 잡으면 기수 소개 문단처럼 표로
+ * 옮긴다. 그때 고칠 곳이 이 함수 하나라서 여기서 읽는다(파일을 읽는 곳도 이 파일
+ * 하나다). 기수 이름·특집은 DB 의 기수에서 가져온다 — JSON 에는 기수 id 만 있다.
+ */
+export async function getSolonaraSeasons(): Promise<SolonaraSeason[]> {
+  const program = await getProgram(solonara.programId);
+  if (!program) return [];
+  const bySeason = new Map(solonara.seasons.map((entry) => [entry.seasonId, entry]));
+  return getSeasons(program).flatMap((season) => {
+    const entry = bySeason.get(season.id);
+    if (!entry) return [];
+    return [
+      {
+        season,
+        stay: entry.stay,
+        items: entry.items as SolonaraItem[],
+      },
+    ];
   });
 }
 

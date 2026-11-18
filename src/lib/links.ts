@@ -23,6 +23,7 @@ export const ABOUT_PATH = "/about";
 export const FAQ_PATH = "/faq";
 export const COUPLES_PATH = "/couples";
 export const EPISODES_PATH = "/episodes";
+export const SOLONARA_PATH = "/solonara";
 export const TAKEDOWN_PATH = "/takedown";
 export const PRIVACY_PATH = "/privacy";
 
@@ -110,6 +111,11 @@ export function couplesHref(locale: Locale): string {
 /** 회차별 정리 모음 — 한국어 화면만 있다. `app/[lang]/episodes` 와 짝이다. */
 export function episodesHref(locale: Locale): string {
   return localePath(locale, EPISODES_PATH);
+}
+
+/** 솔로나라 기록(기수별 숙소와 게임) — 한국어 화면만 있다. `app/[lang]/solonara` 와 짝이다. */
+export function solonaraHref(locale: Locale): string {
+  return localePath(locale, SOLONARA_PATH);
 }
 
 /** 사이트 소개. `app/[lang]/about` 과 짝이다. */

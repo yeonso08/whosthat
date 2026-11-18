@@ -1,4 +1,4 @@
-import { ChevronRight, Heart, NotebookText } from "lucide-react";
+import { ChevronRight, Heart, MapPin, NotebookText } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -19,6 +19,7 @@ import {
   getProgramEpisodes,
   getProgramCouples,
   getPrograms,
+  getSolonaraSeasons,
 } from "@/lib/data";
 import {
   fill,
@@ -26,7 +27,7 @@ import {
   isLocale,
   localizeProgramShortName,
 } from "@/lib/i18n";
-import { couplesHref, episodesHref } from "@/lib/links";
+import { couplesHref, episodesHref, solonaraHref } from "@/lib/links";
 import { websiteSchema } from "@/lib/seo";
 import { countCouples, countEpisodes } from "@/lib/types";
 
@@ -50,13 +51,15 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
   if (!isLocale(lang)) notFound();
 
   const dict = getDictionary(lang);
-  const [programs, airing, coupleGroups, latest, episodeGroups] = await Promise.all([
+  const [programs, airing, coupleGroups, latest, episodeGroups, solonara] = await Promise.all([
     getPrograms(),
     getAiringSeasons(),
     getProgramCouples(),
     // 회차별 정리는 한국어 화면에만 나온다(`seasonEpisodes` 와 같은 이유).
     lang === "ko" ? getLatestEpisodes(LATEST_COUNT) : [],
     lang === "ko" ? getProgramEpisodes() : [],
+    // 숙소와 게임도 한국어 화면만 있다.
+    lang === "ko" ? getSolonaraSeasons() : [],
   ]);
   const couples = countCouples(coupleGroups);
   const episodes = countEpisodes(episodeGroups);
@@ -153,7 +156,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
              * 있어야 한다. 회차별 정리는 한국어 화면에만 있어서, 다른 언어에서는
              * 모아 보기 한 단만 가운데에 선다.
              */}
-            {(latest.length > 0 || couples > 0 || episodes > 0) && (
+            {(latest.length > 0 || couples > 0 || episodes > 0 || solonara.length > 0) && (
               <div
                 className={`gutter mx-auto grid w-full gap-x-6 pt-4 ${
                   latest.length > 0
@@ -187,7 +190,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
                   </section>
                 )}
 
-                {(couples > 0 || episodes > 0) && (
+                {(couples > 0 || episodes > 0 || solonara.length > 0) && (
                   <section>
                     <DigestHeading>{dict.home.collectionsHeading}</DigestHeading>
                     <ListPanel>
@@ -204,6 +207,16 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
                             count: episodes,
                           })}
                           icon={<NotebookText className="size-4.5 text-foreground" />}
+                        />
+                      )}
+                      {solonara.length > 0 && (
+                        <CollectionLink
+                          href={solonaraHref(lang)}
+                          title={dict.solonara.heading}
+                          summary={fill(dict.solonara.summary, {
+                            count: solonara.length,
+                          })}
+                          icon={<MapPin className="size-4.5 text-foreground" />}
                         />
                       )}
                       {couples > 0 && (
