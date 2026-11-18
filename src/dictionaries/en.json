@@ -90,7 +90,8 @@
     "programSeparator": ", ",
     "searchPlaceholder": "Find by season or name",
     "summary": "{count} recaps from {programs}",
-    "more": "{count} more"
+    "more": "Show {count} more",
+    "less": "Show less"
   },
   "status": {
     "none": "No account",

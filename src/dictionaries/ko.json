@@ -90,7 +90,8 @@
     "programSeparator": "·",
     "searchPlaceholder": "기수나 이름으로 찾기",
     "summary": "{programs} {count}편",
-    "more": "나머지 {count}편"
+    "more": "나머지 {count}편 보기",
+    "less": "접기"
   },
   "status": {
     "none": "계정 없음",

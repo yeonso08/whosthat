@@ -90,7 +90,8 @@
     "programSeparator": "・",
     "searchPlaceholder": "シーズンや名前で探す",
     "summary": "{programs} {count}本",
-    "more": "残り{count}本"
+    "more": "残り{count}本を見る",
+    "less": "閉じる"
   },
   "status": {
     "none": "アカウントなし",
