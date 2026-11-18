@@ -9,7 +9,11 @@ import { InstagramIcon } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
 import { ListPanel } from "@/components/list-card";
 import { PageEyebrow, PageTitle } from "@/components/page-heading";
-import { EpisodeBlocks } from "@/components/season-episodes";
+import {
+  EPISODE_LIST_PANEL,
+  EpisodeBlocks,
+  EpisodeHeading,
+} from "@/components/season-episodes";
 import { getProgram, getPrograms, getSeason, getSeasons } from "@/lib/data";
 import {
   fill,
@@ -196,31 +200,33 @@ export default async function Page({
       </section>
 
       {others.length > 0 && (
-        <section className="gutter">
-          <h2 className="pt-9 pb-3.5 text-[15px] font-bold tracking-[-0.02em] lg:text-base">
+        // 본문의 소제목·목록과 같은 모양이다 — 글 안에 손으로 적던 "지난 회차" 를
+        // 이 목록이 대신한다(링크가 있고, 뒤 회차와 옛 기수 글에도 나온다).
+        <section className="gutter mt-12 flex flex-col gap-4">
+          <EpisodeHeading as="h2">
             {fill(dict.episode.othersHeading, { season: label })}
-          </h2>
-          <ListPanel>
+          </EpisodeHeading>
+          <ul className={EPISODE_LIST_PANEL}>
             {others.map((other) => (
-              <Link
-                key={other.id}
-                href={episodeHref(locale, programId, season.id, other.airDate)}
-                className="press focus-ring group flex items-center gap-4 px-5 py-4 hover:bg-elevated/40"
-              >
-                <span className="min-w-0 flex-1">
-                  <span className="font-lat block text-[12px] font-semibold text-muted-foreground">
-                    {fill(dict.season.episodeAired, {
-                      date: formatEpisodeDate(other.airDate, locale),
-                    })}
+              <li key={other.id}>
+                <Link
+                  href={episodeHref(locale, programId, season.id, other.airDate)}
+                  className="focus-ring group flex gap-2.5 py-2.5"
+                >
+                  <span aria-hidden className="text-muted-foreground">
+                    ·
                   </span>
-                  <span className="mt-0.5 block text-[15px] leading-[1.4] font-bold tracking-[-0.02em] break-keep">
-                    {other.title}
+                  <span className="min-w-0 flex-1 text-foreground/85 group-hover:text-foreground">
+                    <span className="text-muted-foreground">
+                      {formatEpisodeDate(other.airDate, locale)}
+                    </span>{" "}
+                    — {other.title}
                   </span>
-                </span>
-                <ChevronRight className="size-4 shrink-0 text-ring transition-transform duration-200 ease-soft group-hover:translate-x-0.5" />
-              </Link>
+                  <ChevronRight className="mt-1 size-4 shrink-0 text-ring transition-transform duration-200 ease-soft group-hover:translate-x-0.5" />
+                </Link>
+              </li>
             ))}
-          </ListPanel>
+          </ul>
         </section>
       )}
     </main>
