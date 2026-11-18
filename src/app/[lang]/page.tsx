@@ -157,7 +157,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
               <div
                 className={`gutter mx-auto grid w-full gap-x-6 pt-4 ${
                   latest.length > 0
-                    ? "max-w-[984px] lg:grid-cols-[minmax(0,1fr)_320px]"
+                    ? "max-w-[984px] lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"
                     : "max-w-[512px]"
                 }`}
               >
@@ -188,9 +188,11 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
                 )}
 
                 {(couples > 0 || episodes > 0) && (
-                  <section>
+                  // 판이 옆 "최근 방송" 판의 바닥까지 내려온다 — 줄이 둘뿐이라 제 키로
+                  // 두면 옆 판의 절반에서 끝나 덧붙인 칸처럼 보였다. 줄이 나눠서 채운다.
+                  <section className="flex flex-col">
                     <DigestHeading>{dict.home.collectionsHeading}</DigestHeading>
-                    <ListPanel>
+                    <ListPanel className="flex flex-1 flex-col *:flex-1">
                       {episodes > 0 && (
                         <CollectionLink
                           href={episodesHref(lang)}
