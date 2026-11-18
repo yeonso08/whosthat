@@ -87,7 +87,7 @@ async function EpisodeLine({ season, episode }: { season: Season; episode: Episo
       href={episodeHref(locale, season.programId, season.id, episode.airDate)}
       className="focus-ring group flex gap-2.5 py-2.5 text-[14.5px] leading-[1.55] break-keep"
     >
-      <span className="font-lat w-[52px] shrink-0 pt-px text-[12.5px] font-semibold text-muted-foreground">
+      <span className="font-lat w-[60px] shrink-0 pt-px whitespace-nowrap text-[12.5px] font-semibold text-muted-foreground">
         {formatEpisodeDate(episode.airDate, locale)}
       </span>
       <span className="min-w-0 flex-1 text-foreground/85 group-hover:text-foreground">

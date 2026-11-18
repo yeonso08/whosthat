@@ -29,9 +29,14 @@ export function FoldList({ items, shown, text }: Props) {
 
   return (
     <>
-      <ul id={id} className="divide-y divide-border">
+      {/* 줄 사이 선은 위쪽 테두리로 긋는다 — `divide-y` 는 숨긴 줄 앞의 줄에도 밑줄을
+          남겨서, 접힌 판의 마지막 줄 아래에 선이 하나 더 생겼다. */}
+      <ul id={id}>
         {items.map((item, i) => (
-          <li key={i} className={!open && i >= shown ? "hidden" : undefined}>
+          <li
+            key={i}
+            className={`border-t border-border first:border-t-0 ${!open && i >= shown ? "hidden" : ""}`}
+          >
             {item}
           </li>
         ))}
@@ -42,7 +47,7 @@ export function FoldList({ items, shown, text }: Props) {
           aria-expanded={open}
           aria-controls={id}
           onClick={() => setOpen((value) => !value)}
-          className="focus-ring -mx-5 -mb-5 flex items-center justify-center gap-1 rounded-b-2xl border-t border-border py-3 text-[13px] font-semibold text-muted-foreground transition-colors duration-200 hover:bg-elevated/40 hover:text-foreground"
+          className="press focus-ring mt-3 flex w-full items-center justify-center gap-1 rounded-xl bg-elevated py-2.5 text-[13px] font-semibold text-muted-foreground transition-colors duration-200 hover:text-foreground"
         >
           {open ? text.less : text.more}
           <ChevronDown
