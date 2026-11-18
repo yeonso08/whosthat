@@ -1,4 +1,3 @@
-import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { FoldList } from "@/components/fold-list";
 import { LiveDot } from "@/components/live-dot";
@@ -9,7 +8,7 @@ import {
   getDictionary,
   localizeSeason,
 } from "@/lib/i18n";
-import { episodeHref, seasonHref } from "@/lib/links";
+import { episodeHref } from "@/lib/links";
 import type { Episode, Season } from "@/lib/types";
 
 type Props = { season: Season };
@@ -24,8 +23,12 @@ const SHOWN_EPISODES = 4;
 /**
  * 회차별 정리 모음의 한 판 — 한 기수와 그 기수의 회차 글(최신부터).
  *
- * 판 머리는 그 기수 화면으로, 줄은 그 회차 글로 간다. 줄 모양은 글 페이지 아래
- * "다른 회차" 와 같다 — 날짜 + 제목 한 줄이다.
+ * 줄은 그 회차 글로 간다. 줄 모양은 글 페이지 아래 "다른 회차" 와 같다 — 날짜 +
+ * 제목 한 줄이다.
+ *
+ * **판 머리는 링크가 아니다**(2026-11-18). 커플 판을 따라 기수 화면으로 보냈더니
+ * `9편 ›` 가 "9편 다 보기" 로 읽혀 눌렀는데 인스타 화면이 열렸다. 회차는 판 안에
+ * 이미 다 있다(`FoldList`).
  */
 export async function EpisodeSeasonCard({ season }: Props) {
   const locale = await currentLocale();
@@ -40,26 +43,22 @@ export async function EpisodeSeasonCard({ season }: Props) {
     // 높이를 줄에 맞추지 않는다(`h-full` 없음) — 한 판을 펼치면 같은 줄의 판까지
     // 늘어나 빈 판이 됐다. 접힌 판은 줄 수가 같아 대부분 키가 같다.
     <article className="flex flex-col rounded-2xl bg-card p-5 shadow-soft">
-      <Link
-        href={seasonHref(locale, season.programId, season.id)}
-        className="focus-ring group -m-1 flex items-start gap-3 rounded-lg p-1"
-      >
-        <span className="min-w-0 flex-1">
+      <div className="flex items-start gap-3">
+        <h3 className="min-w-0 flex-1">
           <span className="flex items-center gap-2 text-[18px] leading-[1.3] font-bold tracking-[-0.02em] break-keep">
             {label}
             {season.onAir && <LiveDot />}
           </span>
           {detail && (
-            <span className="font-lat mt-0.5 block text-[12px] leading-[1.45] break-keep text-muted-foreground">
+            <span className="font-lat mt-0.5 block text-[12px] leading-[1.45] font-normal break-keep text-muted-foreground">
               {detail}
             </span>
           )}
-        </span>
-        <span className="font-lat flex shrink-0 items-center gap-0.5 pt-1 text-[12px] font-semibold text-muted-foreground">
+        </h3>
+        <span className="font-lat shrink-0 pt-1 text-[12px] font-semibold text-muted-foreground">
           {count(episodes.length)}
-          <ChevronRight className="size-4 text-ring transition-transform duration-200 ease-soft group-hover:translate-x-0.5" />
         </span>
-      </Link>
+      </div>
 
       <div className="mt-4 border-t border-border/60">
         <FoldList
