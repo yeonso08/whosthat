@@ -93,6 +93,33 @@
     "more": "残り{count}本を見る",
     "less": "閉じる"
   },
+  "solonara": {
+    "heading": "宿泊先とゲーム",
+    "navLabel": "期別の宿泊先とゲーム",
+    "metaTitle": "I Am SOLO 期別の宿泊先とゲーム",
+    "description": "I Am SOLO {count}期分の宿泊先と、第一印象・デートの選び方、スーパーデート権のゲームを期別にまとめました。",
+    "lead": "I Am SOLO {count}期分の宿泊先と、第一印象・デート相手の決め方をまとめました。",
+    "count": "{count}期",
+    "searchPlaceholder": "期・宿泊先・ゲームで探す",
+    "summary": "I Am SOLO {count}期分の宿泊先・選び方・ゲーム",
+    "stay": "宿泊先",
+    "stayUnknown": "情報源が食い違い、宿泊先の名前を決められていません。",
+    "noItems": "選び方とゲームはまだまとめていません。",
+    "kinds": {
+      "firstImpression": "第一印象の選択",
+      "dateChoice": "デートの選択",
+      "random": "ランダムデート",
+      "superDate": "スーパーデート権のゲーム"
+    },
+    "all": "すべて",
+    "who": {
+      "male": "男性が選ぶ",
+      "female": "女性が選ぶ"
+    },
+    "scene": "放送では",
+    "more": "あと{count}件を見る",
+    "less": "閉じる"
+  },
   "status": {
     "none": "アカウントなし",
     "searching": "調査中",
