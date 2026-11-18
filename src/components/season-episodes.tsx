@@ -241,12 +241,7 @@ function Block({ block, ctx }: { block: EpisodeBlock; ctx: Ctx }): ReactNode {
       // 위 여백을 넓혀 앞 장면과 끊는다 — 소제목이 문단에 붙으면 굵은 문장으로 읽힌다.
       const heading = getEpisodeHeading(block);
       if (heading !== undefined) {
-        const Heading = ctx.headingTag;
-        return (
-          <Heading className="pt-6 text-[19px] leading-[1.4] font-bold tracking-[-0.02em] break-keep first:pt-0">
-            <span className={HIGHLIGHT}>{heading}</span>
-          </Heading>
-        );
+        return <EpisodeHeading as={ctx.headingTag}>{heading}</EpisodeHeading>;
       }
       const list = getEpisodeList(block);
       if (list !== undefined) return <List lines={list} ctx={ctx} />;
@@ -363,15 +358,30 @@ function Bubble({ block, ctx }: { block: EpisodeBlock; ctx: Ctx }) {
 }
 
 /**
+ * 회차 글의 소제목 — 형광펜을 긋는다. 글 페이지 아래 "다른 회차" 도 이걸 써서
+ * 본문의 소제목과 같은 모양으로 선다.
+ */
+export function EpisodeHeading({ as: Heading, children }: { as: "h2" | "h4"; children: ReactNode }) {
+  return (
+    <Heading className="pt-6 text-[19px] leading-[1.4] font-bold tracking-[-0.02em] break-keep first:pt-0">
+      <span className={HIGHLIGHT}>{children}</span>
+    </Heading>
+  );
+}
+
+/** 회차 글의 목록 판 — 본문 목록과 글 페이지 아래 "다른 회차" 가 같은 판을 쓴다. */
+export const EPISODE_LIST_PANEL = "divide-y divide-border rounded-2xl bg-card px-5 py-1.5 text-[15px] leading-[1.6] break-keep shadow-soft";
+
+/**
  * 목록. 줄이 `[영호] → [현숙]·[순자]` 꼴이면 이름 칩을 화살표로 잇는다 — 마음의
  * 방향을 문장으로 읽게 하지 않고 한눈에 보이게. 나머지 줄은 그대로 한 줄씩이다.
  */
 function List({ lines, ctx }: { lines: string[]; ctx: Ctx }) {
   return (
     <ul
-      className={`divide-y divide-border text-[15px] leading-[1.6] break-keep ${
-        ctx.nested ? "" : "rounded-2xl bg-card px-5 py-1.5 shadow-soft"
-      }`}
+      className={
+        ctx.nested ? "divide-y divide-border text-[15px] leading-[1.6] break-keep" : EPISODE_LIST_PANEL
+      }
     >
       {lines.map((line, i) => {
         const relation = parseRelation(line, ctx.byAlias);
