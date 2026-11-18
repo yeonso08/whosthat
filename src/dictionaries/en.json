@@ -55,6 +55,8 @@
     "couplePair": "{a} & {b}",
     "coupleSeparator": ", ",
     "noFinalCouple": "No final couples were formed.",
+    "pickVotes": "{count} picks",
+    "pickedByNobody": "Not picked",
     "pickedNobody": "Chose no one",
     "episodesSource": "Written from the broadcast and news coverage of it."
   },

@@ -55,6 +55,8 @@
     "couplePair": "{a}·{b}",
     "coupleSeparator": ", ",
     "noFinalCouple": "최종 커플은 나오지 않았습니다.",
+    "pickVotes": "{count}표",
+    "pickedByNobody": "선택받지 못함",
     "pickedNobody": "선택 안 함",
     "episodesSource": "방송과 방송을 다룬 기사를 바탕으로 정리했습니다."
   },
