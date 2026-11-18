@@ -55,6 +55,8 @@
     "couplePair": "{a}・{b}",
     "coupleSeparator": "、",
     "noFinalCouple": "最終カップルは誕生しませんでした。",
+    "pickVotes": "{count}票",
+    "pickedByNobody": "選ばれず",
     "pickedNobody": "選ばず",
     "episodesSource": "放送と放送を報じた記事をもとにまとめました。"
   },
