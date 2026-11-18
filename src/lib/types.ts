@@ -415,6 +415,24 @@ export type ProgramCouples = {
   seasons: SeasonCouples[];
 };
 
+/**
+ * 회차별 정리 모음의 한 묶음 — 프로그램 하나와 회차 글이 있는 기수들(최신 기수부터).
+ * 기수의 회차는 `season.episodes` 를 그대로 본다.
+ */
+export type ProgramEpisodes = {
+  program: Program;
+  seasons: Season[];
+};
+
+/** 묶음들의 회차 글 수. 모음 화면의 머리글·탭과 홈의 판이 같은 셈을 쓴다. */
+export function countEpisodes(groups: ProgramEpisodes[]): number {
+  return groups.reduce(
+    (sum, { seasons }) =>
+      sum + seasons.reduce((n, season) => n + (season.episodes?.length ?? 0), 0),
+    0,
+  );
+}
+
 /** 묶음들의 커플 수. 모음 화면의 머리글·탭과 홈의 판이 같은 셈을 쓴다. */
 export function countCouples(groups: ProgramCouples[]): number {
   return groups.reduce(

@@ -1,4 +1,5 @@
-import { Heart } from "lucide-react";
+import { ChevronRight, Heart, NotebookText } from "lucide-react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { AutoAds } from "@/components/ads";
@@ -15,6 +16,7 @@ import {
   buildSearchIndex,
   getAiringSeasons,
   getLatestEpisodes,
+  getProgramEpisodes,
   getProgramCouples,
   getPrograms,
 } from "@/lib/data";
@@ -24,9 +26,9 @@ import {
   isLocale,
   localizeProgramShortName,
 } from "@/lib/i18n";
-import { couplesHref } from "@/lib/links";
+import { couplesHref, episodesHref } from "@/lib/links";
 import { websiteSchema } from "@/lib/seo";
-import { countCouples } from "@/lib/types";
+import { countCouples, countEpisodes } from "@/lib/types";
 
 /** "최근 방송" 에 세우는 회차 수. 방영 중인 프로그램이 셋이라 한 주치가 다 들어간다. */
 const LATEST_COUNT = 3;
@@ -48,14 +50,16 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
   if (!isLocale(lang)) notFound();
 
   const dict = getDictionary(lang);
-  const [programs, airing, coupleGroups, latest] = await Promise.all([
+  const [programs, airing, coupleGroups, latest, episodeGroups] = await Promise.all([
     getPrograms(),
     getAiringSeasons(),
     getProgramCouples(),
     // 회차별 정리는 한국어 화면에만 나온다(`seasonEpisodes` 와 같은 이유).
     lang === "ko" ? getLatestEpisodes(LATEST_COUNT) : [],
+    lang === "ko" ? getProgramEpisodes() : [],
   ]);
   const couples = countCouples(coupleGroups);
+  const episodes = countEpisodes(episodeGroups);
 
   return (
     <main>
@@ -149,7 +153,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
              * 있어야 한다. 회차별 정리는 한국어 화면에만 있어서, 다른 언어에서는
              * 모아 보기 한 단만 가운데에 선다.
              */}
-            {(latest.length > 0 || couples > 0) && (
+            {(latest.length > 0 || couples > 0 || episodes > 0) && (
               <div
                 className={`gutter mx-auto grid w-full gap-x-6 pt-4 ${
                   latest.length > 0
@@ -159,7 +163,18 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
               >
                 {latest.length > 0 && (
                   <section>
-                    <DigestHeading>{dict.home.latestHeading}</DigestHeading>
+                    {/* "최근 방송" 은 기수마다 마지막 한 편뿐이다 — 나머지 글로 가는 길을
+                        제목 줄 끝에 둔다(모아 보기 판의 "회차별 정리" 와 같은 곳으로 간다). */}
+                    <div className="flex items-baseline justify-between gap-4">
+                      <DigestHeading>{dict.home.latestHeading}</DigestHeading>
+                      <Link
+                        href={episodesHref(lang)}
+                        className="focus-ring group flex items-center gap-0.5 rounded-md text-[13px] font-semibold text-muted-foreground hover:text-foreground"
+                      >
+                        {dict.home.latestAll}
+                        <ChevronRight className="size-4 text-ring transition-transform duration-200 ease-soft group-hover:translate-x-0.5" />
+                      </Link>
+                    </div>
                     <ListPanel>
                       {latest.map(({ season, episode }) => (
                         <EpisodeRow
@@ -172,23 +187,40 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
                   </section>
                 )}
 
-                {couples > 0 && (
+                {(couples > 0 || episodes > 0) && (
                   <section>
                     <DigestHeading>{dict.home.collectionsHeading}</DigestHeading>
                     <ListPanel>
-                      <CollectionLink
-                        href={couplesHref(lang)}
-                        title={dict.couples.heading}
-                        summary={fill(dict.couples.summary, {
-                          programs: coupleGroups
-                            .map(({ program }) =>
-                              localizeProgramShortName(program.id, lang),
-                            )
-                            .join(dict.couples.programSeparator),
-                          couples,
-                        })}
-                        icon={<Heart className="size-4.5 fill-couple text-couple" />}
-                      />
+                      {episodes > 0 && (
+                        <CollectionLink
+                          href={episodesHref(lang)}
+                          title={dict.episodes.heading}
+                          summary={fill(dict.episodes.summary, {
+                            programs: episodeGroups
+                              .map(({ program }) =>
+                                localizeProgramShortName(program.id, lang),
+                              )
+                              .join(dict.episodes.programSeparator),
+                            count: episodes,
+                          })}
+                          icon={<NotebookText className="size-4.5 text-foreground" />}
+                        />
+                      )}
+                      {couples > 0 && (
+                        <CollectionLink
+                          href={couplesHref(lang)}
+                          title={dict.couples.heading}
+                          summary={fill(dict.couples.summary, {
+                            programs: coupleGroups
+                              .map(({ program }) =>
+                                localizeProgramShortName(program.id, lang),
+                              )
+                              .join(dict.couples.programSeparator),
+                            couples,
+                          })}
+                          icon={<Heart className="size-4.5 fill-couple text-couple" />}
+                        />
+                      )}
                     </ListPanel>
                   </section>
                 )}

@@ -13,7 +13,8 @@
     "heading": "Cast Instagram",
     "programsHeading": "Programs",
     "collectionsHeading": "Collections",
-    "latestHeading": "Latest episodes"
+    "latestHeading": "Latest episodes",
+    "latestAll": "See all"
   },
   "program": {
     "posterAlt": "{program} poster",
@@ -77,6 +78,19 @@
     "programSeparator": ", ",
     "searchPlaceholder": "Find by season or name",
     "summary": "{couples} couples from {programs}"
+  },
+  "episodes": {
+    "heading": "Episode recaps",
+    "navLabel": "Episode recaps",
+    "metaTitle": "{programs} episode recaps",
+    "description": "{count} recaps of {programs}, one per broadcast, grouped by program and season.",
+    "lead": "{count} recaps, one per broadcast date, grouped by program and season.\nWritten from the broadcasts and articles covering them.",
+    "count": "{count} recaps",
+    "countOne": "{count} recap",
+    "programSeparator": ", ",
+    "searchPlaceholder": "Find by season or name",
+    "summary": "{count} recaps from {programs}",
+    "more": "{count} more"
   },
   "status": {
     "none": "No account",
