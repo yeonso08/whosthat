@@ -28,6 +28,14 @@ import { couplesHref, episodesHref, solonaraHref } from "@/lib/links";
 import { websiteSchema } from "@/lib/seo";
 import { countCouples, countEpisodes } from "@/lib/types";
 
+/**
+ * 홈 목록 판의 다크 모드. 바탕(#0a0a0c)과 판(#141418)의 명도 차가 작고 검은 그림자는
+ * 안 보여서, 다크에서는 판이 바탕에 붙어 화면이 한 장의 검은 면이 됐다(2026-11-19).
+ * 반투명 유리판 + 위쪽 가장자리의 가는 빛으로 띄운다. 라이트는 그대로다.
+ */
+const HOME_PANEL =
+  "dark:bg-white/[0.045] dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.07)] dark:ring-1 dark:ring-white/[0.07] dark:backdrop-blur";
+
 /** "최근 방송" 에 세우는 회차 수. 방영 중인 프로그램이 셋이라 한 주치가 다 들어간다. */
 const LATEST_COUNT = 3;
 
@@ -96,9 +104,12 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
            * 빛과 포스터 판 두 곳에만 쓴다(2026-11-19 홈 재디자인). 가로로 넘치는
            * 빛은 `main` 이 잘라 낸다.
            */}
+          {/* 다크는 빛을 따로 칠한다(2026-11-19) — 다크 팔레트의 `--she`·`--he` 는 글자용
+              파스텔이라 검정 위에 깔면 회보라 얼룩이 됐다. 진한 원색을 `screen` 으로
+              겹쳐 겹친 자리가 밝아지게 한다. */}
           <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-24 -z-10 h-[420px]">
-            <div className="absolute top-0 left-1/2 size-[300px] -translate-x-[88%] rounded-full bg-she opacity-25 blur-[80px] lg:size-[420px] dark:opacity-30" />
-            <div className="absolute top-10 left-1/2 size-[300px] -translate-x-[12%] rounded-full bg-he opacity-25 blur-[80px] lg:size-[420px] dark:opacity-30" />
+            <div className="absolute top-0 left-1/2 size-[300px] -translate-x-[88%] rounded-full bg-she opacity-25 blur-[80px] lg:size-[420px] dark:bg-[#e0397a] dark:opacity-25 dark:mix-blend-screen" />
+            <div className="absolute top-10 left-1/2 size-[300px] -translate-x-[12%] rounded-full bg-he opacity-25 blur-[80px] lg:size-[420px] dark:bg-[#2f62e8] dark:opacity-30 dark:mix-blend-screen" />
           </div>
           {/* `PageTitle` 을 안 쓰는 건 홈만 크기·서체가 달라서다. 제목은 착지한
               사람이 들고 온 질문 그대로다 — 굵은 낱말 하나(`출연진 인스타`)는
@@ -174,7 +185,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
                         <ChevronRight className="size-4 text-ring transition-transform duration-200 ease-soft group-hover:translate-x-0.5" />
                       </Link>
                     </div>
-                    <ListPanel>
+                    <ListPanel className={HOME_PANEL}>
                       {latest.map(({ season, episode }) => (
                         <EpisodeRow
                           key={`${season.programId}-${season.id}`}
@@ -189,7 +200,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
                 {(couples > 0 || episodes > 0 || solonara.length > 0) && (
                   <section>
                     <DigestHeading>{dict.home.collectionsHeading}</DigestHeading>
-                    <ListPanel>
+                    <ListPanel className={HOME_PANEL}>
                       {episodes > 0 && (
                         <CollectionLink
                           href={episodesHref(lang)}
@@ -202,7 +213,8 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
                               .join(dict.episodes.programSeparator),
                             count: episodes,
                           })}
-                          icon={<NotebookText className="size-4.5 text-foreground" />}
+                          icon={<NotebookText className="size-4.5 text-foreground dark:text-[#8fb0ff]" />}
+                          iconClassName="dark:bg-[#2f62e8]/20"
                         />
                       )}
                       {solonara.length > 0 && (
@@ -212,7 +224,8 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
                           summary={fill(dict.solonara.summary, {
                             count: solonara.length,
                           })}
-                          icon={<MapPin className="size-4.5 text-foreground" />}
+                          icon={<MapPin className="size-4.5 text-foreground dark:text-[#c7a8ff]" />}
+                          iconClassName="dark:bg-[#7a4fe0]/25"
                         />
                       )}
                       {couples > 0 && (
@@ -228,6 +241,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
                             couples,
                           })}
                           icon={<Heart className="size-4.5 fill-couple text-couple" />}
+                          iconClassName="dark:bg-[#e0397a]/20"
                         />
                       )}
                     </ListPanel>
