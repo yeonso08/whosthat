@@ -70,8 +70,10 @@ export function SeasonSearch({
 
   // 홈은 좁은 기둥으로 모으고, 프로그램 화면은 그 화면이 이미 폭을 묶고 있어
   // 여기서 또 줄이면 위아래 카드와 오른쪽 끝이 어긋난다.
+  // 홈 다크 모드의 검색창은 유리판이다 — 홈 목록 판(`HOME_PANEL`)과 같은 이유로,
+  // 검은 바탕 위 `bg-card` 는 그림자가 안 보여 바탕에 붙는다.
   const column = hero
-    ? "mx-auto w-full max-w-[600px] lg:h-16"
+    ? "mx-auto w-full max-w-[600px] lg:h-16 dark:bg-white/[0.06] dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.08)] dark:ring-1 dark:ring-white/[0.08] dark:backdrop-blur"
     : "";
   const resultsColumn = hero ? "mx-auto w-full max-w-[640px]" : "";
 
