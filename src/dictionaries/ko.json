@@ -10,7 +10,8 @@
     "language": "언어 선택"
   },
   "home": {
-    "heading": "출연진 인스타",
+    "heading": "방송에서 본 그 사람,\n누군지 궁금할 때",
+    "tagline": "출연진 인스타부터 회차 정리, 최종 커플까지 프로그램·기수별로 모았습니다.",
     "programsHeading": "프로그램",
     "collectionsHeading": "모아 보기",
     "latestHeading": "최근 방송",
@@ -27,6 +28,7 @@
     "airedPeriod": "{first} ~ {last} 방영 · {count}회",
     "airingSince": "{first}부터 방영 중",
     "onAir": "방영 중",
+    "onAirSeason": "{season} 방영 중",
     "coverage": "{found} / {total} 확인",
     "coveragePending": "명단 정리 중",
     "castCount": "{total}명 중 {found}명 계정 확인",
@@ -94,8 +96,8 @@
     "less": "접기"
   },
   "solonara": {
-    "heading": "숙소와 게임",
-    "navLabel": "기수별 숙소와 게임",
+    "heading": "솔로나라 숙소와 게임",
+    "navLabel": "솔로나라 숙소와 게임",
     "metaTitle": "나는 솔로 기수별 숙소와 게임 — 촬영지·첫인상 선택·데이트 선택 방식",
     "description": "나는 솔로 1기부터 {count}기까지 솔로나라 숙소와 주소, 첫인상 선택·데이트 선택·랜덤 데이트 방식, 슈퍼 데이트권 게임을 기수별로 모았습니다.",
     "lead": "나는 솔로 {count}개 기수가 묵은 숙소와, 첫인상·데이트 상대를 정한 방식, 슈퍼 데이트권을 건 게임을 진행 방법과 함께 기수별로 모았습니다.\n방송과 방송을 다룬 기사로 확인한 내용만 적었습니다.",
