@@ -331,6 +331,7 @@ Hobby 한도(Deployment Storage 10GB)를 넘었다 — 10.44GB. 11-11 부터 사
 - **고친 것**: 프로젝트 Settings → Security 맨 아래 **Deployment Retention Policy**(메뉴에 바로 안 보이면 같은 화면의 "Recently Deleted Deployments" 설명에 있는 "defined retention policy" 링크로 간다). Canceled 1일, Errored·Pre-Production·Production 1주. 현재 Production(도메인이 걸린 배포)은 기간과 상관없이 안 지워진다.
 - **이미 쌓인 것을 `vercel rm whosthat --safe` 로 지우지는 않았다.** 정책이 기존 배포에도 적용되고, `--safe` 는 도메인이 걸린 하나만 남겨 롤백 대상까지 지운다. 지운 배포는 30일 동안 휴지통(Recently Deleted)에 남는데 그게 용량에 잡히는지는 확인하지 못했다.
 - 같은 화면에서 CDN Requests 가 865K / 1M 이었다 — 방문자 트래픽이라 배포를 지워도 안 준다.
+- **2026-11-19 확인: 둘 다 내려갔다**(사용자 보고). 보관 기간을 줄인 것만으로 Deployment Storage 가 한도 아래로 돌아왔고, CDN Requests 도 줄었다. 휴지통을 따로 비울 일은 없었다.
 
 ## 17. 네이버 유입 분석 · 기수 검색(AEO) 대응 (2026-11-16)
 

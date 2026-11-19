@@ -217,6 +217,41 @@
   }
 }
 
+/*
+ * 홈에서만 시험하는 서체 — 나눔스퀘어라운드(2026-11-19). Pretendard·SUIT 을
+ * 차례로 걸었다가 "똑같다" 로 반려됐다 — 둘 다 Gothic A1 과 같은 반듯한 고딕이라
+ * 휴대폰 크기에서는 차이가 안 보인다. 갈래를 둥근 고딕으로 바꿨다(사용자 선택).
+ *
+ * 굵기마다 파일이 따로라 화면이 쓰는 굵기만 내려온다(한 벌 약 250KB). 600 은
+ * 이 서체에 없어서 B(700)가 받는다. `font-display: swap` 이라 받기 전에는 원래
+ * 서체로 먼저 그린다. 배포처에 버전 태그가 없어 커밋으로 못박았다. 가나·한자는
+ * 이 서체에 없어 일본어 화면에서는 글자마다 원래 서체로 떨어진다.
+ */
+@font-face {
+  font-family: "NanumSquareRound";
+  font-weight: 100 500;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/innks/NanumSquareRound@1c6bf0ee5e0e17e2552311aac31ba157dcb805e8/NanumSquareRoundR.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "NanumSquareRound";
+  font-weight: 600 700;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/innks/NanumSquareRound@1c6bf0ee5e0e17e2552311aac31ba157dcb805e8/NanumSquareRoundB.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "NanumSquareRound";
+  font-weight: 800 900;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/innks/NanumSquareRound@1c6bf0ee5e0e17e2552311aac31ba157dcb805e8/NanumSquareRoundEB.woff2") format("woff2");
+}
+
+@utility font-home {
+  font-family: "NanumSquareRound", var(--font-sans), sans-serif;
+}
+
 @utility focus-ring {
   &:focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;

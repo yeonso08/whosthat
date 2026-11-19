@@ -10,7 +10,8 @@
     "language": "言語を選ぶ"
   },
   "home": {
-    "heading": "出演者インスタ",
+    "heading": "番組で見たあの人の\nインスタを探す",
+    "tagline": "韓国バラエティ出演者の確認済みアカウントを、番組・シーズン別にまとめています。",
     "programsHeading": "番組",
     "collectionsHeading": "まとめ",
     "latestHeading": "最近の放送",
@@ -27,6 +28,7 @@
     "airedPeriod": "{first}〜{last} 放送 · 全{count}回",
     "airingSince": "{first}から放送中",
     "onAir": "放送中",
+    "onAirSeason": "{season} 放送中",
     "coverage": "{found} / {total} 確認",
     "coveragePending": "出演者リスト整理中",
     "castCount": "{total}人中 {found}人のアカウントを確認",

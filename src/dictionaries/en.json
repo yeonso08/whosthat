@@ -10,7 +10,8 @@
     "language": "Choose a language"
   },
   "home": {
-    "heading": "Cast Instagram",
+    "heading": "Saw them on the show?\nFind their Instagram.",
+    "tagline": "Verified Instagram accounts of Korean reality show casts, sorted by show and season.",
     "programsHeading": "Programs",
     "collectionsHeading": "Collections",
     "latestHeading": "Latest episodes",
@@ -27,6 +28,7 @@
     "airedPeriod": "Aired {first} – {last} · {count} episodes",
     "airingSince": "Airing since {first}",
     "onAir": "On air",
+    "onAirSeason": "{season} on air",
     "coverage": "{found} / {total} found",
     "coveragePending": "Cast list pending",
     "castCount": "{found} of {total} accounts found",
