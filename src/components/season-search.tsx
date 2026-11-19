@@ -41,8 +41,8 @@ type Props = {
 type HitProps = { member: IndexedMember; status: Dictionary["status"] };
 
 /**
- * 결과 한 줄. `SeasonRow` 와 같은 판(`ListCard`) 안에 들어가므로 높이·여백을
- * 그쪽에 맞춘다 — 검색 전후로 줄 높이가 달라지면 목록이 튀어 보인다.
+ * 결과 한 줄. 판(`ListCard`) 안의 줄 목록이다 — 높이·여백은 홈·프로그램 화면이
+ * 같은 값을 쓴다.
  */
 const ROW =
   "focus-ring press flex items-center gap-2.5 px-4 py-3.5 hover:bg-elevated/60 lg:px-5";
@@ -52,7 +52,7 @@ const ROW =
  *
  * 입력이 비어 있으면 `children`(지난 기수 목록)을 그대로 두고, 뭔가 입력하면
  * 그 자리를 결과로 바꾼다. 목록을 두 벌 그리지 않으려고 서버가 그린 목록을
- * children 으로 받는다 — `SeasonRow` 를 여기서 import 하면 그 컴포넌트가 쓰는
+ * children 으로 받는다 — `SeasonTile` 을 여기서 import 하면 그 컴포넌트가 쓰는
  * `lib/data` 를 타고 원본 JSON 이 클라이언트 번들로 딸려 온다.
  */
 export function SeasonSearch({

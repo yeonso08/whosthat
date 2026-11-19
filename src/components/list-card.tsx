@@ -3,13 +3,19 @@ import type { ReactNode } from "react";
 type Props = { children: ReactNode; className?: string };
 
 /**
- * 판의 다크 모드 — 반투명 유리판 + 위쪽 가장자리의 가는 빛(2026-11-19). 다크는
- * 바탕(#0a0a0c)과 판(#141418)의 명도 차가 작고 검은 그림자는 안 보여서, 판이
- * 바탕에 붙어 화면이 한 장의 검은 면이 됐다. 라이트는 그대로다. 프로그램
- * 화면의 기수 목록과 최신 기수 판이 쓴다.
+ * 프로그램 화면 판(최신 기수 판·기수 타일)의 다크 모드.
+ *
+ * **라이트와 같은 구조로 띄운다** — 라이트는 바탕(#fafafa)보다 밝은 흰 판이
+ * 그림자 위에 선다. 다크는 바탕(#0a0a0c)에서 한 단계 밝은 불투명 판에, 위가 조금
+ * 더 밝은 세로 그러데이션과 위쪽 가장자리의 가는 빛을 준다(빛을 위에서 받은 면).
+ * 검은 그림자는 다크에서 안 보이므로 판을 띄우는 건 명도 차와 가장자리다.
+ *
+ * 반투명 유리판(`bg-white/[0.045]`)이던 때는 바탕과 명도 차가 거의 없고 뒤의
+ * 앰비언트 포스터 빛이 비쳐 판이 탁했다 — "라이트에 비해 별로" 로 반려됐다
+ * (2026-11-19). 홈의 판(`HOME_PANEL`)은 따로다.
  */
-export const GLASS_PANEL =
-  "dark:bg-white/[0.045] dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.07)] dark:ring-1 dark:ring-white/[0.07] dark:backdrop-blur";
+export const DARK_PANEL =
+  "dark:bg-transparent dark:bg-gradient-to-b dark:from-[#1d1d23] dark:to-[#16161b] dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_8px_24px_-12px_rgb(0_0_0/0.8)] dark:ring-1 dark:ring-white/[0.06] dark:hover:from-[#222229] dark:hover:to-[#1a1a20]";
 
 /**
  * 줄 목록을 담는 흰 판. 기수 목록과 검색 결과 두 묶음이 같은 판을 쓴다.
