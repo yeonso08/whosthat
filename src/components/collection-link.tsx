@@ -2,7 +2,14 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-type Props = { href: string; title: string; summary: string; icon: ReactNode };
+type Props = {
+  href: string;
+  title: string;
+  summary: string;
+  icon: ReactNode;
+  /** 아이콘 원의 바탕을 바꿀 때. 홈이 다크 모드에서 아이콘마다 옅은 색을 깐다. */
+  iconClassName?: string;
+};
 
 /**
  * 홈 "모아 보기" 판의 한 줄 — 여러 프로그램을 가로질러 모은 화면으로 간다.
@@ -14,13 +21,13 @@ type Props = { href: string; title: string; summary: string; icon: ReactNode };
  *
  * 앞의 둥근 자리는 그 모음이 무엇인지 말하는 그림 하나다. 색은 쓰는 쪽이 준다.
  */
-export function CollectionLink({ href, title, summary, icon }: Props) {
+export function CollectionLink({ href, title, summary, icon, iconClassName = "" }: Props) {
   return (
     <Link
       href={href}
       className="press focus-ring group flex items-center gap-3.5 px-5 py-4.5 hover:bg-elevated/40"
     >
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-elevated">
+      <span className={`flex size-10 shrink-0 items-center justify-center rounded-full bg-elevated ${iconClassName}`}>
         {icon}
       </span>
       <span className="min-w-0 flex-1">

@@ -1,5 +1,5 @@
 /**
- * 홈에서 프로그램마다 입히는 색 — 포스터 판의 그러데이션(2026-11-19 홈
+ * 프로그램마다 입히는 색 — 홈 포스터 판의 그러데이션, 프로그램 화면 판의 빛(2026-11-19 홈
  * 재디자인). 포스터가 걸리면 그림 뒤로 가려지고, 없는 프로그램에서만 보인다.
  *
  * 포스터가 0장인 동안 회색 판이 줄지어 "칙칙하다" 는 지적을 받았다. 색면을
@@ -31,4 +31,12 @@ function programTint(programId: string): Tint {
 export function programTintBackground(programId: string): string {
   const { glow, from, to } = programTint(programId);
   return `radial-gradient(120% 70% at 0% 0%, ${glow} 0%, transparent 55%), linear-gradient(155deg, ${from} 0%, ${to} 100%)`;
+}
+
+/**
+ * 프로그램 화면에서 판 모서리에 번지는 빛의 색(2026-11-19 프로그램 화면 재디자인).
+ * 포스터 판과 같은 표에서 꺼내야 홈에서 누른 판과 도착한 화면의 색이 이어진다.
+ */
+export function programTintGlow(programId: string): string {
+  return programTint(programId).from;
 }
