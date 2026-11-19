@@ -7,10 +7,12 @@ import {
   fill,
   getDictionary,
   localizeProgramShortName,
+  localizeSeason,
   programStrings,
 } from "@/lib/i18n";
 import { programHref } from "@/lib/links";
-import { getTotals, type Program } from "@/lib/types";
+import { programTintBackground } from "@/lib/program-tint";
+import type { Program } from "@/lib/types";
 
 /**
  * 포스터 비율. 넷플릭스·티빙의 세로 포스터가 2:3 이고, 그 비율이라야 격자가
@@ -51,7 +53,7 @@ const POSTER_SIZES = "(min-width: 1024px) 212px, (min-width: 640px) 184px, 50vw"
  * 낱말은 그때만 꺾이게 한다.
  */
 const POSTER_TITLE =
-  "mt-auto text-[26px] leading-[1.1] font-bold tracking-[-0.03em] break-keep [overflow-wrap:anywhere]";
+  "mt-auto text-[26px] leading-[1.1] font-bold tracking-[-0.035em] drop-shadow-sm break-keep [overflow-wrap:anywhere]";
 
 /**
  * 방송사·플랫폼. 티빙이 판 모서리에 채널 배지를 얹는 자리와 같다.
@@ -82,9 +84,8 @@ export async function ProgramCard({ program }: Props) {
   const locale = await currentLocale();
   const dict = getDictionary(locale);
   const strings = programStrings(program.id, locale);
+  const airing = getSeasons(program).filter((season) => season.onAir);
 
-  const seasons = getSeasons(program);
-  const { people, found } = getTotals(seasons);
 
   return (
     <Link
@@ -97,7 +98,11 @@ export async function ProgramCard({ program }: Props) {
           가장자리를 끊어 준다 — 그림이 없는 판은 배경에 번져서 어디까지가 한
           장인지 흐려진다(그림이 걸리면 그 일을 그림이 한다). */}
       <div
-        className={`lift relative flex ${POSTER} ${POSTER_RADIUS} flex-col overflow-hidden bg-gradient-to-b from-elevated to-card p-4 shadow-soft ring-1 ring-border/60 ring-inset`}
+        // 회색 판 대신 프로그램 색을 입힌다(2026-11-19, `lib/program-tint.ts`).
+        // 판이 그림 자리라 글자는 테마와 상관없이 흰색이고, 안쪽 흰 테두리 한
+        // 겹이 유리판 같은 가장자리를 낸다.
+        className={`lift relative flex ${POSTER} ${POSTER_RADIUS} flex-col overflow-hidden p-4 text-white shadow-soft ring-1 ring-white/15 ring-inset`}
+        style={{ background: programTintBackground(program.id) }}
       >
         {program.posterUrl && (
           <Image
@@ -118,17 +123,9 @@ export async function ProgramCard({ program }: Props) {
         )}
 
         <div className="relative flex items-start gap-1.5">
-          <span
-            className={`${PLATFORM} ${program.posterUrl ? "text-white/85" : "text-muted-foreground"}`}
-          >
+          <span className={`${PLATFORM} text-white/80`}>
             {program.platform}
           </span>
-          {seasons.some((season) => season.onAir) && (
-            <span className="ml-auto flex shrink-0 items-center pt-px">
-              <LiveDot />
-              <span className="sr-only">{dict.season.onAir}</span>
-            </span>
-          )}
         </div>
 
         {program.posterUrl ? (
@@ -146,10 +143,29 @@ export async function ProgramCard({ program }: Props) {
         )}
       </div>
 
-      <p className="font-lat mt-3 truncate text-center text-[12px] font-semibold text-muted-foreground">
-        {people === 0
-          ? dict.season.coveragePending
-          : fill(dict.season.coverage, { found, total: people })}
+      {/* 판 아래는 현황이 아니라 프로그램 이름이다(2026-11-19, 사용자 요청).
+          포스터가 걸리면 판 안의 이름은 그림의 일부라 눈에 잘 안 걸리고, 넷플릭스
+          ·티빙도 포스터 아래에 제목을 단다. 현황은 들어간 프로그램 화면이 말한다. */}
+      <p className="mt-3 truncate text-center text-[15px] font-extrabold tracking-[-0.02em] lg:text-[16px]">
+        {localizeProgramShortName(program.id, locale)}
+      </p>
+      {/* 방영 중은 포스터 위 점이 아니라 이름 아래 한 줄이다(2026-11-19). 판
+          모서리의 점 하나는 무엇이 방영 중인지(몇 기)도, 점이 무슨 뜻인지도
+          말하지 못했다. 방영 중이 아닌 프로그램도 같은 높이를 비워 둬서 옆 판과
+          이름 줄이 어긋나지 않는다. */}
+      <p className="mt-1 flex h-[18px] items-center justify-center gap-1.5 text-[12.5px] font-semibold text-muted-foreground">
+        {airing.length > 0 && (
+          <>
+            <LiveDot />
+            <span className="truncate">
+              {fill(dict.season.onAirSeason, {
+                season: airing
+                  .map((season) => localizeSeason(season, locale).label)
+                  .join(", "),
+              })}
+            </span>
+          </>
+        )}
       </p>
     </Link>
   );

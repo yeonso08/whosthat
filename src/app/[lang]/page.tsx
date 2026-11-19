@@ -7,14 +7,11 @@ import { CollectionLink } from "@/components/collection-link";
 import { EpisodeRow } from "@/components/episode-row";
 import { JsonLd } from "@/components/json-ld";
 import { ListPanel } from "@/components/list-card";
-import { GroupHeading, PageTitle } from "@/components/page-heading";
-import { LiveRow } from "@/components/live-row";
 import { ProgramCard } from "@/components/program-card";
 import { SeasonSearch } from "@/components/season-search";
 import { WithBanner } from "@/components/with-banner";
 import {
   buildSearchIndex,
-  getAiringSeasons,
   getLatestEpisodes,
   getProgramEpisodes,
   getProgramCouples,
@@ -51,9 +48,8 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
   if (!isLocale(lang)) notFound();
 
   const dict = getDictionary(lang);
-  const [programs, airing, coupleGroups, latest, episodeGroups, solonara] = await Promise.all([
+  const [programs, coupleGroups, latest, episodeGroups, solonara] = await Promise.all([
     getPrograms(),
-    getAiringSeasons(),
     getProgramCouples(),
     // 회차별 정리는 한국어 화면에만 나온다(`seasonEpisodes` 와 같은 이유).
     lang === "ko" ? getLatestEpisodes(LATEST_COUNT) : [],
@@ -65,7 +61,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
   const episodes = countEpisodes(episodeGroups);
 
   return (
-    <main>
+    <main className="font-home relative isolate overflow-x-clip">
       {/* 사이트 이름을 검색 결과에 도메인 대신 띄우려면 홈에 이 마크업이 있어야 한다. */}
       <JsonLd data={websiteSchema(lang)} />
 
@@ -93,11 +89,26 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
       {/* 모비온 배너는 홈에 조건 없이 건다 — 애드센스와 같은 이유다(위). */}
       {/* 배너를 제목 줄 높이에서 시작한다 — 제목 위 여백(`lg:pt-24`)과 짝이다. */}
       <WithBanner show railClassName="lg:mt-24">
-        <header className="gutter pt-16 text-center lg:pt-24">
-          {/* 워드마크 바로 아래라 "누꼬 / 출연진 인스타" 로 읽힌다 — 이름과 하는 일이
-              한 덩어리다. 사이트 전체 집계를 여기 한 줄 더 적지 않는 건 아래 카드가
-              프로그램마다 그 숫자를 이미 말하기 때문이다. */}
-          <PageTitle className="lg:text-[46px]">{dict.home.heading}</PageTitle>
+        <header className="gutter relative pt-14 text-center lg:pt-24">
+          {/*
+           * 머리글 뒤에서 분홍과 파랑 두 빛이 만난다 — 이 장르의 솔로녀·솔로남
+           * 색이고, 서로 다른 둘이 겹치는 자리가 연애 예능 그 자체다. 색은 이
+           * 빛과 포스터 판 두 곳에만 쓴다(2026-11-19 홈 재디자인). 가로로 넘치는
+           * 빛은 `main` 이 잘라 낸다.
+           */}
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-24 -z-10 h-[420px]">
+            <div className="absolute top-0 left-1/2 size-[300px] -translate-x-[88%] rounded-full bg-she opacity-25 blur-[80px] lg:size-[420px] dark:opacity-30" />
+            <div className="absolute top-10 left-1/2 size-[300px] -translate-x-[12%] rounded-full bg-he opacity-25 blur-[80px] lg:size-[420px] dark:opacity-30" />
+          </div>
+          {/* `PageTitle` 을 안 쓰는 건 홈만 크기·서체가 달라서다. 제목은 착지한
+              사람이 들고 온 질문 그대로다 — 굵은 낱말 하나(`출연진 인스타`)는
+              무슨 사이트인지 말하지 못하고 도장처럼 찍혔다(2026-11-19 반려). */}
+          <h1 className="text-[32px] leading-[1.18] font-bold tracking-[-0.045em] whitespace-pre-line break-keep lg:text-[54px]">
+            {dict.home.heading}
+          </h1>
+          <p className="mx-auto mt-4 max-w-[36ch] text-[14.5px] leading-relaxed text-balance break-keep text-muted-foreground lg:text-[16px]">
+            {dict.home.tagline}
+          </p>
         </header>
 
         {/* 검색창이 목록 자리를 쥐고 있다 — 입력이 없을 때만 아래 카드가 보인다.
@@ -112,40 +123,25 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
         >
           <>
             {/*
-             * **히어로의 주인공은 검색창이고, 그 바로 아래가 방영 중인 기수다.**
-             * 이 사이트에 사람이 오는 순간은 방송 직후 "저 사람 누구야" 이고,
-             * 그때 찾는 기수는 거의 언제나 지금 나가는 기수다 — 프로그램을 고르고
-             * 기수를 고르는 두 단계를 건너뛴다. 검색어를 치면 이 줄도 결과에
-             * 자리를 내준다(검색창의 `children` 이라 그렇다).
+             * 포스터 진열대. 제목과 판을 왼쪽 선에 맞춘다(2026-11-19, 사용자 요청 —
+             * 그전엔 가운데로 모이는 줄바꿈이었다). 기둥 폭은 포스터 네 장 줄과 같아
+             * 지금 네 프로그램이면 한 줄이 꽉 찬다. 프로그램이 늘면 다음 줄이 왼쪽부터
+             * 찬다.
              *
-             * 방영 중인 게 없으면 통째로 사라진다 — 빈 자리를 "없음" 으로 채우면
-             * 히어로가 안내문이 된다.
+             * 검색창 아래 방영 중 바로가기 줄은 같은 날 뺐다 — "자리만 차지한다".
              */}
-            {airing.length > 0 && (
-              <div className="gutter flex flex-wrap justify-center gap-2 pt-5">
-                {airing.map((season) => (
-                  <LiveRow key={`${season.programId}-${season.id}`} season={season} />
-                ))}
+            <div className="gutter pt-10 lg:pt-14">
+              <div className="mx-auto w-full max-w-[784px] lg:max-w-[920px]">
+                <h2 className="pb-4 text-[22px] font-extrabold tracking-[-0.03em] lg:pb-5 lg:text-[26px]">
+                  {dict.home.programsHeading}
+                </h2>
+                <section className="flex flex-wrap gap-x-4 gap-y-8 lg:gap-x-6">
+                  {programs.map((program) => (
+                    <ProgramCard key={program.id} program={program} />
+                  ))}
+                </section>
               </div>
-            )}
-
-            <GroupHeading className="text-center">
-              {dict.home.programsHeading}
-            </GroupHeading>
-            {/*
-             * 포스터 진열대다 — 격자가 아니라 가운데로 모이는 줄바꿈이라, 프로그램이
-             * 둘일 때도 스무 개일 때도 마지막 줄이 왼쪽에 몰리지 않는다. 판 크기는
-             * 화면이 아니라 포스터가 정한다(고정 폭) — 컨테이너를 열로 나누면 둘뿐인
-             * 지금 판이 손톱만 해진다.
-             *
-             * 세로 간격이 넓은 건 포스터 아래 현황 줄이 다음 줄 포스터에 붙지 않게
-             * 하려는 것이다.
-             */}
-            <section className="gutter flex flex-wrap justify-center gap-x-4 gap-y-9 lg:gap-x-6">
-              {programs.map((program) => (
-                <ProgramCard key={program.id} program={program} />
-              ))}
-            </section>
+            </div>
 
             {/*
              * 진열대 아래는 두 단이다 — 왼쪽은 **다시 올 이유**(최근 방송 정리),

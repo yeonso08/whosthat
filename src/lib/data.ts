@@ -164,17 +164,6 @@ export async function getAllSeasons(): Promise<Season[]> {
 }
 
 /**
- * 지금 방영 중인 기수들. 홈이 착지하자마자 이걸 한 줄로 세운다.
- *
- * 프로그램을 가로질러 모으는 집계라 페이지가 아니라 여기 있다 — 홈에서
- * `getPrograms().flatMap(...).filter(...)` 를 다시 적으면 프로그램이 늘 때마다
- * 그 줄이 같이 늘어난다.
- */
-export async function getAiringSeasons(): Promise<Season[]> {
-  return (await getAllSeasons()).filter((season) => season.onAir);
-}
-
-/**
  * 홈의 "최근 방송" — 기수마다 마지막 회차를 하나씩 꺼내 방송일이 늦은 순으로.
  *
  * 방영 중인 기수만 고르지 않는다: 방영 중인 게 없는 주에도 막 끝난 기수의 최종
