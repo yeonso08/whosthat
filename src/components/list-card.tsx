@@ -3,6 +3,15 @@ import type { ReactNode } from "react";
 type Props = { children: ReactNode; className?: string };
 
 /**
+ * 판의 다크 모드 — 반투명 유리판 + 위쪽 가장자리의 가는 빛(2026-11-19). 다크는
+ * 바탕(#0a0a0c)과 판(#141418)의 명도 차가 작고 검은 그림자는 안 보여서, 판이
+ * 바탕에 붙어 화면이 한 장의 검은 면이 됐다. 라이트는 그대로다. 프로그램
+ * 화면의 기수 목록과 최신 기수 판이 쓴다.
+ */
+export const GLASS_PANEL =
+  "dark:bg-white/[0.045] dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.07)] dark:ring-1 dark:ring-white/[0.07] dark:backdrop-blur";
+
+/**
  * 줄 목록을 담는 흰 판. 기수 목록과 검색 결과 두 묶음이 같은 판을 쓴다.
  *
  * **줄이 배경 위에 그냥 떠 있던 것을 판 하나로 묶었다**(2026-08-31). 1280px

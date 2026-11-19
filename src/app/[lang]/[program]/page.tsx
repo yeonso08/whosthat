@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import { AutoAds } from "@/components/ads";
 import { BackLink } from "@/components/back-link";
 import { JsonLd } from "@/components/json-ld";
-import { ListCard } from "@/components/list-card";
-import { GroupHeading, PageEyebrow, PageTitle } from "@/components/page-heading";
+import { GLASS_PANEL, ListPanel } from "@/components/list-card";
+import { GroupHeading } from "@/components/page-heading";
 import { SeasonFeature } from "@/components/season-feature";
 import { SeasonRow } from "@/components/season-row";
 import { SeasonSearch } from "@/components/season-search";
@@ -66,7 +66,7 @@ export default async function Page({
     // 모비온 배너가 걸리면 데스크톱에서 오른쪽 세로 칸(간격 32 + 배너 160 + 끝 여백 32)만큼
     // 판을 넓힌다 — 기둥 폭은 860px 그대로다.
     <main
-      className={`mx-auto w-full max-w-[860px] ${showBanner ? "lg:max-w-[1084px]" : ""}`}
+      className={`font-home mx-auto w-full max-w-[860px] ${showBanner ? "lg:max-w-[1084px]" : ""}`}
     >
       <JsonLd data={breadcrumbSchema(lang, programCrumb(program, lang))} />
       {/* 확인한 계정이 한 건도 없는 프로그램에는 광고를 걸지 않는다. */}
@@ -74,16 +74,19 @@ export default async function Page({
 
       {/* 명단이 한 줄도 없는 프로그램에는 배너를 안 건다 — 화면이 빈 줄의 목록이다. */}
       <WithBanner show={showBanner}>
-        <header className="gutter pt-8 pb-1 lg:pt-12">
-          <PageEyebrow>{strings.name}</PageEyebrow>
-
-          {/* 뒤로가기를 제목 줄에 붙인다 — 기수 상세와 같은 구조다. */}
-          <div className="mt-3 -ml-3 flex items-start gap-1">
+        <header className="gutter pt-10 pb-1 lg:pt-14">
+          {/* 큰 제목은 프로그램 이름이다(2026-11-19). 그전엔 작은 프로그램 이름
+              아래 `전체 기수` 가 크게 섰는데, 이 화면을 찾아오는 검색어는 프로그램
+              이름이고 `전체 기수` 는 아래 목록이 이미 말한다. 뒤로가기를 제목 줄에
+              붙이는 건 그대로다. */}
+          <div className="-ml-3 flex items-start gap-1">
             <BackLink href={homeHref(lang)} label={dict.nav.backHome} />
-            <PageTitle>{strings.heading}</PageTitle>
+            <h1 className="text-[30px] leading-[1.2] font-bold tracking-[-0.04em] break-keep lg:text-[40px]">
+              {strings.name}
+            </h1>
           </div>
 
-          <p className="mt-2 text-[13px] text-muted-foreground">
+          <p className="mt-2.5 text-[13.5px] font-semibold text-muted-foreground">
             {formatProgramSummary(program.id, getTotals(seasons), lang)}
           </p>
 
@@ -117,11 +120,13 @@ export default async function Page({
           {rest.length > 0 && (
             <>
               <GroupHeading>{strings.pastSeasons}</GroupHeading>
-              <ListCard>
-                {rest.map((season) => (
-                  <SeasonRow key={season.id} season={season} />
-                ))}
-              </ListCard>
+              <div className="gutter">
+                <ListPanel className={GLASS_PANEL}>
+                  {rest.map((season) => (
+                    <SeasonRow key={season.id} season={season} />
+                  ))}
+                </ListPanel>
+              </div>
             </>
           )}
         </SeasonSearch>

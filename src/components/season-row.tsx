@@ -1,12 +1,10 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { CastPhoto } from "@/components/cast-photo";
 import {
   Item,
   ItemActions,
   ItemContent,
   ItemDescription,
-  ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
 import {
@@ -17,22 +15,18 @@ import {
 import { seasonHref } from "@/lib/links";
 import { getCoverage, type Season } from "@/lib/types";
 
-/** 줄 왼쪽에 겹쳐 쌓는 얼굴 수. 더 넣으면 기수 이름이 밀린다. */
-const FACE_COUNT = 4;
-
-/**
- * 겹쳐 쌓이는 원형 자리. 명단이 빈 기수의 빈 원까지 같은 모양을 써야 해서
- * 뽑아 뒀다. text 는 사진이 없을 때 나오는 가명 배지가 상속받는다.
- */
-const FACE_SHAPE =
-  "relative -ml-2.5 size-9.5 shrink-0 overflow-hidden rounded-full border-2 border-card text-[10px]";
-
 type Props = { season: Season };
 
+/**
+ * 프로그램 화면의 기수 한 줄 — 기수 이름, 방송 시기·특집, 현황.
+ *
+ * **왼쪽의 겹친 가명 원 넷을 2026-11-19 에 뺐다**(사용자 요청). 사진이 0장이라
+ * 원마다 `영수`·`영호` 같은 가명 글자만 기수마다 똑같이 반복돼, 정보 없이
+ * 줄의 3분의 1을 차지했다.
+ */
 export async function SeasonRow({ season }: Props) {
   const locale = await currentLocale();
   const coverage = getCoverage(season.cast);
-  const faces = season.cast.slice(0, FACE_COUNT);
   const { label, special, airDate } = localizeSeason(season, locale);
   const detail = [airDate, special].filter(Boolean).join(" · ");
 
@@ -40,35 +34,9 @@ export async function SeasonRow({ season }: Props) {
     <Item
       // 판(`ListCard`) 안의 한 줄이라 모서리를 죽인다 — 줄마다 둥글면 판 안에
       // 작은 카드가 겹쳐 있는 것처럼 보인다. 높이는 손가락 자리에 맞춰 키웠다.
-      className="press gap-4 rounded-none px-4 py-4 lg:px-5"
+      className="press gap-4 rounded-none px-5 py-4 lg:px-6"
       render={<Link href={seasonHref(locale, season.programId, season.id)} />}
     >
-      {/* 기본값 두 개를 되돌린다 — 설명이 있으면 위로 붙는 정렬, 그리고 얼굴 겹침을 상쇄하는 gap. */}
-      <ItemMedia className="translate-y-0 gap-0 self-center pl-2.5">
-        {faces.map((member) => (
-          <div key={member.id} className={FACE_SHAPE}>
-            <CastPhoto
-              src={member.profileImageUrl}
-              // 배지는 사진 대신 놓는 워터마크라 언어를 안 따라간다 — 로마자로
-              // 바꾸면 원에 안 들어가고, 잘라 쓰면 영수·영호·영식이 전부 "Ye" 가
-              // 된다. 이름은 기수 상세의 카드가 그 언어로 온전히 말한다.
-              alias={member.alias}
-              status={member.status}
-              alt=""
-              sizes="38px"
-            />
-          </div>
-        ))}
-
-        {/* 명단이 아직 없는 기수도 빈 원으로 자리를 지킨다 — 안 그리면 그 줄만
-            글자가 왼쪽으로 당겨져 목록이 들쭉날쭉해진다. 판 위에서 보이려면
-            배지와 같은 `bg-elevated` 라야 한다. */}
-        {faces.length === 0 &&
-          Array.from({ length: FACE_COUNT }, (_, i) => (
-            <div key={i} className={`${FACE_SHAPE} bg-elevated`} />
-          ))}
-      </ItemMedia>
-
       <ItemContent className="gap-1">
         <ItemTitle className="text-[15px] font-bold tracking-[-0.02em] lg:text-base">
           {label}
