@@ -200,8 +200,8 @@ export default async function Page({
                     {rest.length}
                   </span>
                 </GroupHeading>
-                {/* 타일 격자 — 이유는 `SeasonTile` 에 있다. 기둥이 860px 라 넓어도 넷이다. */}
-                <div className="gutter grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 lg:gap-4">
+                {/* 타일 격자 — 이유는 `SeasonTile` 에 있다. 넓어도 셋이다. */}
+                <div className="gutter grid grid-cols-2 gap-3 sm:grid-cols-3 lg:gap-4">
                   {rest.map((season) => (
                     <SeasonTile key={season.id} season={season} />
                   ))}
