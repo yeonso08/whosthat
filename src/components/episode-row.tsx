@@ -1,6 +1,5 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { LiveDot } from "@/components/live-dot";
 import {
   currentLocale,
   fill,
@@ -32,7 +31,6 @@ export async function EpisodeRow({ season, episode }: LatestEpisode) {
     >
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-muted-foreground">
-          {season.onAir && <LiveDot />}
           <span className="truncate text-foreground/80">
             {localizeProgramShortName(season.programId, locale)}{" "}
             {localizeSeason(season, locale).label}

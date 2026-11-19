@@ -10,8 +10,8 @@
     "language": "言語を選ぶ"
   },
   "home": {
-    "heading": "番組で見たあの人の\nインスタを探す",
-    "tagline": "韓国バラエティ出演者の確認済みアカウントを、番組・シーズン別にまとめています。",
+    "heading": "番組で見たあの人、\n誰なのか気になったら",
+    "tagline": "出演者のインスタから放送回まとめ、最終カップルまで、番組・シーズン別にまとめています。",
     "programsHeading": "番組",
     "collectionsHeading": "まとめ",
     "latestHeading": "最近の放送",
@@ -96,8 +96,8 @@
     "less": "閉じる"
   },
   "solonara": {
-    "heading": "宿泊先とゲーム",
-    "navLabel": "期別の宿泊先とゲーム",
+    "heading": "ソロ国の宿泊先とゲーム",
+    "navLabel": "ソロ国の宿泊先とゲーム",
     "metaTitle": "I Am SOLO 期別の宿泊先とゲーム",
     "description": "I Am SOLO {count}期分の宿泊先と、第一印象・デートの選び方、スーパーデート権のゲームを期別にまとめました。",
     "lead": "I Am SOLO {count}期分の宿泊先と、第一印象・デート相手の決め方をまとめました。",

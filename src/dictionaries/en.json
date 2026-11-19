@@ -10,8 +10,8 @@
     "language": "Choose a language"
   },
   "home": {
-    "heading": "Saw them on the show?\nFind their Instagram.",
-    "tagline": "Verified Instagram accounts of Korean reality show casts, sorted by show and season.",
+    "heading": "Saw someone on the show?\nFind out who they are.",
+    "tagline": "Cast Instagram accounts, episode recaps and final couples, sorted by show and season.",
     "programsHeading": "Programs",
     "collectionsHeading": "Collections",
     "latestHeading": "Latest episodes",
@@ -96,8 +96,8 @@
     "less": "Show less"
   },
   "solonara": {
-    "heading": "Stays and games",
-    "navLabel": "Stays and games by season",
+    "heading": "Solo Nara stays and games",
+    "navLabel": "Solo Nara stays and games",
     "metaTitle": "I Am SOLO stays and games by season",
     "description": "Where each season of I Am SOLO stayed, and how first impressions, dates and super date tickets were decided, for {count} seasons.",
     "lead": "Where {count} seasons of I Am SOLO stayed, and how first impressions and dates were decided.",
