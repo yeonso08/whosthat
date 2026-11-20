@@ -361,6 +361,8 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
   - **Flat Rate CDN 은 껐다** — 켜 두면 포함량(요청 1M·1TB)을 넘은 달 다음 주기부터 월 $20 단계로 저절로 올라간다. 끄면 넘은 만큼 크레딧에서 깎이고, 크레딧을 넘으면 위 예산이 사이트를 멈춘다.
   - **Firewall 은 AI Bots `Allow`, Bot Protection `Off` 로 둔다.** AI 검색·브리핑이 누꼬를 인용하는 게 유입 경로다(AEO) — 아래 Cloudflare 를 DNS only 로 두는 것과 같은 이유다.
   - **Priority projects 에 프로젝트를 넣지 않는다**(Billing → Add-Ons, 프로젝트당 월 $200).
+  - **월정액 추가 기능(Speed Insights Plus·Web Analytics Plus 각 월 $10, 비밀번호 보호 등)은 켜지 않는다.** $20 크레딧은 사용량(CDN·함수·분석 이벤트)에만 쓰이고 월정액은 카드로 따로 나간다 — 위 $1 예산도 이걸 막지 못한다.
+  - **속도는 Speed Insights 무료 등급으로 잰다**(2026-11-20, 루트 레이아웃의 `<SpeedInsights />`). 팀 전체 30일 1만 이벤트이고 넘으면 수집만 멈추고 요금은 없다. **Web Analytics 는 Pro 에서 무료분이 없다**(1,000 이벤트당 $0.03, 크레딧에서 깎인다) — Usage 에 조금씩 잡히는 게 정상이다. 둘 다 `/privacy` 의 `visitor2` 가 말하고 있으니 떼거나 바꾸면 그 문장부터 고친다.
   - **알림은 Observability Plus(Pro 포함)의 Alerts 다** — 기본 규칙(High 이상, 수정 불가) + `트래픽·에러 급증 (Medium)`(전 프로젝트, CDN 요청·전송량·함수 실행 급증과 5xx 급증). `vercel monitors ls` 로 본다. 휴대폰 푸시는 계정마다 따로 켠다(Settings → My Notifications).
 - **배포 보관은 1주다**(프로젝트 Settings → Security → Deployment Retention Policy, Canceled 만 1일). 기본값 30일로 두면 push 마다 Preview, "사이트에 반영" 마다 Production 이 쌓여 Hobby 때 Deployment Storage 10GB 를 넘었다 — 2026-11-13([HISTORY §16](docs/HISTORY.md)). Pro 로 올린 뒤에도 그대로 둔다 — 쌓아 둘 이유가 없다. 저장 용량이 다시 차면 `vercel rm --safe` 로 지우기 전에 이 기간부터 줄인다 — `--safe` 는 롤백 대상까지 지운다.
 
