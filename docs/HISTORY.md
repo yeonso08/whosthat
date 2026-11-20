@@ -530,3 +530,5 @@ Googlebot UA 로 apex·`/`·`/ko`·기수 상세·robots.txt·sitemap 을 다시
 - **Firewall** — AI Bots Allow·Bot Protection Off 를 확인하고 그대로 뒀다(AEO). DDoS 완화는 기본으로 돈다.
 - **Alerts** — Observability Plus 가 Pro 에 포함이라 이미 켜져 있었다. 기본 규칙(High 이상)은 심각도·대상을 못 바꿔서, Medium 규칙을 하나 더 만들었다(`vercel monitors add`). 에러 이상 알림은 켠 뒤 24시간, 사용량 이상 알림은 3일 뒤부터 온다. Critical 은 Vercel Agent 조사 크레딧(주기당 10회 포함)을 쓴다.
 - **배포 알림을 텔레그램·슬랙으로 받는 건 하지 않았다** — Vercel 웹훅을 받아 옮겨 줄 중계 서버가 필요하다. Vercel 자체 알림(웹·메일·푸시)으로 충분하다고 사용자가 정했다.
+- **Traces 는 켜지 않았다** — 요청 하나를 단계별로 재는 도구인데, 누꼬는 방문자 요청에 서버가 도는 게 proxy 하나뿐이고 데이터는 빌드 때 읽어서 잴 게 없다.
+- **Speed Insights 를 붙였다**(#207). 무료 등급(팀 30일 1만 이벤트, 넘으면 수집만 멈춤)이다. 처리방침 `visitor2` 에 문장을 더하고 `effectiveDate` 를 2026-11-20 으로 옮겼다(ko·en·ja). Speed Insights Plus(프로젝트당 월 $10)는 크레딧이 아니라 카드로 따로 청구되는 월정액이라 켜지 않는다. 같이 확인한 것 — Web Analytics 는 Pro 에서 무료분이 없고 1,000 이벤트당 $0.03 이 크레딧에서 깎인다.
