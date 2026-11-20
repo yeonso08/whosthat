@@ -37,6 +37,7 @@
     "airingEmpty": "While a season is on air, most cast members keep their accounts private.\nWe only list accounts we have confirmed, so none are listed yet.",
     "previousAllFound": "Instagram accounts for all {total} cast members",
     "previousSomeFound": "Instagram accounts found for {found} of {total}",
+    "castHeading": "Cast",
     "aboutHeading": "About {season}",
     "photoAlt": "Photo of {alias}",
     "age": "age {age}",

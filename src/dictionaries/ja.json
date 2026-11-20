@@ -37,6 +37,7 @@
     "airingEmpty": "放送中は出演者の多くがアカウントを非公開にしています。\n確認できたアカウントだけを載せるため、まだ載っているアカウントはありません。",
     "previousAllFound": "{total}人全員のインスタアカウントがあります",
     "previousSomeFound": "{total}人中 {found}人のインスタアカウントを確認",
+    "castHeading": "出演者",
     "aboutHeading": "{season}について",
     "photoAlt": "{alias}の写真",
     "age": "{age}歳",

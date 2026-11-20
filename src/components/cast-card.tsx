@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Fragment, type ReactElement } from "react";
 import { InstagramIcon } from "@/components/icons";
+import { DARK_PANEL } from "@/components/list-card";
 import {
   currentLocale,
   fill,
@@ -83,7 +84,15 @@ export async function CastCard({ member, earlier }: CardProps) {
       {found && (
         // 계정이 있다는 표시. 사진 위에도 얹히므로 뒤를 흐려서 어떤 그림 위에서도
         // 마크가 살아 있게 한다.
-        <span className="absolute top-3 right-3 flex size-8 items-center justify-center rounded-full bg-background/70 backdrop-blur-md">
+        // 사진이 없는 판에서는 판 색과 거의 같은 바탕이라 원이 사라졌다 — 그때는
+        // 글자색을 옅게 깐다.
+        <span
+          className={`absolute top-3 right-3 flex size-8 items-center justify-center rounded-full ${
+            member.profileImageUrl
+              ? "bg-background/70 backdrop-blur-md"
+              : "bg-foreground/[0.06] dark:bg-white/[0.08]"
+          }`}
+        >
           <InstagramIcon className="size-4 text-foreground" />
         </span>
       )}
@@ -158,18 +167,25 @@ export async function CastCard({ member, earlier }: CardProps) {
    *
    * 테두리 실선 대신 그림자로 판을 세운다 — 실선만 있으면 오려 붙인 종이로
    * 보인다. 포스터 판과 같은 처리다.
+   *
+   * 사진이 없는 판은 프로그램 화면의 기수 타일과 같은 판이다(2026-11-20) — 라이트는
+   * 흰 판, 다크는 바탕보다 한 단계 밝은 판(`DARK_PANEL`). 회색에서 흰색으로 내려가던
+   * 그러데이션은 판 위쪽 절반을 탁한 회색 띠로 만들었다.
    */
-  const shell = `relative ${ANCHOR_OFFSET} block aspect-square overflow-hidden rounded-2xl shadow-soft ring-1 ring-border/60 ring-inset ${
-    member.profileImageUrl
-      ? "bg-card"
-      : "bg-gradient-to-b from-elevated to-card"
+  const shell = `relative ${ANCHOR_OFFSET} block aspect-square overflow-hidden rounded-2xl bg-card shadow-soft ${
+    member.profileImageUrl ? "ring-1 ring-border/60 ring-inset" : DARK_PANEL
   }`;
 
   // handle 까지 봐야 타입이 좁혀진다. found 인데 핸들이 없는 건 데이터 오류라
   // 링크를 거는 대신 카드로만 둔다.
   if (!found || !handle) {
+    // 누를 수 없는 판이라 `DARK_PANEL` 의 hover 밝기를 되돌린다 — 밝아지면 눌리는
+    // 판으로 읽힌다.
     return (
-      <div id={member.id} className={shell}>
+      <div
+        id={member.id}
+        className={`${shell} dark:hover:from-[#1d1d23] dark:hover:to-[#16161b]`}
+      >
         {body}
       </div>
     );
