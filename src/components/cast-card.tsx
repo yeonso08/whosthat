@@ -1,3 +1,4 @@
+import { ArrowUpRight, Lock, UserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, type ReactElement } from "react";
@@ -29,9 +30,21 @@ type CardProps = Props & { earlier?: EarlierAppearance[] };
 /** 사전을 통째로 받지 않는다 — 이 줄이 읽는 건 `status` 묶음뿐이다. */
 type StatusProps = Props & { status: Dictionary["status"]; locale: Locale };
 
-/** 격자의 열 수와 짝이다 — 2→3→4→5열로 늘어나므로 같은 중단점을 밟는다. */
+/**
+ * 격자의 열 수와 짝이다 — 2→3→4→5열로 늘어나므로 같은 중단점을 밟는다. 사진은
+ * 판 폭을 다 쓴다.
+ */
 const CARD_SIZES =
   "(min-width: 1024px) 240px, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw";
+
+/** 명찰의 기울기 — 손으로 단 정도. 더 기울이면 장난스러워진다. */
+const NAME_TAG_TILT = "-rotate-[1.5deg]";
+
+/**
+ * 사진 칸의 비율. 인물 사진이 서는 세로 4:5 — 정사각 원본(600×600)의 양옆을
+ * 조금 자르고 얼굴은 그대로 남는다.
+ */
+const PHOTO_ASPECT = "aspect-[4/5]";
 
 /**
  * 검색 결과에서 앵커로 내려왔을 때 카드가 화면 맨 위에 딱 붙지 않게 띄운다.
@@ -48,13 +61,17 @@ const CARD_LINK_LAYER = "z-10";
 const EARLIER_LINK_LAYER = "z-20";
 
 /**
- * 출연진 한 장.
+ * 출연진 한 장 — **위는 사진 칸, 아래는 글 칸이고, 그 경계에 흰 가명 명찰이
+ * 걸친다**(2026-11-20 재디자인).
  *
- * **사진이 있든 없든 글자 블록은 같은 자리에 같은 모양으로 앉는다.** 예전에는
- * 사진이 없으면 그 자리를 흐린 가명 글자가 채우고 아래에 같은 가명이 또 나와서,
- * 한 카드에 같은 이름이 두 번 찍혔다 — 사진이 0장인 동안 격자 전체가 그 그림이라
- * "회색 상자에 글자 두 번" 으로 읽혔다. 지금은 사진 유무가 **뒤에 그림이 깔리느냐**
- * 하나만 가른다.
+ * 예전에는 정사각 판에 사진을 깔고 글자 블록을 그 위 아래쪽에 얹었다. 사진이 0장일
+ * 때 만든 모양이라, 사진이 실제로 들어오자(34기) 글을 읽히게 하려고 깐 어두운
+ * 그러데이션이 사진의 3분의 2를 덮어 "투명해서 안 보이고 글이랑 겹친다" 가 됐다.
+ * 이제 둘이 겹치지 않으므로 그러데이션도 없다.
+ *
+ * **사진이 있든 없든 칸 구성은 같다.** 없으면 사진 칸에 옅은 사람 모양만 둔다 —
+ * 가명 글자를 채우면 바로 아래 명찰과 한 카드에 같은 이름이 두 번 찍힌다(예전에
+ * 실제로 그랬다).
  */
 export async function CastCard({ member, earlier }: CardProps) {
   const locale = await currentLocale();
@@ -62,6 +79,8 @@ export async function CastCard({ member, earlier }: CardProps) {
 
   const found = member.status === "found";
   const handle = member.instagramHandle;
+  // 판 전체가 인스타로 가는지. found 인데 핸들이 없는 건 데이터 오류라 링크를 안 건다.
+  const linked = found && Boolean(handle);
   const alias = localizeAlias(member.alias, locale);
   const description = describe(member, locale);
   // 숫자만 두면 나이인지 번호인지 안 읽힌다 — 단위를 붙여 이름 옆에 둔다.
@@ -71,63 +90,60 @@ export async function CastCard({ member, earlier }: CardProps) {
 
   const body = (
     <>
-      {member.profileImageUrl && (
-        <Image
-          src={member.profileImageUrl}
-          alt={fill(dict.season.photoAlt, { alias })}
-          fill
-          sizes={CARD_SIZES}
-          className={`object-cover ${found ? "" : "opacity-45"}`}
-        />
-      )}
+      {/* 사진 칸. 명찰이 이 칸 아래 경계에 걸쳐야 해서 바깥 상자는 자르지 않고
+          사진만 안쪽 상자에서 자른다. */}
+      <div className="relative">
+        <div className={`relative ${PHOTO_ASPECT} overflow-hidden bg-elevated`}>
+          {member.profileImageUrl ? (
+            <Image
+              src={member.profileImageUrl}
+              alt={fill(dict.season.photoAlt, { alias })}
+              fill
+              sizes={CARD_SIZES}
+              // 누를 수 있는 판만 사진이 살짝 다가온다 — 움직이면 눌리는 판으로 읽힌다.
+              className={`object-cover transition-transform duration-300 ease-soft ${
+                linked ? "group-hover:scale-[1.03]" : ""
+              }`}
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <UserRound
+                aria-hidden
+                strokeWidth={1.25}
+                className="size-1/3 text-foreground/[0.12]"
+              />
+            </div>
+          )}
+        </div>
 
-      {found && (
-        // 계정이 있다는 표시. 사진 위에도 얹히므로 뒤를 흐려서 어떤 그림 위에서도
-        // 마크가 살아 있게 한다.
-        // 사진이 없는 판에서는 판 색과 거의 같은 바탕이라 원이 사라졌다 — 그때는
-        // 글자색을 옅게 깐다.
+        {/* **명찰.** 나는 솔로 출연자가 가슴에 다는 흰 가명 명찰에서 왔다 — 이 카드의
+            단 하나의 장식이다. 사진과 글 칸의 경계에 걸쳐 두 칸을 한 장으로 묶고,
+            사진 위에 글자를 얹지 않으면서도 이름이 사진에 붙어 있게 한다.
+            현실의 물건이라 테마를 따라 뒤집지 않는다(다크에서도 흰 명찰). 살짝
+            기운 건 손으로 단 느낌이다 — 더 기울이면 장난스러워진다. */}
         <span
-          className={`absolute top-3 right-3 flex size-8 items-center justify-center rounded-full ${
-            member.profileImageUrl
-              ? "bg-background/70 backdrop-blur-md"
-              : "bg-foreground/[0.06] dark:bg-white/[0.08]"
-          }`}
+          className={`absolute bottom-0 left-3 z-[1] flex max-w-[calc(100%-1.5rem)] translate-y-1/2 items-baseline gap-1.5 rounded-[6px] bg-white px-2.5 py-1 text-black shadow-[0_1px_0_rgb(0_0_0/0.06),0_6px_14px_-6px_rgb(0_0_0/0.45)] ring-1 ring-black/[0.06] ${NAME_TAG_TILT}`}
         >
-          <InstagramIcon className="size-4 text-foreground" />
-        </span>
-      )}
-
-      {/* 그러데이션은 **사진 위에서 글자를 읽히게 하는 장치라 사진이 있을 때만
-          깐다.** 없는 판에 깔면 위(판 그러데이션)·가운데·아래(이 그러데이션)로
-          띠가 세 겹 생겨 판이 탁해진다 — 눌러야 할 그림이 없는데 눌러서다.
-          글자 블록의 자리와 모양은 어느 쪽이든 같다. */}
-      <div
-        className={`absolute inset-x-0 bottom-0 flex flex-col px-4 pt-14 pb-4 ${
-          member.profileImageUrl
-            ? "bg-gradient-to-t from-background/95 via-background/60 to-transparent"
-            : ""
-        }`}
-      >
-        {/* 나이는 이름 옆이다 — 방송 자막이 "영수(34)" 처럼 이름에 붙여 부르는
-            자리라 설명 없이 읽힌다. 이름보다 작고 흐리게 둬서 이름이 주인공인
-            건 그대로다. */}
-        <span
-          className={`text-[19px] leading-[1.25] font-bold tracking-[-0.02em] break-keep ${
-            found ? "" : "text-muted-foreground"
-          }`}
-        >
-          {alias}
+          <span className="truncate text-[17px] leading-tight font-extrabold tracking-[-0.03em] lg:text-[18px]">
+            {alias}
+          </span>
+          {/* 나이는 명찰 안, 이름 옆이다 — 방송 자막이 "영수(34)" 처럼 이름에
+              붙여 부르는 자리라 설명 없이 읽힌다. */}
           {age && (
-            <span className="ml-1.5 text-[13px] font-medium tracking-normal text-muted-foreground">
+            <span className="font-lat shrink-0 text-[12px] font-semibold text-black/45">
               {age}
             </span>
           )}
         </span>
-        {/* 출신은 이름 바로 아래다 — 실명으로 나오는 프로그램에서 "이 사람이
+      </div>
+
+      {/* 글 칸. 위 여백은 명찰이 내려와 걸친 만큼이다. */}
+      <div className="flex flex-1 flex-col px-3.5 pt-7 pb-3 lg:px-4">
+        {/* 출신은 이름 바로 다음이다 — 실명으로 나오는 프로그램에서 "이 사람이
             그 16기 상철" 이라는 게 이름 다음으로 궁금한 값이다. 직업보다 진하게
             둬서 두 줄이 한 덩어리로 안 뭉친다. */}
         {earlier && earlier.length > 0 && (
-          <span className="mt-1 text-[12px] leading-[1.45] font-semibold break-keep text-foreground/75">
+          <span className="mb-1 text-[12px] leading-[1.45] font-semibold break-keep text-foreground/75">
             {earlier.map((appearance, index) => (
               <Fragment key={appearance.href}>
                 {index > 0 && " · "}
@@ -149,32 +165,28 @@ export async function CastCard({ member, earlier }: CardProps) {
         {description && (
           <span
             title={description}
-            className="mt-1 line-clamp-2 text-[12px] leading-[1.45] break-keep text-muted-foreground [overflow-wrap:anywhere]"
+            className="line-clamp-2 text-[12.5px] leading-[1.5] break-keep text-muted-foreground [overflow-wrap:anywhere]"
           >
             {description}
           </span>
         )}
-        <CardStatus member={member} status={dict.status} locale={locale} />
+        {/* 계정 줄은 판 바닥에 붙인다 — 직업이 한 줄인 카드와 두 줄인 카드가 한
+            줄에 서도 계정 줄이 같은 높이에 온다. 가는 선 하나로 사람 정보와 가른다. */}
+        <div className="mt-auto pt-3">
+          <div className="flex min-w-0 items-center gap-1.5 border-t border-border/70 pt-2.5">
+            <CardStatus member={member} status={dict.status} locale={locale} />
+          </div>
+        </div>
       </div>
     </>
   );
 
   /*
-   * 판은 정사각형이다. 세로로 길었던 때는 사진이 한 장도 없는 동안 격자가
-   * 통째로 큰 빈 상자 열댓 개였다 — 채울 그림이 없는데 자리만 세로로 길었다.
-   * 정사각형은 인스타 프로필 사진이 잘리지 않는 비율이기도 해서, 사진이
-   * 들어와도 그대로 쓴다.
-   *
    * 테두리 실선 대신 그림자로 판을 세운다 — 실선만 있으면 오려 붙인 종이로
-   * 보인다. 포스터 판과 같은 처리다.
-   *
-   * 사진이 없는 판은 프로그램 화면의 기수 타일과 같은 판이다(2026-11-20) — 라이트는
-   * 흰 판, 다크는 바탕보다 한 단계 밝은 판(`DARK_PANEL`). 회색에서 흰색으로 내려가던
-   * 그러데이션은 판 위쪽 절반을 탁한 회색 띠로 만들었다.
+   * 보인다. 라이트는 흰 판, 다크는 바탕보다 한 단계 밝은 판(`DARK_PANEL`)으로
+   * 프로그램 화면의 기수 타일과 같다. `h-full` 로 같은 줄의 판 키를 맞춘다.
    */
-  const shell = `relative ${ANCHOR_OFFSET} block aspect-square overflow-hidden rounded-2xl bg-card shadow-soft ${
-    member.profileImageUrl ? "ring-1 ring-border/60 ring-inset" : DARK_PANEL
-  }`;
+  const shell = `group relative ${ANCHOR_OFFSET} flex h-full flex-col overflow-hidden rounded-2xl bg-card shadow-soft ${DARK_PANEL}`;
 
   // handle 까지 봐야 타입이 좁혀진다. found 인데 핸들이 없는 건 데이터 오류라
   // 링크를 거는 대신 카드로만 둔다.
@@ -216,51 +228,63 @@ export async function CastCard({ member, earlier }: CardProps) {
  * 여기서 컴파일 에러가 난다 — 화면 문구를 빠뜨리지 않게 하는 장치다.
  */
 function CardStatus({ member, status, locale }: StatusProps): ReactElement {
+  // 계정 줄은 언제나 인스타 마크로 시작한다 — 이 사이트가 사람마다 답하는 질문이
+  // "인스타가 있나" 라서, 답이 아직 없어도 그 질문의 자리는 보여야 한다. 마크의
+  // 농도가 답을 미리 말한다(있으면 또렷하게, 아니면 옅게).
+  const checked = member.lastVerified
+    ? fill(status.checked, { date: formatChecked(member.lastVerified, locale) })
+    : "";
+
   switch (member.status) {
     case "found":
       // **이 사이트에서 색이 도는 자리는 여기 하나다.** 방문자가 가지러 온 값이고,
       // 고정폭이라 한 글자씩 짚어 읽힌다 — 핸들은 문장이 아니라 식별자다.
+      // 끝의 화살표는 판을 누르면 사이트 밖(인스타)으로 나간다는 표시다.
       return (
-        <span className="font-mono mt-2 truncate text-[12px] font-medium text-verified">
-          @{member.instagramHandle}
-        </span>
+        <>
+          <InstagramIcon className="size-3.5 shrink-0 text-foreground" />
+          <span className="font-mono min-w-0 flex-1 truncate text-[12px] font-medium text-verified">
+            @{member.instagramHandle}
+          </span>
+          <ArrowUpRight
+            aria-hidden
+            className="size-3.5 shrink-0 text-muted-foreground transition-transform duration-200 ease-soft group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+          />
+        </>
       );
 
-    case "none": {
-      const checked = member.lastVerified
-        ? fill(status.checked, {
-            date: formatChecked(member.lastVerified, locale),
-          })
-        : "";
+    case "none":
       return (
-        <span className="mt-2 text-[12px] font-semibold text-muted-foreground">
-          {status.none}
-          {checked && ` · ${checked}`}
-        </span>
+        <>
+          <InstagramIcon className="size-3.5 shrink-0 text-foreground/25" />
+          <span className="truncate text-[12px] font-semibold text-muted-foreground">
+            {status.none}
+            {checked && ` · ${checked}`}
+          </span>
+        </>
       );
-    }
 
     case "searching":
       return (
-        <span className="mt-2 text-[12px] font-semibold text-searching">
-          {status.searching}
-        </span>
+        <>
+          <InstagramIcon className="size-3.5 shrink-0 text-foreground/25" />
+          <span className="truncate text-[12px] font-semibold text-searching">
+            {status.searching}
+          </span>
+        </>
       );
 
     // 핸들은 내지 않는다 — 본인이 잠근 계정이다(`AccountStatus` 주석).
-    case "private": {
-      const checked = member.lastVerified
-        ? fill(status.checked, {
-            date: formatChecked(member.lastVerified, locale),
-          })
-        : "";
+    case "private":
       return (
-        <span className="mt-2 text-[12px] font-semibold text-muted-foreground">
-          {status.private}
-          {checked && ` · ${checked}`}
-        </span>
+        <>
+          <Lock aria-hidden className="size-3.5 shrink-0 text-foreground/35" />
+          <span className="truncate text-[12px] font-semibold text-muted-foreground">
+            {status.private}
+            {checked && ` · ${checked}`}
+          </span>
+        </>
       );
-    }
   }
 }
 
