@@ -235,7 +235,7 @@
     ],
     "excludeNote": "Working through a single season, more than half of the candidates reported as “found” are rejected for these reasons. Six handles printed in one news site's “complete season 28 Instagram roundup” matched no real account at all — the list had been invented. Another handle circulating as season 28's Yeongho turned out to belong to the wedding photographer who shot the couple.",
     "photoHeading": "Photos",
-    "photo1": "Where a photo appears, its only source is the person's own Instagram profile picture. Screen captures from the broadcast are not used — the copyright there belongs to the production company, which makes it a different question from a request by the person themselves. Images are never hotlinked from another server.",
+    "photo1": "Photos come from the broadcast, from images published by the broadcaster or in news articles, and from photos the person has made public. They are saved and served from this site — never hotlinked from another server. If the person or the copyright holder asks, the photo is taken down without asking why.",
     "programsHeading": "Programs covered",
     "programs1": "The site started with I Am SOLO and added Single's Inferno. What the cast are called on air differs by program — I Am SOLO uses aliases such as Yeongsu and Oksun, while Single's Inferno uses real names. The name used on the show is the large one on screen, with the real name, age, and occupation on the line beneath it as far as they are known.",
     "programs2": "A new program starts as a season skeleton; the cast list is confirmed first, then the accounts. A season whose cast list has not been confirmed is left as “cast list in progress” rather than guessed at. Season sizes differ, so stamping in a default roster would invent people who were never on the show.",
@@ -283,7 +283,7 @@
       },
       {
         "q": "Where do the photos come from?",
-        "a": "Only from the person's own Instagram profile picture. Screen captures from the broadcast are not used, and images are never hotlinked from another server."
+        "a": "From the broadcast, from images published by the broadcaster or in news articles, and from photos the person has made public. Images are never hotlinked from another server, and they are taken down if the person or the copyright holder asks."
       },
       {
         "q": "Do you cover anything other than Instagram?",

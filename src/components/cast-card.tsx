@@ -77,7 +77,7 @@ export async function CastCard({ member, earlier }: CardProps) {
           alt={fill(dict.season.photoAlt, { alias })}
           fill
           sizes={CARD_SIZES}
-          className={`object-cover ${found ? "" : "opacity-45"}`}
+          className="object-cover"
         />
       )}
 
