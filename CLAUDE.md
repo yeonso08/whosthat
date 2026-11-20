@@ -47,6 +47,7 @@ src/app/icon.tsx                     파비콘 — 크기·여백만 정하고 �
 src/app/apple-icon.tsx               iOS 홈 화면 아이콘 — 같은 타일, 180×180
 src/app/[lang]/opengraph-image.tsx   공유 카드 — 글자만 고르고 판은 lib/og.tsx 가 그린다 (프로그램·기수 상세도 한 벌씩)
 src/app/sitemap.ts / robots.ts       언어마다 한 줄씩 + hreflang (명단 빈 기수·그런 기수뿐인 프로그램은 뺀다)
+src/app/llms.txt · llms-full.txt     AI 에게 주는 사이트 안내문 — 내용은 src/lib/llms.ts 가 데이터로 만든다(아래 "검색 노출" 절)
 src/proxy.ts                         `/` 로 들어온 사람을 브라우저 언어로 보낸다 (Next 16 의 미들웨어)
 src/lib/locales.ts                   언어 목록 + 언어 이름 — 화면·클라이언트·프록시가 다 읽는 순수 모듈
 src/lib/i18n.ts                      사전 로더 + 데이터 어휘(가명·특집) + 프로그램 문구 조회(programStrings) + 날짜/현황 포맷
@@ -139,12 +140,19 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **공유 카드는 `lib/og.tsx` 의 `ogImageResponse()` 한 판이다.** 라우트는 글자 넷(언어·활자 크기·작은 줄·큰 줄·현황)만 고르고 판·색·폰트 서브셋은 안 만진다. 두 라우트가 각자 그리던 시절엔 90줄 중 85줄이 같았는데, 어긋나도 링크를 실제로 공유해 보기 전까지 안 보인다. 활자 크기가 두 벌인 건 큰 줄에 뭐가 오느냐가 달라서다 — 홈은 문장, 기수는 `33기` 한 덩어리다.
 - **`openGraph` 를 정의하는 페이지는 `openGraphBase(locale)` 를 펼치는 것으로 시작한다.** Next 의 metadata 는 얕게 병합돼서, 페이지가 `openGraph` 를 정의하는 순간 레이아웃의 `openGraph` 가 **통째로** 덮인다 — `og:site_name`·`og:locale`·`og:locale:alternate` 가 조용히 빠진다. 화면에선 안 보이고 공유 카드에서만 드러나서 늦게 발견된다(기수·정책 세 페이지가 실제로 그 상태였다).
 - **색인 여부는 `isIndexable(season)`·`isProgramIndexable(program)` 로 정하고, 두 곳에 함께 건다.** 명단이 빈 기수는 화면에 "명단 정리 중" 한 문장뿐이라 크롤러가 soft 404 로 읽고, 그 판정은 그 페이지로 끝나지 않고 사이트 전체 평가로 번진다. 그래서 `robots: noindex, follow`(기수 상세의 `generateMetadata`)와 sitemap 제외를 **같이** 한다 — 하나만 하면 어느 쪽으로든 어긋난다. noindex 페이지를 sitemap 으로 제출하면 Search Console 이 오류로 잡고, sitemap 에서만 빼면 홈의 링크를 타고 그대로 색인된다. 명단이 들어오면 저절로 돌아온다.
-- **JSON-LD 는 화면에 이미 있는 것만 옮긴다.** 홈은 `WebSite`(검색 결과에 도메인 대신 사이트 이름을 쓸지 Google 이 여기를 본다), 나머지는 `BreadcrumbList`, 기수 상세는 거기에 `ItemList` 가 더 붙는다. **탐색경로는 화면마다 길이가 다르다** — 정책 두 페이지는 `홈 › 이 페이지` 두 칸, 기수 상세는 `홈 › 나는 솔로 › 33기` 세 칸이다. `breadcrumbSchema(locale, ...trail)` 이 홈 칸을 알아서 앞에 놓으므로 쓰는 쪽은 그 뒤만 적는다. **`ItemList` 에는 `found` 인 사람만 넣는다** — 못 찾은 사람은 이을 `sameAs` 가 없어서 "사람이 있다"는 주장만 남고, 그건 화면에 없는 말을 마크업으로 더하는 것이다. 삭제 요청으로 계정을 내리면 마크업도 함께 사라진다(데이터에서 나오므로 따로 손댈 게 없다).
+- **JSON-LD 는 화면에 이미 있는 것만 옮긴다.** 홈은 `WebSite`(검색 결과에 도메인 대신 사이트 이름을 쓸지 Google 이 여기를 본다)와 `Organization`(운영 주체 — 이름·로고(`/apple-icon`)·연락처(삭제·정정 창구)·`sameAs`(`lib/site.ts` 의 `OFFICIAL_CHANNELS`, 실제로 운영하는 채널만), 2026-11-20), 나머지는 `BreadcrumbList`, 기수 상세는 거기에 `ItemList` 가 더 붙는다. **탐색경로는 화면마다 길이가 다르다** — 정책 두 페이지는 `홈 › 이 페이지` 두 칸, 기수 상세는 `홈 › 나는 솔로 › 33기` 세 칸이다. `breadcrumbSchema(locale, ...trail)` 이 홈 칸을 알아서 앞에 놓으므로 쓰는 쪽은 그 뒤만 적는다. **`ItemList` 에는 `found` 인 사람만 넣는다** — 못 찾은 사람은 이을 `sameAs` 가 없어서 "사람이 있다"는 주장만 남고, 그건 화면에 없는 말을 마크업으로 더하는 것이다. 삭제 요청으로 계정을 내리면 마크업도 함께 사라진다(데이터에서 나오므로 따로 손댈 게 없다).
 - **언어 없는 경로를 리터럴로 적지 말 것.** canonical·hreflang·sitemap 이 같은 문자열을 봐야 한다 — `links.ts` 의 `programPath()`·`seasonPath()`·`TAKEDOWN_PATH`·`PRIVACY_PATH` 가 그 한 벌이고, 언어를 앞에 붙이는 것도 `localePath()` 하나다. 예전엔 `languageAlternates("/takedown")` 과 sitemap 의 `["/takedown", "/privacy"]` 가 각자 적혀 있었다 — 경로를 바꾸면 화면 링크만 따라오고 canonical 은 옛 주소를 가리키는데, 그건 화면에서 끝내 안 보인다.
 - **정책 두 페이지의 metadata 는 `policyMetadata(locale, page)` 다.** 둘은 제목·설명만 다르고 나머지가 같아서, 각자 적어 두면 한쪽만 고치게 된다. 새 정책 페이지를 붙이면 `seo.ts` 의 `POLICY_PATHS` 에 한 줄 더한다.
 - **기수 정보(방송 기간 날짜·최종 커플·넓힌 제목·`TVSeason`)는 나는 솔로 10·11·16·20기에서만 시험 중이다**(2026-11-16, `lib/seo.ts` 의 `SEASON_FACTS_TRIAL`). 나머지는 비교군이다 — **11월 말 결과를 보기 전에 기수를 더하거나 다른 기수 소개 문단에 날짜를 넣지 말 것**(비교가 깨진다). 판단 기준은 `docs/PROGRESS.md`, 경위와 고치기 전 출처 표는 `docs/HISTORY.md` §17.
 - **기수 상세 머리글의 프로그램 이름을 빼지 말 것.** 제목은 `나는 솔로 33기 출연진 인스타` 인데 본문에는 `33기` 와 가명뿐이라 프로그램 이름이 한 글자도 없던 적이 있다 — 주 검색어를 본문이 뒷받침하지 못하는 상태였다. 프로그램 화면과 같은 구조(프로그램 이름 한 줄 + 큰 제목)다.
 - **`site.name` 은 프로그램 이름이 아니다.** 프로그램이 하나였을 땐 `나는 솔로 출연진 인스타` 였는데, 그건 title.template·`og:site_name`·`WebSite` 이름·탐색경로 첫 칸에 다 쓰이는 값이라 프로그램이 둘이 되는 순간 사이트가 자기 이름으로 거짓말을 하게 됐다. 지금은 `누꼬 — 예능 출연진 인스타` 다. 프로그램 이름은 프로그램·기수 화면의 제목이 진다(둘 다 `title: { absolute }` 라 사이트 이름이 뒤에 또 붙지 않는다).
+
+**`/llms.txt`·`/llms-full.txt` 는 sitemap 과 같은 방식이다**(2026-11-20, `lib/llms.ts`). 빌드 때 데이터로 굽고(`force-static`), 싣는 화면은 `isProgramIndexable`·`isIndexable` 로 sitemap 과 같이 거른다. 한국어 원문 한 벌이다.
+- **인스타 핸들을 싣지 않는다.** 일반인 수백 명의 계정을 한 파일로 묶으면 통째로 긁어 가기 쉬운 목록이 된다 — 계정은 기수 화면이 한 기수씩 말한다.
+- **방송 기간 날짜를 싣지 않는다** — 기수 정보 시험(`SEASON_FACTS_TRIAL`)의 비교군이 깨진다. 시험이 끝나면 다시 본다.
+- 주요 AI 검색이 이 파일을 읽는다는 공식 확인은 아직 없다. 점검 도구(GEO 진단)의 빈칸을 메우는 값싼 장치로 둔 것이다.
+
+**외부 점검 도구가 403·0점을 내면 Vercel 의 봇 확인부터 의심한다**(2026-11-20). 데이터센터에서 도는 점검기는 Vercel 의 기본 완화(`x-vercel-mitigated: challenge`, 제목 `Vercel Security Checkpoint`)에 걸려 진짜 페이지 대신 확인 화면을 채점한다 — GEO·보안 헤더·구조화 데이터 세 결과가 한꺼번에 그렇게 나왔다. 프로젝트 방화벽 규칙은 없고, 진짜 크롤러(공식 IP 대역)와 일반 요청은 200 이다. 구조화 데이터는 Google 리치 결과 테스트·`validator.schema.org`, 헤더는 `curl -sI` 로 직접 본다.
 
 **IndexNow 가 바뀐 페이지를 Bing·네이버에 알린다**(2026-11-03, `scripts/indexnow.mjs` + `.github/workflows/indexnow.yml`). 구글은 IndexNow 를 안 받아서 sitemap 그대로다. DuckDuckGo 는 제출 창구가 없고 Bing 색인을 쓴다 — DuckDuckGo 노출을 늘리려면 Bing 을 본다.
 - **보내는 건 빌드가 아니라 한 시간마다 도는 Actions 다.** 빌드 중에 보내면 크롤러가 아직 옛 화면을 받아 간다. "사이트에 반영" 이 Deploy Hook 이라 GitHub 가 배포의 끝을 모르므로, 라이브 sitemap 을 지난번 스냅숏과 비교해 `lastmod` 가 바뀐 주소만 보낸다. **그래서 sitemap 의 `lastmod` 를 빌드 시각으로 바꾸지 말 것** — 매시간 전 주소를 다시 보내게 되고, 바뀌지 않은 주소를 계속 보내면 엔진이 그 신호를 믿지 않는다.
