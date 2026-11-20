@@ -58,6 +58,12 @@ export function contactMailto(subject: string): string {
 }
 
 /**
+ * 누꼬가 직접 운영하는 바깥 채널. Organization 의 `sameAs` 로 나간다 — AI·검색엔진이
+ * "이 블로그와 이 사이트는 같은 주체" 로 잇는 근거다. 실제로 운영하는 계정만 넣는다.
+ */
+export const OFFICIAL_CHANNELS = ["https://blog.naver.com/nukko_kr"];
+
+/**
  * 네이버 서치어드바이저 소유확인 코드.
  *
  * 구글은 DNS TXT 로 확인해서 코드에 아무것도 안 남지만, 네이버는 DNS 방식이

@@ -36,7 +36,12 @@ import {
   PRIVACY_PATH,
   TAKEDOWN_PATH,
 } from "./links";
-import { absoluteUrl, SITE_URL } from "./site";
+import {
+  absoluteUrl,
+  CONTACT_EMAIL,
+  OFFICIAL_CHANNELS,
+  SITE_URL,
+} from "./site";
 import {
   getAirPeriod,
   getCoverage,
@@ -255,6 +260,36 @@ export function websiteSchema(locale: Locale): Schema {
     url: SITE_URL,
     description: dict.site.description,
     inLanguage: locale,
+  };
+}
+
+/**
+ * 로고로 내보낼 이미지. 앱 아이콘(180×180, `app/apple-icon.tsx`)이다 — Google 이
+ * 로고에 요구하는 112px 이상이고, 해시 없는 이 주소로도 열린다.
+ */
+const ORGANIZATION_LOGO_PATH = "/apple-icon";
+
+/**
+ * 사이트를 운영하는 주체. AI 검색이 "누가 만든 사이트인가" 를 여기서 읽는다.
+ *
+ * 연락처는 삭제·정정 창구다 — 사이트가 실제로 받는 문의가 그것뿐이다.
+ * 홈 한 곳에만 건다(WebSite 와 짝).
+ */
+export function organizationSchema(locale: Locale): Schema {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: BRAND_WORDMARK[locale],
+    url: SITE_URL,
+    logo: absoluteUrl(ORGANIZATION_LOGO_PATH),
+    email: CONTACT_EMAIL,
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      email: CONTACT_EMAIL,
+      url: absoluteUrl(localePath(locale, TAKEDOWN_PATH)),
+    },
+    sameAs: OFFICIAL_CHANNELS,
   };
 }
 

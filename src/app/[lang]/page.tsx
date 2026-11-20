@@ -25,7 +25,7 @@ import {
   localizeProgramShortName,
 } from "@/lib/i18n";
 import { couplesHref, episodesHref, solonaraHref } from "@/lib/links";
-import { websiteSchema } from "@/lib/seo";
+import { organizationSchema, websiteSchema } from "@/lib/seo";
 import { countCouples, countEpisodes } from "@/lib/types";
 
 /**
@@ -72,6 +72,8 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
     <main className="font-home relative isolate overflow-x-clip">
       {/* 사이트 이름을 검색 결과에 도메인 대신 띄우려면 홈에 이 마크업이 있어야 한다. */}
       <JsonLd data={websiteSchema(lang)} />
+      {/* 운영 주체 — AI 검색이 누가 만든 사이트인지 여기서 읽는다. */}
+      <JsonLd data={organizationSchema(lang)} />
 
       {/*
        * 홈은 조건 없이 건다. 2026-09-02 의 위반 뒤 한동안 빼 뒀는데, 그때 걸린 건
