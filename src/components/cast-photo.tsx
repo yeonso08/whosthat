@@ -30,7 +30,7 @@ export function CastPhoto({ src, alias, status, alt, sizes }: Props) {
       alt={alt}
       fill
       sizes={sizes}
-      className={`object-cover ${status === "found" ? "" : "opacity-45"}`}
+      className="object-cover"
     />
   );
 }
