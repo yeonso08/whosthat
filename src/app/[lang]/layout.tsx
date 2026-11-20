@@ -7,6 +7,7 @@ import {
 } from "next/font/google";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -152,6 +153,7 @@ export default async function RootLayout({
           <SiteFooter />
         </ThemeProvider>
         <Analytics />
+        <SpeedInsights />
         {/* 광고는 여기 없다. 콘텐츠가 있는 화면만 `<AutoAds />` 를 직접 건다 —
             이유는 `components/ads.tsx` 에 적어 뒀다. */}
       </body>
