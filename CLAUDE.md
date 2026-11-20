@@ -356,7 +356,13 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 - 화면은 전부 정적이다 — 방문자 요청에 도는 건 `/` 를 언어로 보내는 proxy 하나뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (Cloudflare Registrar 등록·DNS). 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다.
 - 도메인은 `lib/site.ts` 한 곳에서 정해진다. **`NEXT_PUBLIC_SITE_URL`(Production)에 `https://www.nukko.net` 을 박아 뒀다** — Vercel 자동값(`VERCEL_PROJECT_PRODUCTION_URL`)은 "가장 짧은 커스텀 도메인"을 고르는데, 그러면 리다이렉트 전용인 apex(`nukko.net`)가 뽑힌다. 이유는 위 "커스텀 도메인을 연결할 때" 1번에 있다.
-- **Vercel 은 Hobby 플랜이고 배포 보관은 1주다**(Settings → Security → Deployment Retention Policy, Canceled 만 1일). 기본값 30일로 두면 push 마다 Preview, "사이트에 반영" 마다 Production 이 쌓여 Deployment Storage 10GB 를 넘는다 — 2026-11-13 에 실제로 넘었다([HISTORY §16](docs/HISTORY.md)). 저장 용량이 다시 차면 `vercel rm --safe` 로 지우기 전에 이 기간부터 줄인다 — `--safe` 는 롤백 대상까지 지운다.
+- **Vercel 은 Pro 플랜이다**(2026-11-20 — Hobby 한도로 사이트가 멈춘 뒤 바꿨다, [HISTORY §23](docs/HISTORY.md)). 월 $20(부가세 포함 $22)에 사용량 크레딧 $20 이 들어 있다. **같은 팀에 trend-now(keywi.kr)가 있어 한도·예산·크레딧을 함께 쓴다** — Hobby 한도는 계정 단위라 keywi 가 CDN 요청을 다 쓰면서 누꼬까지 멈췄다.
+  - **크레딧을 넘으면 돈을 더 내지 않고 사이트를 멈춘다**(사용자 결정). Settings → Billing → Spend Management 의 팀 예산 **$1** + "Pause production deployments" 다. 팀 예산은 크레딧을 **넘은** 사용량만 센다 — $20 으로 잡으면 크레딧까지 합쳐 $40 을 쓴다. 멈추면 팀의 전 프로젝트가 503(`DEPLOYMENT_PAUSED`)이고, 예산을 올리거나 다음 결제 주기가 와야 풀린다. **사이트가 갑자기 503 이면 여기부터 본다.**
+  - **Flat Rate CDN 은 껐다** — 켜 두면 포함량(요청 1M·1TB)을 넘은 달 다음 주기부터 월 $20 단계로 저절로 올라간다. 끄면 넘은 만큼 크레딧에서 깎이고, 크레딧을 넘으면 위 예산이 사이트를 멈춘다.
+  - **Firewall 은 AI Bots `Allow`, Bot Protection `Off` 로 둔다.** AI 검색·브리핑이 누꼬를 인용하는 게 유입 경로다(AEO) — 아래 Cloudflare 를 DNS only 로 두는 것과 같은 이유다.
+  - **Priority projects 에 프로젝트를 넣지 않는다**(Billing → Add-Ons, 프로젝트당 월 $200).
+  - **알림은 Observability Plus(Pro 포함)의 Alerts 다** — 기본 규칙(High 이상, 수정 불가) + `트래픽·에러 급증 (Medium)`(전 프로젝트, CDN 요청·전송량·함수 실행 급증과 5xx 급증). `vercel monitors ls` 로 본다. 휴대폰 푸시는 계정마다 따로 켠다(Settings → My Notifications).
+- **배포 보관은 1주다**(프로젝트 Settings → Security → Deployment Retention Policy, Canceled 만 1일). 기본값 30일로 두면 push 마다 Preview, "사이트에 반영" 마다 Production 이 쌓여 Hobby 때 Deployment Storage 10GB 를 넘었다 — 2026-11-13([HISTORY §16](docs/HISTORY.md)). Pro 로 올린 뒤에도 그대로 둔다 — 쌓아 둘 이유가 없다. 저장 용량이 다시 차면 `vercel rm --safe` 로 지우기 전에 이 기간부터 줄인다 — `--safe` 는 롤백 대상까지 지운다.
 
 ### 계정·삭제 요청
 
