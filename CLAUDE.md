@@ -535,8 +535,8 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 **표를 하나 더할 때**(기수 소개 `season_descriptions` 를 2026-09-22 에 이 순서로 넣었다):
 
-1. Supabase 에 표를 먼저 만든다(로컬 `nukko-admin-api/.env` 의 DB 주소로 실행했다).
-2. OCI 에서 `git pull --ff-only` → `sudo systemctl restart nukko-admin-api`. **API 는 자동 배포가 없다.** 재시작 직후 몇 초는 nginx 가 502 를 준다 — 뜨는 중이지 깨진 게 아니다.
+1. Supabase 에 표를 먼저 만든다(로컬 `nukko-admin-api/.env` 의 DB 주소로 실행했다. 로컬에 `.env` 가 없으면 OCI 에서 그 venv 와 `.env`(`app.config.settings.database_url`)로 실행한다 — `episode_votes` 가 그렇게 들어갔다).
+2. OCI 에서 `git pull --ff-only` → **`./venv/bin/python -c "import app.main"` 이 되는지 본다** → `sudo systemctl restart nukko-admin-api`. **API 는 자동 배포가 없다.** 재시작 직후 몇 초는 nginx 가 502 를 준다 — 뜨는 중이지 깨진 게 아니다. **서버 Python 은 3.9 다** — `str | None` 같은 3.10+ 문법이 로컬(3.12)에서는 통과하고 서버에서 앱을 죽인다(2026-11-22 시청자 투표 배포 때 운영 API 가 2분 502). import 가 안 되면 재시작하지 말고 직전 커밋으로 `git checkout` 한다.
 3. 데이터 스크립트(`python -m scripts.import_*.py --apply`)로 넣는다. 이런 스크립트는 관리자에서 고친 값도 덮어쓰므로 **한 번만 돌린다** — 그 뒤로는 관리자 화면에서 고친다.
 4. 스크립트는 반영 대기 수만 올리므로, 넣고 나서 관리자 화면의 **"사이트에 반영"** 을 누른다.
 
