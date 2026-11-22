@@ -24,6 +24,7 @@ export const FAQ_PATH = "/faq";
 export const COUPLES_PATH = "/couples";
 export const EPISODES_PATH = "/episodes";
 export const SOLONARA_PATH = "/solonara";
+export const VOTE_PATH = "/vote";
 export const TAKEDOWN_PATH = "/takedown";
 export const PRIVACY_PATH = "/privacy";
 
@@ -116,6 +117,11 @@ export function episodesHref(locale: Locale): string {
 /** 솔로나라 기록(기수별 숙소와 게임) — 한국어 화면만 있다. `app/[lang]/solonara` 와 짝이다. */
 export function solonaraHref(locale: Locale): string {
   return localePath(locale, SOLONARA_PATH);
+}
+
+/** 시청자 투표 — 한국어 화면만 있다. `app/[lang]/vote` 와 짝이다. */
+export function voteHref(locale: Locale): string {
+  return localePath(locale, VOTE_PATH);
 }
 
 /** 사이트 소개. `app/[lang]/about` 과 짝이다. */

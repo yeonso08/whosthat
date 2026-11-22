@@ -1,10 +1,11 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Vote } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AutoAds } from "@/components/ads";
 import { BackLink } from "@/components/back-link";
 import { CollectionLink } from "@/components/collection-link";
+import { VoteChip } from "@/components/vote-chip";
 import { InstagramIcon } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
 import { ListPanel } from "@/components/list-card";
@@ -14,7 +15,13 @@ import {
   EpisodeBlocks,
   EpisodeHeading,
 } from "@/components/season-episodes";
-import { getProgram, getPrograms, getSeason, getSeasons } from "@/lib/data";
+import {
+  episodeVotesUrl,
+  getProgram,
+  getPrograms,
+  getSeason,
+  getSeasons,
+} from "@/lib/data";
 import {
   fill,
   formatEpisodeDate,
@@ -30,10 +37,12 @@ import {
   episodeHref,
   programHref,
   seasonHref,
+  voteHref,
 } from "@/lib/links";
 import { DEFAULT_LOCALE } from "@/lib/locales";
 import { breadcrumbSchema, isEpisodeIndexable, openGraphBase } from "@/lib/seo";
 import { getCoverage, getEpisodeExcerpt } from "@/lib/types";
+import { votableEpisode } from "@/lib/vote";
 
 /** 검색 결과 설명 한 줄의 길이. 더 길면 검색엔진이 중간에서 자른다. */
 const DESCRIPTION_LENGTH = 150;
@@ -129,6 +138,8 @@ export default async function Page({
   const coverage = getCoverage(season.cast);
   // 최신 회차부터. 지금 읽는 회차는 뺀다.
   const others = episodes.filter((e) => e.id !== episode.id).reverse();
+  // 투표는 방영 중인 기수의 마지막 회차에서만 열린다 — 그 글에만 투표 화면으로 가는 줄을 단다.
+  const votable = votableEpisode(programId, season)?.id === episode.id;
 
   return (
     // 읽는 화면이라 좁은 기둥이다 — 기수 화면 안에서 이 글이 서던 폭(720px)과 같다.
@@ -167,6 +178,24 @@ export default async function Page({
             date: formatFullDate(episode.airDate, locale),
           })}
         </p>
+
+        {/* 투표가 열린 회차는 제목 바로 아래에서 투표 화면으로 잇는다 — 글 맨 아래 줄은
+            끝까지 읽은 사람만 본다. */}
+        {votable && (
+          <div className="mt-4">
+            <VoteChip
+              href={voteHref(locale)}
+              endpoint={episodeVotesUrl(programId, season.id, episode.airDate)}
+              label={dict.vote.chip}
+              leaderTemplate={dict.vote.chipLeader}
+              candidates={season.cast.map((member) => ({
+                id: member.id,
+                alias: member.alias,
+                gender: member.gender,
+              }))}
+            />
+          </div>
+        )}
       </header>
 
       <article className="gutter mt-7 lg:mt-9">
@@ -184,7 +213,7 @@ export default async function Page({
         </p>
       </article>
 
-      {/* 글을 다 읽은 사람이 갈 곳 둘 — 이 사람들의 계정, 그리고 같은 기수의 다른 회차. */}
+      {/* 글을 다 읽은 사람이 갈 곳 — 이 사람들의 계정, 투표(열린 회차만), 같은 기수의 다른 회차. */}
       <section className="gutter mt-10 lg:mt-12">
         <ListPanel>
           <CollectionLink
@@ -196,6 +225,14 @@ export default async function Page({
             })}
             icon={<InstagramIcon className="size-4.5 text-foreground" />}
           />
+          {votable && (
+            <CollectionLink
+              href={voteHref(locale)}
+              title={dict.vote.episodeLink}
+              summary={dict.vote.episodeLinkSummary}
+              icon={<Vote className="size-4.5 text-foreground" />}
+            />
+          )}
         </ListPanel>
       </section>
 

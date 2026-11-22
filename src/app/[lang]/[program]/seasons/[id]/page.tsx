@@ -9,8 +9,10 @@ import { JsonLd } from "@/components/json-ld";
 import { GroupHeading, PageEyebrow } from "@/components/page-heading";
 import { PreviousSeasonLink } from "@/components/previous-season-link";
 import { SeasonEpisodes } from "@/components/season-episodes";
+import { VoteChip } from "@/components/vote-chip";
 import { WithBanner } from "@/components/with-banner";
 import {
+  episodeVotesUrl,
   getEarlierAppearances,
   getPreviousSeason,
   getProgram,
@@ -31,7 +33,7 @@ import {
   seasonDescription,
   seasonEpisodes,
 } from "@/lib/i18n";
-import { programHref, seasonHref, seasonPath } from "@/lib/links";
+import { programHref, seasonHref, seasonPath, voteHref } from "@/lib/links";
 import { programTintBackground } from "@/lib/program-tint";
 import {
   hasAdContent,
@@ -42,6 +44,7 @@ import {
   showsSeasonFacts,
 } from "@/lib/seo";
 import { getCoverage, getFinalCouples } from "@/lib/types";
+import { votableEpisode } from "@/lib/vote";
 
 /**
  * 머리글 포스터의 폭. 프로그램 화면(120px)보다 한 단계 작다 — 여기서 포스터는
@@ -145,6 +148,8 @@ export default async function Page({
   // 방영 중인 기수만 앞 기수로 잇는다 — 사람들이 몰려오는데 계정이 잠겨 있는
   // 자리다. 앞 기수도 확인한 계정이 없으면 이어 줘 봐야 같은 빈 화면이다.
   const airingEmpty = season.onAir && coverage.found === 0;
+  // 투표는 회차 글처럼 한국어 화면만 있다. 방송 직후 사람이 몰리는 이 화면에서 보이게 칩을 건다.
+  const voteEpisode = lang === "ko" ? votableEpisode(programId, season) : undefined;
   const candidate = season.onAir ? getPreviousSeason(program, season) : undefined;
   const previous =
     candidate && getCoverage(candidate.cast).found > 0 ? candidate : undefined;
@@ -310,6 +315,24 @@ export default async function Page({
             <p className="mt-3 max-w-[52ch] text-[13px] leading-[1.7] whitespace-pre-line text-pretty break-keep text-muted-foreground">
               {dict.season.airingEmpty}
             </p>
+          )}
+
+          {/* 시청자 투표로 가는 칩 — 머리글 안 한 줄이다. 격자 위에 판으로 얹으면 명단을
+              밀어 내린다(앞 기수 판을 격자 아래에 둔 것과 같은 이유). */}
+          {voteEpisode && (
+            <div className="mt-4">
+              <VoteChip
+                href={voteHref(lang)}
+                endpoint={episodeVotesUrl(programId, season.id, voteEpisode.airDate)}
+                label={dict.vote.chip}
+                leaderTemplate={dict.vote.chipLeader}
+                candidates={season.cast.map((member) => ({
+                  id: member.id,
+                  alias: member.alias,
+                  gender: member.gender,
+                }))}
+              />
+            </div>
           )}
         </header>
 

@@ -38,6 +38,7 @@ src/app/[lang]/[program]/seasons/[id]/episodes/[date]/page.tsx 회차 글 한 �
 src/app/[lang]/couples/page.tsx      최종 커플 모음 — 프로그램 탭 + 찾기 + 기수별 판 (최종 선택이 방송된 기수만)
 src/app/[lang]/episodes/page.tsx     회차별 정리 모음 — 프로그램 탭 + 찾기 + 기수별 판(최신 회차 넷, 나머지는 접힘). 한국어 화면만
 src/app/[lang]/solonara/page.tsx     솔로나라 숙소와 게임 — 나는 솔로 기수마다 숙소와 놀이(첫인상·데이트 선택·랜덤 데이트·슈퍼 데이트권 게임)의 진행 방법. 놀이 종류 칩 + 찾기 + 줄 순서 격자(34기 옆에 33기 — 단으로 쌓았다가 반려됨), 판마다 게임 하나만 펼치고 나머지는 접는다(판 키를 맞추려고). 회차 글 링크는 걸지 않는다(반려됨). 데이터는 아직 src/data/solonara.json. 한국어 화면만
+src/app/[lang]/vote/page.tsx         시청자 투표 — 프로그램 탭 + 진행 중인 투표 + 회차별 결과(1위 vs 최종 선택). 현황은 브라우저가 API 에서 읽는다. 한국어 화면만, noindex
 src/app/[lang]/about/page.tsx        사이트 소개 — 무엇을 싣고 계정을 어떻게 확인하는지 (애드센스가 요구한 고유 콘텐츠)
 src/app/[lang]/faq/page.tsx          자주 묻는 질문 — 문답 10개 + FAQPage JSON-LD
 src/app/[lang]/takedown/page.tsx     삭제·정정 요청 창구
@@ -364,7 +365,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ### 배포·도메인
 
-- 화면은 전부 정적이다 — 방문자 요청에 도는 건 `/` 를 언어로 보내는 proxy 하나뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (Cloudflare Registrar 등록·DNS). 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다.
+- 화면은 전부 정적이다 — 방문자 요청에 도는 건 `/` 를 언어로 보내는 proxy 와, 시청자 투표 화면이 브라우저에서 부르는 API(아래 "시청자 투표")뿐이다. Vercel 에 배포돼 있다 — https://www.nukko.net (Cloudflare Registrar 등록·DNS). 프록시는 **DNS only** 로 둔다 — 주황 구름을 켜면 Vercel 검증·SSL 발급이 막히고 Bot Fight Mode 가 크롤러를 자른다.
 - 도메인은 `lib/site.ts` 한 곳에서 정해진다. **`NEXT_PUBLIC_SITE_URL`(Production)에 `https://www.nukko.net` 을 박아 뒀다** — Vercel 자동값(`VERCEL_PROJECT_PRODUCTION_URL`)은 "가장 짧은 커스텀 도메인"을 고르는데, 그러면 리다이렉트 전용인 apex(`nukko.net`)가 뽑힌다. 이유는 위 "커스텀 도메인을 연결할 때" 1번에 있다.
 - **Vercel 은 Pro 플랜이다**(2026-11-20 — Hobby 한도로 사이트가 멈춘 뒤 바꿨다, [HISTORY §23](docs/HISTORY.md)). 월 $20(부가세 포함 $22)에 사용량 크레딧 $20 이 들어 있다. **같은 팀에 trend-now(keywi.kr)가 있어 한도·예산·크레딧을 함께 쓴다** — Hobby 한도는 계정 단위라 keywi 가 CDN 요청을 다 쓰면서 누꼬까지 멈췄다.
   - **크레딧을 넘으면 돈을 더 내지 않고 사이트를 멈춘다**(사용자 결정). Settings → Billing → Spend Management 의 팀 예산 **$1** + "Pause production deployments" 다. 팀 예산은 크레딧을 **넘은** 사용량만 센다 — $20 으로 잡으면 크레딧까지 합쳐 $40 을 쓴다. 멈추면 팀의 전 프로젝트가 503(`DEPLOYMENT_PAUSED`)이고, 예산을 올리거나 다음 결제 주기가 와야 풀린다. **사이트가 갑자기 503 이면 여기부터 본다.**
@@ -455,6 +456,20 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 **광고를 떼거나 바꾸면 `/privacy` 부터 되돌린다.** 처리방침의 세 문단이 광고를 전제하고 쓰여 있다 — `visitor2`(무쿠키 주장을 Vercel Analytics 로 한정), `processor`(Google LLC 가 제3자로 들어가 있다), `ads`(게재 중이라고 말한다). 광고를 떼고 이 문구를 두면 처리방침이 반대 방향으로 거짓말을 한다. 문구가 바뀌면 `effectiveDate` 도 함께 옮긴다.
 
+### 시청자 투표 (2026-11-22)
+
+나는 솔로·나솔사계 회차마다 "이번 회 마음에 든 솔로남·솔로녀" 를 한 명씩 고른다. 매주 다시 올 이유를 만들려는 것이다. 저장은 `nukko-admin-api` 의 `/votes`(표 `episode_votes`)다.
+
+- **투표는 전용 화면(`/ko/vote`) 한 곳이다**(2026-11-22, 사용자 요청). 처음엔 회차 글 맨 아래에 상자를 붙였는데 "위치가 마음에 안 든다" 로 뺐다. 프로그램 탭 → "진행 중인 투표"(방영 중 기수의 마지막 회차, `EpisodeVote`) + "회차별 결과"(회차마다 솔로남·솔로녀 1위와 기수의 실제 최종 선택, `VoteHistory`). 들어오는 길은 홈 "모아 보기" 줄, 그리고 **방영 중 기수 화면 머리글과 투표가 열린 회차 글 제목 아래의 칩**(`VoteChip`, `시청자 투표 중 · 현재 1위 영수, 옥순 ›`)이다 — 방문자는 검색에서 기수 화면·회차 글로 바로 착지해 홈 줄만으로는 안 보였다. 칩은 머리글 안 한 줄이라 명단을 밀지 않고, 흑백이다(기수 화면 규칙). 칩에 날짜를 넣으면 휴대폰에서 1위 이름이 잘린다. 칩을 걸지 정하는 건 `votableEpisode` 하나다. **상단 바에 걸지 않는다**(모음 화면을 상단 바에 건 안은 이미 반려됐다).
+- **이 화면은 색인에서 뺀다**(`noindex` + sitemap 없음) — 현황을 전부 브라우저가 읽어서 크롤러가 받는 HTML 은 후보 이름뿐이다. 한국어 화면만 있다.
+
+- **페이지는 그대로 정적이고 상자만 브라우저가 API 를 부른다.** API 가 죽으면 상자가 안 그려질 뿐 글은 멀쩡하다. Vercel 함수로 만들지 않은 건 팀 예산($1)을 넘으면 사이트가 통째로 멈추기 때문이다.
+- **열고 닫는 건 API 가 정한다** — 그 기수의 마지막 회차이고 방송 다음 주 같은 요일 밤 10시(KST) 전이면 열린다. 닫혔는데 표가 없으면 "지금 열린 투표가 없습니다" 다.
+- **순위는 전원을 보여 준다 — 0표·꼴찌 포함**(사용자 결정). 찍기 전에는 후보만, 찍은 뒤나 닫힌 뒤에 결과다.
+- **로그인도 쿠키도 없다.** 브라우저 무작위 토큰(localStorage) 하나가 "한 사람" 이고, 서버는 IP 를 HMAC 한 값으로 한 IP 의 표 수에만 상한(30)을 건다 — 통신사 망은 여러 사람이 IP 하나를 쓰므로 1로 걸면 안 된다. 이 사실을 `/privacy` 의 `visitor4`·`processor` 가 말한다 — 방식을 바꾸면 그 문장부터 고친다.
+- 계약결혼은 두 쌍뿐이라 빼 뒀다(`lib/vote.ts` 의 `VOTE_PROGRAMS`). 표는 매일 백업에 안 들어간다.
+- `fill` 은 클라이언트도 쓰려고 `lib/template.ts` 로 뺐다(`i18n.ts` 가 다시 내보낸다) — 투표 상자가 `i18n.ts` 를 import 하면 사전 세 벌이 번들에 딸려 간다.
+
 ### 검색
 
 검색(`SeasonSearch`)은 **목록 바로 위 검색창**이다(홈은 프로그램 진열대 위, 프로그램 화면은 기수 목록 위). 헤더 돋보기 + `⌘K` 팔레트(shadcn `command`)로 먼저 만들었다가 반려됐다 — 목록 위 검색창이 맞다. 그래서 `command`·`dialog` 는 다시 걷어냈고 `cmdk` 의존도 지웠다.
@@ -478,6 +493,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 
 ```
 방문자 → 누꼬(Vercel, 정적)              이 경로에 백엔드가 없다
+방문자 브라우저 → api.nukko.net/votes   시청자 투표 화면(/ko/vote)만(2026-11-22)
 관리자 → admin.nukko.net(Vercel) → api.nukko.net(OCI) → Supabase
                                         └→ "사이트에 반영" 을 누르면 Vercel Deploy Hook → 누꼬 전체 재빌드(약 1분)
 ```
