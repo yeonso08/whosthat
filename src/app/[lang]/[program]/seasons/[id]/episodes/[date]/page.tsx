@@ -1,11 +1,10 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Vote } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AutoAds } from "@/components/ads";
 import { BackLink } from "@/components/back-link";
 import { CollectionLink } from "@/components/collection-link";
-import { EpisodeVote } from "@/components/episode-vote";
 import { InstagramIcon } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
 import { ListPanel } from "@/components/list-card";
@@ -15,13 +14,7 @@ import {
   EpisodeBlocks,
   EpisodeHeading,
 } from "@/components/season-episodes";
-import {
-  episodeVotesUrl,
-  getProgram,
-  getPrograms,
-  getSeason,
-  getSeasons,
-} from "@/lib/data";
+import { getProgram, getPrograms, getSeason, getSeasons } from "@/lib/data";
 import {
   fill,
   formatEpisodeDate,
@@ -37,16 +30,12 @@ import {
   episodeHref,
   programHref,
   seasonHref,
+  voteHref,
 } from "@/lib/links";
 import { DEFAULT_LOCALE } from "@/lib/locales";
 import { breadcrumbSchema, isEpisodeIndexable, openGraphBase } from "@/lib/seo";
 import { getCoverage, getEpisodeExcerpt } from "@/lib/types";
-
-/**
- * 시청자 투표를 거는 프로그램. 솔로남·솔로녀 여럿이 한 회차에 나오는 쪽만이다 — 계약결혼은
- * 두 쌍뿐이라 고를 게 없고, 솔로지옥은 회차 글이 없다.
- */
-const VOTE_PROGRAMS = new Set(["i-am-solo", "i-am-solo-love-goes-on"]);
+import { VOTE_PROGRAMS } from "@/lib/vote";
 
 /** 검색 결과 설명 한 줄의 길이. 더 길면 검색엔진이 중간에서 자른다. */
 const DESCRIPTION_LENGTH = 150;
@@ -142,6 +131,11 @@ export default async function Page({
   const coverage = getCoverage(season.cast);
   // 최신 회차부터. 지금 읽는 회차는 뺀다.
   const others = episodes.filter((e) => e.id !== episode.id).reverse();
+  // 투표는 방영 중인 기수의 마지막 회차에서만 열린다 — 그 글에만 투표 화면으로 가는 줄을 단다.
+  const votable =
+    VOTE_PROGRAMS.includes(programId) &&
+    season.onAir &&
+    episodes.at(-1)?.id === episode.id;
 
   return (
     // 읽는 화면이라 좁은 기둥이다 — 기수 화면 안에서 이 글이 서던 폭(720px)과 같다.
@@ -197,26 +191,7 @@ export default async function Page({
         </p>
       </article>
 
-      {/* 시청자 투표 — 현황은 브라우저가 API 에서 읽는다. 닫혔는데 표가 없는 옛 회차나
-          API 가 안 될 때는 상자가 아예 안 그려진다(`EpisodeVote`). */}
-      {VOTE_PROGRAMS.has(programId) && (
-        <div className="gutter mt-12">
-          <EpisodeVote
-            heading={<EpisodeHeading as="h2">{dict.episodeVote.heading}</EpisodeHeading>}
-            endpoint={episodeVotesUrl(programId, season.id, episode.airDate)}
-            candidates={season.cast.map((member) => ({
-              id: member.id,
-              alias: member.alias,
-              gender: member.gender,
-              profileImageUrl: member.profileImageUrl,
-            }))}
-            strings={dict.episodeVote}
-            locale={locale}
-          />
-        </div>
-      )}
-
-      {/* 글을 다 읽은 사람이 갈 곳 둘 — 이 사람들의 계정, 그리고 같은 기수의 다른 회차. */}
+      {/* 글을 다 읽은 사람이 갈 곳 — 이 사람들의 계정, 투표(열린 회차만), 같은 기수의 다른 회차. */}
       <section className="gutter mt-10 lg:mt-12">
         <ListPanel>
           <CollectionLink
@@ -228,6 +203,14 @@ export default async function Page({
             })}
             icon={<InstagramIcon className="size-4.5 text-foreground" />}
           />
+          {votable && (
+            <CollectionLink
+              href={voteHref(locale)}
+              title={dict.vote.episodeLink}
+              summary={dict.vote.episodeLinkSummary}
+              icon={<Vote className="size-4.5 text-foreground" />}
+            />
+          )}
         </ListPanel>
       </section>
 

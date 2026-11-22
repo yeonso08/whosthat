@@ -50,6 +50,11 @@ export function episodeVotesUrl(programId: string, seasonId: string, airDate: st
   return `${API_URL}/votes/${programId}/${seasonId}/${airDate}`;
 }
 
+/** 한 프로그램의 회차별 득표 전부 — 투표 화면의 "회차별 결과" 가 탭마다 한 번 부른다. */
+export function programVotesUrl(programId: string): string {
+  return `${API_URL}/votes/${programId}`;
+}
+
 /**
  * 응답 캐시의 키를 배포마다 바꾼다. **Vercel 의 데이터 캐시는 배포를 넘어 살아남아서**
  * (문서: "Persistent across deployments") 같은 URL 이면 새 빌드가 옛 응답을 그대로

@@ -13,8 +13,10 @@ type Gender = VoteCandidate["gender"];
 type Strings = Dictionary["episodeVote"];
 
 type Props = {
-  /** 서버가 그린 소제목 — 회차 글 본문과 같은 형광펜 제목이다. */
+  /** 서버가 그린 머리 — 어느 기수·회차의 투표인지. */
   heading: ReactNode;
+  /** 닫혔는데 표가 하나도 없을 때 대신 그릴 것. 없으면 아무것도 안 그린다. */
+  fallback?: ReactNode;
   /** `episodeVotesUrl` 이 만든 주소. */
   endpoint: string;
   candidates: VoteCandidate[];
@@ -64,13 +66,14 @@ function voterToken(): string {
 }
 
 /**
- * 회차 글 맨 아래의 시청자 투표. 현황은 브라우저가 API 에서 읽는다 — 페이지는 정적이다.
+ * 한 회차의 시청자 투표(투표 화면의 "진행 중인 투표"). 현황은 브라우저가 API 에서 읽는다
+ * — 페이지는 정적이다.
  *
  * - **API 가 안 되면 아무것도 안 그린다.** 상자가 비어 깨진 채로 남는 것보다 낫다.
- * - 닫혔는데 표가 하나도 없는 회차(투표를 붙이기 전의 옛 회차)도 안 그린다.
+ * - 닫혔는데 표가 하나도 없는 회차는 `fallback` 을 그린다.
  * - 찍기 전에는 후보만, 찍은 뒤나 닫힌 뒤에는 **전원의 순위를 보여 준다**(0표 포함).
  */
-export function EpisodeVote({ heading, endpoint, candidates, strings, locale }: Props) {
+export function EpisodeVote({ heading, fallback = null, endpoint, candidates, strings, locale }: Props) {
   const [results, setResults] = useState<VoteResults | null>(null);
   const [picks, setPicks] = useState<Partial<Record<Gender, string>>>({});
 
@@ -94,7 +97,7 @@ export function EpisodeVote({ heading, endpoint, candidates, strings, locale }: 
 
   if (!results) return null;
   const total = Object.values(results.counts).reduce((sum, n) => sum + n, 0);
-  if (!results.open && total === 0) return null;
+  if (!results.open && total === 0) return fallback;
 
   async function vote(gender: Gender, memberId: string): Promise<boolean> {
     const response = await fetch(endpoint, {
@@ -114,7 +117,7 @@ export function EpisodeVote({ heading, endpoint, candidates, strings, locale }: 
       {heading}
       <p className="text-[14px] leading-[1.6] text-muted-foreground break-keep">
         {results.open
-          ? `${strings.lead} ${fill(strings.deadline, { date: formatVoteDeadline(results.closesAt, locale) })}`
+          ? fill(strings.deadline, { date: formatVoteDeadline(results.closesAt, locale) })
           : strings.closed}
       </p>
       <div className="grid gap-4 lg:grid-cols-2">

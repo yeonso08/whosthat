@@ -4,6 +4,12 @@
  */
 import type { VoteCandidate, VoteResults } from "@/lib/types";
 
+/**
+ * 시청자 투표를 거는 프로그램. 솔로남·솔로녀 여럿이 한 회차에 나오는 쪽만이다 — 계약결혼은
+ * 두 쌍뿐이라 고를 게 없고, 솔로지옥은 회차 글이 없다.
+ */
+export const VOTE_PROGRAMS: readonly string[] = ["i-am-solo", "i-am-solo-love-goes-on"];
+
 /** 마감 시각은 방송 시간대로 적는다 — 해외에서 열어도 "한국 밤 10시" 가 기준이다. */
 const VOTE_TIME_ZONE = "Asia/Seoul";
 

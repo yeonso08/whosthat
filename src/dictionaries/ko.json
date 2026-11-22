@@ -71,9 +71,7 @@
     "othersHeading": "{season} 다른 회차"
   },
   "episodeVote": {
-    "heading": "시청자 투표",
-    "lead": "이번 회 마음에 든 솔로남·솔로녀를 한 명씩 골라 주세요.",
-    "deadline": "{date}까지",
+    "deadline": "{date}까지 투표할 수 있습니다.",
     "closed": "투표가 끝났습니다.",
     "male": "솔로남",
     "female": "솔로녀",
@@ -84,6 +82,26 @@
     "rank": "{rank}위",
     "error": "투표를 보내지 못했습니다. 잠시 뒤 다시 해 주세요.",
     "note": "재미로 하는 투표입니다. 한 브라우저에서 한 회차에 솔로남·솔로녀 한 표씩 넣을 수 있고, 넣은 표는 바꿀 수 없습니다."
+  },
+  "vote": {
+    "heading": "시청자 투표",
+    "metaTitle": "시청자 투표 — 이번 주 마음에 든 솔로남·솔로녀",
+    "description": "나는 솔로·나솔사계 회차마다 시청자가 고른 솔로남·솔로녀와, 그 사람들이 실제로 누구를 최종 선택했는지 나란히 모았습니다.",
+    "lead": "회차마다 마음에 든 솔로남·솔로녀를 한 명씩 골라 주세요.\n매주 시청자 1위와 실제 최종 선택을 나란히 모읍니다.",
+    "summary": "이번 주 마음에 든 솔로남·솔로녀 고르기",
+    "liveHeading": "진행 중인 투표",
+    "liveEmpty": "지금 열린 투표가 없습니다. 다음 회차 글이 올라오면 열립니다.",
+    "aired": "{season} · {date} 방송",
+    "historyHeading": "회차별 결과",
+    "historyEmpty": "아직 쌓인 결과가 없습니다.",
+    "topMale": "솔로남 1위",
+    "topFemale": "솔로녀 1위",
+    "none": "표 없음",
+    "finalLabel": "최종 선택",
+    "finalNone": "최종 커플 없음",
+    "finalPending": "최종 선택 전",
+    "episodeLink": "이번 회 시청자 투표",
+    "episodeLinkSummary": "마음에 든 솔로남·솔로녀를 골라 주세요"
   },
   "couples": {
     "heading": "최종 커플",

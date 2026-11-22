@@ -71,9 +71,7 @@
     "othersHeading": "More from {season}"
   },
   "episodeVote": {
-    "heading": "Viewer vote",
-    "lead": "Pick one man and one woman you liked in this episode.",
-    "deadline": "Open until {date}",
+    "deadline": "Voting is open until {date}.",
     "closed": "Voting has closed.",
     "male": "Men",
     "female": "Women",
@@ -84,6 +82,26 @@
     "rank": "#{rank}",
     "error": "Your vote did not go through. Please try again in a moment.",
     "note": "This vote is just for fun. Each browser gets one vote for a man and one for a woman per episode, and votes cannot be changed."
+  },
+  "vote": {
+    "heading": "Viewer vote",
+    "metaTitle": "Viewer vote — who viewers liked this week",
+    "description": "For each episode of I Am SOLO and its spin-off, the man and woman viewers picked, next to who those people actually chose in the end.",
+    "lead": "Pick one man and one woman you liked in each episode.\nEvery week's viewer favorites sit next to the real final choices.",
+    "summary": "Pick this week's favorite man and woman",
+    "liveHeading": "Open now",
+    "liveEmpty": "No vote is open right now. It opens when the next episode write-up goes up.",
+    "aired": "{season} · aired {date}",
+    "historyHeading": "Results by episode",
+    "historyEmpty": "No results yet.",
+    "topMale": "Top man",
+    "topFemale": "Top woman",
+    "none": "No votes",
+    "finalLabel": "Final choice",
+    "finalNone": "No final couple",
+    "finalPending": "Before the final choice",
+    "episodeLink": "Viewer vote for this episode",
+    "episodeLinkSummary": "Pick the man and woman you liked"
   },
   "couples": {
     "heading": "Final couples",

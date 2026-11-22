@@ -71,9 +71,7 @@
     "othersHeading": "{season}の他の回"
   },
   "episodeVote": {
-    "heading": "視聴者投票",
-    "lead": "今回気になった男性・女性を一人ずつ選んでください。",
-    "deadline": "{date}まで",
+    "deadline": "{date}まで投票できます。",
     "closed": "投票は終了しました。",
     "male": "男性",
     "female": "女性",
@@ -84,6 +82,26 @@
     "rank": "{rank}位",
     "error": "投票を送れませんでした。少し経ってからもう一度お試しください。",
     "note": "楽しむための投票です。ひとつのブラウザから一回につき男性・女性に一票ずつ入れられ、入れた票は変えられません。"
+  },
+  "vote": {
+    "heading": "視聴者投票",
+    "metaTitle": "視聴者投票 — 今週気になった男性・女性",
+    "description": "「私はSOLO」とスピンオフの各回で視聴者が選んだ男性・女性と、その人たちが実際に誰を最終選択したかを並べました。",
+    "lead": "各回で気になった男性・女性を一人ずつ選んでください。\n毎週の視聴者1位と実際の最終選択を並べて残します。",
+    "summary": "今週気になった男性・女性を選ぶ",
+    "liveHeading": "投票受付中",
+    "liveEmpty": "いま受付中の投票はありません。次の回の記事が上がると始まります。",
+    "aired": "{season} · {date}放送",
+    "historyHeading": "回ごとの結果",
+    "historyEmpty": "まだ結果がありません。",
+    "topMale": "男性1位",
+    "topFemale": "女性1位",
+    "none": "票なし",
+    "finalLabel": "最終選択",
+    "finalNone": "最終カップルなし",
+    "finalPending": "最終選択前",
+    "episodeLink": "今回の視聴者投票",
+    "episodeLinkSummary": "気になった男性・女性を選んでください"
   },
   "couples": {
     "heading": "最終カップル",
