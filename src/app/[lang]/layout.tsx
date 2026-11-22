@@ -10,6 +10,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
+import { QueryProvider } from "@/components/query-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import {
   getDictionary,
@@ -148,7 +149,9 @@ export default async function RootLayout({
           {/* 본문이 남은 높이를 먹어 푸터를 화면 바닥까지 민다 — 짧은 화면에서
               푸터가 콘텐츠에 바로 붙으면 그 아래 빈 화면이 "덜 그려진 페이지" 로
               읽힌다. 폭은 여기서 묶는다(상단 바는 안 묶인다). */}
-          <div className="mx-auto w-full max-w-[1280px] flex-1">{children}</div>
+          <div className="mx-auto w-full max-w-[1280px] flex-1">
+            <QueryProvider>{children}</QueryProvider>
+          </div>
           {/* 레이아웃에 두면 기수를 아무리 늘려도 삭제 창구가 빠지는 화면이 없다. */}
           <SiteFooter />
         </ThemeProvider>

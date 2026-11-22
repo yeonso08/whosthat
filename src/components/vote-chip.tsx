@@ -2,10 +2,11 @@
 
 import { ChevronRight, Vote } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fill } from "@/lib/template";
-import type { VoteCandidate, VoteResults } from "@/lib/types";
+import type { VoteCandidate } from "@/lib/types";
 import { rankVotes } from "@/lib/vote";
+import { episodeVotesQuery } from "@/lib/vote-queries";
 
 type Props = {
   href: string;
@@ -32,16 +33,7 @@ const GENDER_SEPARATOR = ", ";
  * 흑백 칩이다(기수 화면의 특집 칩과 같은 모양) — 기수 화면은 유채색을 쓰지 않는다.
  */
 export function VoteChip({ href, endpoint, label, leaderTemplate, candidates }: Props) {
-  const [results, setResults] = useState<VoteResults | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch(endpoint, { signal: controller.signal })
-      .then((response) => (response.ok ? response.json() : null))
-      .then((data: VoteResults | null) => setResults(data))
-      .catch(() => {});
-    return () => controller.abort();
-  }, [endpoint]);
+  const { data: results } = useQuery(episodeVotesQuery(endpoint));
 
   if (results && !results.open) return null;
 
