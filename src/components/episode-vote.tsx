@@ -2,11 +2,13 @@
 
 import { UserRound } from "lucide-react";
 import Image from "next/image";
-import { type ReactNode, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { type ReactNode, useState, useSyncExternalStore } from "react";
 import type { Dictionary } from "@/lib/i18n";
 import { fill } from "@/lib/template";
 import type { VoteCandidate, VoteResults } from "@/lib/types";
 import { formatVoteDeadline, rankVotes, voteClosesAt } from "@/lib/vote";
+import { episodeVotesQuery, postVote, VOTE_QUERY_ROOT } from "@/lib/vote-queries";
 
 type Gender = VoteCandidate["gender"];
 
@@ -43,6 +45,10 @@ const PICK_PHOTO_SIZES = "(min-width: 1024px) 90px, 30vw";
 const RESULT_PHOTO_SIZES = "40px";
 
 // localStorage 는 사생활 보호 창·차단된 사이트 데이터에서 비거나 던진다 — 그래도 투표는 된다.
+function pickKey(endpoint: string, gender: Gender): string {
+  return `${PICK_KEY_PREFIX}${endpoint}:${gender}`;
+}
+
 function readStorage(key: string): string | null {
   try {
     return window.localStorage.getItem(key);
@@ -79,7 +85,7 @@ function voterToken(): string {
 function useStoredPick(endpoint: string, gender: Gender): string | null {
   return useSyncExternalStore(
     subscribeNothing,
-    () => readStorage(`${PICK_KEY_PREFIX}${endpoint}:${gender}`),
+    () => readStorage(pickKey(endpoint, gender)),
     () => null,
   );
 }
@@ -112,6 +118,8 @@ function subscribeNothing() {
  * - 셈한 마감이 지났으면 API 답을 기다린다 — 닫혔는데 표가 하나도 없는 회차는 `fallback`,
  *   API 가 안 되면 아무것도 안 그린다.
  * - 찍기 전에는 후보만, 찍은 뒤나 닫힌 뒤에는 **전원의 순위를 보여 준다**(0표 포함).
+ * - 현황은 TanStack Query 로 읽는다(`vote-queries.ts`). 한 표를 넣으면 같은 화면의 회차별
+ *   결과까지 다시 불러 새로고침 없이 바뀐다.
  */
 export function EpisodeVote({
   heading,
@@ -122,78 +130,55 @@ export function EpisodeVote({
   strings,
   locale,
 }: Props) {
-  const [results, setResults] = useState<VoteResults | null>(null);
+  const queryClient = useQueryClient();
+  const query = episodeVotesQuery(endpoint);
+  const { data: results, isError } = useQuery(query);
   const [picks, setPicks] = useState<Partial<Record<Gender, string | null>>>({});
   const [failed, setFailed] = useState<Partial<Record<Gender, boolean>>>({});
-  // 표 수가 API 에서 왔는지. 내 표만 더한 숫자(`1표 · 100%`)는 진짜 현황이 아니라 숫자를 비운다.
-  const [loaded, setLoaded] = useState(false);
-  // 현황 답이 오기 전에 찍었는지.
-  const voted = useRef(false);
   const stored = { male: useStoredPick(endpoint, "male"), female: useStoredPick(endpoint, "female") };
 
   const closesAt = voteClosesAt(airDate);
   const openByClock = useOpenByClock(closesAt);
 
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch(endpoint, { signal: controller.signal })
-      .then((response) => (response.ok ? response.json() : null))
-      .then((data: VoteResults | null) => {
-        // 이미 찍었으면 투표 응답이 진짜 현황을 가져온다 — 늦게 온 현황(내 표가 빠진)으로 덮지 않는다.
-        if (voted.current) return;
-        if (!data) {
-          setResults(CLOSED_UNKNOWN);
-          return;
-        }
-        setResults(data);
-        setLoaded(true);
-      })
-      .catch(() => {});
-    return () => controller.abort();
-  }, [endpoint]);
+  const mutation = useMutation({
+    mutationFn: ({ memberId }: { gender: Gender; memberId: string }) =>
+      postVote(endpoint, memberId, voterToken()),
+    // 누르는 순간 "내 선택"·순위를 보인다. 늦게 온 현황(내 표가 빠진)이 덮지 않게 불러오기를 멈춘다.
+    onMutate: async ({ gender, memberId }) => {
+      await queryClient.cancelQueries({ queryKey: query.queryKey });
+      const before = queryClient.getQueryData(query.queryKey);
+      const base = before ?? { open: true, closesAt, counts: {} };
+      queryClient.setQueryData(query.queryKey, {
+        ...base,
+        counts: { ...base.counts, [memberId]: (base.counts[memberId] ?? 0) + 1 },
+      });
+      writeStorage(pickKey(endpoint, gender), memberId);
+      setPicks((current) => ({ ...current, [gender]: memberId }));
+      setFailed((current) => ({ ...current, [gender]: false }));
+      return { before };
+    },
+    onSuccess: (data) => queryClient.setQueryData(query.queryKey, data),
+    // 보내지 못했다 — 찍기 전으로 되돌린다(마감·상한이었으면 다시 읽은 현황이 말한다).
+    onError: (_error, { gender }, context) => {
+      // 현황을 받기 전이었으면 "없음" 으로 되돌릴 수 없어서(setQueryData 가 undefined 를 무시한다) 비우고 다시 부른다.
+      if (context?.before) queryClient.setQueryData(query.queryKey, context.before);
+      else void queryClient.resetQueries({ queryKey: query.queryKey });
+      removeStorage(pickKey(endpoint, gender));
+      setPicks((current) => ({ ...current, [gender]: null }));
+      setFailed((current) => ({ ...current, [gender]: true }));
+    },
+    // 같은 화면의 회차별 결과·칩까지 새 현황으로(새로고침 없이).
+    // 기다리지 않는다 — 기다리면 그동안 투표가 "보내는 중" 으로 남아 숫자가 비어 있다.
+    onSettled: () => void queryClient.invalidateQueries({ queryKey: [VOTE_QUERY_ROOT] }),
+  });
 
-  // 답이 오기 전에는 셈한 값으로 그린다. 셈한 마감이 지났으면 그릴 것을 모르니 기다린다.
-  if (!results && !openByClock) return null;
-  if (results === CLOSED_UNKNOWN) return null;
+  // 답이 오기 전에는 셈한 값으로 그린다. 셈한 마감이 지났거나 API 가 안 되면 그릴 것을 모른다.
+  if (!results && (isError || !openByClock)) return null;
   const shown: VoteResults = results ?? { open: true, closesAt, counts: {} };
+  // 표 수가 서버에서 왔는지 — 내 표만 더한 숫자(`1표 · 100%`)는 진짜 현황이 아니라 비운다.
+  const loaded = results !== undefined && !mutation.isPending;
   const total = Object.values(shown.counts).reduce((sum, n) => sum + n, 0);
   if (loaded && !shown.open && total === 0) return fallback;
-
-  function vote(gender: Gender, memberId: string) {
-    const key = `${PICK_KEY_PREFIX}${endpoint}:${gender}`;
-    const before = results;
-    voted.current = true;
-    writeStorage(key, memberId);
-    setPicks((current) => ({ ...current, [gender]: memberId }));
-    setFailed((current) => ({ ...current, [gender]: false }));
-    setResults({ ...shown, counts: { ...shown.counts, [memberId]: (shown.counts[memberId] ?? 0) + 1 } });
-
-    fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ memberId, voter: voterToken() }),
-    })
-      .then((response) => (response.ok ? response.json() : Promise.reject(response)))
-      .then((data: VoteResults) => {
-        setResults(data);
-        setLoaded(true);
-      })
-      .catch(() => {
-        // 보내지 못했다 — 찍기 전으로 되돌린다(마감·상한이었으면 다시 읽은 현황이 말한다).
-        removeStorage(key);
-        setPicks((current) => ({ ...current, [gender]: null }));
-        setFailed((current) => ({ ...current, [gender]: true }));
-        setResults(before);
-        fetch(endpoint)
-          .then((response) => (response.ok ? response.json() : null))
-          .then((data: VoteResults | null) => {
-            if (!data) return;
-            setResults(data);
-            setLoaded(true);
-          })
-          .catch(() => {});
-      });
-  }
 
   return (
     <section className="flex flex-col gap-4">
@@ -219,7 +204,7 @@ export function EpisodeVote({
               pick={pick ?? undefined}
               failed={Boolean(failed[gender])}
               strings={strings}
-              onVote={(id) => vote(gender, id)}
+              onVote={(memberId) => mutation.mutate({ gender, memberId })}
             />
           );
         })}
@@ -228,9 +213,6 @@ export function EpisodeVote({
     </section>
   );
 }
-
-/** 현황을 못 읽었다는 표시 — 셈한 값으로 그리던 투표함을 거둔다. */
-const CLOSED_UNKNOWN: VoteResults = { open: false, closesAt: "", counts: {} };
 
 function GenderPanel({
   gender,

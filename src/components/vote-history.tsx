@@ -1,14 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { Dictionary } from "@/lib/i18n";
 import { fill } from "@/lib/template";
 import type { VoteCandidate } from "@/lib/types";
 import { rankVotes } from "@/lib/vote";
-
-/** 기수 → 방송일 → 출연자 → 표. API `GET /votes/{program}` 그대로다. */
-type ProgramVotes = Record<string, Record<string, Record<string, number>>>;
+import { programVotesQuery } from "@/lib/vote-queries";
 
 export type VoteHistorySeason = {
   id: string;
@@ -33,22 +31,12 @@ const TONE = { male: "text-he", female: "text-she" } as const;
  * 투표 화면의 "회차별 결과" — 기수마다 회차별 솔로남·솔로녀 1위, 그리고 실제 최종 선택.
  * 시청자가 고른 사람과 방송의 결말을 한 판에서 나란히 보게 하는 게 이 화면의 재미다.
  *
- * 표가 쌓인 기수·회차만 그린다. API 가 안 되면 빈 안내 한 줄이다.
+ * 표가 쌓인 기수·회차만 그린다. API 가 안 되면 빈 안내 한 줄이다. 투표함에서 표를 넣으면
+ * 같은 화면의 이 결과도 함께 바뀐다(`vote-queries.ts`).
  */
 export function VoteHistory({ endpoint, seasons, strings }: Props) {
-  const [votes, setVotes] = useState<ProgramVotes | null>(null);
-  const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch(endpoint, { signal: controller.signal })
-      .then((response) => (response.ok ? response.json() : Promise.reject()))
-      .then((data: ProgramVotes) => setVotes(data))
-      .catch(() => {
-        if (!controller.signal.aborted) setFailed(true);
-      });
-    return () => controller.abort();
-  }, [endpoint]);
+  // 투표함에서 한 표를 넣으면 이 쿼리도 무효화돼 다시 불린다(새로고침 없이 바뀐다).
+  const { data: votes, isError: failed } = useQuery(programVotesQuery(endpoint));
 
   if (!votes && !failed) return null;
 

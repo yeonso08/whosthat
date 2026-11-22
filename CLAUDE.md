@@ -66,6 +66,8 @@ src/data/singles-inferno.json              솔로지옥 시즌 1~5 골격 — �
 src/components/ads.tsx               AutoAds — 애드센스 스니펫. 레이아웃이 아니라 페이지가 건다(위 "광고" 절)
 src/components/with-banner.tsx       모비온 배너 자리 — 데스크톱 본문 옆 세로 칸 + 휴대폰 본문 아래. 홈·프로그램·기수 상세가 감싼다
 src/components/mobon-banner.tsx      모비온 지면 코드와 스니펫 실행 — 기기를 보고 웹·모바일 지면 중 하나만 건다
+src/components/query-provider.tsx    TanStack Query 클라이언트 — 브라우저에서 API 를 부르는 곳(시청자 투표)의 캐시
+src/lib/vote-queries.ts              시청자 투표 쿼리 키·불러오기·한 표 넣기
 src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-tile, season-feature, season-search, couple-card, collection-browser, collection-link, episode-row, episode-season-card, fold-list, list-card, live-dot, previous-season-link, site-footer, site-nav, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
@@ -469,6 +471,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
 - **순위는 전원을 보여 준다 — 0표·꼴찌 포함**(사용자 결정). 찍기 전에는 후보만, 찍은 뒤나 닫힌 뒤에 결과다.
 - **로그인도 쿠키도 없다.** 브라우저 무작위 토큰(localStorage) 하나가 "한 사람" 이고, 서버는 IP 를 HMAC 한 값으로 한 IP 의 표 수에만 상한(30)을 건다 — 통신사 망은 여러 사람이 IP 하나를 쓰므로 1로 걸면 안 된다. 이 사실을 `/privacy` 의 `visitor4`·`processor` 가 말한다 — 방식을 바꾸면 그 문장부터 고친다.
 - 계약결혼은 두 쌍뿐이라 빼 뒀다(`lib/vote.ts` 의 `VOTE_PROGRAMS`). 표는 매일 백업에 안 들어간다.
+- **브라우저에서 API 를 부르는 건 TanStack Query 다**(2026-11-22, 사용자 결정 — 브라우저에서 부르는 화면이 늘어날 것이라). Provider 는 루트 레이아웃 본문을 감싸는 `QueryProvider`(`components/query-provider.tsx`, staleTime 30초), 쿼리 키·불러오기는 `lib/vote-queries.ts` 한 곳이다 — 칩·투표함·회차별 결과가 같은 키를 써서 같은 현황은 한 번만 부르고, **한 표를 넣으면 `votes` 키 아래를 통째로 무효화해** 같은 화면의 회차별 결과가 새로고침 없이 바뀐다(그전엔 새로고침해야 바뀌었다). 새로 브라우저에서 부르는 데이터가 생기면 `fetch` + `useEffect` 로 짜지 말고 같은 방식으로 쿼리 파일을 둔다. 정적 페이지에서 쓰는 데이터는 지금처럼 빌드 때 `lib/data.ts` 가 읽는다 — Query 로 옮기지 않는다.
 - `fill` 은 클라이언트도 쓰려고 `lib/template.ts` 로 뺐다(`i18n.ts` 가 다시 내보낸다) — 투표 상자가 `i18n.ts` 를 import 하면 사전 세 벌이 번들에 딸려 간다.
 
 ### 검색
