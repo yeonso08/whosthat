@@ -19,6 +19,20 @@ export function votableEpisode(programId: string, season: Season): Episode | und
   return season.episodes?.at(-1);
 }
 
+const VOTE_WINDOW_DAYS = 7;
+const VOTE_CLOSE_TIME = "22:00:00";
+
+/**
+ * 투표가 닫히는 때 — 방송일 + 7일 밤 10시(KST). **API(`votes.py` 의 `_closes_at`)와 같은 규칙이다**
+ * — 화면이 API 답을 기다리지 않고 투표함·마감 안내를 바로 그리려고 여기도 셈한다. 어긋나도
+ * 막는 건 API 라 표가 잘못 들어가지는 않고, 답이 오면 화면이 API 값으로 바뀐다.
+ */
+export function voteClosesAt(airDate: string): string {
+  const day = new Date(`${airDate}T00:00:00Z`);
+  day.setUTCDate(day.getUTCDate() + VOTE_WINDOW_DAYS);
+  return `${day.toISOString().slice(0, 10)}T${VOTE_CLOSE_TIME}+09:00`;
+}
+
 /** 마감 시각은 방송 시간대로 적는다 — 해외에서 열어도 "한국 밤 10시" 가 기준이다. */
 const VOTE_TIME_ZONE = "Asia/Seoul";
 

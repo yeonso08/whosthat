@@ -167,6 +167,7 @@ export default async function Page({ params }: PageProps<"/[lang]/vote">) {
                         <p className="text-[14px] text-muted-foreground">{dict.vote.liveEmpty}</p>
                       }
                       endpoint={episodeVotesUrl(program.id, season.id, episode.airDate)}
+                      airDate={episode.airDate}
                       candidates={candidates(season.cast)}
                       strings={dict.episodeVote}
                       locale={lang}
