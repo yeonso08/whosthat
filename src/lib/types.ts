@@ -99,6 +99,25 @@ export type Episode = {
   blocks: EpisodeBlock[];
 };
 
+/** 시청자 투표의 후보 한 명 — 투표 상자가 그리는 데 필요한 것만(`EpisodeVote`). */
+export type VoteCandidate = {
+  id: string;
+  alias: string;
+  gender: CastMember["gender"];
+  profileImageUrl?: string;
+};
+
+/**
+ * 한 회차의 투표 현황(API `GET /votes/...` 그대로). 득표가 0 인 사람은 `counts` 에
+ * 키가 없다 — 후보 명단으로 0 을 채운다(`rankVotes`).
+ */
+export type VoteResults = {
+  open: boolean;
+  /** ISO 시각. 방송 다음 주 같은 요일 밤 10시(KST) — API 가 정한다. */
+  closesAt: string;
+  counts: Record<string, number>;
+};
+
 /**
  * 블록 한 칸. `text` 의 `[영수]` 는 그 사람 카드로 가는 링크가 된다.
  * `quote`·`profile` 은 `memberId` 가, `picks` 는 `round` 가 반드시 있다(DB 제약).

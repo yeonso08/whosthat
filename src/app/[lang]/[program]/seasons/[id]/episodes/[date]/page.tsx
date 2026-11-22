@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { AutoAds } from "@/components/ads";
 import { BackLink } from "@/components/back-link";
 import { CollectionLink } from "@/components/collection-link";
+import { EpisodeVote } from "@/components/episode-vote";
 import { InstagramIcon } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
 import { ListPanel } from "@/components/list-card";
@@ -14,7 +15,13 @@ import {
   EpisodeBlocks,
   EpisodeHeading,
 } from "@/components/season-episodes";
-import { getProgram, getPrograms, getSeason, getSeasons } from "@/lib/data";
+import {
+  episodeVotesUrl,
+  getProgram,
+  getPrograms,
+  getSeason,
+  getSeasons,
+} from "@/lib/data";
 import {
   fill,
   formatEpisodeDate,
@@ -34,6 +41,12 @@ import {
 import { DEFAULT_LOCALE } from "@/lib/locales";
 import { breadcrumbSchema, isEpisodeIndexable, openGraphBase } from "@/lib/seo";
 import { getCoverage, getEpisodeExcerpt } from "@/lib/types";
+
+/**
+ * 시청자 투표를 거는 프로그램. 솔로남·솔로녀 여럿이 한 회차에 나오는 쪽만이다 — 계약결혼은
+ * 두 쌍뿐이라 고를 게 없고, 솔로지옥은 회차 글이 없다.
+ */
+const VOTE_PROGRAMS = new Set(["i-am-solo", "i-am-solo-love-goes-on"]);
 
 /** 검색 결과 설명 한 줄의 길이. 더 길면 검색엔진이 중간에서 자른다. */
 const DESCRIPTION_LENGTH = 150;
@@ -183,6 +196,25 @@ export default async function Page({
           {dict.season.episodesSource}
         </p>
       </article>
+
+      {/* 시청자 투표 — 현황은 브라우저가 API 에서 읽는다. 닫혔는데 표가 없는 옛 회차나
+          API 가 안 될 때는 상자가 아예 안 그려진다(`EpisodeVote`). */}
+      {VOTE_PROGRAMS.has(programId) && (
+        <div className="gutter mt-12">
+          <EpisodeVote
+            heading={<EpisodeHeading as="h2">{dict.episodeVote.heading}</EpisodeHeading>}
+            endpoint={episodeVotesUrl(programId, season.id, episode.airDate)}
+            candidates={season.cast.map((member) => ({
+              id: member.id,
+              alias: member.alias,
+              gender: member.gender,
+              profileImageUrl: member.profileImageUrl,
+            }))}
+            strings={dict.episodeVote}
+            locale={locale}
+          />
+        </div>
+      )}
 
       {/* 글을 다 읽은 사람이 갈 곳 둘 — 이 사람들의 계정, 그리고 같은 기수의 다른 회차. */}
       <section className="gutter mt-10 lg:mt-12">

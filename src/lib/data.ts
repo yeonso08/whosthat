@@ -42,6 +42,15 @@ import {
 const API_URL = process.env.NUKKO_API_URL ?? "http://127.0.0.1:8000";
 
 /**
+ * 회차 글의 시청자 투표 주소. **방문자 브라우저가 부르는 유일한 API 다** — 페이지는 그대로
+ * 정적이고, 투표 상자만 이 주소로 현황을 읽고 표를 보낸다. API 가 죽으면 상자만 안 뜬다.
+ * 빌드가 읽는 주소와 같은 서버라 여기 둔다(클라이언트는 이 값을 prop 으로만 받는다).
+ */
+export function episodeVotesUrl(programId: string, seasonId: string, airDate: string): string {
+  return `${API_URL}/votes/${programId}/${seasonId}/${airDate}`;
+}
+
+/**
  * 응답 캐시의 키를 배포마다 바꾼다. **Vercel 의 데이터 캐시는 배포를 넘어 살아남아서**
  * (문서: "Persistent across deployments") 같은 URL 이면 새 빌드가 옛 응답을 그대로
  * 굽는다 — 저장해서 다시 빌드했는데 화면이 안 바뀌는 상태다. 배포 ID 를 붙이면 배포당

@@ -26,6 +26,7 @@ import en from "@/dictionaries/en.json";
 import ja from "@/dictionaries/ja.json";
 import ko from "@/dictionaries/ko.json";
 import { localePath } from "./links";
+import { fill } from "./template";
 import { DEFAULT_LOCALE, LOCALES, isLocale, type Locale } from "./locales";
 import { hasRegisteredStrings, lookupProgramStrings } from "./program-strings";
 import { lookupAlias, lookupSpecial } from "./translations";
@@ -117,15 +118,8 @@ export async function currentDictionary(): Promise<Dictionary> {
   return getDictionary(await currentLocale());
 }
 
-/** "{found} / {total} 확인" + { found: 4, total: 14 } → "4 / 14 확인". */
-export function fill(
-  template: string,
-  values: Record<string, string | number>,
-): string {
-  return template.replaceAll(/\{(\w+)\}/g, (whole, key: string) =>
-    key in values ? String(values[key]) : whole,
-  );
-}
+// 클라이언트도 쓰려고 순수 모듈로 뺐다 — 서버 쪽 호출부는 그대로 여기서 가져간다.
+export { fill };
 
 
 
