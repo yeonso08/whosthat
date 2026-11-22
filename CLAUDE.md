@@ -71,6 +71,7 @@ src/lib/vote-queries.ts              시청자 투표 쿼리 키·불러오기·
 src/components/                      cast-card, cast-photo, cast-avatar, program-card, season-tile, season-feature, season-search, couple-card, collection-browser, collection-link, episode-row, episode-season-card, fold-list, list-card, live-dot, previous-season-link, site-footer, site-nav, back-link, wordmark, page-heading, policy-page, empty-card, icons, json-ld, theme-provider, mode-toggle, locale-toggle
 public/cast/                         출연진 사진 — profileImageUrl 이 가리키는 곳 (아직 비어 있다)
 public/ads.txt                       애드센스 판매자 선언 — lib/site.ts 의 ADSENSE_CLIENT_ID 와 pub 번호가 같아야 한다
+vercel.json · scripts/vercel-ignore-build.sh  문서만 바뀐 커밋은 미리보기 빌드를 건너뛴다(아래 "배포·도메인")
 public/<키>.txt · scripts/indexnow.mjs  IndexNow 키 파일과 알림 스크립트 — 매시간 .github/workflows/indexnow.yml 이 돌린다(아래 "검색 노출" 절)
 docs/PROGRESS.md · HISTORY.md        지금 상태·할 일 / 끝난 작업의 경위 — 아래 "진행 상황과 작업 기록"
 docs/DAILY_LOG.md                    노션 운영 일지(하루 한 줄 — 방문자·유입·한 일·원인) 쓰는 법. scripts/daily-metrics.sh 가 숫자를 뽑는다
@@ -377,6 +378,7 @@ Next.js 16 App Router + Tailwind v4 + shadcn/ui, pnpm. `params` 는 Promise 라 
   - **월정액 추가 기능(Speed Insights Plus·Web Analytics Plus 각 월 $10, 비밀번호 보호 등)은 켜지 않는다.** $20 크레딧은 사용량(CDN·함수·분석 이벤트)에만 쓰이고 월정액은 카드로 따로 나간다 — 위 $1 예산도 이걸 막지 못한다.
   - **속도는 Speed Insights 무료 등급으로 잰다**(2026-11-20, 루트 레이아웃의 `<SpeedInsights />`). 팀 전체 30일 1만 이벤트이고 넘으면 수집만 멈추고 요금은 없다. **Web Analytics 는 Pro 에서 무료분이 없다**(1,000 이벤트당 $0.03, 크레딧에서 깎인다) — Usage 에 조금씩 잡히는 게 정상이다. 둘 다 `/privacy` 의 `visitor2` 가 말하고 있으니 떼거나 바꾸면 그 문장부터 고친다.
   - **알림은 Observability Plus(Pro 포함)의 Alerts 다** — 기본 규칙(High 이상, 수정 불가) + `트래픽·에러 급증 (Medium)`(전 프로젝트, CDN 요청·전송량·함수 실행 급증과 5xx 급증). `vercel monitors ls` 로 본다. 휴대폰 푸시는 계정마다 따로 켠다(Settings → My Notifications).
+- **문서만 바뀐 커밋은 미리보기 빌드를 건너뛴다**(2026-11-22, `vercel.json` 의 `ignoreCommand` → `scripts/vercel-ignore-build.sh`). 커밋마다 전 페이지를 새로 굽느라 Build CPU Minutes 가 쌓였다 — 작업 브랜치 푸시·dev 머지가 각각 한 번씩이다. `docs/`·`marketing/`·`.github/`·`*.md` 만 바뀌었으면 건너뛴다. **운영(Production)은 언제나 빌드한다** — "사이트에 반영"(Deploy Hook)은 새 커밋 없이 같은 커밋을 다시 굽는데, 차이만 보고 건너뛰면 데이터 반영이 막힌다(다른 프로젝트에서 실제로 난 사고다). 환경을 모르거나 비교할 커밋이 없어도 빌드한다. **스크립트의 종료 코드는 거꾸로다**(0 = 건너뜀). 빌드에 쓰이는 파일을 저 목록에 넣지 말 것. 머지를 PR 마다 하지 않고 모아서 하는 것도 같은 이유다.
 - **배포 보관은 1주다**(프로젝트 Settings → Security → Deployment Retention Policy, Canceled 만 1일). 기본값 30일로 두면 push 마다 Preview, "사이트에 반영" 마다 Production 이 쌓여 Hobby 때 Deployment Storage 10GB 를 넘었다 — 2026-11-13([HISTORY §16](docs/HISTORY.md)). Pro 로 올린 뒤에도 그대로 둔다 — 쌓아 둘 이유가 없다. 저장 용량이 다시 차면 `vercel rm --safe` 로 지우기 전에 이 기간부터 줄인다 — `--safe` 는 롤백 대상까지 지운다.
 
 ### 계정·삭제 요청
