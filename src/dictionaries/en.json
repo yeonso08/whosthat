@@ -101,7 +101,9 @@
     "finalNone": "No final couple",
     "finalPending": "Before the final choice",
     "episodeLink": "Viewer vote for this episode",
-    "episodeLinkSummary": "Pick the man and woman you liked"
+    "episodeLinkSummary": "Pick the man and woman you liked",
+    "chip": "Viewer vote open",
+    "chipLeader": "Leading: {names}"
   },
   "couples": {
     "heading": "Final couples",

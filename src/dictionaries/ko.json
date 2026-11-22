@@ -101,7 +101,9 @@
     "finalNone": "최종 커플 없음",
     "finalPending": "최종 선택 전",
     "episodeLink": "이번 회 시청자 투표",
-    "episodeLinkSummary": "마음에 든 솔로남·솔로녀를 골라 주세요"
+    "episodeLinkSummary": "마음에 든 솔로남·솔로녀를 골라 주세요",
+    "chip": "시청자 투표 중",
+    "chipLeader": "현재 1위 {names}"
   },
   "couples": {
     "heading": "최종 커플",

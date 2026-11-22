@@ -101,7 +101,9 @@
     "finalNone": "最終カップルなし",
     "finalPending": "最終選択前",
     "episodeLink": "今回の視聴者投票",
-    "episodeLinkSummary": "気になった男性・女性を選んでください"
+    "episodeLinkSummary": "気になった男性・女性を選んでください",
+    "chip": "視聴者投票受付中",
+    "chipLeader": "現在1位 {names}"
   },
   "couples": {
     "heading": "最終カップル",

@@ -25,7 +25,7 @@ import { episodeHref, homeHref, voteHref } from "@/lib/links";
 import { DEFAULT_LOCALE } from "@/lib/locales";
 import { openGraphBase } from "@/lib/seo";
 import { getFinalCouples, type CastMember, type Season } from "@/lib/types";
-import { VOTE_PROGRAMS } from "@/lib/vote";
+import { VOTE_PROGRAMS, votableEpisode } from "@/lib/vote";
 
 /** 화면 안 두 덩어리(진행 중·회차별 결과)의 제목. 탭 아래라 `GroupHeading`(자기 여백을 가진다)을 못 쓴다. */
 const SECTION_HEADING = "text-[17px] font-bold tracking-[-0.02em]";
@@ -48,11 +48,11 @@ function candidates(cast: CastMember[]) {
   }));
 }
 
-/** 지금 투표가 열려 있을 수 있는 회차 — 방영 중인 기수의 마지막 회차. 열고 닫기는 API 가 정한다. */
-function liveEpisodes(seasons: Season[]) {
+/** 지금 투표가 열려 있을 수 있는 회차(`votableEpisode`). 열고 닫기는 API 가 정한다. */
+function liveEpisodes(programId: string, seasons: Season[]) {
   return seasons.flatMap((season) => {
-    const latest = season.episodes?.at(-1);
-    return season.onAir && latest ? [{ season, episode: latest }] : [];
+    const episode = votableEpisode(programId, season);
+    return episode ? [{ season, episode }] : [];
   });
 }
 
@@ -136,7 +136,7 @@ export default async function Page({ params }: PageProps<"/[lang]/vote">) {
 
         {programs.map((program) => {
           const seasons = getSeasons(program);
-          const live = liveEpisodes(seasons);
+          const live = liveEpisodes(program.id, seasons);
           return (
             <TabsContent key={program.id} value={program.id} className="gutter flex flex-col gap-12 pt-6">
               <section className="flex flex-col gap-4">
