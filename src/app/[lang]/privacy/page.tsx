@@ -56,6 +56,7 @@ export default async function Page({ params }: PageProps<"/[lang]/privacy">) {
       <p className={POLICY_BODY}>{privacy.visitor1}</p>
       <p className={POLICY_BODY}>{privacy.visitor2}</p>
       <p className={POLICY_BODY}>{privacy.visitor3}</p>
+      <p className={POLICY_BODY}>{privacy.visitor4}</p>
 
       <h2 className={POLICY_HEADING}>{privacy.processorHeading}</h2>
       <p className={POLICY_BODY}>{privacy.processor}</p>

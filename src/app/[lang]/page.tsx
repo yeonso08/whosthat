@@ -1,4 +1,4 @@
-import { ChevronRight, Heart, MapPin, NotebookText } from "lucide-react";
+import { ChevronRight, Heart, MapPin, NotebookText, Vote } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -24,7 +24,7 @@ import {
   isLocale,
   localizeProgramShortName,
 } from "@/lib/i18n";
-import { couplesHref, episodesHref, solonaraHref } from "@/lib/links";
+import { couplesHref, episodesHref, solonaraHref, voteHref } from "@/lib/links";
 import { organizationSchema, websiteSchema } from "@/lib/seo";
 import { countCouples, countEpisodes } from "@/lib/types";
 
@@ -217,6 +217,16 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
                           })}
                           icon={<NotebookText className="size-4.5 text-foreground dark:text-[#8fb0ff]" />}
                           iconClassName="dark:bg-[#2f62e8]/20"
+                        />
+                      )}
+                      {/* 회차 글처럼 한국어 화면만 있다 — 회차별 정리 줄과 같은 조건이다. */}
+                      {episodes > 0 && (
+                        <CollectionLink
+                          href={voteHref(lang)}
+                          title={dict.vote.heading}
+                          summary={dict.vote.summary}
+                          icon={<Vote className="size-4.5 text-foreground dark:text-[#ff8db6]" />}
+                          iconClassName="dark:bg-[#e0397a]/20"
                         />
                       )}
                       {solonara.length > 0 && (
