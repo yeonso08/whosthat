@@ -111,6 +111,9 @@ export type VoteCandidate = {
  * 한 회차의 투표 현황(API `GET /votes/...` 그대로). 득표가 0 인 사람은 `counts` 에
  * 키가 없다 — 후보 명단으로 0 을 채운다(`rankVotes`).
  */
+/** 기수 → 방송일 → 출연자 → 표. API `GET /votes/{program}` 그대로다. */
+export type ProgramVotes = Record<string, Record<string, Record<string, number>>>;
+
 export type VoteResults = {
   open: boolean;
   /** ISO 시각. 방송 다음 주 같은 요일 밤 10시(KST) — API 가 정한다. */
