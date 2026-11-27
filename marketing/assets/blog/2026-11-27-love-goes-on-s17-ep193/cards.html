@@ -1,0 +1,132 @@
+<!doctype html>
+<!--
+  블로그 글(posts/2026-11-27_나솔사계_솔로민박17_193회_블로그.md) 이미지 원본. 1080×1080.
+  2026-10-26 결혼 글 cards.html 과 같은 판형 — 흑백, 왼쪽 정렬. 출연자 사진·방송 캡처·핸들은 넣지 않는다.
+  cards.html?c=c1 처럼 고른다.
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800;900&family=Manrope:wght@600;800&display=block" rel="stylesheet">
+<style>
+  :root { --ink: #0a0a0c; --paper: #f4f4f6; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1080px; overflow: hidden; }
+  body { font-family: "Gothic A1", sans-serif; word-break: keep-all; }
+  .card { display: none; width: 1080px; height: 1080px; padding: 80px 88px; flex-direction: column; }
+  .card.on { display: flex; }
+  .dark { background: var(--ink); color: var(--paper); }
+  .light { background: var(--paper); color: var(--ink); }
+  .top { display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-family: "Manrope", sans-serif; font-weight: 800; font-size: 40px; letter-spacing: -0.02em; }
+  .page { font-family: "Manrope", sans-serif; font-weight: 600; font-size: 28px; }
+  .label { margin-top: 56px; font-size: 34px; font-weight: 500; opacity: .82; }
+  .h1 { margin-top: 20px; font-size: 104px; font-weight: 900; line-height: 1.14; letter-spacing: -0.035em; }
+  .h2 { margin-top: 40px; font-size: 68px; font-weight: 900; line-height: 1.16; letter-spacing: -0.03em; }
+  .lat { font-family: "Manrope", sans-serif; }
+  .date { margin-top: 40px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 56px; letter-spacing: -0.02em; }
+  .foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 30px; font-weight: 700; }
+  /* 줄 목록 */
+  .tl { margin-top: 40px; }
+  .tl div { display: grid; grid-template-columns: 220px 1fr; padding: 22px 0; border-top: 2px solid currentColor; align-items: baseline; }
+  .tl div:last-child { border-bottom: 2px solid currentColor; }
+  .tl b { font-family: "Manrope", "Gothic A1", sans-serif; font-weight: 800; font-size: 34px; }
+  .tl span { font-size: 34px; font-weight: 700; }
+  .tl small { display: block; margin-top: 6px; font-size: 25px; font-weight: 500; opacity: .7; }
+  .tl .hl { background: var(--ink); color: var(--paper); padding: 22px 20px; margin: 0 -20px; border-radius: 12px; border: 0; }
+  .dark .tl .hl { background: var(--paper); color: var(--ink); }
+  /* 화살표 관계 */
+  .rel { margin-top: 40px; display: flex; flex-direction: column; gap: 18px; }
+  .rel div { display: grid; grid-template-columns: 130px 60px 1fr; align-items: baseline; font-size: 40px; font-weight: 800; }
+  .rel i { font-style: normal; font-family: "Manrope", sans-serif; opacity: .6; }
+  .rel em { font-style: normal; font-size: 26px; font-weight: 500; opacity: .7; margin-left: 10px; }
+  /* 인용 */
+  .q { margin-top: 30px; padding: 24px 28px; border-left: 8px solid currentColor; font-size: 38px; font-weight: 800; line-height: 1.35; }
+  .q small { display: block; margin-top: 8px; font-size: 25px; font-weight: 500; opacity: .7; }
+  /* 직업 표 */
+  .jobs { margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 44px; }
+  .jobs div { display: grid; grid-template-columns: 82px 64px 1fr; padding: 15px 0; border-top: 2px solid currentColor; align-items: baseline; font-size: 27px; }
+  .jobs b { font-weight: 800; font-size: 30px; }
+  .jobs .n { font-family: "Manrope", sans-serif; font-weight: 800; }
+  .jobs span { font-weight: 500; line-height: 1.3; }
+  .grid { margin-top: 40px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .cell { border: 2px solid currentColor; border-radius: 14px; padding: 20px 0; text-align: center; font-size: 34px; font-weight: 800; }
+  .sub { margin-top: 24px; font-size: 28px; font-weight: 500; opacity: .75; }
+  .url { margin-top: 40px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 44px; letter-spacing: -0.02em; }
+  .couple { margin-top: 36px; padding: 30px 0; border-top: 2px solid currentColor; }
+  .couple .where { font-size: 28px; font-weight: 700; opacity: .7; }
+  .couple .pair { margin-top: 14px; display: grid; grid-template-columns: 1fr 70px 1fr; align-items: start; }
+  .couple .pair i { font-style: normal; font-size: 48px; text-align: center; opacity: .6; }
+  .couple b { display: block; font-size: 50px; font-weight: 900; letter-spacing: -0.02em; }
+  .couple span { display: block; margin-top: 8px; font-size: 28px; font-weight: 700; }
+  .couple small { display: block; margin-top: 6px; font-size: 24px; font-weight: 500; opacity: .7; line-height: 1.35; }
+</style>
+<style>.tl div{grid-template-columns:290px 1fr}.jobs div{grid-template-columns:72px 150px 1fr}.jobs .n{font-family:"Gothic A1",sans-serif;font-size:26px}</style>
+
+</head>
+<body>
+<section class="card dark" id="c1">
+  <div class="top"><span class="logo">nukko</span><span class="page">01 / 05</span></div>
+  <p class="label">ENA · SBS Plus · 11월 26일 방송</p>
+  <h1 class="h1">나솔사계<br>193회 정리</h1>
+  <p class="h2" style="font-size:52px;margin-top:32px">"마지막에 서로를<br>선택하자" 14기 광수</p>
+  <div class="foot"><span>방송에 나온 장면만</span><span class="lat" style="font-weight:800;font-size:34px">nukko.net</span></div>
+</section>
+<section class="card light" id="c2">
+  <div class="top"><span class="logo">nukko</span><span class="page">02 / 05</span></div>
+  <h2 class="h2" style="margin-top:28px">솔로민박 17 지금까지</h2>
+  <div class="tl" style="margin-top:28px">
+    <div><b>188회 · 10.22</b><span>입소와 첫인상 선택</span></div>
+    <div><b>189회 · 10.29</b><span>자기소개와 첫 데이트 선택</span></div>
+    <div><b>190회 · 11.5</b><span>첫 데이트, 흔들리는 작약</span></div>
+    <div><b>191회 · 11.12</b><span>14기 광수의 3대 1 데이트</span></div>
+    <div><b>192회 · 11.19</b><span>주사위 랜덤 데이트</span></div>
+    <div class="hl"><b>193회 · 11.26</b><span>사계 데이트권 사용</span></div>
+  </div>
+  <p class="sub">외국인 솔로녀 5명 · 경력직 솔로남 5명</p>
+</section>
+<section class="card dark" id="c3">
+  <div class="top"><span class="logo">nukko</span><span class="page">03 / 05</span></div>
+  <h2 class="h2">사계 데이트권 사용</h2>
+  <div class="rel">
+    <div style="grid-template-columns:200px 60px 1fr"><span>백합</span><i>→</i><span>14기 광수</span></div>
+    <div style="grid-template-columns:200px 60px 1fr"><span>7기 영식</span><i>→</i><span>백합</span></div>
+    <div style="grid-template-columns:200px 60px 1fr"><span>작약</span><i>→</i><span>7기 영식<em>광수에게 거절당한 뒤</em></span></div>
+    <div style="grid-template-columns:200px 60px 1fr"><span>장미</span><i>→</i><span>12기 영철</span></div>
+    <div style="grid-template-columns:200px 60px 1fr"><span>12기 영철</span><i>→</i><span>국화</span></div>
+  </div>
+  <p class="q">내일은 패스<small>14기 광수 · 작약의 데이트 신청에</small></p>
+  <p class="q" style="font-size:34px">이 사람은 욕심이 많구나<small>작약 · 인터뷰</small></p>
+</section>
+<section class="card light" id="c4">
+  <div class="top"><span class="logo">nukko</span><span class="page">04 / 05</span></div>
+  <h2 class="h2">흔들리는 마음들</h2>
+  <p class="q" style="font-size:34px">각자 다른 사람과 데이트하고 마지막에 서로를 선택하자<small>14기 광수 → 백합</small></p>
+  <p class="q" style="font-size:34px">정말 제가 좋다면 굳이 그렇게까지 안 할 것 같다<small>백합 · 인터뷰</small></p>
+  <p class="q" style="font-size:34px">난 선택 안 받더라도 나는 무조건 선택한다<small>7기 영식 → 백합</small></p>
+  <div class="foot" style="font-size:28px"><span>장미의 호감도 — 1기 영호 30 : 12기 영철 70</span></div>
+</section>
+<section class="card dark" id="c5">
+  <div class="top"><span class="logo">nukko</span><span class="page">05 / 05</span></div>
+  <h2 class="h2" style="margin-top:28px">솔로민박 17 출연진</h2>
+  <p class="sub">부안 · 여성 외국인 특집</p>
+  <div class="jobs">
+    <div><b>1기</b><span class="n">영호</span><span>성악가</span></div>
+    <div><b>장미</b><span class="n">몽골</span><span>제약회사 근무</span></div>
+    <div><b>7기</b><span class="n">영호</span><span>수학학원 운영</span></div>
+    <div><b>작약</b><span class="n">중국</span><span></span></div>
+    <div><b>7기</b><span class="n">영식</span><span>비주얼 디자이너·미술 작가</span></div>
+    <div><b>튤립</b><span class="n" style="font-size:20px">세네갈·<br>프랑스</span><span>모델</span></div>
+    <div><b>12기</b><span class="n">영철</span><span>프로레슬러</span></div>
+    <div><b>백합</b><span class="n">일본</span><span>안무가·댄서</span></div>
+    <div style="border-bottom:2px solid currentColor"><b>14기</b><span class="n">광수</span><span>공인노무사</span></div>
+    <div style="border-bottom:2px solid currentColor"><b>국화</b><span class="n" style="font-size:20px">라트비아·이탈리아</span><span>모델 겸 배우</span></div>
+  </div>
+  <div class="foot" style="font-size:28px"><span>인스타·회차별 정리는 누꼬에</span><span class="lat" style="font-weight:800;font-size:34px">nukko.net</span></div>
+</section>
+
+<script>
+  document.getElementById(new URLSearchParams(location.search).get("c") || "c1").classList.add("on");
+</script>
+</body>
+</html>
